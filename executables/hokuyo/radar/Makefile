@@ -2,4 +2,4 @@ C++_FLAG = -Wall -Werror `urg-config --cflags` `sdl-config --cflags`  `urg-confi
 
 
 do : radarDriver.cpp	
-	g++ -o radDriver.exe radarDriver.cpp $(C++_FLAG)
+	g++ -o raddriver.exe radarDriver.cpp $(C++_FLAG)
