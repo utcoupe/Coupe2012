@@ -27,7 +27,7 @@ class ExecutableBot(bridgebot.BridgeBot):
 		
 
 	def connect_exec(self):
-		if self.lock_connect.acquire(False):
+		def f():
 			while True:
 				try:
 					# kill de l'ancien process
@@ -47,7 +47,12 @@ class ExecutableBot(bridgebot.BridgeBot):
 					print("reconnection ok")
 					self.sendall("reconnection ok")
 					break
+		if self.lock_connect.acquire(False):
+			t = threading.Thread(target=f)
+			t.setDaemon(True)
+			t.start()
 			self.lock_connect.release()
+			
 	
 	def write(self, msg):
 		""" #écrit sur l'input standart """
