@@ -39,6 +39,7 @@ class ExecutableBot(bridgebot.BridgeBot):
 								self.process.terminate()
 						except Exception:
 							self.process = None
+					print("COUCOU",self.exec_name, self.exec_params)
 					self.process = subprocess.Popen([self.exec_name]+self.exec_params, stdout=subprocess.PIPE, stdin=subprocess.PIPE)
 				except Exception as ex:
 					print(ex)

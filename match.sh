@@ -1,6 +1,3 @@
-arduino/asservpetitrobot/clientIRC/asservbot.py
-sleep 1
-
-cd ia
-./main.py -a 1 -s 1
+arduino/asservgrosrobot/clientIRC/asservbot.py
+arduino/othersgrosrobot/clientIRC/othersbot.py
 
