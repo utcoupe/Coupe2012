@@ -21,7 +21,7 @@ Retour :
 goto x y v ==> onMove ==> goto ok
 
 gotor x y v :
-Aller à un point (x,y) de la carte à une vitesse (v). absolut
+Aller à un point (x,y) de la carte à une vitesse (v). relatif
 Params :
 	x,y : mm
 	v : [0,255]
