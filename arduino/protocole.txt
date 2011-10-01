@@ -1,0 +1,100 @@
+chan #asserv
+
+id :
+Demande d'identification. 
+Retour : Le nom du client ('asserv', 'other', 'cam')
+id ==> string
+
+ping :
+Demande de ping, en fait c'est juste un test de réponse.
+Retour : 'Pong'
+ping ==> pong
+
+goto x y v :
+Aller à un point (x,y) de la carte à une vitesse (v). absolut
+Params :
+	x,y : mm
+	v : [0,255]
+Retour : 
+	onMove lors de la reception
+	goto ok quand but atteind
+goto x y v ==> onMove ==> goto ok
+
+gotor x y v :
+Aller à un point (x,y) de la carte à une vitesse (v). absolut
+Params :
+	x,y : mm
+	v : [0,255]
+Retour : 
+	onMove lors de la reception
+	goto ok quand but atteind
+gotor x y v ==> onMove ==> gotor ok
+
+angle a v :
+Faire tourner le robot d'un angle (a) à une vitesse (v).
+Params :
+	a : degrès
+	v : [0,255]
+Retour : 
+	onTurn lors de la reception
+	turn ok quand but atteind
+angle a v ==> onTurn ==> turn ok
+
+angler a v :
+Faire tourner le robot d'un angle (a) à une vitesse (v).
+Params :
+	a : degrès
+	v : [0,255]
+Retour : 
+	onTurn lors de la reception
+	turn ok quand but atteind
+angler a v ==> onTurn ==> turn ok
+
+position :
+Récupérer la position actuelle du robot.
+Retour : 
+	La position sous la forme 'x:y:a', avec x et y en mm et a en degrès.
+position ==> x y a
+
+recal c:
+Lance le recalage automatique pour la couleur (c). A ne faire que sur l'une des deux zones de départ.
+Params :
+	c : 0 pour bleu, 1 pour rouge.
+Retour :
+	onRecal lors de la reception
+	recal ok quand but atteind
+recal ==> onRecal ==> recal ok
+
+recal t v:
+Recalage manuel de type (type), cad que c'est nous qui disons au robot quelle valeur (value) mettre.
+Params :
+	type (valeur définies dans fifo.h):
+		3 : pour x (#define TYPE_CALIB_X)
+		4 : pour y (#define TYPE_CALIB_Y)
+		5 : pour l'angle (#define TYPE_CALIB_ANGLE)
+	value : la valeur à mettre, (x,y : mm; angle : degrès).
+Retour :
+	onRecal lors de la reception
+	recal ok quand but atteind
+recal ==> onRecal ==> recal ok
+
+stop :
+Arrete tout, vide la fifo.
+Retour : 
+	stop ok
+stop ==> stop ok
+
+pause :
+pause le robot
+Retour :
+	pause ok
+pause ==> pause ok
+
+resume :
+resume le pause
+retour :
+	resume ok
+resume ==> resume ok
+
+chan #ia
+todo ...
