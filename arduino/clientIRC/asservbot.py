@@ -20,19 +20,19 @@ class AsservBot(arduinobot.ArduinoBot):
 
 	def cmd_goto(self, x, y, v):
 		""" Aller à un point (x,y) de la carte à une vitesse (v). absolut """
-		return "2" + self.add_args(SEP, x, y, v)
+		return "2" + SEP.join([x, y, v])
 
 	def cmd_gotor(self, x, y, v):
 		""" Aller à un point (x,y) de la carte à une vitesse (v). relatif """
-		return "3" + self.add_args(SEP, x, y, v)
+		return "3" + SEP.join([x, y, v])
 	
 	def cmd_turn(self, a, v):
 		""" tourner """
-		return "4" + self.add_args(SEP, a, v)
+		return "4" + SEP.join([a, v])
 
 	def cmd_turnr(self, a, v):
 		""" tourner """
-		return "5" + self.add_args(SEP, a, v)
+		return "5" + SEP.join([a, v])
 
 	def cmd_pos(self):
 		""" position """

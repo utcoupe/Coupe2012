@@ -63,9 +63,6 @@ class ArduinoBot(ircbot.SingleServerIRCBot):
 				self.serial.write(bytes("0.0." + f(*msg_split[:-1])+"\n","utf-8"))
 			else:
 				serv.privmsg(canal, "invalid arg number")
-
-	def add_args(self, sep, *args):
-		return "."+sep.join(args)
 	
 	def loop(self):
 		while True:
