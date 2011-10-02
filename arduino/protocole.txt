@@ -78,13 +78,13 @@ Retour :
 	recal ok quand but atteind
 recal ==> onRecal ==> recal ok
 
-stop :
+cancel :
 Arrete tout, vide la fifo.
 Retour : 
 	stop ok
 stop ==> stop ok
 
-pause :
+stop :
 pause le robot
 Retour :
 	pause ok
