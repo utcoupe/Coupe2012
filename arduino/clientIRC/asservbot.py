@@ -42,6 +42,10 @@ class AsservBot(arduinobot.ArduinoBot):
 		""" recalage """
 		return "7" + SEP + c
 
+	def cmd_stop(self):
+		""" arreter le robot et vider la FIFO """
+		return "13"
+
 
 
 if __name__ == "__main__":
