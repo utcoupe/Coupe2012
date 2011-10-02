@@ -59,7 +59,7 @@ class ArduinoBot(ircbot.SingleServerIRCBot):
 		elif hasattr(self, cmd):
 			f = getattr(self, cmd)
 			if len(msg_split) == len(inspect.getargspec(f).args):
-				msg = bytes("0.0." + f(*msg_split[:-1])+"\n","utf-8")
+				msg = bytes("0.0." + f(*msg_split[1:])+"\n","utf-8")
 				print (msg)
 				self.serial.write(msg)
 			else:
