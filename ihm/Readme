@@ -1,3 +1,9 @@
 @author Matthieu Guffroy
 
 IHM du robot, codé en OPA.
+
+ATTENTION : Il faut une version d'opa compilé maison, avec des correctifs sur
+            la lib irc.
+
+	Voir le fork mattgu74/opalang.git sur github.
+
