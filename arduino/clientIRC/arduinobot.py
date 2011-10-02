@@ -26,7 +26,7 @@ class ArduinoBot(ircbot.SingleServerIRCBot):
 			self.serial = serial.Serial(serial_port, serial_baudrate, timeout=1, writeTimeout=1)
 		except serial.SerialException as ex:
 			print(ex)
-			#sys.exit(1)
+			sys.exit(1)
 		self.serv = None
 		self.nickname = nickname
 		self.channel = channel
