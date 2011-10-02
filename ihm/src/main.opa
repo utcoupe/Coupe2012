@@ -24,6 +24,8 @@ keydown(e) =
 
 interface() =
     <h1>Interface Homme-Machine du robot 2012</h1>
+    <>{bot_map_control()}</>
+    <br />
     <input id=#message onnewline={_ -> send_test()} onkeyup={e -> keyup(e)} onkeydown={e -> keydown(e)} value="ping" />
     <button onclick={_ -> send_test()}>Envoyer un message</button><br />
     <h2>Activité sur le channel <button onclick={_ -> Dom.transform([#messages <- <></>])}>Clear</button></h2>
