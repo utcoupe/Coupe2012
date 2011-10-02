@@ -21,7 +21,7 @@ class ArduinoBot(ircbot.SingleServerIRCBot):
 			self.serial = serial.Serial(serial_port, serial_baudrate, timeout=1, writeTimeout=1)
 		except serial.SerialException as ex:
 			print(ex)
-			sys.exit(1)
+			#sys.exit(1)
 		self.serv = None
 		self.nickname = nickname
 		self.channel = channel
@@ -53,9 +53,12 @@ class ArduinoBot(ircbot.SingleServerIRCBot):
 		msg_split = msg.split(" ")
 		cmd = "cmd_" + msg_split[0]
 		if msg == "help":
-			for f_name in dir(self):
-				if "cmd_" in f_name:
-					serv.privmsg(canal, f_name[4:] + ":" + getattr(self, f_name).__doc__.replace("\n"," ").replace("\r"," ").replace("\t"," "))
+			if len(msg_split) > 1:
+				self.print_doc("cmd_"+msg_split[1], msg_split[1])
+			else:
+				for f_name in dir(self):
+					if "cmd_" in f_name:
+						self.print_doc(f_name, f_name[4:])
 		elif hasattr(self, cmd):
 			f = getattr(self, cmd)
 			if len(msg_split) == len(inspect.getargspec(f).args):
@@ -71,22 +74,16 @@ class ArduinoBot(ircbot.SingleServerIRCBot):
 			if msg and self.serv:
 				self.serv.privmsg(self.channel, str(msg,"utf-8"))
 
+	def print_doc(self, f_name, cmd=None):
+		cmd = f_name if not cmd else cmd
+		try:
+			doc = getattr(self, f_name).__doc__
+		except AttributeError as ex:
+			serv.privmsg(canal, str(ex))
+		else:
+			for line in doc.split("\n"):
+				serv.privmsg(canal, cmd + ":" + line)
+			
 
 if __name__ == "__main__":
-	"""import sys
-	if len(sys.argv) < 3:
-		print "exe <serial-port> <bauderate>"
-		sys.exit(1)
-	
-	port = sys.argv[1]
-	try:
-		baudrate = int(sys.argv[2])
-	except ValueError:
-		print "invalid bauderate"
-		sys.exit(1)
-	
-	import serial
-
-	s = serial.Serial(port, baudrate, timeout=1, writeTimeout=1)"""
-	
 	ArduinoBot("10.42.43.94",6667,"arduinobot","#test","/dev/ttyACM0",115200).start()
