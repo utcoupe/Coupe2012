@@ -21,14 +21,12 @@ draw_map()=
 // This function draw the bot
 draw_bot(x, y, a)=
      ctx=get_ctx()
+     PI = 3.14
      do Canvas.set_fill_style(ctx,{color = Color.black})
-     do Canvas.fill_rect(ctx,Int.of_float(x*conf.size-conf.robot_rayon*conf.size),
-                             Int.of_float(y*conf.size-conf.robot_rayon*conf.size),
-                             Int.of_float(2.*conf.robot_rayon*conf.size),
-                             Int.of_float(2.*conf.robot_rayon*conf.size))
-     //do Canvas.begin_path(ctx)
-     //do Canvas.arc_to(ctx, Int.of_float(x*conf.size), Int.of_float(y*conf.size), Int.of_float(conf.size*conf.robot_rayon), 10, 7)
-     //do Canvas.fill(ctx)
+     do Canvas.begin_path(ctx)
+     do Canvas.arc(ctx, Int.of_float(x*conf.size), Int.of_float(y*conf.size), Int.of_float(conf.size*conf.robot_rayon), 0.*PI, 2.*PI, false)
+     do Canvas.close_path(ctx)
+     do Canvas.fill(ctx)
      void
 
 load_map()=
@@ -40,7 +38,7 @@ load_map()=
           | {some=ctx} ->
               do Canvas.set_line_cap(ctx, {round})
               do draw_map()
-              do draw_bot(500., 500., 55) 
+              do draw_bot(500., 500., 30.) 
               void
           | {none} -> jlog("error canvas 2")
          end
@@ -51,7 +49,7 @@ click_event(ev)=
      pos=Dom.Dimension.sub(ev.mouse_position_on_page,Dom.get_offset(#map_bot))
      newpos={x=Float.of_int(pos.x_px)/conf.size y=Float.of_int(pos.y_px)/conf.size}
      do draw_map()
-     do draw_bot(newpos.x, newpos.y, 55) 
+     do draw_bot(newpos.x, newpos.y, 30.) 
      do jlog(Debug.dump(newpos))
      void
 
