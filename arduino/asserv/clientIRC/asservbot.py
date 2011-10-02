@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 
-
+import sys
+import os
+FILE_DIR  = os.path.dirname(os.path.abspath(__file__))
+sys.path.append(os.path.join(FILE_DIR,"..","..","clientIRC"))
 
 import arduinobot
-SERVER_ROOT_DIR  = os.path.split(os.path.dirname(os.path.abspath(__file__)))[0]
 SEP = '.'
 
 class AsservBot(arduinobot.ArduinoBot):
