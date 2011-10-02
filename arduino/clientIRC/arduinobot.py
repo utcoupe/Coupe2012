@@ -1,10 +1,15 @@
 # -*- coding: utf-8 -*-
 
 import sys
-sys.path.append("../../lib/pyirclib")
+import os
+FILE_DIR  = os.path.dirname(os.path.abspath(__file__))
+sys.path.append(os.path.join(FILE_DIR,"..","..","lib","py3irc"))
+
 import threading
 import serial
 import inspect
+import time
+
 
 import irclib
 import ircbot
@@ -51,16 +56,16 @@ class ArduinoBot(ircbot.SingleServerIRCBot):
 		canal = ev.target()
 		msg = ev.arguments()[0].lower()
 		msg_split = msg.split(" ")
-		cmd = "cmd_" + msg_split[0]
-		if msg == "help":
+		f_name = "cmd_" + msg_split[0]
+		if msg_split[0] == "help":
 			if len(msg_split) > 1:
 				self.print_doc("cmd_"+msg_split[1], msg_split[1])
 			else:
 				for f_name in dir(self):
 					if "cmd_" in f_name:
 						self.print_doc(f_name, f_name[4:])
-		elif hasattr(self, cmd):
-			f = getattr(self, cmd)
+		elif hasattr(self, f_name):
+			f = getattr(self, f_name)
 			if len(msg_split) == len(inspect.getargspec(f).args):
 				msg = bytes("0.0." + f(*msg_split[1:])+"\n","utf-8")
 				print (msg)
@@ -70,20 +75,25 @@ class ArduinoBot(ircbot.SingleServerIRCBot):
 	
 	def loop(self):
 		while True:
-			msg = self.serial.readline()
-			if msg and self.serv:
-				self.serv.privmsg(self.channel, str(msg,"utf-8"))
+			try:
+				msg = self.serial.readline()
+			except Exception as ex:
+				print(ex)
+				time.sleep(2)
+			else:
+				if msg and self.serv:
+					self.serv.privmsg(self.channel, str(msg,"utf-8"))
 
 	def print_doc(self, f_name, cmd=None):
 		cmd = f_name if not cmd else cmd
 		try:
 			doc = getattr(self, f_name).__doc__
 		except AttributeError as ex:
-			serv.privmsg(canal, str(ex))
+			self.serv.privmsg(self.channel, str(ex))
 		else:
 			for line in doc.split("\n"):
-				serv.privmsg(canal, cmd + ":" + line)
-			
+				self.serv.privmsg(self.channel, cmd + ":" + line)
+
 
 if __name__ == "__main__":
 	ArduinoBot("10.42.43.94",6667,"arduinobot","#test","/dev/ttyACM0",115200).start()
