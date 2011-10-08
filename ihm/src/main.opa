@@ -5,7 +5,7 @@ history = Mutable.make({l = ["ping","help","id"] : list(string); pos = 4})
 
 send_test() = 
             msg = Dom.get_value(#message)
-            do send_msg(msg)
+            do send_msg(msg, true)
             h = history.get()
             do history.set({h with l=List.add(msg, h.l) ; pos=List.length(h.l)+1})
             Dom.clear_value(#message)
@@ -25,7 +25,15 @@ keydown(e) =
 interface() =
     <h1>Interface Homme-Machine du robot 2012</h1>
     <>{bot_map_control()}</>
+    <div id=#control><h2>Bouton de control</h2>
+    <button onclick={_ -> send_msg("stop",true)}>[STOP]</button><br />
+    <button onclick={_ -> send_msg("pause",true)}>[PAUSE]</button><br />
+    <button onclick={_ -> send_msg("resume",true)}>[RESUME]</button><br />
+    <button onclick={_ -> send_msg("recal 2",true)}>[RECAL BLUE]</button><button onclick={_ -> send_msg("recal 1",true)}>[RECAL RED]</button><br />
+    </div>
     <br />
+    <>{compas()}</>
+    <br /><br /><br />
     <input id=#message onnewline={_ -> send_test()} onkeyup={e -> keyup(e)} onkeydown={e -> keydown(e)} value="ping" />
     <button onclick={_ -> send_test()}>Envoyer un message</button><br />
     <h2>Activité sur le channel <button onclick={_ -> Dom.transform([#messages <- <></>])}>Clear</button></h2>

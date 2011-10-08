@@ -1,12 +1,12 @@
 
 conf = 
 {
-    size=0.1
+    size=0.2
     map_width=3000.
-    map_height=2000.
+    map_height=2100.
     robot_rayon=150.
-    canvas_width=0.1*3000.
-    canvas_height=0.1*2000.
+    canvas_width=0.2*3000.
+    canvas_height=0.2*2100.
 }
 
 get_ctx() = Option.get(Canvas.get_context_2d(Option.get(Canvas.get(#map_bot))))
@@ -20,6 +20,8 @@ draw_map()=
 
 // This function draw the bot
 draw_bot(x, y, a)=
+     y=conf.map_height-y
+     a=-a
      ctx=get_ctx()
      PI = 3.14
      a = a * 2.*PI/360.
@@ -32,6 +34,12 @@ draw_bot(x, y, a)=
 
 load_map()=
      //get canvas
+     do Scheduler.timer(200, (-> pos = position.get()
+                                 do draw_map()
+                                 do draw_bot(Float.of_int(pos.x),
+                                             Float.of_int(pos.y),
+                                             Float.of_int(pos.a))
+                                 void))
      match Canvas.get(#map_bot) with
       | {some=canvas} ->
          //get context
@@ -39,7 +47,6 @@ load_map()=
           | {some=ctx} ->
               do Canvas.set_line_cap(ctx, {round})
               do draw_map()
-              do draw_bot(500., 500., 30.) 
               void
           | {none} -> jlog("error canvas 2")
          end
@@ -48,11 +55,12 @@ load_map()=
 
 click_event(ev)=
      pos=Dom.Dimension.sub(ev.mouse_position_on_page,Dom.get_offset(#map_bot))
-     newpos={x=Float.of_int(pos.x_px)/conf.size y=Float.of_int(pos.y_px)/conf.size}
+     newpos={x=Float.of_int(pos.x_px)/conf.size y=conf.map_height - Float.of_int(pos.y_px)/conf.size}
      do draw_map()
-     do draw_bot(newpos.x, newpos.y, 95.) 
-     do jlog(Debug.dump(newpos))
+     //do draw_bot(newpos.x, newpos.y, 95.)
+     do send_msg("goto {Int.of_float(newpos.x)} {Int.of_float(newpos.y)}", true)
+     //do jlog(Debug.dump(newpos))
      void
 
 bot_map_control()=
-    <canvas id="map_bot"  width="{conf.canvas_width}" height="{conf.canvas_height}" onready={_ -> load_map()} onclick={click_event}>Ton navigateur supporte pas les canvas !!</canvas>
+    <canvas id="map_bot" style="float: left;" width="{conf.canvas_width}" height="{conf.canvas_height}" onready={_ -> load_map()} onclick={click_event}>Ton navigateur supporte pas les canvas !!</canvas>
