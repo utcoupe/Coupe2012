@@ -32,21 +32,21 @@
 #define Q_CODEUR	 		44 
 
 // asserv
-#define QA_IDENT 			0 // [] identification
+#define QA_ID 				0 // [] identification
 #define QA_PING 			1   // [] pong
-#define QA_STOP 			13 // [] stop et vide la fifo
-#define QA_GOAL_ABS 		2 // [x,y,v]
-#define QA_GOAL_REL 		3 // [x,y,v]
-#define QA_ANGLE_ABS 		4 // [a,v]
-#define QA_ANGLE_REL 		5 // [a,v]
-#define QA_POSITION 		6 // []
-#define QA_AUTO_CALIB		7 // [c] 0:blue 1:rouge
-#define QA_MANUAL_CALIB		8
+#define QA_CANCEL 			13 // [] stop et vide la fifo
+#define QA_GOTO		 		2 // [x,y,v]
+#define QA_GOTOR	 		3 // [x,y,v]
+#define QA_TURN		 		4 // [a,v]
+#define QA_TURNR	 		5 // [a,v]
+#define QA_POS		 		6 // []
+#define QA_ACALIB			7 // [c] 0:blue 1:rouge
+#define QA_MCALIB			8
 #define QA_DELAY 			9
 #define QA_PWM 				10
 #define QA_MODIF_GOAL_ABS 	11
 #define QA_MODIF_GOAL_REL 	12
-#define QA_PAUSE			14 // [] pause
+#define QA_STOP				14 // [] pause
 #define QA_RESUME			15 // [] reprendre
 #define QA_GETSENS			16 // [] debug : retourne le sens
 #define QA_GETENC			17 // [] debug : retourne la valeur des encodeurs

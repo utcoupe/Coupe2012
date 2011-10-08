@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
 import sys
@@ -145,8 +146,70 @@ class ArduinoBot(ircbot.SingleServerIRCBot):
 		f_name = "cmd_"+cmd_name.lower()
 		setattr(self, f_name, COMPILED_F)
 
+def run(**args):
+	import sys
+	import optparse
+	
+	server_ip = args["server_ip"] if "server_ip" in args else "10.42.43.94"
+	server_port = args["server_port"] if "server_port" in args else 6667
+	nickname = args["nickname"] if "nickname" in args else "testbot"
+	channel = args["channel"] if "channel" in args else "test"
+	serial_port = args["serial_port"] if "serial_port" in args else "/dev/ttyACM0"
+	serial_baudrate = args["serial_baudrate"] if "serial_baudrate" in args else 115200
+	protocole_file = args["protocole_file"] if "protocole_file" in args else "protocole.h"
+	protocole_prefixe = args["protocole_prefixe"] if "protocole_prefixe" in args else "QA_"
 
-if __name__ == "__main__":
-	bot = ArduinoBot("10.42.43.94",6667,"arduinobot","#test","/dev/ttyACM0",115200,"protocole.h","QA_")
+	
+	usage = "usage: %prog [options]"
+	parser = optparse.OptionParser(usage,version="%prog 0.0")
+	parser.add_option("-S", "--server-ip",
+						action="store", dest="server_ip", default=server_ip,
+						help="ip irc server")
+	parser.add_option("-P", "--server-port",
+						action="store", dest="server_port", type="int", default=server_port,
+						help="port irc server")
+	parser.add_option("-n", "--nickname",
+						action="store", dest="nickname", default=nickname,
+						help="nickname on irc")
+	parser.add_option("-c", "--channel",
+						action="store", dest="channel", default=channel,
+						help="channel on irc")
+	parser.add_option("-s", "--serial-port",
+						action="store", dest="serial_port", default=serial_port,
+						help="serial port")
+	parser.add_option("-p", "--serial-baudrate",
+						action="store", dest="serial_baudrate", default=serial_baudrate,
+						help="serial baudrate")
+	parser.add_option("-f", "--protocole-file",
+						action="store", dest="protocole_file", default=protocole_file,
+						help="protocole file")
+	parser.add_option("-x", "--protocole-prefixe",
+						action="store", dest="protocole_prefixe", default=protocole_prefixe,
+						help="protocole prefixe")
+    
+	(options, args) = parser.parse_args()
+
+	print(options.server_ip,
+		options.server_port,
+		options.nickname,
+		options.channel,
+		options.serial_port,
+		options.serial_baudrate,
+		options.protocole_file,
+		options.protocole_prefixe)
+	bot = ArduinoBot(
+		options.server_ip,
+		options.server_port,
+		options.nickname,
+		"#"+options.channel,
+		options.serial_port,
+		options.serial_baudrate,
+		options.protocole_file,
+		options.protocole_prefixe)
 	#print(list(filter(lambda x: x[0:4] == 'cmd_', dir(bot))))
 	bot.start()
+
+	
+if __name__ == "__main__":
+	run()
+	
