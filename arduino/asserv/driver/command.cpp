@@ -5,6 +5,7 @@
 #include "message.h"
 #include "encoder.h"
 #include "pwm.h"
+#include "WProgram.h"
 
 /**
  * Analyse le message et effectue les actions associees
@@ -18,19 +19,19 @@ void cmd(int id, int id_cmd, int* args, int size){
 	/* On analyse le message en fonction de son type */
 	switch(id_cmd){
 
-		case Q_IDENT: /* Identification */
+		case QA_IDENT: /* Identification */
 		{
 			sendMessage(id, ID_ASSERV, (char*)"asserv");
 			break;
 		}
 
-		case Q_PING:
+		case QA_PING:
 		{
 			sendMessage(id, (char*)"Pong");
 			break;
 		}
 
-		case Q_GOAL_ABS:
+		case QA_GOAL_ABS:
 		{
 			if (size < 3)
 				sendMessage(id, E_INVALID_PARAMETERS_NUMBERS);
@@ -42,7 +43,7 @@ void cmd(int id, int id_cmd, int* args, int size){
 			break;
 		}
 
-		case Q_GOAL_REL:
+		case QA_GOAL_REL:
 		{
 			if (size < 3)
 				sendMessage(id, E_INVALID_PARAMETERS_NUMBERS);
@@ -57,7 +58,7 @@ void cmd(int id, int id_cmd, int* args, int size){
 			break;
 		}
 
-		case Q_ANGLE_ABS:
+		case QA_ANGLE_ABS:
 		{
 			if (size < 2)
 				sendMessage(id, E_INVALID_PARAMETERS_NUMBERS);
@@ -71,7 +72,7 @@ void cmd(int id, int id_cmd, int* args, int size){
 			break;
 		}
 
-		case Q_ANGLE_REL:
+		case QA_ANGLE_REL:
 		{
 			if (size < 2)
 				sendMessage(id, E_INVALID_PARAMETERS_NUMBERS);
@@ -84,7 +85,7 @@ void cmd(int id, int id_cmd, int* args, int size){
 			break;
 		}
 
-		case Q_POSITION:
+		case QA_POSITION:
 		{
 			int x_mm = robot_state.x*ENC_TICKS_TO_MM;
 			int y_mm = robot_state.y*ENC_TICKS_TO_MM;
@@ -94,7 +95,7 @@ void cmd(int id, int id_cmd, int* args, int size){
 	        break;
 		}
 
-		case Q_MANUAL_CALIB : //TODO a eclater en calibration manuel de l'angle ,de x et de y
+		case QA_MANUAL_CALIB : //TODO a eclater en calibration manuel de l'angle ,de x et de y
 		{
 			if (size < 3)
 				sendMessage(id, E_INVALID_PARAMETERS_NUMBERS);
@@ -108,7 +109,7 @@ void cmd(int id, int id_cmd, int* args, int size){
 			break;
 		}
 
-		case Q_AUTO_CALIB :
+		case QA_AUTO_CALIB :
 		{
 			if (size < 1)
 				sendMessage(id, E_INVALID_PARAMETERS_NUMBERS);
@@ -126,7 +127,7 @@ void cmd(int id, int id_cmd, int* args, int size){
 			break;
 		}
 
-		case Q_DELAY:
+		case QA_DELAY:
 		{
 			if (size < 1)
 				sendMessage(id, E_INVALID_PARAMETERS_NUMBERS);
@@ -138,7 +139,7 @@ void cmd(int id, int id_cmd, int* args, int size){
 			break;
 		}
 
-		case Q_PWM:
+		case QA_PWM:
 		{
 			if (size < 2)
 				sendMessage(id, E_INVALID_PARAMETERS_NUMBERS);
@@ -185,7 +186,7 @@ void cmd(int id, int id_cmd, int* args, int size){
 			break;
 		}
 		 */
-		case Q_STOP: /* comme stop */
+		case QA_STOP: /* comme stop */
 		{
 			clearGoals();
 			current_goal.isCanceled = true;
@@ -193,21 +194,21 @@ void cmd(int id, int id_cmd, int* args, int size){
 			break;
 		}
 
-		case Q_PAUSE: /* comme pause */
+		case QA_PAUSE: /* comme pause */
 		{
 			current_goal.isPaused = true;
 			sendMessage(id, 1);
 			break;
 		}
 
-		case Q_RESUME: /* comme resume */
+		case QA_RESUME: /* comme resume */
 		{
 			current_goal.isPaused = false;
 			sendMessage(id, 1);
 			break;
 		}
 
-		case Q_GETSENS:
+		case QA_GETSENS:
 		{
 			if (value_pwm_right > 0)
 				sendMessage(id, AVANT);
@@ -218,7 +219,7 @@ void cmd(int id, int id_cmd, int* args, int size){
 			break;
 		}
 
-		case Q_GETENC:
+		case QA_GETENC:
 		{
 			int tab[2] = {value_left_enc,value_right_enc};
 			sendMessage(id, tab, 2);

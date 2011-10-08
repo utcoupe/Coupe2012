@@ -4,19 +4,17 @@
 
 // cf. protocole
 #define C_SEP_SEND	'.' // tout est séparé par ça.
-
+#define V_SEP		'.'
 
 
 // all
 #define Q_IDENT 			0 // [] identification
-#define Q_PING 				1 // [] pong
+#define Q_PING 				1   // [] pong
 #define Q_DEBUG				99
-#define Q_STOP 				13
+#define Q_STOP 				13 // [] stop et vide la fifo
 
 // autre
-#define Q_IDENT 			0
-#define Q_PING 				1
-#define Q_SHARP 			31 // [n] yooooo
+#define Q_SHARP 			31 // [n] valeur du sharp
 //#define Q_TSHARP 			32 // [x,y] TRIGGERSHARP //obselete
 #define Q_MS	 			33
 #define Q_TMS	 			34 //TRIGGERMS
@@ -24,7 +22,7 @@
 #define Q_SETPOSITION 		36 //PINCE POSITION
 #define Q_LOAD 				37 //PRESENT_LOAD
 #define Q_JACK		 		38
-#define Q_LED		 		39
+//#define Q_LED		 		39 
 #define Q_PION		 		40
 #define Q_RESET		 		45
 #define Q_RECALAGE	 		46
@@ -34,21 +32,24 @@
 #define Q_CODEUR	 		44 
 
 // asserv
-#define Q_GOAL_ABS 			2
-#define Q_GOAL_REL 			3
-#define Q_ANGLE_ABS 		4
-#define Q_ANGLE_REL 		5
-#define Q_POSITION 			6
-#define Q_AUTO_CALIB		7
-#define Q_MANUAL_CALIB		8
-#define Q_DELAY 			9
-#define Q_PWM 				10
-#define Q_MODIF_GOAL_ABS 	11
-#define Q_MODIF_GOAL_REL 	12
-#define Q_PAUSE				14
-#define Q_RESUME			15
-#define Q_GETSENS			16
-#define Q_GETENC			17
+#define QA_IDENT 			0 // [] identification
+#define QA_PING 			1   // [] pong
+#define QA_STOP 			13 // [] stop et vide la fifo
+#define QA_GOAL_ABS 		2 // [x,y,v]
+#define QA_GOAL_REL 		3 // [x,y,v]
+#define QA_ANGLE_ABS 		4 // [a,v]
+#define QA_ANGLE_REL 		5 // [a,v]
+#define QA_POSITION 		6 // []
+#define QA_AUTO_CALIB		7 // [c] 0:blue 1:rouge
+#define QA_MANUAL_CALIB		8
+#define QA_DELAY 			9
+#define QA_PWM 				10
+#define QA_MODIF_GOAL_ABS 	11
+#define QA_MODIF_GOAL_REL 	12
+#define QA_PAUSE			14 // [] pause
+#define QA_RESUME			15 // [] reprendre
+#define QA_GETSENS			16 // [] debug : retourne le sens
+#define QA_GETENC			17 // [] debug : retourne la valeur des encodeurs
 
 // erreurs
 #define	E_INVALID_CMD						-1

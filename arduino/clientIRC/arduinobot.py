@@ -14,7 +14,6 @@ import re
 import irclib
 import ircbot
 
-import holla
 
 
 COMPILED_F = None
@@ -148,6 +147,6 @@ class ArduinoBot(ircbot.SingleServerIRCBot):
 
 
 if __name__ == "__main__":
-	bot = ArduinoBot("10.42.43.94",6667,"arduinobot","#test","/dev/ttyACM0",115200,"protocole.h","Q_")
+	bot = ArduinoBot("10.42.43.94",6667,"arduinobot","#test","/dev/ttyACM0",115200,"protocole.h","QA_")
 	#print(list(filter(lambda x: x[0:4] == 'cmd_', dir(bot))))
 	bot.start()

@@ -28,9 +28,10 @@ void setup(){
 	/*Active la liaison serie*/
 	initSerialLink();
 
-	// LED qui n'en est pas une
 	pinMode(16,OUTPUT);
+    
 }
+
 
 void loop(){
 	/* on note le temps de debut */
