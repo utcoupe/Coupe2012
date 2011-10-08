@@ -1,4 +1,5 @@
 #!/bin/bash
+
 pourcentage() {
 	upower -d | grep percentage | cut -d" " -f 15
 }
@@ -9,10 +10,10 @@ time_to_empty() {
 }
 
 case $1 in
-	pourcentage)
+	p)
 		pourcentage;;
-	timeto)
+	t)
 		time_to_empty;;
 	*)
-		echo "ERROR PARAM : pourcentage or timeto"
+		echo "ERROR PARAM : p or t"
 esac
