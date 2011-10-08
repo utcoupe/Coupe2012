@@ -19,7 +19,7 @@ void cmd(int id, int id_cmd, int* args, int size){
 	/* On analyse le message en fonction de son type */
 	switch(id_cmd){
 
-		case QA_IDENT: /* Identification */
+		case QA_ID: /* Identification */
 		{
 			sendMessage(id, ID_ASSERV, (char*)"asserv");
 			break;
@@ -31,7 +31,7 @@ void cmd(int id, int id_cmd, int* args, int size){
 			break;
 		}
 
-		case QA_GOAL_ABS:
+		case QA_GOTO:
 		{
 			if (size < 3)
 				sendMessage(id, E_INVALID_PARAMETERS_NUMBERS);
@@ -43,7 +43,7 @@ void cmd(int id, int id_cmd, int* args, int size){
 			break;
 		}
 
-		case QA_GOAL_REL:
+		case QA_GOTOR:
 		{
 			if (size < 3)
 				sendMessage(id, E_INVALID_PARAMETERS_NUMBERS);
@@ -58,7 +58,7 @@ void cmd(int id, int id_cmd, int* args, int size){
 			break;
 		}
 
-		case QA_ANGLE_ABS:
+		case QA_TURN:
 		{
 			if (size < 2)
 				sendMessage(id, E_INVALID_PARAMETERS_NUMBERS);
@@ -72,7 +72,7 @@ void cmd(int id, int id_cmd, int* args, int size){
 			break;
 		}
 
-		case QA_ANGLE_REL:
+		case QA_TURNR:
 		{
 			if (size < 2)
 				sendMessage(id, E_INVALID_PARAMETERS_NUMBERS);
@@ -85,7 +85,7 @@ void cmd(int id, int id_cmd, int* args, int size){
 			break;
 		}
 
-		case QA_POSITION:
+		case QA_POS:
 		{
 			int x_mm = robot_state.x*ENC_TICKS_TO_MM;
 			int y_mm = robot_state.y*ENC_TICKS_TO_MM;
@@ -95,7 +95,7 @@ void cmd(int id, int id_cmd, int* args, int size){
 	        break;
 		}
 
-		case QA_MANUAL_CALIB : //TODO a eclater en calibration manuel de l'angle ,de x et de y
+		case QA_MCALIB: //TODO a eclater en calibration manuel de l'angle ,de x et de y
 		{
 			if (size < 3)
 				sendMessage(id, E_INVALID_PARAMETERS_NUMBERS);
@@ -109,7 +109,7 @@ void cmd(int id, int id_cmd, int* args, int size){
 			break;
 		}
 
-		case QA_AUTO_CALIB :
+		case QA_ACALIB:
 		{
 			if (size < 1)
 				sendMessage(id, E_INVALID_PARAMETERS_NUMBERS);
@@ -186,7 +186,7 @@ void cmd(int id, int id_cmd, int* args, int size){
 			break;
 		}
 		 */
-		case QA_STOP: /* comme stop */
+		case QA_CANCEL: /* comme stop */
 		{
 			clearGoals();
 			current_goal.isCanceled = true;
@@ -194,7 +194,7 @@ void cmd(int id, int id_cmd, int* args, int size){
 			break;
 		}
 
-		case QA_PAUSE: /* comme pause */
+		case QA_STOP: /* comme pause */
 		{
 			current_goal.isPaused = true;
 			sendMessage(id, 1);
