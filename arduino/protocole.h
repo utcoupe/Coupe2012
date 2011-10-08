@@ -8,16 +8,16 @@
 
 
 // all
-#define Q_IDENT 			0
-#define Q_PING 				1
+#define Q_IDENT 			0 // [] identification
+#define Q_PING 				1 // [] pong
 #define Q_DEBUG				99
 #define Q_STOP 				13
 
 // autre
 #define Q_IDENT 			0
 #define Q_PING 				1
-#define Q_SHARP 			31
-//#define Q_TSHARP 			32 //TRIGGERSHARP //obselete
+#define Q_SHARP 			31 // [n] yooooo
+//#define Q_TSHARP 			32 // [x,y] TRIGGERSHARP //obselete
 #define Q_MS	 			33
 #define Q_TMS	 			34 //TRIGGERMS
 //#define Q_PINCE 			35
