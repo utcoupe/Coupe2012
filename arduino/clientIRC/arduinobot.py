@@ -8,7 +8,6 @@ sys.path.append(os.path.join(FILE_DIR,"..","..","lib","py3irc"))
 
 import threading
 import serial
-import inspect
 import time
 import re
 
@@ -25,10 +24,6 @@ class ArduinoBot(myircbot.MyIRCBot):
 		"""
 		Constructeur qui pourrait prendre des paramètres dans un "vrai" programme.
 		"""
-		self.serv = None
-		self.nickname = nickname
-		self.channel = channel
-		
 		myircbot.MyIRCBot.__init__(self, server_ip, server_port, nickname, channel)
 		
 		print("Récupération du protocole dans %s..." %protocole_file)
@@ -45,6 +40,11 @@ class ArduinoBot(myircbot.MyIRCBot):
 		
 		self.thread = threading.Thread(None,self.loop,"arduinoloop")
 		self.thread.start()
+
+	def write_rep(self, msg):
+		msg = bytes(msg.strip()+"\n","utf-8")
+		self.serial.write(msg)
+		
 	
 	def loop(self):
 		while True:

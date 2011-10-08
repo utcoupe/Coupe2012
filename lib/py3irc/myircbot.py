@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
 
+import inspect
+
 
 import irclib
 import ircbot
@@ -27,6 +29,9 @@ class MyIRCBot(ircbot.SingleServerIRCBot):
 		"""
 		serv.join(self.channel)
 		self.serv = serv
+	
+	def write_rep(self, msg):
+		self.send(msg)
 		
 	def on_pubmsg(self, serv, ev):
 		"""
@@ -49,10 +54,10 @@ class MyIRCBot(ircbot.SingleServerIRCBot):
 						self.print_doc(f_name, f_name[4:])
 		elif hasattr(self, f_name):
 			f = getattr(self, f_name)
-			if len(msg_split)-1 == len(inspect.getargspec(f).args):
-				msg = bytes(f(*msg_split[1:])+"\n","utf-8")
-				print (msg)
-				self.serial.write(msg)
+			f_args = inspect.getargspec(f).args
+			nb_args = len(f_args) - (1 if 'self' in f_args else 0)
+			if len(msg_split)-1 == nb_args:
+				self.write_rep(f(*msg_split[1:])+"\n")
 			else:
 				serv.privmsg(canal, "invalid arg number : need %s and get %s" % (str(inspect.getargspec(f)),msg_split))
 
@@ -66,4 +71,6 @@ class MyIRCBot(ircbot.SingleServerIRCBot):
 			if not doc: doc = "No documentation"
 			for line in doc.split("\n"):
 				self.serv.privmsg(self.channel, cmd + ":" + line)
-	
+
+	def send(self, msg):
+		if self.serv: self.serv.privmsg(self.channel, msg)
