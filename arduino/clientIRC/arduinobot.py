@@ -42,7 +42,7 @@ class ArduinoBot(myircbot.MyIRCBot):
 		self.thread.start()
 
 	def write_rep(self, msg):
-		msg = bytes(f(*msg_split[1:])+"\n","utf-8")
+		msg = bytes(msg.strip()+"\n","utf-8")
 		self.serial.write(msg)
 		
 	
