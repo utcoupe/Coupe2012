@@ -9,27 +9,41 @@ import threading
 import serial
 import inspect
 import time
-
+import re
 
 import irclib
 import ircbot
 
+
+
+COMPILED_F = None
+SEP = '.'
+
+
 class ArduinoBot(ircbot.SingleServerIRCBot):
-	def __init__(self, server_ip, server_port, nickname, channel, serial_port, serial_baudrate):
+	def __init__(self, server_ip, server_port, nickname, channel, serial_port, serial_baudrate, protocole_file=None, protocole_prefixe=None):
 		"""
 		Constructeur qui pourrait prendre des paramètres dans un "vrai" programme.
 		"""
+		self.serv = None
+		self.nickname = nickname
+		self.channel = channel
+		
 		ircbot.SingleServerIRCBot.__init__(self, [(server_ip, server_port)],
 										   nickname, "Bot réalisé en Python avec ircbot")
-
+		
+		print("Récupération du protocole dans %s..." %protocole_file)
+		self._get_protocole(protocole_file, protocole_prefixe)
+		print("OK")
+		
+		print("Connection au port série %s..." % serial_port)
 		try:
 			self.serial = serial.Serial(serial_port, serial_baudrate, timeout=1, writeTimeout=1)
 		except serial.SerialException as ex:
 			print(ex)
 			sys.exit(1)
-		self.serv = None
-		self.nickname = nickname
-		self.channel = channel
+		print("OK")
+		
 		self.thread = threading.Thread(None,self.loop,"arduinoloop")
 		self.thread.start()
 	
@@ -54,7 +68,7 @@ class ArduinoBot(ircbot.SingleServerIRCBot):
 		
 		auteur = irclib.nm_to_n(ev.source())
 		canal = ev.target()
-		msg = ev.arguments()[0].lower()
+		msg = ev.arguments()[0].strip().lower()
 		msg_split = msg.split(" ")
 		f_name = "cmd_" + msg_split[0]
 		if msg_split[0] == "help":
@@ -62,16 +76,16 @@ class ArduinoBot(ircbot.SingleServerIRCBot):
 				self.print_doc("cmd_"+msg_split[1], msg_split[1])
 			else:
 				for f_name in dir(self):
-					if "cmd_" in f_name:
+					if "cmd_" == f_name[0:4]:
 						self.print_doc(f_name, f_name[4:])
 		elif hasattr(self, f_name):
 			f = getattr(self, f_name)
-			if len(msg_split) == len(inspect.getargspec(f).args):
-				msg = bytes("0.0." + f(*msg_split[1:])+"\n","utf-8")
+			if len(msg_split)-1 == len(inspect.getargspec(f).args):
+				msg = bytes(f(*msg_split[1:])+"\n","utf-8")
 				print (msg)
 				self.serial.write(msg)
 			else:
-				serv.privmsg(canal, "invalid arg number")
+				serv.privmsg(canal, "invalid arg number : need %s and get %s" % (str(inspect.getargspec(f)),msg_split))
 	
 	def loop(self):
 		while True:
@@ -91,9 +105,48 @@ class ArduinoBot(ircbot.SingleServerIRCBot):
 		except AttributeError as ex:
 			self.serv.privmsg(self.channel, str(ex))
 		else:
+			if not doc: doc = "No documentation"
 			for line in doc.split("\n"):
 				self.serv.privmsg(self.channel, cmd + ":" + line)
 
+	def _get_protocole(self, f_name, prefixe):
+		f = open(f_name)
+		re_begin = '(#define)?\s+{prefixe}(?P<var>\w+)\s+'.format(prefixe=prefixe)
+		re_end = '(\s)*\/\/\s*(?P<doc>\[(?P<params>(\w|,|\s)*)].*)'
+		re_char = re.compile(re_begin+'[\'"](?P<value>[^\s|\/]+)[\'"]'+re_end)
+		re_int = re.compile(re_begin+'(?P<value>[^\s|\/]+)'+re_end)
+		for line in f:
+			# recherche char
+			t = re_char.match(line)
+			if t:
+				self._add_cmd_function(t.group('var'), t.group('value'), t.group('params'), t.group('doc'))
+				#print(t.group('var'),"\t= (str)",t.group('value'),"\tdoc= ",t.group('doc'), t.group('doc'))
+			else:
+				# recherche int
+				t = re_int.match(line)
+				if t:
+					try:
+						value = int(t.group('value'))
+					except:
+						value = None
+					self._add_cmd_function(t.group('var'), t.group('value'), t.group('params'), t.group('doc'))
+					#print(t.group('var'),"\t= (int)",value,"\tparams= ",t.group('params'),"\tdoc= ",t.group('doc'))
+		f.close()
+
+	"""
+	Ajouter une commande à la classe en cours.
+	@param cmd_name le nom de la commande
+	@param id_cmd l'id de la commande dans le protocole
+	"""
+	def _add_cmd_function(self, cmd_name, id_cmd, params, doc):
+		global COMPILED_F
+		exec("COMPILED_F = lambda {params}: '{SEP}'.join(['0','0','{id_cmd}',{params}])".format(params=params,SEP=SEP,id_cmd=str(id_cmd).lower()), globals())
+		COMPILED_F.__doc__ = doc.strip()
+		f_name = "cmd_"+cmd_name.lower()
+		setattr(self, f_name, COMPILED_F)
+
 
 if __name__ == "__main__":
-	ArduinoBot("10.42.43.94",6667,"arduinobot","#test","/dev/ttyACM0",115200).start()
+	bot = ArduinoBot("10.42.43.94",6667,"arduinobot","#test","/dev/ttyACM0",115200,"protocole.h","QA_")
+	#print(list(filter(lambda x: x[0:4] == 'cmd_', dir(bot))))
+	bot.start()

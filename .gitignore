@@ -1,1 +1,7 @@
 *__pycache__*
+arduino-0*
+*.dblite
+*build
+*.o
+*.elf
+*.hex
