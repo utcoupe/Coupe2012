@@ -58,7 +58,7 @@ click_event(ev)=
      newpos={x=Float.of_int(pos.x_px)/conf.size y=conf.map_height - Float.of_int(pos.y_px)/conf.size}
      do draw_map()
      //do draw_bot(newpos.x, newpos.y, 95.)
-     do send_msg("goto {Int.of_float(newpos.x)} {Int.of_float(newpos.y)}", true)
+     do Irc_Asserv.send_msg("goto {Int.of_float(newpos.x)} {Int.of_float(newpos.y)}", true)
      //do jlog(Debug.dump(newpos))
      void
 

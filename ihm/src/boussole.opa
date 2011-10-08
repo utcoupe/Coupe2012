@@ -52,10 +52,7 @@ load_compas()=
 click_compas_event(ev)=
      pos=Dom.Dimension.sub(ev.mouse_position_on_page,Dom.get_offset(#map_compas))
      newpos={x=Float.of_int(pos.x_px)-100. y=100.-Float.of_int(pos.y_px)}
-     do draw_map()
-     //do draw_compas_bot(rad2deg(atan2(newpos.x,newpos.y)))
-     do send_msg("angle {rad2deg(atan2(newpos.x,newpos.y))}", true)
-     //do jlog(Debug.dump(newpos))
+     do Irc_Asserv.send_msg("{asserv_angle} {rad2deg(atan2(newpos.x,newpos.y))}", true)
      void
 
 compas()=

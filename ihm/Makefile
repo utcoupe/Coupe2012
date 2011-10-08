@@ -5,7 +5,7 @@ EXE=main.exe
 
 all: $(EXE)
 
-$(EXE): src/grid.opa src/irc.opa src/boussole.opa src/main.opa
+$(EXE): src/config.opa src/grid.opa src/irc.opa src/boussole.opa src/main.opa
 	$(OPA) $^ -o $(EXE)
 
 run: all
