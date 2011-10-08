@@ -1,3 +1,18 @@
+#include <WProgram.h>
+
+int main(void)
+{
+	init();
+
+	setup();
+    
+	for (;;)
+		loop();
+        
+	return 0;
+}
+
+#line 1 "build/driver.pde"
 #include "WProgram.h"
 #include "parameters.h"
 #include <math.h>
