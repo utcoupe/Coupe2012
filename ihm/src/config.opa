@@ -20,8 +20,37 @@ asserv_recalB = "recal 2"
 asserv_recalR = "recal 1"
 asserv_position = "position"
 asserv_angle = "angle"
-// Reception d'une position
-parse_message_asserv: Parser.general_parser(void) = 
-    parser
-      | "-1.0." x=Rule.integer "." y=Rule.integer "." a=Rule.integer -> position.set({~x ~y ~a})
-    end
+asserv_botname = "asservbot"
+
+// CONFIG MONITORING
+channel_monitoring = "#monitoring"
+monitoring_botname = "monitoringbot"
+
+// Reception d'un message
+parse_message(from, to): Parser.general_parser(void) =
+    if to == channel_asserv then
+        if from == asserv_botname then
+            parser
+             | "-1.0." x=Rule.integer "." y=Rule.integer "." a=Rule.integer -> position.set({~x ~y ~a})
+            end
+        else
+            do jlog("from : {from}, to : {to}")
+            parser
+             | Rule.fail -> void
+            end
+    else if to == channel_monitoring then
+        if from == monitoring_botname then
+            parser
+             | p=Rule.float "%" -> batterie.set({batterie.get() with ~p})
+             | t=Rule.float -> batterie.set({batterie.get() with ~t})
+            end
+        else
+            do jlog("from : {from}, to : {to}")
+            parser
+             | Rule.fail -> void
+            end
+      else
+         parser
+          | Rule.fail -> void
+         end
+            
