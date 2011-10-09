@@ -22,23 +22,24 @@ MyCanvas(id, _width, height) =
 
    rectangle(couleur, x0, y0, x1, y1)=
      do Canvas.set_fill_style(ctx(),{color = couleur})
-     do Canvas.fill_rect(ctx(),newx(x0),newy(y0),newx(x1),newy(y1))
+     do Canvas.fill_rect(ctx(),newx(x0),newy(y1),newx(x1),newy(y0))
+     do Canvas.stroke(ctx())
      void
 
    arc(couleur, x, y, r, a, size) =
      ct = ctx()
      do Canvas.set_fill_style(ct,{color = couleur})
      do Canvas.begin_path(ct)
-     do Canvas.arc(ct, newx(x), newy(y), r, MyMath.deg2rad(a) + size*Math.PI, MyMath.deg2rad(a) - size*Math.PI, false)
+     do Canvas.arc(ct, newx(x), newy(y), r, MyMath.deg2rad(newa(a)) + size*Math.PI, MyMath.deg2rad(newa(a)) - size*Math.PI, false)
      do Canvas.close_path(ct)
      do Canvas.fill(ct)
      void
 
     line(couleur, x, y, l : list((int, int)), size) =
       ct = ctx()
-      do Canvas.set_line_cap = {round};
-      do Canvas.set_stroke_style = "#0000ff"; // line color
-      do Canvas.context.lineWidth = size;
+      do Canvas.set_line_cap(ct,{round})
+      do Canvas.set_stroke_style(ct,{color = couleur}) 
+      do Canvas.set_line_width(ct,size)
       do Canvas.begin_path(ct)
       do Canvas.move_to(ct,x,y)
       do List.iter(( a -> (x,y) = a

@@ -29,12 +29,14 @@ bat = Mutable.make({p=0.0 t=0.0})
    set_p(p)=bat.set({bat.get() with ~p})
 
    set_t(t)=bat.set({bat.get() with ~t})
+  
+   get() = bat.get()
 
    show_bat()=
       refresh()=
-         b = bat.get()
-         Dom.transform([#bat <- <>Pourcentage : {b.p}%<br/>Time to : {b.t}h<br/></>])
-      do Scheduler.sleep(18000,(-> Scheduler.timer(10000, refresh)))
+         b = get()
+         Dom.transform([#bat <- <>* {Math.round(b.p)}% Restant<br/> * {b.t}h Restant<br/></>])
+      do Scheduler.timer(10000, refresh)
       <div id=#bat />
 }}
 // Wait 10 sec and ask every 150ms the position, 

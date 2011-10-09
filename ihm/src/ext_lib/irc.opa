@@ -29,11 +29,11 @@ MyIrcLib(channel : string,
     myParser =
         parser
           | result={parse_message(from, to)} -> result
-          | "ping" -> do Network.broadcast(<><strong>{from} {to}:</strong> ping <br/></>, mynetwork)
+          | "ping" -> do Network.broadcast(<><strong>{from} {to}:</strong> ping <br/></>, Network.cloud("utcoupe"))
                       send_msg("pong", to, true)
-          | "id" -> do Network.broadcast(<><strong>{from} {to}:</strong> id <br/></>, mynetwork)
+          | "id" -> do Network.broadcast(<><strong>{from} {to}:</strong> id <br/></>, Network.cloud("utcoupe"))
                     send_msg(nickname, to, true)
-          | msg=(.*) -> Network.broadcast(<><strong>{from} {to}:</strong> {msg} <br/></>, mynetwork)
+          | msg=(.*) -> Network.broadcast(<><strong>{from} {to}:</strong> {msg} <br/></>, Network.cloud("utcoupe"))
          end
     Parser.parse(myParser, msg)
 

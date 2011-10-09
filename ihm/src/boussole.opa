@@ -18,43 +18,32 @@ Compas = {{
     // Pour l'instant c'est un cercle gris
     // on pourrait importer une image.
     draw_compas() =
-        canvas.arc(Color.lightgrey,canvas_width/2,canvas_height/2,canvas_width/2, 360, 0)
+        canvas.rectangle(Color.lightgreen,0,0,200, 200)
 
     //Cette fonction symbolise l'angle du robot en tracant un trait
     draw_bot(a) =
-        canvas.line(
+        canvas.line(Color.black, 100, 100, [(Int.of_float(100.+100.*Math.cos(MyMath.deg2rad(a))), Int.of_float(100.-100.*Math.sin(MyMath.deg2rad(a))))], 3.)
 
-draw_compas_bot(a)=
-    ctx=get_compas()
-    do Canvas.begin_path(ctx)
-    do Canvas.move_to(ctx, 100, 100)
-    do Canvas.line_to(ctx, Int.of_float(100.+100.*Math.cos(deg2rad(a))), Int.of_float(100.-100.*Math.sin(deg2rad(a))))
-    do Canvas.close_path(ctx)
-    do Canvas.stroke(ctx)
-    void
-
-load_compas()=
-    do Scheduler.timer(200, (-> pos = Position.get()
+    // Au chargment
+    on_load(_)=
+        Scheduler.timer(200, (-> pos = Position.get()
                                  do draw_compas()
-                                 do draw_compas_bot(pos.a)
+                                 do draw_bot(pos.a)
                                  void))
-     match Canvas.get(#map_compas) with
-      | {some=canvas} ->
-         //get context
-         match Canvas.get_context_2d(canvas) with
-          | {some=ctx} ->
-              do Canvas.set_line_cap(ctx, {round})
-              do draw_compas() 
-              void
-          | {none} -> jlog("error canvas 2")
-         end
-      | {none} -> jlog("error canvas 1")
-     end
-click_compas_event(ev)=
-     pos=Dom.Dimension.sub(ev.mouse_position_on_page,Dom.get_offset(#map_compas))
-     newpos={x=Float.of_int(pos.x_px)-100. y=100.-Float.of_int(pos.y_px)}
-     do MyIrc.send_msg("{asserv_angle} {rad2deg(atan2(newpos.x,newpos.y))}", channel_asserv, true)
-     void
 
-compas()=
-    <canvas id="map_compas" width="200" height="200" onready={_ -> load_compas()} onclick={click_compas_event}>Ton navigateur supporte pas les canvas !!</canvas>
+    on_click(ev)=
+        // position en px
+        pos_px=Dom.Dimension.sub(ev.mouse_position_on_page,Dom.get_offset(#{id}))
+        // position en mm
+        pos_mm={x=Float.of_int(pos_px.x_px)-100. y=100.-Float.of_int(pos_px.y_px)}
+        do MyIrc.send_msg("{asserv_angle} {MyMath.rad2deg(MyMath.atan2(pos_mm.x,pos_mm.y))} 125", channel_asserv, true)
+        void
+
+    get()=
+        <canvas id=#{id} 
+                width="{canvas_width}" 
+                height="{canvas_height}" 
+                onready={on_load} 
+                onclick={on_click}>Ton navigateur supporte pas les canvas !!</canvas>
+
+}}

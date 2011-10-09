@@ -9,19 +9,19 @@ realname = "Ihm Bot"
 nickname = "IHM"
 password = ""
 port = 6667
-channel_all = "{channel_asserv},{channel_monitoring}"
+channel_all = "{channel_asserv},{channel_monitoring},#test"
 
 // CONFIG ASSERV
 channel_asserv = "#asserv"
 // commandes
 asserv_goto = "goto"
-asserv_stop = "stop"
-asserv_pause = "pause"
+asserv_stop = "cancel"
+asserv_pause = "stop"
 asserv_resume = "resume"
-asserv_recalB = "recal 2"
-asserv_recalR = "recal 1"
-asserv_position = "position"
-asserv_angle = "angle"
+asserv_recalB = "acalib 0"
+asserv_recalR = "acalib 1"
+asserv_position = "pos"
+asserv_angle = "turn"
 asserv_botname = "asservbot"
 
 // CONFIG MONITORING
