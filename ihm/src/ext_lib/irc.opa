@@ -1,3 +1,8 @@
+/*
+ * @author Matthieu Guffroy
+ * Ce fichier est une extension à la lib irc
+ */
+
 import stdlib.apis.irc
 
 MyIrcLib(channel : string, 
@@ -65,42 +70,3 @@ MyIrcLib(channel : string,
 
 }}
 
-// CHANNEL ASSERV
-position = Mutable.make({x=0 y=0 a=0})
-
-batterie = Mutable.make({p=0.0 t=0.0})
-
-MyIrc = MyIrcLib(channel_all, server_bot, 
-         username, 
-         realname, 
-         nickname,
-         password,
-         port,
-         parse_message)
-
-do MyIrc.run()
-
-ask_position() = 
-    MyIrc.send_msg(asserv_position, channel_asserv, false)
-
-ask_bat() =
-    do MyIrc.send_msg("batterie p", channel_monitoring, false)
-    do MyIrc.send_msg("batterie t", channel_monitoring, false)
-    void
-
-do Scheduler.sleep(10000,(-> Scheduler.timer(150, ask_position)))
-do Scheduler.sleep(17000,(-> Scheduler.timer(10000, ask_bat)))
-
-show_bat()=
-    refresh()=
-       b = batterie.get()
-       Dom.transform([#bat <- <>Pourcentage : {b.p}%<br/>Time to : {b.t}h<br/></>])
-    do Scheduler.sleep(18000,(-> Scheduler.timer(10000, refresh)))
-    <div id=#bat />
-
-Batterie = 
-bat = Mutable.make({p=0.0 t=0.0})
-{{
-   set_p(p)=bat.set({bat.get() with ~p})
-   set_t(t)=bat.set({bat.get() with ~t})
-}}

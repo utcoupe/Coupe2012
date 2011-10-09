@@ -27,7 +27,8 @@ asserv_botname = "asservbot"
 // CONFIG MONITORING
 channel_monitoring = "#monitoring"
 monitoring_botname = "monitoringbot"
-
+monitoring_bat_p = "batterie p"
+monitoring_bat_t = "batterie t"
 
 //// CONFIG DE LA MAP
 conf_map = 
@@ -38,31 +39,4 @@ conf_map =
     robot_rayon=150.
 }
 
-// Reception d'un message
-parse_message(from, to): Parser.general_parser(void) =
-    if to == channel_asserv then
-        if from == asserv_botname then
-            parser
-             | "-1.0." x=Rule.integer "." y=Rule.integer "." a=Rule.integer -> position.set({~x ~y ~a})
-            end
-        else
-            do jlog("from : {from}, to : {to}")
-            parser
-             | Rule.fail -> void
-            end
-    else if to == channel_monitoring then
-        if from == monitoring_botname then
-            parser
-             | p=Rule.float "%" -> Batterie.set_p(p)
-             | t=Rule.float -> Batterie.set_t(t)
-            end
-        else
-            do jlog("from : {from}, to : {to}")
-            parser
-             | Rule.fail -> void
-            end
-      else
-         parser
-          | Rule.fail -> void
-         end
             

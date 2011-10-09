@@ -31,7 +31,7 @@ draw_compas_bot(a)=
     void
 
 load_compas()=
-    do Scheduler.timer(200, (-> pos = position.get()
+    do Scheduler.timer(200, (-> pos = Position.get()
                                  do draw_compas()
                                  do draw_compas_bot(pos.a)
                                  void))
