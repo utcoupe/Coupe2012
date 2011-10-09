@@ -25,19 +25,15 @@ MyIrcLib(channel : string,
         parser
           | result={parse_message(from, to)} -> result
           | "ping" -> do Network.broadcast(<><strong>{from} {to}:</strong> ping <br/></>, mynetwork)
-                      send_msg("pong", true)
+                      send_msg("pong", to, true)
           | "id" -> do Network.broadcast(<><strong>{from} {to}:</strong> id <br/></>, mynetwork)
-                    send_msg(nickname, true)
+                    send_msg(nickname, to, true)
           | msg=(.*) -> Network.broadcast(<><strong>{from} {to}:</strong> {msg} <br/></>, mynetwork)
          end
     Parser.parse(myParser, msg)
 
-  @server @publish
-  send_msg(msg : string, show:bool) =
-      send_msg_chan(msg, channel, show)
-
   @server @publish 
-  send_msg_chan(msg : string, chan: string, show : bool) = 
+  send_msg(msg : string, chan: string, show : bool) = 
     c = connection.get()
     if Option.is_some(c) then
         do Irc.write_raw(Option.get(c), "PRIVMSG {chan} :{msg}\r\n")
@@ -74,7 +70,7 @@ position = Mutable.make({x=0 y=0 a=0})
 
 batterie = Mutable.make({p=0.0 t=0.0})
 
-Irc_Asserv = MyIrcLib(channel_asserv, server_bot, 
+Irc_Asserv = MyIrcLib(channel_all, server_bot, 
          username, 
          realname, 
          nickname,
@@ -85,16 +81,14 @@ Irc_Asserv = MyIrcLib(channel_asserv, server_bot,
 do Irc_Asserv.run()
 
 ask_position() = 
-    Irc_Asserv.send_msg(asserv_position, false)
+    Irc_Asserv.send_msg(asserv_position, channel_asserv, false)
 
 ask_bat() =
-    do Irc_Asserv.send_msg_chan("batterie p", "#monitoring", false)
-    do Irc_Asserv.send_msg_chan("batterie t", "#monitoring", false)
+    do Irc_Asserv.send_msg("batterie p", channel_monitoring, false)
+    do Irc_Asserv.send_msg("batterie t", channel_monitoring, false)
     void
 
 do Scheduler.sleep(10000,(-> Scheduler.timer(150, ask_position)))
-do Scheduler.sleep(15000,(-> Irc_Asserv.join("#test")))
-do Scheduler.sleep(16000,(-> Irc_Asserv.join("#monitoring")))
 do Scheduler.sleep(17000,(-> Scheduler.timer(10000, ask_bat)))
 
 show_bat()=
@@ -103,3 +97,10 @@ show_bat()=
        Dom.transform([#bat <- <>Pourcentage : {b.p}%<br/>Time to : {b.t}h<br/></>])
     do Scheduler.sleep(18000,(-> Scheduler.timer(10000, refresh)))
     <div id=#bat />
+
+Batterie = 
+bat = Mutable.make({p=0.0 t=0.0})
+{{
+   set_p(p)=bat.set({bat.get() with ~p})
+   set_t(t)=bat.set({bat.get() with ~t})
+}}

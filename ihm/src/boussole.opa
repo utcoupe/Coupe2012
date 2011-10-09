@@ -5,20 +5,18 @@ deg2rad(deg : int) : float=
     Float.of_int(deg)*Math.PI/180.
 
 atan2(x : float, y : float) : float =
-    PI=3.14159
     if x < 0. then
-        Math.atan(y/x)+PI
+        Math.atan(y/x)+Math.PI
     else
         Math.atan(y/x)
 
 get_compas() = Option.get(Canvas.get_context_2d(Option.get(Canvas.get(#map_compas))))
 
 draw_compas()=
-    PI=3.14
     ctx = get_compas()
     do Canvas.set_fill_style(ctx,{color = Color.lightgrey})
     do Canvas.begin_path(ctx)
-    do Canvas.arc(ctx, 100, 100, 100, 0., 2.*PI, false)
+    do Canvas.arc(ctx, 100, 100, 100, 0., 2.*Math.PI, false)
     do Canvas.close_path(ctx)
     do Canvas.fill(ctx)
     void
@@ -52,7 +50,7 @@ load_compas()=
 click_compas_event(ev)=
      pos=Dom.Dimension.sub(ev.mouse_position_on_page,Dom.get_offset(#map_compas))
      newpos={x=Float.of_int(pos.x_px)-100. y=100.-Float.of_int(pos.y_px)}
-     do Irc_Asserv.send_msg("{asserv_angle} {rad2deg(atan2(newpos.x,newpos.y))}", true)
+     do Irc_Asserv.send_msg("{asserv_angle} {rad2deg(atan2(newpos.x,newpos.y))}", channel_asserv, true)
      void
 
 compas()=

@@ -9,6 +9,7 @@ realname = "Ihm Bot"
 nickname = "IHM"
 password = ""
 port = 6667
+channel_all = "{channel_asserv},{channel_monitoring}"
 
 // CONFIG ASSERV
 channel_asserv = "#asserv"
@@ -41,8 +42,8 @@ parse_message(from, to): Parser.general_parser(void) =
     else if to == channel_monitoring then
         if from == monitoring_botname then
             parser
-             | p=Rule.float "%" -> batterie.set({batterie.get() with ~p})
-             | t=Rule.float -> batterie.set({batterie.get() with ~t})
+             | p=Rule.float "%" -> Batterie.set_p(p)
+             | t=Rule.float -> Batterie.set_t(t)
             end
         else
             do jlog("from : {from}, to : {to}")
