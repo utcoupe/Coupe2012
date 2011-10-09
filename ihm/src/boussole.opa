@@ -50,7 +50,7 @@ load_compas()=
 click_compas_event(ev)=
      pos=Dom.Dimension.sub(ev.mouse_position_on_page,Dom.get_offset(#map_compas))
      newpos={x=Float.of_int(pos.x_px)-100. y=100.-Float.of_int(pos.y_px)}
-     do Irc_Asserv.send_msg("{asserv_angle} {rad2deg(atan2(newpos.x,newpos.y))}", channel_asserv, true)
+     do MyIrc.send_msg("{asserv_angle} {rad2deg(atan2(newpos.x,newpos.y))}", channel_asserv, true)
      void
 
 compas()=

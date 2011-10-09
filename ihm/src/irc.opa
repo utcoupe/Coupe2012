@@ -70,7 +70,7 @@ position = Mutable.make({x=0 y=0 a=0})
 
 batterie = Mutable.make({p=0.0 t=0.0})
 
-Irc_Asserv = MyIrcLib(channel_all, server_bot, 
+MyIrc = MyIrcLib(channel_all, server_bot, 
          username, 
          realname, 
          nickname,
@@ -78,14 +78,14 @@ Irc_Asserv = MyIrcLib(channel_all, server_bot,
          port,
          parse_message)
 
-do Irc_Asserv.run()
+do MyIrc.run()
 
 ask_position() = 
-    Irc_Asserv.send_msg(asserv_position, channel_asserv, false)
+    MyIrc.send_msg(asserv_position, channel_asserv, false)
 
 ask_bat() =
-    do Irc_Asserv.send_msg("batterie p", channel_monitoring, false)
-    do Irc_Asserv.send_msg("batterie t", channel_monitoring, false)
+    do MyIrc.send_msg("batterie p", channel_monitoring, false)
+    do MyIrc.send_msg("batterie t", channel_monitoring, false)
     void
 
 do Scheduler.sleep(10000,(-> Scheduler.timer(150, ask_position)))

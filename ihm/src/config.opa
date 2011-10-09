@@ -14,6 +14,7 @@ channel_all = "{channel_asserv},{channel_monitoring}"
 // CONFIG ASSERV
 channel_asserv = "#asserv"
 // commandes
+asserv_goto = "goto"
 asserv_stop = "stop"
 asserv_pause = "pause"
 asserv_resume = "resume"
@@ -26,6 +27,16 @@ asserv_botname = "asservbot"
 // CONFIG MONITORING
 channel_monitoring = "#monitoring"
 monitoring_botname = "monitoringbot"
+
+
+//// CONFIG DE LA MAP
+conf_map = 
+{
+    size=0.2
+    width=3000.
+    height=2100.
+    robot_rayon=150.
+}
 
 // Reception d'un message
 parse_message(from, to): Parser.general_parser(void) =
