@@ -1,25 +1,28 @@
-rad2deg(rad : float) : int=
-    mod(Int.of_float(rad*180./Math.PI),360)
+/*
+ * @author Matthieu Guffroy
+ *
+*/
+/*
+  Représentation d'une boussole, indiquant l'orientation du robot.
+  Et permettant d'un clic, de demander au robot de se tourner.
+*/
 
-deg2rad(deg : int) : float=
-    Float.of_int(deg)*Math.PI/180.
+Compas = {{
+   
+    id = "canvas_compas"
+    canvas_width=200
+    canvas_height=200
+    canvas = MyCanvas(id,canvas_width,canvas_height)
 
-atan2(x : float, y : float) : float =
-    if x < 0. then
-        Math.atan(y/x)+Math.PI
-    else
-        Math.atan(y/x)
+    // Cette fonction dessine le fond du compas
+    // Pour l'instant c'est un cercle gris
+    // on pourrait importer une image.
+    draw_compas() =
+        canvas.arc(Color.lightgrey,canvas_width/2,canvas_height/2,canvas_width/2, 360, 0)
 
-get_compas() = Option.get(Canvas.get_context_2d(Option.get(Canvas.get(#map_compas))))
-
-draw_compas()=
-    ctx = get_compas()
-    do Canvas.set_fill_style(ctx,{color = Color.lightgrey})
-    do Canvas.begin_path(ctx)
-    do Canvas.arc(ctx, 100, 100, 100, 0., 2.*Math.PI, false)
-    do Canvas.close_path(ctx)
-    do Canvas.fill(ctx)
-    void
+    //Cette fonction symbolise l'angle du robot en tracant un trait
+    draw_bot(a) =
+        canvas.line(
 
 draw_compas_bot(a)=
     ctx=get_compas()

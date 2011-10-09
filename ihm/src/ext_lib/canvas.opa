@@ -34,4 +34,17 @@ MyCanvas(id, _width, height) =
      do Canvas.fill(ct)
      void
 
+    line(couleur, x, y, l : list((int, int)), size) =
+      ct = ctx()
+      do Canvas.set_line_cap = {round};
+      do Canvas.set_stroke_style = "#0000ff"; // line color
+      do Canvas.context.lineWidth = size;
+      do Canvas.begin_path(ct)
+      do Canvas.move_to(ct,x,y)
+      do List.iter(( a -> (x,y) = a
+                          Canvas.line_to(ct, x, y)), l)
+      do Canvas.close_path(ct)
+      do Canvas.stroke(ct)
+      void
+
 }}
