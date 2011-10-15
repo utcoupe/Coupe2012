@@ -4,36 +4,44 @@
 #include "main.h"
 #include IRRLICHTPATH
 
+#include <map>
+
 using namespace irr;
 using namespace scene;
 using namespace video;
 using namespace std;
 using namespace core;
 using namespace io;
-
-#define NB_KEY 14
-enum {HAUT=0,KEYA,KEYE,KEYQ,KEYD,BAS,GAUCHE,DROITE,L_GAUCHE,L_DROITE,CAM1,CAM2,C_HAUT,C_BAS};
-
-//a faire:
-//charger les touche a partie d'un fichier config
+using namespace std;
 
 class EventManager : public IEventReceiver
 {
 private:
     static EventManager * em;
-    bool isEvent[NB_KEY-1];
+    std::map<int,bool> keys;
     EventManager(){}
 public:
     static EventManager * getEventManager(){
         if(em == NULL){
             em = new EventManager;
-            for (int i=0;i<NB_KEY;i++)
-                em->isEvent[i]=false;
+            //Window::getWindow()->getDevice()->setEventReceiver(em);
         }
         return em;
     }
     bool OnEvent(const SEvent& event);
-    bool * getEvent();
+    bool getEvent(int key){
+        if(keys.count(key)>0)
+            return keys[key];
+        else
+            return false;
+    }
+    void showMap(){
+     std::map<int,bool>::iterator it;
+          // show content:
+          for ( it=keys.begin() ; it != keys.end(); it++ )
+            cout << (*it).first << " => " << (*it).second << endl;
+    }
+
 };
 
 #endif

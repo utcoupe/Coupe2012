@@ -3,9 +3,14 @@
 
 #include "main.h"
 #include "Window.h"
+#include "Irc.h"
 #include IRRLICHTPATH
 #include <math.h>
 #include <ctime>
+
+#include <iostream>
+#include <sstream>
+#include <string>
 
 using namespace irr;
 using namespace scene;
@@ -14,7 +19,7 @@ using namespace std;
 using namespace core;
 using namespace io;
 
-class Robot
+class Robot : public IRCConnection
 {
     IMeshSceneNode * robot;
 
@@ -29,25 +34,76 @@ class Robot
 	double goalx;
 	double goaly;
 	double goala;
+	bool ackGoTo;
+	bool ackTurn;
 	vector3df initPos;
 	clock_t start;
 
     public:
         Robot();
         virtual ~Robot();
+
+        void goTo(int x , int y){
+            goalx = x;
+            goaly = y;
+            ackGoTo = true;
+        }
+
+        void goTo2(int gx , int gy){
+            double goala2 = atan2(gy - y,gx - x);
+            if(goala2 < 0){
+                goala2 = goala2 + (2*PI);
+            }
+            if(fabs(fmod((goala2 - angle),(2*PI))>(PI/8))) {
+                turnRad(goala2);
+                while(ackTurn==true){}
+            }
+            goTo(gx , gy);
+        }
+
+        void turn(double a){//a en degree
+            turnRad((a*180.0)/3.14);
+        }
+
+        void turnRad(double a){//a en radian
+            goala=a;
+            ackTurn = true;
+        }
+
+        void stop(){
+            goalx=x;
+            goaly=y;
+            goala=angle;
+        }
+
+        void doCmd(std::string time,std::string chan,std::string user,std::string msg){
+            std::istringstream iss(msg);
+            std::vector<std::string> args;
+            do
+            {
+                std::string sub;
+                iss >> sub;
+                args.push_back(sub);
+            } while (iss);
+
+            if(args[0]=="move"){
+                goTo(atoi(args[1].c_str()),atoi(args[2].c_str()));
+            }
+        }
+
         bool load(std::string filename) {
             robot = Window::getSmgr()->addOctreeSceneNode(Window::getSmgr()->getMesh(filename.c_str()),0,-1,1);
-            initPos = vector3df(-1.5+0.2,0.2,-1+0.2);
+            initPos = vector3df(-1.5,0.2,-1);
             robot->setPosition(initPos);
-            x=0;
-            y=0;
+            x=200;
+            y=200;
             angle=0;
             speed=0;
             speedX=0;
             speedY=0;
             speedA=0;
-            goalx=3000;
-            goaly=2000;
+            goalx=x;
+            goaly=y;
             goala=0;
             start = clock();
 
@@ -73,6 +129,10 @@ class Robot
                             speedA = -deltaA/4.0;
                         }
                     }else{
+                        if(ackTurn==true){
+                            //send ack msg
+                            ackTurn=false;
+                        }
                         speedA = 0;
                     }
 
@@ -91,6 +151,10 @@ class Robot
                         speed=deltaX/4.0;
                         if(speed > 50.0) speed = 50.0;
                     }else {
+                        if(ackGoTo==true){
+                            //send ack
+                            ackGoTo=false;
+                        }
                         speed=0;
                         //System.out.println(x+" / "+y);
                     }
@@ -105,7 +169,7 @@ class Robot
 
                     angle = fmod(angle + speedA,2.0*PI);
 
-                    cout<<x<<" "<<y<<" "<<angle<<" "<<goala<<endl;
+                    //cout<<x<<" "<<y<<" "<<angle<<" "<<goala<<endl;
 
                     move(x,y,angle);
                 }

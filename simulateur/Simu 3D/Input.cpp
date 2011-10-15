@@ -2,17 +2,15 @@
 
 EventManager * EventManager::em = NULL;
 
-bool * EventManager::getEvent()
-{
-    return isEvent;
-}
-
 bool EventManager::OnEvent(const SEvent& event)
 {
     // check if user presses the key
     if (event.EventType==EET_KEY_INPUT_EVENT)
     {
-        switch (event.KeyInput.Key)
+            if (event.KeyInput.PressedDown == true) keys[event.KeyInput.Key]=true;
+            else keys[event.KeyInput.Key]=false;
+            //showMap();
+        /*switch (event.KeyInput.Key)
         {
         case KEY_KEY_Z :
         {
@@ -86,7 +84,7 @@ bool EventManager::OnEvent(const SEvent& event)
             return true;
         }
         break;
-        }
+        }*/
     }
     return false;
 }

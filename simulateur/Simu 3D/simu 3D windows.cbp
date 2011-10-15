@@ -2,7 +2,8 @@
 <CodeBlocks_project_file>
 	<FileVersion major="1" minor="6" />
 	<Project>
-		<Option title="objet3d" />
+		<Option title="simu3d" />
+		<Option makefile="makefile" />
 		<Option pch_mode="2" />
 		<Option compiler="gcc" />
 		<Build>
@@ -12,11 +13,21 @@
 				<Option compiler="gcc" />
 			</Target>
 		</Build>
+		<Compiler>
+			<Add option="-Wall" />
+			<Add directory="SFML-1.6\include\" />
+		</Compiler>
 		<Linker>
 			<Add option="irrlicht-1.7.2/lib/Win32-gcc/libIrrlicht.dll.a" />
+			<Add option="-static-libgcc" />
+			<Add option="-lsfml-system" />
+			<Add option="-lsfml-network" />
+			<Add directory="SFML-1.6\lib" />
 		</Linker>
 		<Unit filename="Input.cpp" />
 		<Unit filename="Input.h" />
+		<Unit filename="Irc.cpp" />
+		<Unit filename="Irc.h" />
 		<Unit filename="Map.cpp" />
 		<Unit filename="Map.h" />
 		<Unit filename="Robot.cpp" />
