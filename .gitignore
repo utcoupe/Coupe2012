@@ -12,3 +12,6 @@ arduino-0*
 /simulateur/Simu 3D/SFML-1.6/lib
 /simulateur/Simu 3D/SFML-1.6/include
 /simulateur/Simu 3D/bin
+*.depend
+*.layout
+doc
