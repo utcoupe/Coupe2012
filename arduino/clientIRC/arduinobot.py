@@ -59,6 +59,22 @@ class ArduinoBot(myircbot.MyIRCBot):
 					self.serv.privmsg(self.channel, str(msg,"utf-8"))
 
 	def _get_protocole(self, f_name, prefixe):
+		"""
+		Récupérer le protocole dans le fichier .h précisé.
+		Les commandes doivent être formater de la sorte :
+		/**
+		Documentation
+		@param abc
+		@param t
+		*/
+		#define {prefixe}NOM_DE_LA_COMMANDE		4
+		il sera alors généré une fonction :
+		def cmd_nom_de_la_commande(abc,t):
+			return SEP.join(['4',abc,t])
+
+		@param f_name le nom du fichier
+		@param prefixe le prefixe des define
+		"""
 		f = open(f_name)
 		
 		spec_doc = '\/\*\*(?P<doc>(.(?!\*\/))*.)\*\/'
@@ -73,12 +89,13 @@ class ArduinoBot(myircbot.MyIRCBot):
 			print(t.group('id'), t.group('cmd')+'('+params+')')
 		f.close()
 
-	"""
-	Ajouter une commande à la classe en cours.
-	@param cmd_name le nom de la commande
-	@param id_cmd l'id de la commande dans le protocole
-	"""
+	
 	def _add_cmd_function(self, cmd_name, id_cmd, params, doc):
+		"""
+		Ajouter une commande à la classe en cours.
+		@param cmd_name le nom de la commande
+		@param id_cmd l'id de la commande dans le protocole
+		"""
 		global COMPILED_F
 		exec("COMPILED_F = lambda {params}: '{SEP}'.join(['0','0','{id_cmd}',{params}])".format(params=params,SEP=SEP,id_cmd=str(id_cmd).lower()), globals())
 		COMPILED_F.__doc__ = doc.strip()
