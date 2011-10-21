@@ -29,27 +29,86 @@
 #define Q_COLOR				50
 #define Q_ULTRAPING			51
 #define Q_GETULTRAPING		52
-#define Q_CODEUR	 		44 
+#define Q_CODEUR	 		44
 
 // asserv
-#define QA_ID 				0 // [] identification
-#define QA_PING 			1   // [] pong
-#define QA_CANCEL 			13 // [] stop et vide la fifo
-#define QA_GOTO		 		2 // [x,y,v]
-#define QA_GOTOR	 		3 // [x,y,v]
-#define QA_TURN		 		4 // [a,v]
-#define QA_TURNR	 		5 // [a,v]
-#define QA_POS		 		6 // []
-#define QA_ACALIB			7 // [c] 0:blue 1:rouge
+/**
+ * identification
+ */
+#define QA_ID 				0
+
+/**
+ * ping-pong
+ */
+#define QA_PING 			1
+
+/**
+ * stop et vide la fifo
+ */
+#define QA_CANCEL 			13
+
+/**
+ * @param x
+ * @param y
+ * @param vitesse
+ */
+#define QA_GOTO		 		2
+
+/**
+ * @param x
+ * @param y
+ * @param vitesse
+ */
+#define QA_GOTOR	 		3
+
+/**
+ * @param angle
+ * @param vitesse
+ */
+#define QA_TURN		 		4
+
+/**
+ * Tourner en relatif
+ * @param angle
+ * @param vitesse
+ */
+#define QA_TURNR	 		5
+
+/**
+ * Position actuelle du robot
+ */
+#define QA_POS		 		6
+
+/**
+ * Recalage automatique
+ * @param color 0:blue 1:rouge
+ */
+#define QA_ACALIB			7
 #define QA_MCALIB			8
 #define QA_DELAY 			9
 #define QA_PWM 				10
 #define QA_MODIF_GOAL_ABS 	11
 #define QA_MODIF_GOAL_REL 	12
-#define QA_STOP				14 // [] pause
-#define QA_RESUME			15 // [] reprendre
-#define QA_GETSENS			16 // [] debug : retourne le sens
-#define QA_GETENC			17 // [] debug : retourne la valeur des encodeurs
+
+/**
+ * Pause.
+ */
+#define QA_STOP				14
+
+/**
+ * Reprendre.
+ */
+#define QA_RESUME			15
+
+/**
+ * Debug : sens du robot.
+ */
+#define QA_GETSENS			16
+
+/**
+ * Debug : valeur des encodeurs.
+ */
+#define QA_GETENC			17
 
 // erreurs
 #define	E_INVALID_CMD						-1

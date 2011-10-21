@@ -29,7 +29,7 @@ class ArduinoBot(myircbot.MyIRCBot):
 		print("Récupération du protocole dans %s..." %protocole_file)
 		self._get_protocole(protocole_file, protocole_prefixe)
 		print("OK")
-		
+		"""
 		print("Connection au port série %s..." % serial_port)
 		try:
 			self.serial = serial.Serial(serial_port, serial_baudrate, timeout=1, writeTimeout=1)
@@ -40,7 +40,8 @@ class ArduinoBot(myircbot.MyIRCBot):
 		
 		self.thread = threading.Thread(None,self.loop,"arduinoloop")
 		self.thread.start()
-
+		"""
+	
 	def write_rep(self, msg):
 		msg = bytes(msg.strip()+"\n","utf-8")
 		self.serial.write(msg)
@@ -59,26 +60,17 @@ class ArduinoBot(myircbot.MyIRCBot):
 
 	def _get_protocole(self, f_name, prefixe):
 		f = open(f_name)
-		re_begin = '(#define)?\s+{prefixe}(?P<var>\w+)\s+'.format(prefixe=prefixe)
-		re_end = '(\s)*\/\/\s*(?P<doc>\[(?P<params>(\w|,|\s)*)].*)'
-		re_char = re.compile(re_begin+'[\'"](?P<value>[^\s|\/]+)[\'"]'+re_end)
-		re_int = re.compile(re_begin+'(?P<value>[^\s|\/]+)'+re_end)
-		for line in f:
-			# recherche char
-			t = re_char.match(line)
-			if t:
-				self._add_cmd_function(t.group('var'), t.group('value'), t.group('params'), t.group('doc'))
-				#print(t.group('var'),"\t= (str)",t.group('value'),"\tdoc= ",t.group('doc'), t.group('doc'))
-			else:
-				# recherche int
-				t = re_int.match(line)
-				if t:
-					try:
-						value = int(t.group('value'))
-					except:
-						value = None
-					self._add_cmd_function(t.group('var'), t.group('value'), t.group('params'), t.group('doc'))
-					#print(t.group('var'),"\t= (int)",value,"\tparams= ",t.group('params'),"\tdoc= ",t.group('doc'))
+		
+		spec_doc = '\/\*\*(?P<doc>(.(?!\*\/))*.)\*\/'
+		spec_define = '#define\s+{prefixe}(?P<cmd>\w+)\s+(?P<id>\d+)'.format(prefixe=prefixe)
+		spec_cmd = spec_doc+"\s"+spec_define
+
+		spec_params = 'param\s+(?P<param>[a-zA-Z_]\w*)'
+		re_params = re.compile(spec_params)
+		for t in re.finditer(spec_cmd,f.read(),re.DOTALL):
+			params = ','.join([p.group("param") for p in re_params.finditer(t.group('doc'))])
+			self._add_cmd_function(t.group('cmd'), t.group('id'), params, t.group('doc'))
+			print(t.group('id'), t.group('cmd')+'('+params+')')
 		f.close()
 
 	"""
