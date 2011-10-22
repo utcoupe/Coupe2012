@@ -13,25 +13,77 @@
 #define Q_DEBUG				99
 #define Q_STOP 				13 // [] stop et vide la fifo
 
-// autre
-#define Q_SHARP 			31 // [n] valeur du sharp
-//#define Q_TSHARP 			32 // [x,y] TRIGGERSHARP //obselete
-#define Q_MS	 			33
-#define Q_TMS	 			34 //TRIGGERMS
-//#define Q_PINCE 			35
-#define Q_SETPOSITION 		36 //PINCE POSITION
-#define Q_LOAD 				37 //PRESENT_LOAD
-#define Q_JACK		 		38
-//#define Q_LED		 		39 
-#define Q_PION		 		40
-#define Q_RESET		 		45
-#define Q_RECALAGE	 		46
-#define Q_COLOR				50
-#define Q_ULTRAPING			51
-#define Q_GETULTRAPING		52
-#define Q_CODEUR	 		44
+////////////////////////////////////////////////////////////////////////
+////						OTHERS
+////////////////////////////////////////////////////////////////////////
 
-// asserv
+/**
+ * identification
+ */
+#define QO_IDENT			0
+
+/**
+ * pong
+ */
+#define QO_PING				1
+
+/**
+ * Valeur d'un microswitch
+ * @param face 0:AV 1:AR
+ */
+#define QO_MS	 			33
+
+/**
+ * trigger microswitch
+ * @param face 0:AV 1:AR
+ */
+#define QO_TMS	 			34
+
+/**
+ * Fixer la position des pinces
+ * @param face 0:AV 1:AR
+ * @param hauteur
+ */
+#define QO_SETPPOSITION 	36
+#define Q_JACK		 		38
+
+/**
+ * Fait des resets (see PH for more details)
+ */
+#define QO_RESET		 	45
+
+/**
+ * Recaler la pince n
+ * @param face 0:AV 1:AR
+ */
+#define QO_PRECALAGE	 	46
+
+/**
+ * Retourne la couleur du robot
+ */
+#define QO_COLOR				50
+
+/**
+ * Tourne la tourelle
+ * @param face 0:AV 1:AR
+ */
+#define QO_ULTRAPING		51
+
+/**
+ * Retourne la valeure du ping
+ * @param face 0:AV 1:AR
+ */
+#define QO_GETULTRAPING		52
+
+/**
+ * Debug : valeur du codeur de l'ascenseur d'une pince
+ * @param face 0:AV 1:AR
+ */
+#define QO_PCODEUR	 		44
+
+////////////////////////////////////////////////////////////////////////
+////						ASSERV
+////////////////////////////////////////////////////////////////////////
 /**
  * identification
  */
