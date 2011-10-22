@@ -18,3 +18,5 @@ arduino-0*
 *.depend
 *.layout
 doc
+
+/simulateur/Simu 3D
