@@ -4,7 +4,7 @@
 #include "main.h"
 #include "Window.h"
 #include "Irc.h"
-#include IRRLICHTPATH
+#include "irrlicht.h"
 #include <math.h>
 #include <ctime>
 

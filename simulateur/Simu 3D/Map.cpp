@@ -3,9 +3,12 @@
 Map * Map::map = NULL;
 
 bool Map::run() {
+    deltaTime = irrTimer->getTime() - timeStamp;
+    timeStamp = irrTimer->getTime();
+    UpdatePhysics(deltaTime);
     if(EventManager::getEventManager()->getEvent(KEY_F1)==true){
         camera->remove();
-        camera=smgr->addCameraSceneNodeFPS(0,30,0.03);
+        camera=smgr->addCameraSceneNodeFPS(0,30,0.003);
         camera->setName("fps");
         camera->setPosition(vector3df(0,3,1));
         camera->setTarget(vector3df(0,0,0));
@@ -41,6 +44,12 @@ void Map::init() {
     camera->setTarget(vector3df(0,0,0));
     camera->setName("track");
     //camera->setPosition(vector3df(0,40,40));
+
+    Physic::init();
+
+    irrTimer = device->getTimer();
+    timeStamp = irrTimer->getTime();
+    deltaTime = 0;
 }
 
 Map::~Map() {

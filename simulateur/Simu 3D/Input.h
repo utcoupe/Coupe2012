@@ -2,7 +2,7 @@
 #define INPUT_MANAGER
 
 #include "main.h"
-#include IRRLICHTPATH
+#include "irrlicht.h"
 
 #include <map>
 

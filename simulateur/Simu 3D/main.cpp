@@ -10,7 +10,7 @@ int main (int argc , char * argv[]) {
 
     Window * window = Window::getWindow();
     Map * map = Map::getMap();
-    map->load("media/map.obj");
+    map->load("media/map.dae");
 
     Robot bot;
     bot.load("media/bot.obj");

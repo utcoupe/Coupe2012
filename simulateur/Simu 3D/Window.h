@@ -2,7 +2,7 @@
 #define WINDOWSMANAGER
 
 #include "main.h"
-#include IRRLICHTPATH
+#include "irrlicht.h"
 #include "Input.h"
 
 using namespace irr;
