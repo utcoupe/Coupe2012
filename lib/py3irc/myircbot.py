@@ -15,8 +15,12 @@ class MyIRCBot(ircbot.SingleServerIRCBot):
 		self.nickname = nickname
 		self.channel = channel
 		
-		ircbot.SingleServerIRCBot.__init__(self, [(server_ip, server_port)],
-										   nickname, "Bot réalisé en Python avec ircbot")
+		ircbot.SingleServerIRCBot.__init__(self,
+			[(server_ip, server_port)],
+			nickname,
+			"Bot réalisé en Python avec ircbot",
+			1
+		)
 	
 	def on_nicknameinuse(self, serv, e):
 		self.nickname += "_"

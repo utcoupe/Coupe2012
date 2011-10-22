@@ -15,3 +15,6 @@ arduino-0*
 /simulateur/Simu 3D/bullet-2.79/src
 /simulateur/Simu 3D/bullet-2.79/lib
 /simulateur/Simu 3D
+*.depend
+*.layout
+doc
