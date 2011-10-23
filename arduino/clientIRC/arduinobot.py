@@ -81,7 +81,7 @@ class ArduinoBot(myircbot.MyIRCBot):
 		spec_define = '#define\s+{prefixe}(?P<cmd>\w+)\s+(?P<id>\d+)'.format(prefixe=prefixe)
 		spec_cmd = spec_doc+"\s"+spec_define
 
-		spec_params = 'param\s+(?P<param>[a-zA-Z_]\w*)'
+		spec_params = '@param\s+(?P<param>[a-zA-Z_]\w*)'
 		re_params = re.compile(spec_params)
 		for t in re.finditer(spec_cmd,f.read(),re.DOTALL):
 			params = ','.join([p.group("param") for p in re_params.finditer(t.group('doc'))])

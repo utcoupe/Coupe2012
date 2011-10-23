@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# @param type p:% t:time
+
 pourcentage() {
 	upower -d | grep percentage | cut -d" " -f 15
 }
