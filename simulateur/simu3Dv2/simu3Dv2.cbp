@@ -85,23 +85,21 @@
 				</Compiler>
 				<Linker>
 					<Add option="-lOgreKitCore" />
+					<Add option="-lPlugin_ParticleFXStatic" />
+					<Add option="-lRenderSystem_GLStatic" />
 					<Add option="-lOgreMainStatic" />
 					<Add option="-lFreeImage" />
 					<Add option="-lfreetype" />
 					<Add option="-lRenderSystem_GLStatic" />
 					<Add option="-lGameKitUtils" />
 					<Add option="-lOIS" />
-					<Add option="-lZLib" />
 					<Add option="-lAnimKit" />
 					<Add option="-lfbtFile" />
 					<Add option="-lbfBlend" />
+					<Add option="-lZLib" />
 					<Add option="-lLua" />
 					<Add option="-lXrandr" />
-					<Add option="-lZLib" />
 					<Add option="-lPlugin_ParticleFXStatic" />
-					<Add option="-lOgreMainStatic" />
-					<Add option="-lFreeImage" />
-					<Add option="-lfreetype" />
 					<Add option="-lSM" />
 					<Add option="-lICE" />
 					<Add option="-lX11" />

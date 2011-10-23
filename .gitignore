@@ -6,6 +6,7 @@
 arduino-0*
 *.dblite
 *build
+*bin
 *.o
 *.elf
 *.hex
