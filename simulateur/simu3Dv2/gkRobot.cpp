@@ -61,19 +61,21 @@ void gkBuggy::load(void)
 	setMaxSteeringAngle(0.23);
 	setRuptorRpm(6000);
 
+	double scale = 0.2;
+
 	// wheels
-	float connectionHeight = 0.267;
+	float connectionHeight = 0.267*scale;
 	/*float sideOffsetF = 0.764;
 	float sideOffsetR = 0.848;
 	float frontOffest = 0.988;
 	float rearOffset = 0.965;*/
-    float sideOffsetF = 0.764;
-	float sideOffsetR = 0.848;
+    float sideOffsetF = 0.764*scale;
+	float sideOffsetR = 0.848*scale;
 	float frontOffest = 0;
 	float rearOffset = 0;
-	float radius = 0.370;
+	float radius = 0.370*scale;
 
-	float suspensionTravelCm = 40;
+	float suspensionTravelCm = 40*scale;
 	float suspensionRestLength = .4;
 	float suspensionStiffness = 22.0;
 	float suspensionRelax = 0.6 * 2.0 * btSqrt(suspensionStiffness);
