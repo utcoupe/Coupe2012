@@ -23,6 +23,11 @@ class MyIRCBot(ircbot.SingleServerIRCBot):
 		)
 	
 	def on_nicknameinuse(self, serv, e):
+		"""
+		Callback quand le nom est déjà utilisé
+		@param serv
+		@param e
+		"""
 		self.nickname += "_"
 		serv.nick(self.nickname + "_")
 	
@@ -35,12 +40,19 @@ class MyIRCBot(ircbot.SingleServerIRCBot):
 		self.serv = serv
 	
 	def write_rep(self, msg):
+		"""
+		Fonction qui redistribue le message retourné par les fonctions "cmd_*".
+		@param msg le message à envoyer
+		"""
 		self.send(msg)
 		
 	def on_pubmsg(self, serv, ev):
 		"""
-		Méthode appelée à la réception d'un message, qui exclut son expéditeur s'il
-		écrit une insulte.
+		Méthode appelée à la réception d'un message, si le message est
+		une commande, (<=> si il existe une fonction "cmd_{message}",
+		alors on lance la fonction.
+		@param serv le serveur
+		@param ev
 		"""
 		self.serv = serv
 		
@@ -66,6 +78,13 @@ class MyIRCBot(ircbot.SingleServerIRCBot):
 				serv.privmsg(canal, "invalid arg number : need %s and get %s" % (str(inspect.getargspec(f)),msg_split))
 
 	def print_doc(self, f_name, cmd=None):
+		"""
+		Afficher la doc d'une fonction,
+		ex : print_doc(cmd_bidule, bidule) =>
+		"bidule : voici la documentation de bidule"
+		@param f_name le nom interne de la fonction
+		@param cmd le nom à afficher
+		"""
 		cmd = f_name if not cmd else cmd
 		try:
 			doc = getattr(self, f_name).__doc__
@@ -77,4 +96,8 @@ class MyIRCBot(ircbot.SingleServerIRCBot):
 				self.serv.privmsg(self.channel, cmd + ":" + line)
 
 	def send(self, msg):
+		"""
+		Envoie un message au serveur.
+		@param msg le message à envoyer
+		"""
 		if self.serv: self.serv.privmsg(self.channel, msg)
