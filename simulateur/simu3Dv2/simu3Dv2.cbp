@@ -13,38 +13,42 @@
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add directory="lib\bullet\src" />
-					<Add directory="Ogre-1.8\src" />
-					<Add directory="Ogre-1.8\OgreMain\include" />
-					<Add directory="Ogre-1.8\OgreMain\include\WIN32" />
-					<Add directory="OgreKit\include" />
-					<Add directory="OgreKit\include\AI" />
-					<Add directory="Dependencies\src\FreeType\include" />
-					<Add directory="Dependencies\src\FreeImage\ZLib" />
-					<Add directory="Dependencies\src\OIS\include" />
-					<Add directory="Dependencies\src\GameKit\Utils" />
-					<Add directory="Dependencies\src\GameKit\AnimKit" />
-					<Add directory="Tools\FileTools\File" />
-					<Add directory="Tools\FileTools\FileFormats\Blend" />
-					<Add directory="Dependencies\src\OpenAL" />
-					<Add directory="Dependencies\src\Codecs\include" />
-					<Add directory="Dependencies\src\Lua\lua" />
+					<Add directory="lib\Ogre-1.8\src" />
+					<Add directory="lib\Ogre-1.8\src\OgreMain\include" />
+					<Add directory="lib\Ogre-1.8\src\OgreMain\include\WIN32" />
+					<Add directory="lib\GameKit\OgreKit\include" />
+					<Add directory="lib\GameKit\OgreKit\include\AI" />
+					<Add directory="lib\GameKit\Dependencies\src\FreeType\include" />
+					<Add directory="lib\GameKit\Dependencies\src\FreeImage\ZLib" />
+					<Add directory="lib\GameKit\Dependencies\src\OIS\include" />
+					<Add directory="lib\GameKit\Dependencies\src\GameKit\Utils" />
+					<Add directory="lib\GameKit\Dependencies\src\GameKit\AnimKit" />
+					<Add directory="lib\GameKit\Tools\FileTools\File" />
+					<Add directory="lib\GameKit\Tools\FileTools\FileFormats\Blend" />
+					<Add directory="lib\GameKit\Dependencies\src\OpenAL" />
+					<Add directory="lib\GameKit\Dependencies\src\Codecs\include" />
+					<Add directory="lib\GameKit\Dependencies\src\Lua\lua" />
 				</Compiler>
 				<Linker>
 					<Add library="OgreKitCore" />
-					<Add library="Ogre-1.8\lib\libOgreMainStatic.a" />
-					<Add library="Dependencies\lib\libFreeImage.a" />
-					<Add library="Dependencies\lib\libfreetype.a" />
-					<Add library="Ogre-1.8\lib\libRenderSystem_GLStatic.a" />
-					<Add library="Dependencies\lib\libGameKitUtils.a" />
-					<Add library="Dependencies\lib\libOIS.a" />
-					<Add library="Dependencies\lib\libZLib.a" />
-					<Add library="Dependencies\lib\libAnimKit.a" />
-					<Add library="Tools\lib\libfbtFile.a" />
-					<Add library="Tools\lib\libbfBlend.a" />
-					<Add library="Dependencies\lib\libOpenAL.a" />
-					<Add library="Dependencies\lib\libOggVorbis.a" />
-					<Add library="Dependencies\lib\libLua.a" />
-					<Add library="Ogre-1.8\lib\libPlugin_ParticleFXStatic.a" />
+					<Add library="OgreMainStatic" />
+					<Add library="FreeImage" />
+					<Add library="freetype" />
+					<Add library="RenderSystem_GLStatic" />
+					<Add library="GameKitUtils" />
+					<Add library="OIS" />
+					<Add library="ZLib" />
+					<Add library="AnimKit" />
+					<Add library="fbtFile" />
+					<Add library="bfBlend" />
+					<Add library="OpenAL" />
+					<Add library="OggVorbis" />
+					<Add library="Lua" />
+					<Add library="ZLib" />
+					<Add library="Plugin_ParticleFXStatic" />
+					<Add library="OgreMainStatic" />
+					<Add library="FreeImage" />
+					<Add library="freetype" />
 					<Add library="ws2_32" />
 					<Add library="BulletDynamics" />
 					<Add library="BulletCollision" />
@@ -62,10 +66,11 @@
 					<Add library="uuid" />
 					<Add library="comdlg32" />
 					<Add library="advapi32" />
-					<Add directory="OgreKit\lib" />
-					<Add directory="Ogre-1.8\lib" />
-					<Add directory="bullet\lib" />
-					<Add directory="Dependencies\lib" />
+					<Add directory="lib\GameKit\OgreKit\lib" />
+					<Add directory="lib\Ogre-1.8\lib" />
+					<Add directory="lib\bullet\lib" />
+					<Add directory="lib\GameKit\Dependencies\lib" />
+					<Add directory="lib\GameKit\Tools\lib" />
 				</Linker>
 			</Target>
 		</Build>

@@ -27,7 +27,7 @@
 
 #include "gkLogic.h"
 #include "gkBulletSerializeNode.h"
-#include "gkBuggy.h"
+#include "gkRobot.h"
 
 gkLogic::gkLogic(gkScene* scene)
 	: m_scene(scene), m_tree(0),
