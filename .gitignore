@@ -6,6 +6,7 @@
 arduino-0*
 *.dblite
 *build
+*bin
 *.o
 *.elf
 *.hex
@@ -18,5 +19,5 @@ arduino-0*
 *.depend
 *.layout
 doc
+*.a
 
-/simulateur/Simu 3D

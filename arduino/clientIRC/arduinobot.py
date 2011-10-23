@@ -29,7 +29,6 @@ class ArduinoBot(myircbot.MyIRCBot):
 		print("Récupération du protocole dans %s..." %protocole_file)
 		self._get_protocole(protocole_file, protocole_prefixe)
 		print("OK")
-		"""
 		print("Connection au port série %s..." % serial_port)
 		try:
 			self.serial = serial.Serial(serial_port, serial_baudrate, timeout=1, writeTimeout=1)
@@ -40,12 +39,10 @@ class ArduinoBot(myircbot.MyIRCBot):
 		
 		self.thread = threading.Thread(None,self.loop,"arduinoloop")
 		self.thread.start()
-		"""
 	
 	def write_rep(self, msg):
 		msg = bytes(msg.strip()+"\n","utf-8")
 		self.serial.write(msg)
-		
 	
 	def loop(self):
 		while True:

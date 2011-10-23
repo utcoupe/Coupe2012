@@ -5,29 +5,29 @@
 		<Option title="Simulateur3D" />
 		<Option compiler="gcc" />
 		<Build>
-			<Target title="simu">
-				<Option output="bin\simu3D" prefix_auto="1" extension_auto="1" />
-				<Option working_dir="bin\" />
-				<Option object_output="bin\objs" />
+			<Target title="simu-win">
+				<Option output="bin/simu3D" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="bin/" />
+				<Option object_output="bin/objs" />
 				<Option type="1" />
 				<Option compiler="gcc" />
 				<Compiler>
-					<Add directory="lib\bullet\src" />
-					<Add directory="lib\Ogre-1.8\src" />
-					<Add directory="lib\Ogre-1.8\src\OgreMain\include" />
-					<Add directory="lib\Ogre-1.8\src\OgreMain\include\WIN32" />
-					<Add directory="lib\GameKit\OgreKit\include" />
-					<Add directory="lib\GameKit\OgreKit\include\AI" />
-					<Add directory="lib\GameKit\Dependencies\src\FreeType\include" />
-					<Add directory="lib\GameKit\Dependencies\src\FreeImage\ZLib" />
-					<Add directory="lib\GameKit\Dependencies\src\OIS\include" />
-					<Add directory="lib\GameKit\Dependencies\src\GameKit\Utils" />
-					<Add directory="lib\GameKit\Dependencies\src\GameKit\AnimKit" />
-					<Add directory="lib\GameKit\Tools\FileTools\File" />
-					<Add directory="lib\GameKit\Tools\FileTools\FileFormats\Blend" />
-					<Add directory="lib\GameKit\Dependencies\src\OpenAL" />
-					<Add directory="lib\GameKit\Dependencies\src\Codecs\include" />
-					<Add directory="lib\GameKit\Dependencies\src\Lua\lua" />
+					<Add directory="lib/bullet/src" />
+					<Add directory="lib/Ogre-1.8/src" />
+					<Add directory="lib/Ogre-1.8/src/OgreMain/include" />
+					<Add directory="lib/Ogre-1.8/src/OgreMain/include/WIN32" />
+					<Add directory="lib/GameKit/OgreKit/include" />
+					<Add directory="lib/GameKit/OgreKit/include/AI" />
+					<Add directory="lib/GameKit/Dependencies/src/FreeType/include" />
+					<Add directory="lib/GameKit/Dependencies/src/FreeImage/ZLib" />
+					<Add directory="lib/GameKit/Dependencies/src/OIS/include" />
+					<Add directory="lib/GameKit/Dependencies/src/GameKit/Utils" />
+					<Add directory="lib/GameKit/Dependencies/src/GameKit/AnimKit" />
+					<Add directory="lib/GameKit/Tools/FileTools/File" />
+					<Add directory="lib/GameKit/Tools/FileTools/FileFormats/Blend" />
+					<Add directory="lib/GameKit/Dependencies/src/OpenAL" />
+					<Add directory="lib/GameKit/Dependencies/src/Codecs/include" />
+					<Add directory="lib/GameKit/Dependencies/src/Lua/lua" />
 				</Compiler>
 				<Linker>
 					<Add library="OgreKitCore" />
@@ -44,11 +44,7 @@
 					<Add library="OpenAL" />
 					<Add library="OggVorbis" />
 					<Add library="Lua" />
-					<Add library="ZLib" />
 					<Add library="Plugin_ParticleFXStatic" />
-					<Add library="OgreMainStatic" />
-					<Add library="FreeImage" />
-					<Add library="freetype" />
 					<Add library="ws2_32" />
 					<Add library="BulletDynamics" />
 					<Add library="BulletCollision" />
@@ -66,11 +62,59 @@
 					<Add library="uuid" />
 					<Add library="comdlg32" />
 					<Add library="advapi32" />
-					<Add directory="lib\GameKit\OgreKit\lib" />
-					<Add directory="lib\Ogre-1.8\lib" />
-					<Add directory="lib\bullet\lib" />
-					<Add directory="lib\GameKit\Dependencies\lib" />
-					<Add directory="lib\GameKit\Tools\lib" />
+					<Add directory="lib/GameKit/OgreKit/lib" />
+					<Add directory="lib/Ogre-1.8/lib" />
+					<Add directory="lib/bullet/lib" />
+					<Add directory="lib/GameKit/Dependencies/lib" />
+					<Add directory="lib/GameKit/Tools/lib" />
+				</Linker>
+			</Target>
+			<Target title="simu-lin">
+				<Option output="bin/simu3D" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="bin/" />
+				<Option object_output="bin/objs" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add directory="lib/bullet/src" />
+					<Add directory="lib/Ogre-1.8/OgreMain/include" />
+					<Add directory="lib/GameKit/Engine/Animation" />
+					<Add directory="lib/GameKit/Engine" />
+					<Add directory="lib/Settings" />
+					<Add directory="lib/GameKit/Dependencies/src" />
+				</Compiler>
+				<Linker>
+					<Add option="-lOgreKitCore" />
+					<Add option="-lPlugin_ParticleFXStatic" />
+					<Add option="-lRenderSystem_GLStatic" />
+					<Add option="-lOgreMainStatic" />
+					<Add option="-lFreeImage" />
+					<Add option="-lfreetype" />
+					<Add option="-lRenderSystem_GLStatic" />
+					<Add option="-lGameKitUtils" />
+					<Add option="-lOIS" />
+					<Add option="-lAnimKit" />
+					<Add option="-lfbtFile" />
+					<Add option="-lbfBlend" />
+					<Add option="-lZLib" />
+					<Add option="-lLua" />
+					<Add option="-lXrandr" />
+					<Add option="-lPlugin_ParticleFXStatic" />
+					<Add option="-lSM" />
+					<Add option="-lICE" />
+					<Add option="-lX11" />
+					<Add option="-lXext" />
+					<Add option="-lXt" />
+					<Add option="-lXaw" />
+					<Add option="-lpthread" />
+					<Add option="-ldl" />
+					<Add option="-lBulletDynamics" />
+					<Add option="-lBulletCollision" />
+					<Add option="-lBulletSoftBody" />
+					<Add option="-lLinearMath" />
+					<Add option="-lGL" />
+					<Add option="-lGLU" />
+					<Add directory="lib/libs" />
 				</Linker>
 			</Target>
 		</Build>
