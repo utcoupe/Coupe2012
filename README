@@ -1,3 +1,7 @@
 Le code de notre robot pour la participation à la coupe 2012.
 
 Plus d'info sur notre site : http://wwwassos.utc.fr/utcoupe
+
+DOXYFILE
+	- install graphviz	(http://doc.ubuntu-fr.org/graphviz)	# pour des jolis diagrammes
+	- install doxypy	(http://code.foosel.org/doxypy)		# pour la doc python
