@@ -6,30 +6,30 @@
 		<Option compiler="gcc" />
 		<Build>
 			<Target title="simu-win">
-				<Option output="bin\simu3D" prefix_auto="1" extension_auto="1" />
-				<Option working_dir="bin\" />
-				<Option object_output="bin\objs" />
+				<Option output="bin/simu3D" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="bin/" />
+				<Option object_output="bin/objs" />
 				<Option type="1" />
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-Os" />
 					<Add option="-O3" />
-					<Add directory="lib\win32\bullet\src" />
-					<Add directory="lib\win32\Ogre-1.8\src" />
-					<Add directory="lib\win32\Ogre-1.8\src\OgreMain\include" />
-					<Add directory="lib\win32\Ogre-1.8\src\OgreMain\include\WIN32" />
-					<Add directory="lib\win32\GameKit\OgreKit\include" />
-					<Add directory="lib\win32\GameKit\OgreKit\include\AI" />
-					<Add directory="lib\win32\GameKit\Dependencies\src\FreeType\include" />
-					<Add directory="lib\win32\GameKit\Dependencies\src\FreeImage\ZLib" />
-					<Add directory="lib\win32\GameKit\Dependencies\src\OIS\include" />
-					<Add directory="lib\win32\GameKit\Dependencies\src\GameKit\Utils" />
-					<Add directory="lib\win32\GameKit\Dependencies\src\GameKit\AnimKit" />
-					<Add directory="lib\win32\GameKit\Tools\FileTools\File" />
-					<Add directory="lib\win32\GameKit\Tools\FileTools\FileFormats\Blend" />
-					<Add directory="lib\win32\GameKit\Dependencies\src\OpenAL" />
-					<Add directory="lib\win32\GameKit\Dependencies\src\Codecs\include" />
-					<Add directory="lib\win32\GameKit\Dependencies\src\Lua\lua" />
+					<Add directory="lib/win32/bullet/src" />
+					<Add directory="lib/win32/Ogre-1.8/src" />
+					<Add directory="lib/win32/Ogre-1.8/src/OgreMain/include" />
+					<Add directory="lib/win32/Ogre-1.8/src/OgreMain/include/WIN32" />
+					<Add directory="lib/win32/GameKit/OgreKit/include" />
+					<Add directory="lib/win32/GameKit/OgreKit/include/AI" />
+					<Add directory="lib/win32/GameKit/Dependencies/src/FreeType/include" />
+					<Add directory="lib/win32/GameKit/Dependencies/src/FreeImage/ZLib" />
+					<Add directory="lib/win32/GameKit/Dependencies/src/OIS/include" />
+					<Add directory="lib/win32/GameKit/Dependencies/src/GameKit/Utils" />
+					<Add directory="lib/win32/GameKit/Dependencies/src/GameKit/AnimKit" />
+					<Add directory="lib/win32/GameKit/Tools/FileTools/File" />
+					<Add directory="lib/win32/GameKit/Tools/FileTools/FileFormats/Blend" />
+					<Add directory="lib/win32/GameKit/Dependencies/src/OpenAL" />
+					<Add directory="lib/win32/GameKit/Dependencies/src/Codecs/include" />
+					<Add directory="lib/win32/GameKit/Dependencies/src/Lua/lua" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
@@ -65,11 +65,11 @@
 					<Add option="-luuid" />
 					<Add option="-lcomdlg32" />
 					<Add option="-ladvapi32" />
-					<Add directory="lib\win32\bullet\lib" />
-					<Add directory="lib\win32\GameKit\Dependencies\lib" />
-					<Add directory="lib\win32\GameKit\OgreKit\lib" />
-					<Add directory="lib\win32\GameKit\Tools\lib" />
-					<Add directory="lib\win32\Ogre-1.8\lib" />
+					<Add directory="lib/win32/bullet/lib" />
+					<Add directory="lib/win32/GameKit/Dependencies/lib" />
+					<Add directory="lib/win32/GameKit/OgreKit/lib" />
+					<Add directory="lib/win32/GameKit/Tools/lib" />
+					<Add directory="lib/win32/Ogre-1.8/lib" />
 				</Linker>
 			</Target>
 			<Target title="simu-lin">
@@ -111,33 +111,35 @@
 					<Add library="libXext" />
 					<Add library="libX11" />
 					<Add library="libZLib" />
+					<Add library="libpthread" />
+					<Add library="libpircbot-mt" />
 					<Add directory="lib/libs" />
 				</Linker>
 			</Target>
 			<Target title="simu-win-dbg">
-				<Option output="bin\simu3D" prefix_auto="1" extension_auto="1" />
-				<Option working_dir="bin\" />
-				<Option object_output="bin\objs" />
+				<Option output="bin/simu3D" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="bin/" />
+				<Option object_output="bin/objs" />
 				<Option type="1" />
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-g" />
-					<Add directory="lib\win32\bullet\src" />
-					<Add directory="lib\win32\Ogre-1.8\src" />
-					<Add directory="lib\win32\Ogre-1.8\src\OgreMain\include" />
-					<Add directory="lib\win32\Ogre-1.8\src\OgreMain\include\WIN32" />
-					<Add directory="lib\win32\GameKit\OgreKit\include" />
-					<Add directory="lib\win32\GameKit\OgreKit\include\AI" />
-					<Add directory="lib\win32\GameKit\Dependencies\src\FreeType\include" />
-					<Add directory="lib\win32\GameKit\Dependencies\src\FreeImage\ZLib" />
-					<Add directory="lib\win32\GameKit\Dependencies\src\OIS\include" />
-					<Add directory="lib\win32\GameKit\Dependencies\src\GameKit\Utils" />
-					<Add directory="lib\win32\GameKit\Dependencies\src\GameKit\AnimKit" />
-					<Add directory="lib\win32\GameKit\Tools\FileTools\File" />
-					<Add directory="lib\win32\GameKit\Tools\FileTools\FileFormats\Blend" />
-					<Add directory="lib\win32\GameKit\Dependencies\src\OpenAL" />
-					<Add directory="lib\win32\GameKit\Dependencies\src\Codecs\include" />
-					<Add directory="lib\win32\GameKit\Dependencies\src\Lua\lua" />
+					<Add directory="lib/win32/bullet/src" />
+					<Add directory="lib/win32/Ogre-1.8/src" />
+					<Add directory="lib/win32/Ogre-1.8/src/OgreMain/include" />
+					<Add directory="lib/win32/Ogre-1.8/src/OgreMain/include/WIN32" />
+					<Add directory="lib/win32/GameKit/OgreKit/include" />
+					<Add directory="lib/win32/GameKit/OgreKit/include/AI" />
+					<Add directory="lib/win32/GameKit/Dependencies/src/FreeType/include" />
+					<Add directory="lib/win32/GameKit/Dependencies/src/FreeImage/ZLib" />
+					<Add directory="lib/win32/GameKit/Dependencies/src/OIS/include" />
+					<Add directory="lib/win32/GameKit/Dependencies/src/GameKit/Utils" />
+					<Add directory="lib/win32/GameKit/Dependencies/src/GameKit/AnimKit" />
+					<Add directory="lib/win32/GameKit/Tools/FileTools/File" />
+					<Add directory="lib/win32/GameKit/Tools/FileTools/FileFormats/Blend" />
+					<Add directory="lib/win32/GameKit/Dependencies/src/OpenAL" />
+					<Add directory="lib/win32/GameKit/Dependencies/src/Codecs/include" />
+					<Add directory="lib/win32/GameKit/Dependencies/src/Lua/lua" />
 				</Compiler>
 				<Linker>
 					<Add option="-lOgreKitCore" />
@@ -172,17 +174,19 @@
 					<Add option="-luuid" />
 					<Add option="-lcomdlg32" />
 					<Add option="-ladvapi32" />
-					<Add directory="lib\win32\bullet\lib" />
-					<Add directory="lib\win32\GameKit\Dependencies\lib" />
-					<Add directory="lib\win32\GameKit\OgreKit\lib" />
-					<Add directory="lib\win32\GameKit\Tools\lib" />
-					<Add directory="lib\win32\Ogre-1.8\lib" />
+					<Add directory="lib/win32/bullet/lib" />
+					<Add directory="lib/win32/GameKit/Dependencies/lib" />
+					<Add directory="lib/win32/GameKit/OgreKit/lib" />
+					<Add directory="lib/win32/GameKit/Tools/lib" />
+					<Add directory="lib/win32/Ogre-1.8/lib" />
 				</Linker>
 			</Target>
 		</Build>
 		<Unit filename="Input.cpp" />
 		<Unit filename="Input.h" />
 		<Unit filename="Main.cpp" />
+		<Unit filename="MyIRCBot.cpp" />
+		<Unit filename="MyIRCBot.h" />
 		<Unit filename="Robot.cpp" />
 		<Unit filename="Robot.h" />
 		<Unit filename="Window.cpp" />
