@@ -73,49 +73,45 @@
 				</Linker>
 			</Target>
 			<Target title="simu-lin">
-				<Option output="bin\simu3D" prefix_auto="1" extension_auto="1" />
-				<Option working_dir="bin\" />
-				<Option object_output="bin\objs" />
+				<Option output="bin/simu3D" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="bin/" />
+				<Option object_output="bin/objs" />
 				<Option type="1" />
 				<Option compiler="gcc" />
 				<Compiler>
-					<Add directory="lib\bullet\src" />
-					<Add directory="lib\Ogre-1.8\OgreMain\include" />
-					<Add directory="lib\GameKit\Engine\Animation" />
-					<Add directory="lib\GameKit\Engine" />
-					<Add directory="lib\Settings" />
-					<Add directory="lib\GameKit\Dependencies\src" />
+					<Add directory="lib/bullet/src" />
+					<Add directory="lib/Ogre-1.8/OgreMain/include" />
+					<Add directory="lib/GameKit/Engine/Animation" />
+					<Add directory="lib/GameKit/Engine" />
+					<Add directory="lib/Settings" />
+					<Add directory="lib/GameKit/Dependencies/src" />
 				</Compiler>
 				<Linker>
-					<Add option="-lOgreKitCore" />
-					<Add option="-lPlugin_ParticleFXStatic" />
-					<Add option="-lRenderSystem_GLStatic" />
-					<Add option="-lOgreMainStatic" />
-					<Add option="-lFreeImage" />
-					<Add option="-lfreetype" />
-					<Add option="-lGameKitUtils" />
-					<Add option="-lOIS" />
-					<Add option="-lAnimKit" />
-					<Add option="-lfbtFile" />
-					<Add option="-lbfBlend" />
-					<Add option="-lZLib" />
-					<Add option="-lLua" />
-					<Add option="-lXrandr" />
-					<Add option="-lSM" />
-					<Add option="-lICE" />
-					<Add option="-lX11" />
-					<Add option="-lXext" />
-					<Add option="-lXt" />
-					<Add option="-lXaw" />
-					<Add option="-lpthread" />
-					<Add option="-ldl" />
-					<Add option="-lBulletDynamics" />
-					<Add option="-lBulletCollision" />
-					<Add option="-lBulletSoftBody" />
-					<Add option="-lLinearMath" />
-					<Add option="-lGL" />
-					<Add option="-lGLU" />
-					<Add directory="lib\libs" />
+					<Add library="libOgreKitCore" />
+					<Add library="libPlugin_ParticleFXStatic" />
+					<Add library="libRenderSystem_GLStatic" />
+					<Add library="libOgreMainStatic" />
+					<Add library="libBulletDynamics" />
+					<Add library="libBulletCollision" />
+					<Add library="libBulletSoftBody" />
+					<Add library="libLinearMath" />
+					<Add library="libGameKitUtils" />
+					<Add library="libAnimKit" />
+					<Add library="libOIS" />
+					<Add library="libLua" />
+					<Add library="libfbtFile" />
+					<Add library="libbfBlend" />
+					<Add library="libGL" />
+					<Add library="libGLU" />
+					<Add library="libXrandr" />
+					<Add library="libfreetype" />
+					<Add library="libFreeImage" />
+					<Add library="libXt" />
+					<Add library="libXaw" />
+					<Add library="libXext" />
+					<Add library="libX11" />
+					<Add library="libZLib" />
+					<Add directory="lib/libs" />
 				</Linker>
 			</Target>
 			<Target title="simu-win-dbg">
