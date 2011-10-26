@@ -125,7 +125,6 @@
 				<Option type="1" />
 				<Option compiler="gcc" />
 				<Compiler>
-					<Add option="-Wall" />
 					<Add option="-g" />
 					<Add directory="lib\win32\bullet\src" />
 					<Add directory="lib\win32\Ogre-1.8\src" />
@@ -185,15 +184,13 @@
 				</Linker>
 			</Target>
 		</Build>
+		<Unit filename="Input.cpp" />
+		<Unit filename="Input.h" />
 		<Unit filename="Main.cpp" />
 		<Unit filename="Robot.cpp" />
 		<Unit filename="Robot.h" />
 		<Unit filename="Window.cpp" />
 		<Unit filename="Window.h" />
-		<Unit filename="gkRobot.cpp" />
-		<Unit filename="gkRobot.h" />
-		<Unit filename="gkVehicleNode.cpp" />
-		<Unit filename="gkVehicleNode.h" />
 		<Extensions>
 			<code_completion />
 			<envvars />

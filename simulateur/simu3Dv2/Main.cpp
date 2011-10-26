@@ -10,7 +10,7 @@ class Main : public Tickable{
 
     void setup(gkScene * scene){
         //ajout le robot à la fenetre
-        bot.setup(scene);
+        bot.setup(scene,300,300,-90.0);
 
         //ajoute les touche du clavier au robot
         inputNode = win->getTree()->createNode<InputNode>();

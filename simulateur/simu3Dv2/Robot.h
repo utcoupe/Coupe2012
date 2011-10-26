@@ -11,7 +11,6 @@
 
 #include "OgreKit.h"
 #include "btBulletDynamicsCommon.h"
-#include "Window.h"
 
 typedef struct gkWheelProperties
 {
@@ -31,7 +30,7 @@ typedef struct gkWheelProperties
 
 } gkWheelProperties;
 
-class Robot : public gkDynamicsWorld::Listener , public Tickable
+class Robot : public gkDynamicsWorld::Listener
 {
 private:
 	gkScene*                           m_scene;
@@ -51,6 +50,28 @@ private:
 
 	void updateTransmition(gkScalar rate);
 	void updateWheels(gkScalar rate);
+	void load();
+	void createVehicle(void);
+
+    void addWheel(gkGameObject* object, gkScalar radius, gkVector3 connectionPoint, gkVector3 wheelDirection,
+	              gkVector3 wheelAxle, bool isFront, gkScalar restLength, gkScalar stiffness, gkScalar dampingRelax,
+	              gkScalar dampingComp, gkScalar friction, gkScalar roll, gkScalar travelDist);
+
+	void setTransform(const gkTransformState& v) { m_object->setTransform(v); }
+
+	void setEngineTorque(gkScalar v)             { m_engineTorque = v; }
+	void setChassisObject(gkGameObject* v)       { m_object = v; }
+	void subtick(gkScalar rate);
+	void presubtick(gkScalar rate);
+	void updateVehicle(gkScalar rate);
+
+	float mmx2float(int mmx){
+        return (mmx/1000.0)-1.5;
+	}
+
+    float mmy2float(int mmy){
+        return -((mmy/1000.0)-1.0);
+	}
 
 public:
 
@@ -58,35 +79,19 @@ public:
 	: m_dynamicWorld(0), m_raycaster(0), m_vehicle(0), m_object(0), m_chassis(0),
 	  m_gazR(0), m_gazL(0), m_engineTorque(0), m_currentRpm(0)
     {
-
     }
 	~Robot();
 
-	void load();
-	void createVehicle(void);
-	void updateVehicle(gkScalar rate);
 
-	void setup(gkScene * scene){
+	void setup(gkScene * scene,int posx,int posy,double angle){
 	    m_scene=scene;
-        //m_vehicle = new Robot(m_scene);
         load();
         createVehicle();
         // Move to start line
-        setTransform(gkTransformState(gkVector3(-0.7,-0.7,0), gkEuler(0, 0, 180).toQuaternion()));
+        setTransform(gkTransformState(gkVector3(mmx2float(posx),mmy2float(posy),0), gkEuler(0, 0, angle).toQuaternion()));
 	}
 
-	void addWheel(gkGameObject* object, gkScalar radius, gkVector3 connectionPoint, gkVector3 wheelDirection,
-	              gkVector3 wheelAxle, bool isFront, gkScalar restLength, gkScalar stiffness, gkScalar dampingRelax,
-	              gkScalar dampingComp, gkScalar friction, gkScalar roll, gkScalar travelDist);
-
 	void tick(gkScalar rate);
-	void presubtick(gkScalar rate);
-	void subtick(gkScalar rate);
-
-	void setTransform(const gkTransformState& v) { m_object->setTransform(v); }
-
-	void setEngineTorque(gkScalar v)             { m_engineTorque = v; }
-	void setChassisObject(gkGameObject* v)       { m_object = v; }
 
 	void setGazR(gkScalar ratio)                  { m_gazR = ratio; }
 	void setGazL(gkScalar ratio)                  { m_gazL = ratio; }
