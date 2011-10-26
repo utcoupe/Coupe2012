@@ -2,6 +2,8 @@
 #include "Robot.h"
 #include "Input.h"
 
+#include "MyIRCBot.h"
+
 
 class Main : public Tickable{
 	Robot bot;
@@ -15,6 +17,26 @@ class Main : public Tickable{
         //ajoute les touche du clavier au robot
         inputNode = win->getTree()->createNode<InputNode>();
         inputNode->setVehicle(&bot);
+        try
+        {
+            //Create new instance of our custom bot
+            PircBot *p = new HackBotcpp;
+
+            //We want verbose messages turned on.
+            p->setVerbose(true);
+
+            //Connect to our irc server
+            p->connect("localhost");
+
+            //Join our channel
+            p->joinChannel("#test");
+        }
+        catch(Exception &e)
+        {
+            //Error, so let's print it and exit 1
+            cout << e.what() << endl;
+            return;
+        }
     }
 
     //instruction boucle principale
