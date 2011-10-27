@@ -9,7 +9,7 @@ import ircbot
 
 
 
-class MyIRCBot(ircbot.SingleServerIRCBot):
+class MyPyIrcBot(ircbot.SingleServerIRCBot):
 	def __init__(self, server_ip, server_port, nickname, channel):
 		self.serv = None
 		self.nickname = nickname

@@ -11,7 +11,7 @@ import serial
 import time
 import re
 
-import myircbot
+import mypyircbot
 
 
 
@@ -19,12 +19,12 @@ COMPILED_F = None
 SEP = '.'
 
 
-class ArduinoBot(myircbot.MyIRCBot):
+class ArduinoBot(mypyircbot.MyPyIrcBot):
 	def __init__(self, server_ip, server_port, nickname, channel, serial_port, serial_baudrate, protocole_file=None, protocole_prefixe=None):
 		"""
 		Constructeur qui pourrait prendre des paramètres dans un "vrai" programme.
 		"""
-		myircbot.MyIRCBot.__init__(self, server_ip, server_port, nickname, channel)
+		mypyircbot.MyPyIrcBot.__init__(self, server_ip, server_port, nickname, channel)
 		
 		print("Récupération du protocole dans %s..." %protocole_file)
 		self._get_protocole(protocole_file, protocole_prefixe)
