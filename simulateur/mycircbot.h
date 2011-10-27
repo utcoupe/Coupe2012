@@ -8,13 +8,13 @@ using namespace std;
 
 /**
  * Our custom bot,
- * called MyIrcBot.
+ * called MyCIrcBot.
  *
  * Inherit from PircBot
  * and implement the methods
  * you need to utilize.
  */
-class MyIrcBot : public PircBot
+class MyCIrcBot : public PircBot
 {
 	public:
 
@@ -23,7 +23,7 @@ class MyIrcBot : public PircBot
 		 * in which we set the name
 		 * of our bot.
 		 */
-		MyIrcBot();
+		MyCIrcBot();
 
 		/**
 		 * We override the onMessage here

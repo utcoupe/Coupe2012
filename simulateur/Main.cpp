@@ -2,7 +2,7 @@
 #include "Robot.h"
 #include "Input.h"
 
-#include "MyIRCBot.h"
+#include "mycircbot.h"
 
 
 class Main : public Tickable{
@@ -20,7 +20,7 @@ class Main : public Tickable{
         try
         {
             //Create new instance of our custom bot
-            MyIrcBot *p = new MyIrcBot;
+            MyCIrcBot *p = new MyCIrcBot;
 
             //We want verbose messages turned on.
             p->setVerbose(true);
@@ -30,6 +30,7 @@ class Main : public Tickable{
 
             //Join our channel
             p->joinChannel("#test");
+            p->joinChannel("#test2");
         }
         catch(Exception &e)
         {

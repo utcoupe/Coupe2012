@@ -223,12 +223,12 @@
 		<Unit filename="Input.cpp" />
 		<Unit filename="Input.h" />
 		<Unit filename="Main.cpp" />
-		<Unit filename="MyIRCBot.cpp" />
-		<Unit filename="MyIRCBot.h" />
 		<Unit filename="Robot.cpp" />
 		<Unit filename="Robot.h" />
 		<Unit filename="Window.cpp" />
 		<Unit filename="Window.h" />
+		<Unit filename="mycircbot.cpp" />
+		<Unit filename="mycircbot.h" />
 		<Extensions>
 			<code_completion />
 			<envvars />

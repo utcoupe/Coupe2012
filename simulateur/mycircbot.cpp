@@ -1,15 +1,15 @@
 
-#include "MyIRCBot.h"
+#include "mycircbot.h"
 
 
 
-MyIrcBot::MyIrcBot()
+MyCIrcBot::MyCIrcBot()
 {
-    this->setName("MyIrcBot");
+    this->setName("MyCIrcBot");
 }
 
 
-void MyIrcBot::onMessage(const char * const channel,
+void MyCIrcBot::onMessage(const char * const channel,
             const char * const sender,
             const char * const login,
             const char * const hostname,
