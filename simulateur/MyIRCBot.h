@@ -8,13 +8,13 @@ using namespace std;
 
 /**
  * Our custom bot,
- * called HackBotcpp.
+ * called MyIrcBot.
  *
  * Inherit from PircBot
  * and implement the methods
  * you need to utilize.
  */
-class HackBotcpp : public PircBot
+class MyIrcBot : public PircBot
 {
 	public:
 
@@ -23,10 +23,7 @@ class HackBotcpp : public PircBot
 		 * in which we set the name
 		 * of our bot.
 		 */
-		HackBotcpp()
-		{
-			this->setName("HackBotcpp");
-		}
+		MyIrcBot();
 
 		/**
 		 * We override the onMessage here
@@ -47,28 +44,7 @@ class HackBotcpp : public PircBot
 					const char * const login,
 					const char * const hostname,
 					const char * const message)
-		   throw(Exception &)
-		{
-			//The message that someone from the server said.
-			string messageString(message);
-
-			//Create a string of the sender of the message from
-			//the sender *char
-			string senderString(sender);
-
-			//Look to see if the message string is equal to time
-			if(messageString == "time")
-			{
-				//Create our time string and sppend the name
-				//of the person asking for the time to it.
-				string time = "Time for you to get a watch";
-				senderString += ": The time is now ";
-				senderString += time;
-
-				//Okay, so send to the channel our message
-				sendMessage(channel, senderString.c_str());
-			}
-		}
+		   throw(Exception &);
 };
 
 

@@ -20,7 +20,7 @@ class Main : public Tickable{
         try
         {
             //Create new instance of our custom bot
-            PircBot *p = new HackBotcpp;
+            MyIrcBot *p = new MyIrcBot;
 
             //We want verbose messages turned on.
             p->setVerbose(true);
