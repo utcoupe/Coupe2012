@@ -11,6 +11,7 @@
 
 #include "OgreKit.h"
 #include "btBulletDynamicsCommon.h"
+#include "Asserv.h"
 
 typedef struct gkWheelProperties
 {
@@ -33,6 +34,7 @@ typedef struct gkWheelProperties
 class Robot : public gkDynamicsWorld::Listener
 {
 private:
+    Asserv asserv;
 	gkScene*                           m_scene;
 	gkDynamicsWorld*                   m_dynamicWorld;
 	btDefaultVehicleRaycaster*         m_raycaster;
@@ -88,13 +90,20 @@ public:
         load();
         createVehicle();
         // Move to start line
-        setTransform(gkTransformState(gkVector3(mmx2float(posx),mmy2float(posy),0), gkEuler(0, 0, angle).toQuaternion()));
+        //setTransform(gkTransformState(gkVector3(mmx2float(posx),mmy2float(posy),0), gkEuler(0, 0, angle).toQuaternion()));
+
+	    asserv.init();
+	    //asserv.turn(-90);
+	    asserv.goTo(1000,1000);
 	}
 
 	void tick(gkScalar rate);
 
 	void setGazR(gkScalar ratio)                  { m_gazR = ratio; }
 	void setGazL(gkScalar ratio)                  { m_gazL = ratio; }
+	void goTo(int x,int y){
+        asserv.goTo(x,y);
+	}
 
 	gkScalar getCurrentSpeedKmHour(void)         { return m_vehicle->getCurrentSpeedKmHour(); }
 	gkScalar getVelocityEulerZ(void);

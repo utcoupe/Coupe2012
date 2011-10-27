@@ -37,7 +37,7 @@ void Robot::load(void)
 	float suspensionStiffness = 22.0;
 	float suspensionRelax = 0.6 * 2.0 * btSqrt(suspensionStiffness);
 	float suspensionCompression = 0.6 * 2.0 * btSqrt(suspensionStiffness);
-	float friction = 2.0f;
+	float friction = 200.0f;
 	float rollInfluence = 0.1;
 
 	gkVector3 wheelDirection(0, 0, -1);
@@ -77,7 +77,17 @@ Robot::~Robot()
 
 void Robot::tick(gkScalar rate)
 {
-	updateVehicle(rate);
+    /*btWheelInfo btwheelR = m_vehicle->getWheelInfo(0);
+    btWheelInfo btwheelL = m_vehicle->getWheelInfo(1);
+    cout<<btwheelR.m_rotation<<endl;
+    asserv.setEncValue(btwheelR.m_rotation*2000.0,btwheelL.m_rotation*2000.0);*/
+    asserv.run();
+    //setGazL(asserv.getPwmL()/255.0);
+    //setGazR(asserv.getPwmR()/255.0);
+    updateVehicle(rate);
+    setTransform(gkTransformState(gkVector3(mmx2float(asserv.getX()),
+                                            mmy2float(asserv.getY()),0.1),
+                                   gkEuler(0, 0, ((-asserv.getAngle())*(180.0/3.14))-90.0).toQuaternion()));
 }
 
 void Robot::presubtick(gkScalar rate)
@@ -108,6 +118,9 @@ void Robot::subtick(gkScalar rate)
 				btwheel.m_deltaRotation *= 0.995;
 		}
 
+        if(btwheel.m_deltaRotation<0.001){
+            btwheel.m_deltaRotation=0;
+        }
 		btwheel.m_rotation += btwheel.m_deltaRotation;
 	}
 }
