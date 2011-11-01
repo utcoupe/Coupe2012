@@ -13,9 +13,14 @@ class MotorPhysic:
 		self.space = pm.Space()
 		self.space.gravity = (0.0, 0.0)
 		self.space.add_collision_handler(0, 0, None, None, draw_collision,None)
+		self.objects = []
+		self.coef_frot = 0.5
 
 	def step(self, dt):
 		self.space.step(dt)
+		for o in self.objects:
+			vx,vy = o.body.velocity
+			o.body._set_velocity((vx*self.coef_frot, vy*self.coef_frot))
 
 	def add(self, obj):
 		if obj.t == CIRCLE:
@@ -38,3 +43,4 @@ class MotorPhysic:
 		obj.shape = shape
 		obj.body = body
 		self.space.add(body, shape)
+		self.objects.append(obj)
