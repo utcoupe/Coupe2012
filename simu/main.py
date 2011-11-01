@@ -9,6 +9,7 @@ from robot import *
 from lingot import *
 from wall import *
 from cd import *
+from totem import *
 
 import threading
 
@@ -30,6 +31,9 @@ if __name__ == "__main__":
 	wall_right = Wall(top_right, down_right)
 	wall_down = Wall(down_left, down_right)
 	wall_left = Wall(top_left, down_left)
+	totem_left = Totem(mm_to_px((1100,1000)))
+	totem_right = Totem(mm_to_px((1900,1000)))
+	robot = Robot(mm_to_px((250,250)))
 	cd = Cd(mm_to_px((1500,1000)), "black")
 	engine.add(wall_top)
 	engine.add(wall_down)
@@ -39,5 +43,7 @@ if __name__ == "__main__":
 		engine.add(Cd(mm_to_px((1500,1000)), "white"))
 	engine.add(robot)
 	engine.add(cd)
+	engine.add(totem_left)
+	engine.add(totem_right)
 	engine.start()
 	

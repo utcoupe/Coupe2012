@@ -33,7 +33,7 @@ class MotorPhysic:
 			obj.poly_points = pm.util.poly_vectors_around_center(obj.poly_points)
 			moment = pm.moment_for_poly(obj.mass,obj.poly_points, Vec2d(0,0))
 			body = pm.Body(obj.mass, moment)
-			body.position = Vec2d(300,300)
+			body.position = obj.posinit[0], obj.posinit[1]
 			shape = pm.Poly(body, obj.poly_points, Vec2d(0,0))
 			shape.friction = 0.5
 			shape.collision_type = COLLTYPE_DEFAULT
