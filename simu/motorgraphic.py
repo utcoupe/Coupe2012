@@ -7,15 +7,21 @@ from pygame.color import *
 class MotorGraphic():
 	def __init__(self):
 		pg.init()
-		self.screen = pg.display.set_mode((600, 600))
+		self.screen = pg.display.set_mode((600, 400))
 		self.clock = pg.time.Clock()
 		self.shapes = []
+		self.logo_img = pg.image.load("C2012_illustration_reglement_web.jpg")
+		self.logo_img=pg.transform.scale(self.logo_img,(self.screen.get_width(),self.screen.get_height()))
+		###print self.logo_img.__class__
 
 
 	def step(self):
 
 		### Clear screen
 		self.screen.fill(THECOLORS["white"])
+		
+		### draw background
+		self.screen.blit(self.logo_img,(0,0))
 
 		### Draw
 		for shape in self.shapes:
