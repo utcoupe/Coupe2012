@@ -18,7 +18,7 @@ class MotorGraphic():
 		self.objects = []
 		self.onMouseEvents = []
 		self.collisions_to_draw = []
-		self.map_img = pg.image.load("map.jpg")
+		self.map_img = pg.image.load("map.png")
 		self.map_img=pg.transform.scale(self.map_img,(self.screen.get_width(),self.screen.get_height()))
 		print self.to_px((200,300))
 
