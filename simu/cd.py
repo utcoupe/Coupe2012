@@ -9,6 +9,6 @@ class Cd(EngineObject):
 		self.posinit = position
 		self.t = CIRCLE
 		self.mass = 1
-		self.radius = 10
+		self.radius = mm_to_px(60)
 
 
