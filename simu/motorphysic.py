@@ -8,6 +8,7 @@ from pymunk import Vec2d
 
 
 class MotorPhysic:
+	""" unité : mm """
 	def __init__(self, draw_collision):
 		self.space = pm.Space()
 		self.space.gravity = (0.0, 0.0)
@@ -20,7 +21,7 @@ class MotorPhysic:
 		if obj.t == CIRCLE:
 			inertia = pm.moment_for_circle(obj.mass, 0, obj.radius, (0,0))
 			body = pm.Body(obj.mass, inertia)
-			body.position = 200, 200
+			body.position = obj.posinit[0], obj.posinit[1]
 			shape = pm.Circle(body, obj.radius, (0,0))
 		elif obj.t == POLY:
 			center = pm.util.calc_center(obj.poly_points)
