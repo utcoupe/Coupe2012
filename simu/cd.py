@@ -4,7 +4,7 @@ from define import *
 
 
 
-class Cd:
+class Cd(EngineObject):
 	def __init__(self):
 		self.t = CIRCLE
 		self.mass = 1
