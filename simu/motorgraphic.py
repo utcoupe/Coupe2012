@@ -18,10 +18,16 @@ class MotorGraphic():
 		self.objects = []
 		self.onMouseEvents = []
 		self.collisions_to_draw = []
+		self.logo_img = pg.image.load("map.jpg")
+		self.logo_img=pg.transform.scale(self.logo_img,(self.screen.get_width(),self.screen.get_height()))
+
 
 	def step(self):
 		### Clear screen
 		self.screen.fill(THECOLORS["white"])
+		
+		### draw background
+		self.screen.blit(self.logo_img,(0,0))
 
 		### Draw
 		for obj in self.objects :
