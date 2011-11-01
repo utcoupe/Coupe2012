@@ -32,6 +32,9 @@ class MotorPhysic:
 			shape = pm.Poly(body, obj.poly_points, Vec2d(0,0))
 			shape.friction = 0.5
 			shape.collision_type = COLLTYPE_DEFAULT
+		elif obj.t == WALL:
+			body = pm.Body(pm.inf, pm.inf)
+			shape = pm.Segment(body, obj.inita, obj.initb, 0.0)
 		obj.shape = shape
 		obj.body = body
 		self.space.add(body, shape)

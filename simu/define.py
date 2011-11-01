@@ -2,6 +2,7 @@
 
 CIRCLE				= 0
 POLY				= 1
+WALL				= 2
 
 COLLTYPE_DEFAULT	= 0
 
