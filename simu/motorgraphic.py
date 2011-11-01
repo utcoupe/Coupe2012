@@ -8,26 +8,26 @@ from pygame.locals import *
 from pygame.color import *
 
 
-class MotorGraphic():
+class MotorGraphic():	
 	def __init__(self):
 		pg.init()
-		self.w = 600
-		self.h = 600
-		self.screen = pg.display.set_mode((self.w, self.h))
+		self.map_height = 2000
+		self.map_width = 3000
+		self.screen = pg.display.set_mode((600, 400))
 		self.clock = pg.time.Clock()
 		self.objects = []
 		self.onMouseEvents = []
 		self.collisions_to_draw = []
-		self.logo_img = pg.image.load("map.jpg")
-		self.logo_img=pg.transform.scale(self.logo_img,(self.screen.get_width(),self.screen.get_height()))
-
+		self.map_img = pg.image.load("map.png")
+		self.map_img=pg.transform.scale(self.map_img,(self.screen.get_width(),self.screen.get_height()))
+		print self.to_px((200,300))
 
 	def step(self):
 		### Clear screen
 		self.screen.fill(THECOLORS["white"])
 		
 		### draw background
-		self.screen.blit(self.logo_img,(0,0))
+		self.screen.blit(self.map_img,(0,0))
 
 		### Draw
 		for obj in self.objects :
@@ -57,8 +57,9 @@ class MotorGraphic():
 
 		return True
 
-	def to_px(self, v):
-		pass
+	def to_px(self, coord):
+		x,y=coord
+		return ((self.screen.get_width()*x)/self.map_width,(self.screen.get_height()*x)/self.map_height)
 	
 	def add(self, obj):
 		self.objects.append(obj)
