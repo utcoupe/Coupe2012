@@ -11,9 +11,18 @@ from wall import *
 from cd import *
 from totem import *
 
+import threading
 
 
 if __name__ == "__main__":
+	robot = Robot()
+	ircbot = SimuIrcBot(robot, "localhost", 6667)
+	engine = Engine(ircbot.stop)
+	try:
+		t = threading.Thread(None,ircbot.start,"simuircbot")
+		t.start()
+	except Exception as ex:
+		print(ex)
 	top_left = mm_to_px((0,0))
 	top_right = mm_to_px((3000,0))
 	down_left = mm_to_px((0,2000))
@@ -26,7 +35,6 @@ if __name__ == "__main__":
 	totem_right = Totem(mm_to_px((1900,1000)))
 	robot = Robot(mm_to_px((250,250)))
 	cd = Cd(mm_to_px((1500,1000)), "black")
-	engine = Engine()
 	engine.add(wall_top)
 	engine.add(wall_down)
 	engine.add(wall_left)

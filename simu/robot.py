@@ -23,7 +23,11 @@ class Robot(EngineObject):
 
 
 	def onMouseEvent(self, x, y):
-		self.goto(x,y,500)
+		"""
+		@param x px
+		@param y px
+		"""
+		self.goto(*list(map(px_to_mm,(x,y,500))))
 	
 	def goto(self, x, y, v):
 		"""
@@ -31,7 +35,7 @@ class Robot(EngineObject):
 		@param y mmm
 		@param v ~~
 		"""
-		self.goals.append((x,y,v))
+		self.goals.append(tuple(map(mm_to_px,(x,y,v))))
 	
 	
 	def step(self, dt):
