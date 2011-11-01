@@ -21,7 +21,9 @@ class Engine:
 
 	def step(self):
 		dt = 1.0/60.0
+		self.motorphysic.step(dt)
 		for o in self.objects:
 			o.step(dt)
-		self.motorphysic.step(dt)
 		self.running = self.motorgraphic.step()
+
+		
