@@ -82,7 +82,7 @@ class MotorGraphic():
 	
 	def draw_collision(self, space, arb):
 		for c in arb.contacts:
-			r = max( 3, abs(c.distance*5) )
+			r = 3 #min(10, max( 3, abs(c.distance*5) ))
 			r = int(r)
 			p = map(int, c.position)
 			self.collisions_to_draw.append((p, r))
