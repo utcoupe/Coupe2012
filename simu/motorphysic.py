@@ -25,6 +25,7 @@ class MotorPhysic:
 			shape = pm.Circle(body, obj.radius, (0,0))
 		elif obj.t == POLY:
 			center = pm.util.calc_center(obj.poly_points)
+			obj.poly_points = pm.util.poly_vectors_around_center(obj.poly_points)
 			moment = pm.moment_for_poly(obj.mass,obj.poly_points, Vec2d(0,0))
 			body = pm.Body(obj.mass, moment)
 			body.position = Vec2d(300,300)
