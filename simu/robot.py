@@ -14,7 +14,7 @@ class Robot(EngineObject):
 		self.pince = Pince()
 		self.t = POLY
 		
-		self.mass = 100
+		self.mass = 10
 		self.poly_points = map(mm_to_px,[(100,0),(160,0),(280,90),(280,230),(160,320),(100,320),(0,290),(0,30)])
 
 		self.goals = []
@@ -34,6 +34,7 @@ class Robot(EngineObject):
 	
 	def step(self, dt):
 		self.body._set_torque(0)
+		self.body._set_angular_velocity(0)
 		if self.goals:
 			gx,gy,v = self.goals[0]
 			x,y = self.body.position
