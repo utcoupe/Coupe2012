@@ -2,6 +2,7 @@
 
 from define import *
 
+from simubot import *
 from engine import *
 from robot import *
 from lingot import *
