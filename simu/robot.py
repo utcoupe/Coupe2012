@@ -2,7 +2,6 @@
 
 import random
 
-from geometry.vec import *
 from pince import *
 
 import pymunk as pm
@@ -10,7 +9,6 @@ from pymunk import Vec2d
 
 class Robot:
 	def __init__(self):
-		self.pos = Vec2(0,0)
 		self.pince = Pince()
 		self.mass = 10
 		self.radius = 25
