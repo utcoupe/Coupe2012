@@ -51,6 +51,9 @@ class MotorGraphic():
 
 		return True
 
+	def to_px(self, v):
+		pass
+	
 	def add(self, obj):
 		self.objects.append(obj)
 		try:
