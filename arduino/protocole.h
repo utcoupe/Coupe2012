@@ -136,11 +136,6 @@
  * @param color 0:blue 1:rouge
  */
 #define QA_ACALIB			7
-#define QA_MCALIB			8
-#define QA_DELAY 			9
-#define QA_PWM 				10
-#define QA_MODIF_GOAL_ABS 	11
-#define QA_MODIF_GOAL_REL 	12
 
 /**
  * Pause.
@@ -161,6 +156,12 @@
  * Debug : valeur des encodeurs.
  */
 #define QA_GETENC			17
+
+#define QA_MCALIB			8
+#define QA_DELAY 			9
+#define QA_PWM 				10
+#define QA_MODIF_GOAL_ABS 	11
+#define QA_MODIF_GOAL_REL 	12
 
 // erreurs
 #define	E_INVALID_CMD						-1

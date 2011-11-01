@@ -27,3 +27,4 @@ def px_to_mm(pos):
 		return int(pos*4.0)
 
 
+CANAL_ASSERV		= "#asserv"
