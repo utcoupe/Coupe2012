@@ -66,7 +66,7 @@ class MotorGraphic():
 			pass
 
 	def draw_circle(self, shape, color):
-		p = map(int, shape.body.position)
+		p = tuple(map(int, shape.body.position))
 		pg.draw.circle(self.screen, color, p, int(shape.radius), 0)
 	
 	def draw_poly(self, shape, color):
@@ -85,5 +85,5 @@ class MotorGraphic():
 		for c in arb.contacts:
 			r = 3 #min(10, max( 3, abs(c.distance*5) ))
 			r = int(r)
-			p = map(int, c.position)
+			p = tuple(map(int, c.position))
 			self.collisions_to_draw.append((p, r))

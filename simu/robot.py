@@ -16,7 +16,7 @@ class Robot(EngineObject):
 		self.color = "black"
 		
 		self.mass = 10
-		self.poly_points = map(mm_to_px,[(100,0),(160,0),(280,90),(280,230),(160,320),(100,320),(0,290),(0,30)])
+		self.poly_points = list(map(mm_to_px,[(100,0),(160,0),(280,90),(280,230),(160,320),(100,320),(0,290),(0,30)]))
 
 		self.goals = []
 

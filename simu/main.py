@@ -26,7 +26,7 @@ if __name__ == "__main__":
 	engine.add(wall_down)
 	engine.add(wall_left)
 	engine.add(wall_right)
-	for _ in xrange(50):
+	for _ in range(50):
 		engine.add(Cd(mm_to_px((1500,1000)), "white"))
 	engine.add(robot)
 	engine.add(cd)
