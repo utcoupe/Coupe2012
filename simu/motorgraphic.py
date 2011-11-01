@@ -10,7 +10,7 @@ class MotorGraphic():
 		self.screen = pg.display.set_mode((600, 400))
 		self.clock = pg.time.Clock()
 		self.shapes = []
-		self.logo_img = pg.image.load("C2012_illustration_reglement_web.jpg")
+		self.logo_img = pg.image.load("map.jpg")
 		self.logo_img=pg.transform.scale(self.logo_img,(self.screen.get_width(),self.screen.get_height()))
 		###print self.logo_img.__class__
 
