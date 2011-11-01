@@ -30,12 +30,13 @@ class MotorGraphic():
 		### Draw
 		for obj in self.objects :
 			if obj.t == CIRCLE:
-				self.draw_circle(obj.shape)
+				self.draw_circle(obj.shape, THECOLORS[obj.color])
 			elif obj.t == POLY:
-				self.draw_poly(obj.shape)
+				self.draw_poly(obj.shape, THECOLORS[obj.color])
 			elif obj.t == WALL:
-				self.draw_segment(obj.shape)
+				self.draw_segment(obj.shape, THECOLORS[obj.color])
 
+		### Draw collisions
 		for p,r in self.collisions_to_draw:
 			pg.draw.circle(self.screen, THECOLORS["red"], p, r, 0)
 		self.collisions_to_draw = []
@@ -64,21 +65,21 @@ class MotorGraphic():
 		except:
 			pass
 
-	def draw_circle(self, shape):
+	def draw_circle(self, shape, color):
 		p = map(int, shape.body.position)
-		pg.draw.circle(self.screen, THECOLORS["blue"], p, int(shape.radius), 2)
+		pg.draw.circle(self.screen, color, p, int(shape.radius), 0)
 	
-	def draw_poly(self, shape):
+	def draw_poly(self, shape, color):
 		body = shape.body
 		ps = shape.get_points()
 		ps.append(ps[0])
-		pg.draw.lines(self.screen, THECOLORS["green"], False, ps)
+		pg.draw.lines(self.screen, color, False, ps)
 
-	def draw_segment(self, shape):
+	def draw_segment(self, shape, color):
 		body = shape.body
 		p1 = body.position + shape.a.rotated(body.angle)
 		p2 = body.position + shape.b.rotated(body.angle)
-		pg.draw.lines(self.screen, THECOLORS["lightgray"], False, [p1,p2])
+		pg.draw.lines(self.screen, color, False, [p1,p2])
 	
 	def draw_collision(self, space, arb):
 		for c in arb.contacts:
