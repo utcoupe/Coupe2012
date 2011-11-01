@@ -10,7 +10,8 @@ from pince import *
 
 
 class Robot(EngineObject):
-	def __init__(self):
+	def __init__(self, position):
+		self.posinit = position
 		self.pince = Pince()
 		self.t = POLY
 		self.color = "black"
