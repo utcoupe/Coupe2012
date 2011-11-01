@@ -13,13 +13,15 @@ class MotorGraphic():
 		pg.init()
 		self.map_height = 2000
 		self.map_width = 3000
-		self.screen = pg.display.set_mode((600, 400))
+		self.screen = pg.display.set_mode((750, 500))
 		self.clock = pg.time.Clock()
 		self.objects = []
 		self.onMouseEvents = []
 		self.collisions_to_draw = []
 		self.map_img = pg.image.load("map.png")
 		self.map_img=pg.transform.scale(self.map_img,(self.screen.get_width(),self.screen.get_height()))
+		
+		###test
 		print self.to_px((200,300))
 
 	def step(self):
