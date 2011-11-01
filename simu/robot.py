@@ -30,23 +30,6 @@ class Robot(EngineObject):
 		else:
 			return (None,None)
 
-	def onMouseEvent(self, x, y):
-		"""
-		@param x px
-		@param y px
-		"""
-		self.cmd_goto(*list(map(px_to_mm,(x,y,500))))
-	
-	def cmd_goto(self, x, y, v):
-		"""
-		@param x mm
-		@param y mmm
-		@param v ~~
-		"""
-		self.to_send.append((CANAL_ASSERV,"goto ok"))
-		self.goals.append(tuple(map(mm_to_px,(x,y,v))))
-	
-	
 	def step(self, dt):
 		self.body._set_torque(0)
 		self.body._set_angular_velocity(0)
@@ -67,5 +50,37 @@ class Robot(EngineObject):
 				vy = dy * v / d
 				self.body._set_velocity((vx,vy))
 				self.body._set_angle(a)
-			
+	
+	def onMouseEvent(self, x, y):
+		"""
+		@param x px
+		@param y px
+		"""
+		self.cmd_goto(*list(map(px_to_mm,(x,y,500))))
+	
+	def cmd_goto(self, x, y, v):
+		"""
+		@param x mm
+		@param y mmm
+		@param v ~~
+		"""
+		self.to_send.append((CANAL_ASSERV,"goto ok"))
+		self.goals.append(tuple(map(mm_to_px,(x,y,v))))
+	
+	
+	def cmd_gotor(self, x, y, v): pass
+
+	def cmd_turn(self, a, v): pass
+
+	def cmd_turnr(self, a, v): pass
+
+	def cmd_acalip(self, c): pass
+
+	def cmd_stop(self): pass
+
+	def cmd_resumt(self): pass
+	
+	
+
+	
 			
