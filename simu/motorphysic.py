@@ -14,7 +14,7 @@ class MotorPhysic:
 		self.space.gravity = (0.0, 0.0)
 		self.space.add_collision_handler(0, 0, None, None, draw_collision,None)
 		self.objects = []
-		self.coef_frot = 0.5
+		self.coef_frot = 0.85
 
 	def step(self, dt):
 		self.space.step(dt)
