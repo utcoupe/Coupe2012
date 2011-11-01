@@ -2,19 +2,23 @@
 
 import random
 
+from define import *
 from pince import *
 
-import pymunk as pm
-from pymunk import Vec2d
 
 class Robot:
 	def __init__(self):
 		self.pince = Pince()
+		self.t = POLY
+		
 		self.mass = 10
-		self.radius = 25
-		self.inertia = pm.moment_for_circle(self.mass, 0, self.radius, (0,0))
-		self.body = pm.Body(self.mass, self.inertia)
-		x = random.randint(115,350)
-		self.body.position = x, 200
-		self.shape = pm.Circle(self.body, self.radius, (0,0))
-	
+		self.poly_points = [(0,0),(12,0),(22,12),(22,18),(18,29),(-5,29),(-9,18),(-9,12)]
+
+
+	def setPos(self, x, y):
+		self.body.position = x,y
+
+	def onMouseEvent(self, x, y):
+		self.setPos(x,y)
+
+

@@ -21,3 +21,4 @@ arduino-0*
 doc
 *.a
 *~
+*.pyc
