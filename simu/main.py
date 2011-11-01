@@ -10,9 +10,17 @@ from lingot import *
 from wall import *
 from cd import *
 
+import threading
 
 
 if __name__ == "__main__":
+	robot = Robot()
+	ircbot = SimuIrcBot(robot, "localhost", 6667)
+	try:
+		t = threading.Thread(None,ircbot.start,"simuircbot")
+		t.start()
+	except Exception as ex:
+		print(ex)
 	top_left = mm_to_px((0,0))
 	top_right = mm_to_px((3000,0))
 	down_left = mm_to_px((0,2000))
@@ -21,7 +29,6 @@ if __name__ == "__main__":
 	wall_right = Wall(top_right, down_right)
 	wall_down = Wall(down_left, down_right)
 	wall_left = Wall(top_left, down_left)
-	robot = Robot()
 	cd = Cd(mm_to_px((1500,1000)), "black")
 	engine = Engine()
 	engine.add(wall_top)
