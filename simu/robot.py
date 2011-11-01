@@ -42,7 +42,7 @@ class Robot(EngineObject):
 			d = math.sqrt(dx**2+dy**2)
 			if d < v * dt:
 				self.body._set_position((gx,gy))
-				x,y,v = self.goals.pop(0)
+				x,y,v = list(map(px_to_mm,self.goals.pop(0)))
 				self.body._set_velocity((0,0))
 				self.to_send.append((CANAL_ASSERV,"goal ok : {0} {1} {2}".format(x,y,v)))
 			else:

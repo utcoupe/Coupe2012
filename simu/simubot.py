@@ -103,8 +103,9 @@ class SimuIrcBot(ircbot.SingleServerIRCBot):
 				self.robot.cmd_resume()
 
 	def send(self, channel, msg):
-		for m in str(msg).split("\n"):
-			self.serv.privmsg(channel, m)
+		if self.serv:
+			for m in str(msg).split("\n"):
+				self.serv.privmsg(channel, m)
 
 	def stop(self):
 		self.running = False
