@@ -16,6 +16,7 @@ import threading
 if __name__ == "__main__":
 	robot = Robot()
 	ircbot = SimuIrcBot(robot, "localhost", 6667)
+	engine = Engine(ircbot.stop)
 	try:
 		t = threading.Thread(None,ircbot.start,"simuircbot")
 		t.start()
@@ -30,7 +31,6 @@ if __name__ == "__main__":
 	wall_down = Wall(down_left, down_right)
 	wall_left = Wall(top_left, down_left)
 	cd = Cd(mm_to_px((1500,1000)), "black")
-	engine = Engine()
 	engine.add(wall_top)
 	engine.add(wall_down)
 	engine.add(wall_left)

@@ -68,4 +68,9 @@ class SimuIrcBot(ircbot.SingleServerIRCBot):
 		for m in msg.split("\n"):
 			self.serv.privmsg(channel, m)
 
-		
+	def stop(self):
+		if self.serv:
+			self.serv.disconnect("Tchuss")
+
+
+	
