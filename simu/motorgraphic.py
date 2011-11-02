@@ -44,7 +44,7 @@ class MotorGraphic():
 		### Flip screen
 		pg.display.flip()
 		self.clock.tick(60)
-		pg.display.set_caption("fps: " + str(self.clock.get_fps()))
+		pg.display.set_caption( "fps: " + str(self.clock.get_fps()))
 
 		### Events
 		for event in pg.event.get():
