@@ -43,7 +43,7 @@ if __name__ == "__main__":
 	mur_bateau_droite = Wall(mm_to_px((2675,2000)),mm_to_px((2640,1260))) 
 	totem_left = Totem(mm_to_px((1100,1000)))
 	totem_right = Totem(mm_to_px((1900,1000)))
-	cd = Cd(mm_to_px((1500,1000)), "black")
+	cd = Cd(mm_to_px((1500,1500)), "black")
 	tour = Tour();
 	
 	engine.add(mur_depart_gauche)
@@ -62,8 +62,8 @@ if __name__ == "__main__":
 	
 
 	
-	for _ in range(50):
-		engine.add(Cd(mm_to_px((1500,1000)), "white"))
+	for _ in range(38):
+		engine.add(Cd(mm_to_px((1500,500)), "white"))
 		
 	
 	engine.start()

@@ -16,7 +16,7 @@ class MotorGraphic():
 		self.objects = []
 		self.onMouseEvents = []
 		self.collisions_to_draw = []
-		self.map_img = pg.image.load("map.png")
+		self.map_img = pg.image.load("map.jpg")
 		self.map_img=pg.transform.scale(self.map_img,(self.screen.get_width(),self.screen.get_height()))
 
 
@@ -43,7 +43,7 @@ class MotorGraphic():
 		
 		### Flip screen
 		pg.display.flip()
-		self.clock.tick(60)
+		self.clock.tick(200)
 		pg.display.set_caption( "fps: " + str(self.clock.get_fps()))
 
 		### Events
