@@ -10,7 +10,7 @@ class Tour(EngineObject):
 		self.posinit = mm_to_px(1500,1000)
 		self.t = CIRCLE
 		self.mass = pm.inf
-		self.radius = mm_to_px(150)
+		self.radius = mm_to_px(75)
 		self.color = "green"
 		self.collision_type = COLLTYPE_WALL
 

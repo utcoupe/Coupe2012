@@ -15,11 +15,8 @@ from totem import *
 from tour import *
 import xml.dom.minidom
 
-document = """\
 
-"""
-
-def map_loader(filename,engine):
+def load_map(filename,engine):
 	
 	ofi = open(filename, 'r')
 	document = ofi.read()
@@ -50,12 +47,12 @@ if __name__ == "__main__":
 	except Exception as ex:
 		print(ex)
 		
-	map_loader("map.xml",engine)
+	load_map("map.xml",engine)
 		
-	top_left = mm_to_px(0,0)
-	top_right = mm_to_px(3000,0)
-	down_left = mm_to_px(0,2000)
-	down_right = mm_to_px(3000,2000)
+	#top_left = mm_to_px(0,0)
+	#top_right = mm_to_px(3000,0)
+	#down_left = mm_to_px(0,2000)
+	#down_right = mm_to_px(3000,2000)
 	
 	
 	#wall_top = Wall(top_left, top_right)
