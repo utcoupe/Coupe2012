@@ -19,7 +19,7 @@ class Robot(EngineObject):
 		self.collision_type = COLLTYPE_ROBOT
 		
 		self.mass = 10
-		self.poly_points = list(map(mm_to_px,[(100,0),(160,0),(280,90),(280,230),(160,320),(100,320),(0,290),(0,30)]))
+		self.poly_points = list(map(lambda p: mm_to_px(*p),[(100,0),(160,0),(280,90),(280,230),(160,320),(100,320),(0,290),(0,30)]))
 
 		self.goals = []
 
@@ -58,7 +58,7 @@ class Robot(EngineObject):
 		@param x px
 		@param y px
 		"""
-		self.cmd_goto(*list(map(px_to_mm,(x,y,500))))
+		self.cmd_goto(*px_to_mm(x,y,500))
 	
 	def cmd_goto(self, x, y, v):
 		"""
@@ -67,7 +67,7 @@ class Robot(EngineObject):
 		@param v ~~
 		"""
 		self.to_send.append((CANAL_ASSERV,"goto ok"))
-		self.goals.append(tuple(map(mm_to_px,(x,y,v))))
+		self.goals.append(mm_to_px(x,y,v))
 	
 	
 	def cmd_gotor(self, x, y, v): pass

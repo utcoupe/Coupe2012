@@ -11,7 +11,7 @@ from pygame.color import *
 class MotorGraphic():	
 	def __init__(self):
 		pg.init()
-		self.screen = pg.display.set_mode(mm_to_px((3000, 2000)))
+		self.screen = pg.display.set_mode(mm_to_px(3000, 2000))
 		self.clock = pg.time.Clock()
 		self.objects = []
 		self.onMouseEvents = []

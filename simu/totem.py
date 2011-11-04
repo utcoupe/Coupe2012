@@ -10,7 +10,7 @@ class Totem(EngineObject):
 		self.t = POLY
 		self.color = "brown"
 		self.mass = pm.inf
-		self.poly_points = list(map(mm_to_px,[(0,0),(250,0),(250,250),(0,250)]))
+		self.poly_points = list(map(lambda p: mm_to_px(*p),[(0,0),(250,0),(250,250),(0,250)]))
 		self.posinit = position
 		self.collision_type = COLLTYPE_WALL
 
