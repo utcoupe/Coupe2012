@@ -9,13 +9,15 @@ from pymunk import Vec2d
 
 class MotorPhysic:
 	""" unité : mm """
-	def __init__(self, draw_collision):
+	def __init__(self):
 		self.space = pm.Space()
 		self.space.gravity = (0.0, 0.0)
-		self.space.add_collision_handler(0, 0, None, None, draw_collision,None)
 		self.objects = []
 		self.coef_frot = 0.85
 
+	def add_collision_handler(self, colltype1, colltype2, f):
+		self.space.add_collision_handler(colltype1, colltype2, None, None, f, None)
+	
 	def step(self, dt):
 		self.space.step(dt)
 		for o in self.objects:
@@ -36,10 +38,10 @@ class MotorPhysic:
 			body.position = obj.posinit[0], obj.posinit[1]
 			shape = pm.Poly(body, obj.poly_points, Vec2d(0,0))
 			shape.friction = 0.5
-			shape.collision_type = COLLTYPE_DEFAULT
 		elif obj.t == WALL:
 			body = pm.Body(pm.inf, pm.inf)
 			shape = pm.Segment(body, obj.inita, obj.initb, 0.0)
+		shape.collision_type = obj.collision_type
 		obj.shape = shape
 		obj.body = body
 		self.space.add(body, shape)

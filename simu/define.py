@@ -1,10 +1,16 @@
 # -*- coding: utf-8 -*-
 
+FPS					= 60
+
+
 CIRCLE				= 0
 POLY				= 1
 WALL				= 2
 
 COLLTYPE_DEFAULT	= 0
+COLLTYPE_WALL		= 1
+COLLTYPE_ROBOT		= 2
+COLLTYPE_CD			= 3
 
 
 class EngineObject:

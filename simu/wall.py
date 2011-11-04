@@ -9,5 +9,6 @@ class Wall(EngineObject):
 		self.color = "black"
 		self.inita = posa
 		self.initb = posb
+		self.collision_type = COLLTYPE_WALL
 
 	

@@ -12,5 +12,6 @@ class Tour(EngineObject):
 		self.mass = pm.inf
 		self.radius = mm_to_px(150)
 		self.color = "green"
+		self.collision_type = COLLTYPE_WALL
 
 

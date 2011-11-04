@@ -43,7 +43,7 @@ class MotorGraphic():
 		
 		### Flip screen
 		pg.display.flip()
-		self.clock.tick(200)
+		self.clock.tick(FPS)
 		pg.display.set_caption( "fps: " + str(self.clock.get_fps()))
 
 		### Events
@@ -83,7 +83,7 @@ class MotorGraphic():
 	
 	def draw_collision(self, space, arb):
 		for c in arb.contacts:
-			r = 3 #min(10, max( 3, abs(c.distance*5) ))
+			r = 5 #min(10, max( 3, abs(c.distance*5) ))
 			r = int(r)
 			p = tuple(map(int, c.position))
 			self.collisions_to_draw.append((p, r))

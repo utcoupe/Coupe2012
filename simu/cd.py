@@ -11,5 +11,6 @@ class Cd(EngineObject):
 		self.mass = 1
 		self.radius = mm_to_px(60)
 		self.color = color
+		self.collision_type = COLLTYPE_CD
 
 
