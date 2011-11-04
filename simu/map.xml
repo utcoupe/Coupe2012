@@ -15,6 +15,10 @@
 	<totem x="1100" y="1000" />
 	<totem x="1900" y="1000" />
 	
+	<lingo x="400" y="840" angle="-5" />
+	<lingo x="2600" y="840" angle="5" />
+	<lingo x="1500" y="2353" angle="90" />
+	
 	<tour />
 
 	<cd x="1230" y="1150" color="white" />
