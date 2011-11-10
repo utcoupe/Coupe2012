@@ -14,7 +14,7 @@ class MotorGraphic():
 		self.screen = pg.display.set_mode(mm_to_px(3000, 2000))
 		self.clock = pg.time.Clock()
 		self.objects = []
-		self.onMouseEvents = []
+		self.onEvents = []
 		self.collisions_to_draw = []
 		self.map_img = pg.image.load("map.jpg")
 		self.map_img=pg.transform.scale(self.map_img,(self.screen.get_width(),self.screen.get_height()))
@@ -52,16 +52,15 @@ class MotorGraphic():
 				return False
 			elif event.type == KEYDOWN and event.key == K_ESCAPE:
 				return False
-			elif event.type == MOUSEBUTTONDOWN and event.button == 1: # LMB
-				p = event.pos
-				for f in self.onMouseEvents: f(p[0], p[1])
+			else:
+				for f in self.onEvents: f(event)
 
 		return True
 	
 	def add(self, obj):
 		self.objects.append(obj)
 		try:
-			self.onMouseEvents.append(obj.onMouseEvent)
+			self.onEvents.append(obj.onEvent)
 		except:
 			pass
 

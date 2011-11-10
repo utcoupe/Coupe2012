@@ -4,22 +4,22 @@ import random
 import math
 
 import pymunk as pm
+from pygame.locals import *
 
 from define import *
-from pince import *
 
 import collections
 
+
 class Robot(EngineObject):
-	def __init__(self, position):
-		self.posinit = position
-		self.pince = Pince()
+	def __init__(self, mass, position, color, poly_points):
 		self.t = POLY
-		self.color = "black"
 		self.collision_type = COLLTYPE_ROBOT
 		
-		self.mass = 10
-		self.poly_points = list(map(lambda p: mm_to_px(*p),[(100,0),(160,0),(280,90),(280,230),(160,320),(100,320),(0,290),(0,30)]))
+		self.mass = mass
+		self.posinit = position
+		self.color = color
+		self.poly_points = list(poly_points)
 
 		self.goals = []
 
@@ -53,12 +53,10 @@ class Robot(EngineObject):
 				self.body._set_velocity((vx,vy))
 				self.body._set_angle(a)
 	
-	def onMouseEvent(self, x, y):
-		"""
-		@param x px
-		@param y px
-		"""
-		self.cmd_goto(*px_to_mm(x,y,500))
+	def onEvent(self, event):
+		if event.type == MOUSEBUTTONDOWN:
+			p = event.pos
+			self.cmd_goto(*px_to_mm(p[0],p[1],500))
 	
 	def cmd_goto(self, x, y, v):
 		"""
@@ -68,7 +66,6 @@ class Robot(EngineObject):
 		"""
 		self.to_send.append((CANAL_ASSERV,"goto ok"))
 		self.goals.append(mm_to_px(x,y,v))
-	
 	
 	def cmd_gotor(self, x, y, v): pass
 
