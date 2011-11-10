@@ -9,6 +9,10 @@ Déplacer petit robot: clic droit
 
 Déplacer adversaire: idem + ctrl
 
+IRC:
+voir les canaux dans define.py
+Chaque robot défini les canaux sur les quels il veut se connecter
+
 @author Thomas Recouvreux
 @author Pierre-Henry Fricot
 @author Cédric Bache
