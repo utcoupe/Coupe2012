@@ -19,16 +19,26 @@ class EngineObject:
 
 
 def mm_to_px(*args):
+	def f(a):
+		if type(a) == tuple:
+			return mm_to_px(*a)
+		else:
+			return int(a / PX_TO_MM)
 	if len(args) == 1:
-		return int(args[0] / PX_TO_MM)
+		return f(args[0])
 	else:
-		return tuple(map(lambda v: int(v / PX_TO_MM), args))
+		return tuple(map(lambda v: f(v), args))
 
 def px_to_mm(*args):
+	def f(a):
+		if type(a) == tuple:
+			return mm_to_px(*a)
+		else:
+			return int(a * PX_TO_MM)
 	if len(args) == 1:
-		return int(args[0] * PX_TO_MM)
+		return f(args[0])
 	else:
-		return tuple(map(lambda v: int(v * PX_TO_MM), args))
+		return tuple(map(lambda v: f(v), args))
 
 
 CANAL_ASSERV		= "#asserv"
