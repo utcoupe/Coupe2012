@@ -76,7 +76,7 @@ class Robot(EngineObject):
 
 	def cmd_turnr(self, a, v): pass
 
-	def cmd_acalip(self, c): pass
+	def cmd_acalib(self, c): pass
 
 	def cmd_stop(self): pass
 

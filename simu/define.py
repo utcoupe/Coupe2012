@@ -19,6 +19,10 @@ class EngineObject:
 
 
 def mm_to_px(*args):
+	"""
+	@param args une liste ou un atom de valeurs ou de positions
+	@param la veleur ou la liste convertie
+	"""
 	def f(a):
 		if type(a) == tuple:
 			return mm_to_px(*a)
@@ -30,6 +34,10 @@ def mm_to_px(*args):
 		return tuple(map(lambda v: f(v), args))
 
 def px_to_mm(*args):
+	"""
+	@param args une liste ou un atom de valeurs ou de positions
+	@param la veleur ou la liste convertie
+	"""
 	def f(a):
 		if type(a) == tuple:
 			return mm_to_px(*a)
