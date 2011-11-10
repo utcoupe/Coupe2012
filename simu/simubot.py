@@ -17,9 +17,8 @@ from define import *
 
 
 class SimuIrcBot(ircbot.SingleServerIRCBot):
-	def __init__(self, bigrobot, minirobot, server_ip, server_port):
-		self.bigrobot = bigrobot
-		self.minirobot = minirobot
+	def __init__(self, robots, server_ip, server_port):
+		self.robots = robots
 		self.serv = None
 		self.nickname = "simubot"
 		ircbot.SingleServerIRCBot.__init__(self,
@@ -48,8 +47,8 @@ class SimuIrcBot(ircbot.SingleServerIRCBot):
 		Notez qu'on ne peut rejoindre les canaux auparavant.
 		"""
 		self.serv = serv
-		for c in [CANAL_ASSERV, CANAL_ASSERV+SUFFIX_MINI]:
-			serv.join(c)
+		for r in self.robots:
+			serv.join(r.canal_asserv)
 
 	def on_pubmsg(self, serv, ev):
 		"""
@@ -64,14 +63,11 @@ class SimuIrcBot(ircbot.SingleServerIRCBot):
 		f_name = msg_split[0]
 		params = msg_split[1:]
 
-		if canal[:len(CANAL_ASSERV)] == CANAL_ASSERV:
-			self.onMsgFromAsserv(canal, f_name, params)
+		for r in self.robots:
+			if canal == r.canal_asserv:
+				self.onMsgFromAsserv(canal, r, f_name, params)
 
-	def onMsgFromAsserv(self, canal, f_name, params):
-		if len(canal) == len(CANAL_ASSERV):
-			robot = self.bigrobot
-		else:
-			robot = self.minirobot
+	def onMsgFromAsserv(self, canal, robot, f_name, params):
 		if f_name == "id":
 			send("asserv")
 		elif f_name == "ping":
@@ -124,10 +120,11 @@ class SimuIrcBot(ircbot.SingleServerIRCBot):
 
 	def loop_send(self):
 		while self.running:
-			canal, msg = self.robot.get_msg()
-			while canal:
-				self.send(canal,msg)
-				canal, msg = self.robot.get_msg()
+			for r in self.robots:
+				canal, msg = r.get_msg()
+				while canal:
+					self.send(canal,msg)
+					canal, msg = r.get_msg()
 			time.sleep(0.01)
 				
 	

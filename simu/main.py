@@ -4,6 +4,11 @@
 """
 Simulateur permettant de simuler un match d'eurobot.
 
+Déplacer gros robot: clic gauche
+Déplacer petit robot: clic droit
+
+Déplacer adversaire: idem + ctrl
+
 @author Thomas Recouvreux
 @author Pierre-Henry Fricot
 @author Cédric Bache
@@ -46,9 +51,11 @@ def load_map(filename,engine):
 import threading
 
 if __name__ == "__main__":
-	bigrobot = BigRobot(mm_to_px(250,250), "blue")
-	minirobot = MiniRobot(mm_to_px(400,250), "blue")
-	ircbot = SimuIrcBot(bigrobot, minirobot, "127.0.0.1", 6667)
+	bigrobot = BigRobot(mm_to_px(250,250), "blue", 1)
+	minirobot = MiniRobot(mm_to_px(400,250), "blue", 1)
+	bigrobot2 = BigRobot(mm_to_px(3000-250,250), "red", 2)
+	minirobot2 = MiniRobot(mm_to_px(3000-400,250), "red", 2)
+	ircbot = SimuIrcBot((bigrobot, minirobot, bigrobot2, minirobot2), "127.0.0.1", 6667)
 	engine = Engine(ircbot.stop)
 	try:
 		t = threading.Thread(None,ircbot.start,"simuircbot")
@@ -60,6 +67,8 @@ if __name__ == "__main__":
 	
 	engine.add(bigrobot)
 	engine.add(minirobot)
+	engine.add(bigrobot2)
+	engine.add(minirobot2)
 		
 	
 	engine.start()
