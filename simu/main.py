@@ -46,19 +46,19 @@ def load_map(filename,engine):
 import threading
 
 if __name__ == "__main__":
-	robot = BigRobot(mm_to_px(250,250), "blue")
+	bigrobot = BigRobot(mm_to_px(250,250), "blue")
 	minirobot = MiniRobot(mm_to_px(400,250), "blue")
-	ircbot = SimuIrcBot(robot, "localhost", 6667)
+	ircbot = SimuIrcBot(bigrobot, minirobot, "127.0.0.1", 6667)
 	engine = Engine(ircbot.stop)
 	try:
 		t = threading.Thread(None,ircbot.start,"simuircbot")
-		#t.start()
+		t.start()
 	except Exception as ex:
 		print(ex)
 		
 	load_map("map.xml",engine)
 	
-	engine.add(robot)
+	engine.add(bigrobot)
 	engine.add(minirobot)
 		
 	

@@ -64,7 +64,11 @@ def px_to_mm(*args):
 	else:
 		return tuple(map(lambda v: f(v), args))
 
+#####
+### IRC
+#####
 
+SUFFIX_MINI			= "mini"
 CANAL_ASSERV		= "#asserv"
 
 
