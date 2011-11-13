@@ -19,6 +19,17 @@ class MotorGraphic():
 		self.map_img = pg.image.load("map.jpg")
 		self.map_img=pg.transform.scale(self.map_img,(self.screen.get_width(),self.screen.get_height()))
 
+	def draw_obj(self, obj):
+		if obj.t == CIRCLE:
+			self.draw_circle(obj.shape, THECOLORS[obj.color])
+		elif obj.t == POLY:
+			self.draw_poly(obj.shape, THECOLORS[obj.color])
+		elif obj.t == WALL:
+			self.draw_segment(obj.shape, THECOLORS[obj.color])
+		else:
+			raise Exception("MotorGraphic.draw_obj : type '%s' doesn't exist"%obj.t)
+		for o in obj.custom_objects:
+			self.draw_obj(o)
 
 	def step(self):
 		### Clear screen
@@ -29,12 +40,7 @@ class MotorGraphic():
 
 		### Draw
 		for obj in self.objects :
-			if obj.t == CIRCLE:
-				self.draw_circle(obj.shape, THECOLORS[obj.color])
-			elif obj.t == POLY:
-				self.draw_poly(obj.shape, THECOLORS[obj.color])
-			elif obj.t == WALL:
-				self.draw_segment(obj.shape, THECOLORS[obj.color])
+			self.draw_obj(obj)
 
 		### Draw collisions
 		for p,r in self.collisions_to_draw:
@@ -86,3 +92,8 @@ class MotorGraphic():
 			r = int(r)
 			p = tuple(map(int, c.position))
 			self.collisions_to_draw.append((p, r))
+
+
+	def remove(self, obj):
+		self.objects.remove(obj)
+	

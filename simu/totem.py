@@ -7,6 +7,7 @@ import pymunk as pm
 
 class Totem(EngineObject):
 	def __init__(self,position):
+		EngineObject.__init__(self)
 		self.t = POLY
 		self.color = "brown"
 		self.mass = pm.inf

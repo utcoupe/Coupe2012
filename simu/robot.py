@@ -3,14 +3,17 @@
 import random
 import math
 
+import pymunk
 
 from define import *
 
 import collections
 
 
+
 class Robot(EngineObject):
-	def __init__(self, mass, position, color, poly_points):
+	def __init__(self, mass, position, color, poly_points, *custom_objects):
+		EngineObject.__init__(self, *custom_objects)
 		self.t = POLY
 		self.collision_type = COLLTYPE_ROBOT
 		
@@ -18,13 +21,11 @@ class Robot(EngineObject):
 		self.posinit = position
 		self.color = color
 		self.poly_points = list(poly_points)
+		
 
 		self.goals = []
-
 		self.to_send = collections.deque()
-
 		self.shift_on = False
-
 		self.canal_asserv = CANAL_ASSERV
 	
 	def get_msg(self):

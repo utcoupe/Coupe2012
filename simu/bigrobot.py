@@ -6,6 +6,15 @@ from define import *
 import robot
 from pince import *
 
+class Rouleau(EngineObject):
+	def __init__(self, offset):
+		EngineObject.__init__(self)
+		self.t = POLY
+		self.color = "orange"
+		self.poly_points = list(map(lambda p: mm_to_px(*p),[(0,0),(170,0),(170,170),(0,170)]))
+		self.offset = offset
+		self.collision_type = COLLTYPE_ROULEAU
+
 
 class BigRobot(robot.Robot):
 	def __init__(self, position, color, team):
@@ -13,7 +22,8 @@ class BigRobot(robot.Robot):
 			10,
 			position,
 			color,
-			mm_to_px((100,0),(160,0),(280,90),(280,230),(160,320),(100,320),(0,290),(0,30))
+			mm_to_px((100,0),(160,0),(280,90),(280,230),(160,320),(100,320),(0,290),(0,30)),
+			Rouleau(mm_to_px(0,-85))
 		)
 		self.pince = Pince()
 		if team == 1:

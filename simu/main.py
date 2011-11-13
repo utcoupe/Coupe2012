@@ -63,7 +63,7 @@ if __name__ == "__main__":
 	engine = Engine(ircbot.stop)
 	try:
 		t = threading.Thread(None,ircbot.start,"simuircbot")
-		t.start()
+		#t.start()
 	except Exception as ex:
 		print(ex)
 		
@@ -73,7 +73,7 @@ if __name__ == "__main__":
 	engine.add(minirobot)
 	engine.add(bigrobot2)
 	engine.add(minirobot2)
-		
+
 	
 	engine.start()
 	

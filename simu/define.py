@@ -11,9 +11,14 @@ COLLTYPE_DEFAULT	= 0
 COLLTYPE_WALL		= 1
 COLLTYPE_ROBOT		= 2
 COLLTYPE_CD			= 3
+COLLTYPE_ROULEAU	= 4
 
 
 class EngineObject:
+	def __init__(self, *custom_objects):
+		self.custom_objects = list(custom_objects)
+		self.offset = (0,0)
+	
 	def step(self, dt):
 		pass
 
