@@ -13,9 +13,10 @@ class MiniRobot(robot.Robot):
 			5,
 			position,
 			color,
+			team,
 			mm_to_px((0,0),(0,200),(200,200),(200,0))
 		)
-		if team == 1:
+		if team == BLUE:
 			self.mouse_button = 1 # LMB
 			self.canal_asserv = CANAL_ASSERV+SUFFIX_MINI
 		else:

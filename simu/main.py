@@ -18,6 +18,8 @@ Chaque robot défini les canaux sur les quels il veut se connecter
 @author Cédric Bache
 """
 
+import xml.dom.minidom
+
 from define import *
 
 
@@ -30,7 +32,7 @@ from wall import *
 from cd import *
 from totem import *
 from tour import *
-import xml.dom.minidom
+from match import *
 
 
 def load_map(filename,engine):
@@ -55,12 +57,13 @@ def load_map(filename,engine):
 import threading
 
 if __name__ == "__main__":
-	bigrobot = BigRobot(mm_to_px(250,250), "blue", 1)
-	minirobot = MiniRobot(mm_to_px(400,250), "blue", 1)
-	bigrobot2 = BigRobot(mm_to_px(3000-250,250), "red", 2)
-	minirobot2 = MiniRobot(mm_to_px(3000-400,250), "red", 2)
+	match = Match()
+	bigrobot = BigRobot(mm_to_px(250,250), "blue", BLUE)
+	minirobot = MiniRobot(mm_to_px(400,250), "blue", BLUE)
+	bigrobot2 = BigRobot(mm_to_px(3000-250,250), "red", RED)
+	minirobot2 = MiniRobot(mm_to_px(3000-400,250), "red", RED)
 	ircbot = SimuIrcBot((bigrobot, minirobot, bigrobot2, minirobot2), "127.0.0.1", 6667)
-	engine = Engine(ircbot.stop)
+	engine = Engine(ircbot.stop, match)
 	try:
 		t = threading.Thread(None,ircbot.start,"simuircbot")
 		#t.start()

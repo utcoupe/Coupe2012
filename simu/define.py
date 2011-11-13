@@ -14,6 +14,12 @@ COLLTYPE_CD			= 3
 COLLTYPE_ROULEAU	= 4
 
 
+BLUE				= 0
+RED					= 1
+
+T_CD				= 0
+T_LINGOT			= 1
+
 class EngineObject:
 	def __init__(self, *custom_objects):
 		self.custom_objects = list(custom_objects)

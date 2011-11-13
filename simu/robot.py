@@ -12,7 +12,7 @@ import collections
 
 
 class Robot(EngineObject):
-	def __init__(self, mass, position, color, poly_points, *custom_objects):
+	def __init__(self, mass, position, color, team, poly_points, *custom_objects):
 		EngineObject.__init__(self, *custom_objects)
 		self.t = POLY
 		self.collision_type = COLLTYPE_ROBOT
@@ -21,7 +21,7 @@ class Robot(EngineObject):
 		self.posinit = position
 		self.color = color
 		self.poly_points = list(poly_points)
-		
+		self.team = team
 
 		self.goals = []
 		self.to_send = collections.deque()

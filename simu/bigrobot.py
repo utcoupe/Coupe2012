@@ -18,15 +18,17 @@ class Rouleau(EngineObject):
 
 class BigRobot(robot.Robot):
 	def __init__(self, position, color, team):
+		self.rouleau = Rouleau(mm_to_px(0,-85))
 		robot.Robot.__init__(self,
 			10,
 			position,
 			color,
+			team,
 			mm_to_px((100,0),(160,0),(280,90),(280,230),(160,320),(100,320),(0,290),(0,30)),
-			Rouleau(mm_to_px(0,-85))
+			self.rouleau
 		)
 		self.pince = Pince()
-		if team == 1:
+		if team == BLUE:
 			self.mouse_button = 1 # LMB
 			self.canal_asserv = CANAL_ASSERV
 		else:
