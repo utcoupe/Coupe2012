@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+SEP		= '.'
+
 FPS					= 60
 PX_TO_MM			= 4
 
@@ -67,7 +69,7 @@ def px_to_mm(*args):
 	"""
 	def f(a):
 		if type(a) == tuple or type(a) == list:
-			return mm_to_px(*a)
+			return px_to_mm(*a)
 		else:
 			return int(a * PX_TO_MM)
 	if len(args) == 1:

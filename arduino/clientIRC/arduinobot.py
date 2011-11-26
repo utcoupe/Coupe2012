@@ -94,7 +94,7 @@ class ArduinoBot(mypyircbot.MyPyIrcBot):
 		@param id_cmd l'id de la commande dans le protocole
 		"""
 		global COMPILED_F
-		exec("COMPILED_F = lambda {params}: '{SEP}'.join(['0','0','{id_cmd}',{params}])".format(params=params,SEP=SEP,id_cmd=str(id_cmd).lower()), globals())
+		exec("COMPILED_F = lambda {params}: '{SEP}'.join(['{id_cmd}',{params}])".format(params=params,SEP=SEP,id_cmd=str(id_cmd).lower()), globals())
 		COMPILED_F.__doc__ = doc.strip()
 		f_name = "cmd_"+cmd_name.lower()
 		setattr(self, f_name, COMPILED_F)

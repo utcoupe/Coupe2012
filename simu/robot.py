@@ -27,6 +27,17 @@ class Robot(EngineObject):
 		self.to_send = collections.deque()
 		self.shift_on = False
 		self.canal_asserv = CANAL_ASSERV
+
+		self.stop = False
+
+	def x(self):
+		return px_to_mm(self.body.position[0])
+
+	def y(self):
+		return px_to_mm(self.body.position[1])
+
+	def a(self):
+		return int(math.degrees(self.body.angle))
 	
 	def get_msg(self):
 		if self.to_send:
@@ -37,7 +48,7 @@ class Robot(EngineObject):
 	def step(self, dt):
 		self.body._set_torque(0)
 		self.body._set_angular_velocity(0)
-		if self.goals:
+		if not self.stop and self.goals:
 			gx,gy,v = self.goals[0]
 			x,y = self.body.position
 			dx = gx - x
@@ -54,7 +65,9 @@ class Robot(EngineObject):
 				vy = dy * v / d
 				self.body._set_velocity((vx,vy))
 				self.body._set_angle(a)
-	
+
+	def send(self, canal, *msg):
+		self.to_send.append((self.canal_asserv,SEP.join(map(str, msg))))
 	
 	def cmd_goto(self, x, y, v):
 		"""
@@ -62,7 +75,7 @@ class Robot(EngineObject):
 		@param y mmm
 		@param v ~~
 		"""
-		self.to_send.append((self.canal_asserv,"goto ok"))
+		self.send(self.canal_asserv,"goto ok")
 		self.goals.append(mm_to_px(x,y,v))
 	
 	def cmd_gotor(self, x, y, v): pass
@@ -73,9 +86,18 @@ class Robot(EngineObject):
 
 	def cmd_acalib(self, c): pass
 
-	def cmd_stop(self): pass
+	def cmd_cancel(self):
+		self.goals = []
 
-	def cmd_resumt(self): pass
+	def cmd_stop(self):
+		self.stop = True
+
+	def cmd_resume(self):
+		self.stop = False
+	
+	def cmd_pos(self):
+		self.send(self.canal_asserv, self.x(), self.y(), self.a())
+
 	
 	
 
