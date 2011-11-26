@@ -14,8 +14,6 @@ void initSerialLink()
 ///
 void sendMessage(int id, int i)
 {
-	Serial.print(-1);
-	Serial.print(C_SEP_SEND);
 	Serial.print(id);
 	Serial.print(C_SEP_SEND);
 	Serial.println(i);
@@ -26,8 +24,6 @@ void sendMessage(int id, int i)
 ///
 void sendMessage(int id, char* str)
 {
-	Serial.print(-1);
-	Serial.print(C_SEP_SEND);
 	Serial.print(id);
 	Serial.print(C_SEP_SEND);
 	Serial.println(str);
@@ -38,8 +34,6 @@ void sendMessage(int id, char* str)
 ///
 void sendMessage(int id, int i, char* str)
 {
-	Serial.print(-1);
-	Serial.print(C_SEP_SEND);
 	Serial.print(id);
 	Serial.print(C_SEP_SEND);
 	Serial.print(i);
@@ -52,8 +46,6 @@ void sendMessage(int id, int i, char* str)
 ///
 void sendMessage(int id, char* str, int i)
 {
-	Serial.print(-1);
-	Serial.print(C_SEP_SEND);
 	Serial.print(id);
 	Serial.print(C_SEP_SEND);
 	Serial.print(str);
@@ -67,8 +59,6 @@ void sendMessage(int id, char* str, int i)
 ///
 void sendMessage(int id, int *tabi, int size)
 {
-	Serial.print(-1);
-	Serial.print(C_SEP_SEND);
 	Serial.print(id);
 	Serial.print(C_SEP_SEND);
 	for (int i=0; i<size-1; ++i)
@@ -85,8 +75,6 @@ void sendMessage(int id, int *tabi, int size)
 ///
 void sendMessage(int id, char** tabs, int nbStr, int *tabi, int nbInt)
 {
-	Serial.print(-1);
-	Serial.print(C_SEP_SEND);
 	Serial.print(id);
 	Serial.print(C_SEP_SEND);
 	
@@ -110,8 +98,6 @@ void sendMessage(int id, char** tabs, int nbStr, int *tabi, int nbInt)
 ///
 void sendMessage(int id, char cmd, int* tabi, int nbInt, char** tabs, int nbStr)
 {
-	Serial.print(-1);
-	Serial.print(C_SEP_SEND);
 	Serial.print(id);
 	Serial.print(C_SEP_SEND);
 	
@@ -141,7 +127,7 @@ void readIncomingData()
 
 	/*
 	 * A propos du protocole :
-	 * id_from:id:id_cmd:arg1:arg2:...
+	 * id_cmd:arg1:arg2:...
 	 * - un message se termine par \n
 	 */
 
@@ -165,7 +151,7 @@ void readIncomingData()
 			{
 				currentArg[currentArgIndex] = '\0';
 				args[argsIndex] = atoi(currentArg);
-				cmd(args[1],args[2],args+3,argsIndex-2); // from, id_cmd, *args, sizeArgs
+				cmd(args[0],args[0],args+1,argsIndex); // id_cmd, *args, sizeArgs
   				argsIndex = 0;
 				currentArgIndex = 0;
 				break;
