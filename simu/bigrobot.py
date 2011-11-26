@@ -17,7 +17,9 @@ class Rouleau(EngineObject):
 
 
 class BigRobot(robot.Robot):
+	
 	def __init__(self, position, color, team):
+		nbCd=0
 		self.rouleau = Rouleau(mm_to_px(0,-85))
 		robot.Robot.__init__(self,
 			10,
