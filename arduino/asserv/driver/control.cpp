@@ -285,7 +285,7 @@ void positionControl(int* value_pwm_left, int* value_pwm_right){
 	 * Si cet angle est superieur a PI/2 en valeur absolue, le robot recule en marche arriere (= il recule)
 	 */
 	int sens = 1;
-	if(current_goal.phase == PHASE_CORRECTION and abs(currentAlpha) > M_PI/2){/* c'est a dire qu'on a meilleur temps de partir en marche arriere */
+	if(current_goal.phase != PHASE_1 and abs(currentAlpha) > M_PI/2){/* c'est a dire qu'on a meilleur temps de partir en marche arriere */
 		sens = -1;
 		currentAlpha = moduloPI(M_PI + angularCoeff - robot_state.angle);
 	}
@@ -296,53 +296,47 @@ void positionControl(int* value_pwm_left, int* value_pwm_right){
  	double dx = current_goal.x-robot_state.x;
 	double dy = current_goal.y-robot_state.y;
 	currentDelta = -sens * sqrt(dx*dx+dy*dy); // - parce que l'ecart doit etre negatif pour partir en avant
-
-	/*
-	Serial.print("coeff:");
-	Serial.print(angularCoeff);
-	Serial.print("  angle:");
-	Serial.print(robot_state.angle);
-	Serial.print("  alpha:");
-	Serial.print(currentAlpha);
-	Serial.print("  delta:");
-	Serial.print(currentDelta);
-	Serial.print("  x:");
-	Serial.print(current_goal.x);
-	Serial.print("  y:");
-	Serial.println(current_goal.y);
-	*/
 	
 	
-	
-	/* on limite la vitesse lineaire quand on s'approche du but */
-	if (abs(currentDelta)<250){
-		pid4DeltaControl.SetOutputLimits(-min(50,current_goal.speed),min(50,current_goal.speed)); // composante liee a la vitesse lineaire
-		pid4AlphaControl.SetOutputLimits(-150,150); // composante liee a la vitesse de rotation
-	}
-	else if (abs(currentDelta)<500){
-		pid4DeltaControl.SetOutputLimits(-min(60,current_goal.speed),min(60,current_goal.speed)); // composante liee a la vitesse lineaire
-		pid4AlphaControl.SetOutputLimits(-150,150); // composante liee a la vitesse de rotation
-	}
-	else if (abs(currentDelta)<750){
-		pid4DeltaControl.SetOutputLimits(-min(80,current_goal.speed),min(80,current_goal.speed)); // composante liee a la vitesse lineaire
-		pid4AlphaControl.SetOutputLimits(-150,150); // composante liee a la vitesse de rotation
-	}
-	else if (abs(currentDelta)<1000){
-		pid4DeltaControl.SetOutputLimits(-min(100,current_goal.speed),min(100,current_goal.speed)); // composante liee a la vitesse lineaire
-		pid4AlphaControl.SetOutputLimits(-150,150); // composante liee a la vitesse de rotation
-	}
-	else if (abs(currentDelta)<1250){
-		pid4DeltaControl.SetOutputLimits(-min(150,current_goal.speed),min(150,current_goal.speed)); // composante liee a la vitesse lineaire
-		pid4AlphaControl.SetOutputLimits(-150,150); // composante liee a la vitesse de rotation
-	}
-	else if (abs(currentDelta)<1500){
-		pid4DeltaControl.SetOutputLimits(-min(200,current_goal.speed),min(200,current_goal.speed)); // composante liee a la vitesse lineaire
-		pid4AlphaControl.SetOutputLimits(-150,150); // composante liee a la vitesse de rotation
-	}
 
 	switch(current_goal.phase)
 	{
 		case PHASE_1:
+			if(abs(currentDelta)<1500) /*si l'ecart n'est plus que de 6 mm, on considere la consigne comme atteinte*/
+			{
+				current_goal.phase = PHASE_DECEL;
+			}
+		break;
+		
+		case PHASE_DECEL:
+			if (fifoIsEmpty())
+			{
+				/* on limite la vitesse lineaire quand on s'approche du but */
+				if (abs(currentDelta)<250){
+					pid4DeltaControl.SetOutputLimits(-min(50,current_goal.speed),min(50,current_goal.speed)); // composante liee a la vitesse lineaire
+					pid4AlphaControl.SetOutputLimits(-150,150); // composante liee a la vitesse de rotation
+				}
+				else if (abs(currentDelta)<500){
+					pid4DeltaControl.SetOutputLimits(-min(60,current_goal.speed),min(60,current_goal.speed)); // composante liee a la vitesse lineaire
+					pid4AlphaControl.SetOutputLimits(-150,150); // composante liee a la vitesse de rotation
+				}
+				else if (abs(currentDelta)<750){
+					pid4DeltaControl.SetOutputLimits(-min(80,current_goal.speed),min(80,current_goal.speed)); // composante liee a la vitesse lineaire
+					pid4AlphaControl.SetOutputLimits(-150,150); // composante liee a la vitesse de rotation
+				}
+				else if (abs(currentDelta)<1000){
+					pid4DeltaControl.SetOutputLimits(-min(100,current_goal.speed),min(100,current_goal.speed)); // composante liee a la vitesse lineaire
+					pid4AlphaControl.SetOutputLimits(-150,150); // composante liee a la vitesse de rotation
+				}
+				else if (abs(currentDelta)<1250){
+					pid4DeltaControl.SetOutputLimits(-min(150,current_goal.speed),min(150,current_goal.speed)); // composante liee a la vitesse lineaire
+					pid4AlphaControl.SetOutputLimits(-150,150); // composante liee a la vitesse de rotation
+				}
+				else {
+					pid4DeltaControl.SetOutputLimits(-min(200,current_goal.speed),min(200,current_goal.speed)); // composante liee a la vitesse lineaire
+					pid4AlphaControl.SetOutputLimits(-150,150); // composante liee a la vitesse de rotation
+				}
+			}
 			if(abs(currentDelta) < 5*ENC_MM_TO_TICKS) /*si l'ecart n'est plus que de 6 mm, on considere la consigne comme atteinte*/
 			{
 				//envoi du message
@@ -361,6 +355,8 @@ void positionControl(int* value_pwm_left, int* value_pwm_right){
 		break;
 
 		case PHASE_CORRECTION:
+			pid4DeltaControl.SetOutputLimits(-min(50,current_goal.speed),min(50,current_goal.speed)); // composante liee a la vitesse lineaire
+			pid4AlphaControl.SetOutputLimits(-150,150); // composante liee a la vitesse de rotation
 			if (abs(currentDelta) < 5*ENC_MM_TO_TICKS)
 			{
 				current_goal.phase = PHASE_ARRET;
@@ -370,7 +366,7 @@ void positionControl(int* value_pwm_left, int* value_pwm_right){
 		break;
 	}
 
-	if (current_goal.phase != PHASE_1 and !fifoIsEmpty()) { //on passe a la tache suivante si la fifo n'est pas vide
+	if (!fifoIsEmpty() and (current_goal.phase == PHASE_ARRET or current_goal.phase == PHASE_CORRECTION)) { //on passe a la tache suivante si la fifo n'est pas vide
 		current_goal.isReached = true;
 		initDone = false;
 	}
