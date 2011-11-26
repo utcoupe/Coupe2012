@@ -28,6 +28,8 @@ class Robot(EngineObject):
 		self.shift_on = False
 		self.canal_asserv = CANAL_ASSERV
 
+		self.stop = False
+
 	def x(self):
 		return px_to_mm(self.body.position[0])
 
@@ -46,7 +48,7 @@ class Robot(EngineObject):
 	def step(self, dt):
 		self.body._set_torque(0)
 		self.body._set_angular_velocity(0)
-		if self.goals:
+		if not self.stop and self.goals:
 			gx,gy,v = self.goals[0]
 			x,y = self.body.position
 			dx = gx - x
@@ -84,8 +86,15 @@ class Robot(EngineObject):
 
 	def cmd_acalib(self, c): pass
 
-	def cmd_cancel(self): pass
+	def cmd_cancel(self):
+		self.goals = []
 
+	def cmd_stop(self):
+		self.stop = True
+
+	def cmd_resume(self):
+		self.stop = False
+	
 	def cmd_pos(self):
 		self.send(self.canal_asserv, self.x(), self.y(), self.a())
 
