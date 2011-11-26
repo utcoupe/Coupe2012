@@ -7,16 +7,16 @@ FILE_DIR  = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(os.path.join(FILE_DIR,"..","lib","py3irc"))
 
 
-import myircbot
+import mypyircbot
 
 import subprocess
 import glob
 import re
 
 
-class MonitoringBot(myircbot.MyIRCBot):
+class MonitoringBot(mypyircbot.MyPyIrcBot):
 	def __init__(self, server_ip, server_port):
-		myircbot.MyIRCBot.__init__(self, server_ip, server_port, "monitoringbot", "#monitoring")
+		mypyircbot.MyPyIrcBot.__init__(self, server_ip, server_port, "monitoringbot", "#monitoring")
 		self.load_all_bash()
 
 	def load_all_bash(self):
@@ -74,5 +74,5 @@ class MonitoringBot(myircbot.MyIRCBot):
 
 
 if __name__ == "__main__":
-	bot = MonitoringBot("10.42.43.94", 6667)
+	bot = MonitoringBot("localhost", 6667)
 	bot.start()
