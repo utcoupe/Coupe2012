@@ -34,7 +34,7 @@ monitoring_bat_t = "batterie t"
 //// CONFIG DE LA MAP
 conf_map = 
 {
-    size=0.2
+    size=0.18
     width=3000.
     height=2100.
     robot_rayon=150.
