@@ -349,13 +349,7 @@ void positionControl(int* value_pwm_left, int* value_pwm_right){
 				sendMessage(current_goal.id,2);
 				current_goal.isMessageSent = true;
 				
-				if(!fifoIsEmpty()) { //on passe a la tache suivante
-					current_goal.isReached = true;
-					initDone = false;
-				}
-				else {
-					current_goal.phase = PHASE_ARRET;
-				}
+				current_goal.phase = PHASE_ARRET;
 			}
 		break;
 
@@ -375,6 +369,12 @@ void positionControl(int* value_pwm_left, int* value_pwm_right){
 		
 		break;
 	}
+
+	if (current_goal.phase != PHASE_1 and !fifoIsEmpty()) { //on passe a la tache suivante si la fifo n'est pas vide
+		current_goal.isReached = true;
+		initDone = false;
+	}
+		
 
 	pid4AlphaControl.Compute();
 	pid4DeltaControl.Compute();
