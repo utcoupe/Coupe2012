@@ -285,10 +285,10 @@ void positionControl(int* value_pwm_left, int* value_pwm_right){
 	 * Si cet angle est superieur a PI/2 en valeur absolue, le robot recule en marche arriere (= il recule)
 	 */
 	int sens = 1;
-	if(abs(currentAlpha) > M_PI/2){/* c'est a dire qu'on a meilleur temps de partir en marche arriere */
-		sens = -1;
-		currentAlpha = moduloPI(M_PI + angularCoeff - robot_state.angle);
-	}
+	//if(abs(currentAlpha) > M_PI/2){/* c'est a dire qu'on a meilleur temps de partir en marche arriere */
+	//	sens = -1;
+	//	currentAlpha = moduloPI(M_PI + angularCoeff - robot_state.angle);
+	//}
 	
 	currentAlpha = -currentAlpha;
 
