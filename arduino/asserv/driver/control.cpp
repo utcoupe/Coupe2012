@@ -354,38 +354,52 @@ void positionControl(int* value_pwm_left, int* value_pwm_right){
 					initDone = false;
 				}
 				else {
-					current_goal.phase = PHASE_MAINTIENT;
+					current_goal.phase = PHASE_ARRET;
 				}
 			}
 		break;
 
-		case PHASE_MAINTIENT:
+		case PHASE_ARRET:
+			if (abs(currentDelta) > 5*ENC_MM_TO_TICKS)
+			{
+				current_goal.phase = PHASE_CORRECTION;
+			}
 		break;
-		
+
+		case PHASE_MAINTIENT:
+			if (abs(currentDelta) < 5*ENC_MM_TO_TICKS)
+			{
+				current_goal.phase = PHASE_ARRET;
+			}
 		default:
+		
 		break;
 	}
 
 	pid4AlphaControl.Compute();
 	pid4DeltaControl.Compute();
 
-	double pwm4Delta = 0.0;
-
-
-	(*value_pwm_right) = output4Delta+output4Alpha;
-	(*value_pwm_left) = output4Delta-output4Alpha;
-	
-	// Débordement
-	if ((*value_pwm_right) > 255)
-		(*value_pwm_right) = 255;
-	else if ((*value_pwm_right) < -255)
-		(*value_pwm_right) = -255;
-	
-	if ((*value_pwm_left) > 255)
-		(*value_pwm_left) = 255;
-	else if ((*value_pwm_left) < -255)
-		(*value_pwm_left) = -255;
-
+	if (current_goal.phase == PHASE_ARRET)
+	{
+		(*value_pwm_right) = 0;
+		(*value_pwm_left) = 0;
+	}
+	else
+	{
+		(*value_pwm_right) = output4Delta+output4Alpha;
+		(*value_pwm_left) = output4Delta-output4Alpha;
+		
+		// Débordement
+		if ((*value_pwm_right) > 255)
+			(*value_pwm_right) = 255;
+		else if ((*value_pwm_right) < -255)
+			(*value_pwm_right) = -255;
+		
+		if ((*value_pwm_left) > 255)
+			(*value_pwm_left) = 255;
+		else if ((*value_pwm_left) < -255)
+			(*value_pwm_left) = -255;
+	}
 }
 
 /*
