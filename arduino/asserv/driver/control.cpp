@@ -285,10 +285,10 @@ void positionControl(int* value_pwm_left, int* value_pwm_right){
 	 * Si cet angle est superieur a PI/2 en valeur absolue, le robot recule en marche arriere (= il recule)
 	 */
 	int sens = 1;
-	//if(abs(currentAlpha) > M_PI/2){/* c'est a dire qu'on a meilleur temps de partir en marche arriere */
-	//	sens = -1;
-	//	currentAlpha = moduloPI(M_PI + angularCoeff - robot_state.angle);
-	//}
+	if(current_goal.phase == PHASE_MAINTIENT and abs(currentAlpha) > M_PI/2){/* c'est a dire qu'on a meilleur temps de partir en marche arriere */
+		sens = -1;
+		currentAlpha = moduloPI(M_PI + angularCoeff - robot_state.angle);
+	}
 	
 	currentAlpha = -currentAlpha;
 
@@ -340,63 +340,51 @@ void positionControl(int* value_pwm_left, int* value_pwm_right){
 		pid4AlphaControl.SetOutputLimits(-150,150); // composante liee a la vitesse de rotation
 	}
 
-	if(abs(currentDelta) < 5*ENC_MM_TO_TICKS) /*si l'ecart n'est plus que de 6 mm, on considere la consigne comme atteinte*/
-		current_goal.phase = PHASE_2;
-	else
-		current_goal.phase = PHASE_1;
+	switch(current_goal.phase)
+	{
+		case PHASE_1:
+			if(abs(currentDelta) < 5*ENC_MM_TO_TICKS) /*si l'ecart n'est plus que de 6 mm, on considere la consigne comme atteinte*/
+			{
+				//envoi du message
+				sendMessage(current_goal.id,2);
+				current_goal.isMessageSent = true;
+				
+				if(!fifoIsEmpty()) { //on passe a la tache suivante
+					current_goal.isReached = true;
+					initDone = false;
+				}
+				else {
+					current_goal.phase = PHASE_MAINTIENT;
+				}
+			}
+		break;
+
+		case PHASE_MAINTIENT:
+		break;
+		
+		default:
+		break;
+	}
 
 	pid4AlphaControl.Compute();
 	pid4DeltaControl.Compute();
 
-	if(current_goal.phase == PHASE_2){
-		(*value_pwm_right) = 0;
-		(*value_pwm_left) = 0;
-	}
-	else{
-		double pwm4Delta = 0.0;
+	double pwm4Delta = 0.0;
 
-		//FIXME probleme de debordemment
-		//alpha 200 delta 255 / delta+alpha = 455 / delta-alpha = 55 / => alpha 200 delta 55
-		//alpha 200 delta -255 / delta+alpha = -55 / delta-alpha = -455 / => alpha 200 delta -55
-		//alpha -200 delta 255 / delta+alpha = 55 / delta-alpha = 455 / => alpha -200 delta 55
-		//alpha -200 delta -255 / delta+alpha = -455 / delta-alpha = -55 / => alpha -200 delta -55
-		/*
-		 Correction by thomas
-		 if(output4Delta+output4Alpha>255 || output4Delta-output4Alpha>255)
-			pwm4Delta = 255-output4Alpha;
-		else if(output4Delta+output4Alpha<-255 || output4Delta-output4Alpha<-255)
-			pwm4Delta = -255+output4Alpha;
-		else
-			pwm4Delta = output4Delta;*/
 
-		(*value_pwm_right) = output4Delta+output4Alpha;
-		(*value_pwm_left) = output4Delta-output4Alpha;
-		
-		// Correction by thomas
-		if ((*value_pwm_right) > 255)
-			(*value_pwm_right) = 255;
-		else if ((*value_pwm_right) < -255)
-			(*value_pwm_right) = -255;
-		
-		if ((*value_pwm_left) > 255)
-			(*value_pwm_left) = 255;
-		else if ((*value_pwm_left) < -255)
-			(*value_pwm_left) = -255;
-	}
-
-	if(current_goal.phase == PHASE_2){
-		if(current_goal.id != -1 && !current_goal.isMessageSent){
-			//le message d'arrivee n'a pas encore ete envoye a l'intelligence
-			//envoi du message
-			sendMessage(current_goal.id,2);
-			current_goal.isMessageSent = true;
-		}
-		/*condition d'arret = si on a atteint le but et qu'un nouveau but attends dans la fifo*/
-		if(!fifoIsEmpty()){ //on passe a la tache suivante
-			current_goal.isReached = true;
-			initDone = false;
-		}
-	}
+	(*value_pwm_right) = output4Delta+output4Alpha;
+	(*value_pwm_left) = output4Delta-output4Alpha;
+	
+	// Débordement
+	if ((*value_pwm_right) > 255)
+		(*value_pwm_right) = 255;
+	else if ((*value_pwm_right) < -255)
+		(*value_pwm_right) = -255;
+	
+	if ((*value_pwm_left) > 255)
+		(*value_pwm_left) = 255;
+	else if ((*value_pwm_left) < -255)
+		(*value_pwm_left) = -255;
 
 }
 
