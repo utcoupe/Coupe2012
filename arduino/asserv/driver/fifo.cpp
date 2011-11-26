@@ -6,7 +6,7 @@
  */
 
 #include "fifo.h"
-#include <math.h>
+#include "math.h"
 #include "wiring.h"
 
 Fifo goals;
