@@ -3,6 +3,8 @@
  *
  */
 
+import stdlib.web.canvas
+
 /*
   Petite surcouche au canvas, pour être un peu plus libre
   Et pour gérer le repére X,Y en orthonormé (base (0,0) en bas a gauche)
@@ -23,7 +25,6 @@ MyCanvas(id, _width, height) =
    rectangle(couleur, x0, y0, x1, y1)=
      do Canvas.set_fill_style(ctx(),{color = couleur})
      do Canvas.fill_rect(ctx(),newx(x0),newy(y1),newx(x1),newy(y0))
-     do Canvas.stroke(ctx())
      void
 
    arc(couleur, x, y, r, a, size) =

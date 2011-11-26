@@ -24,6 +24,7 @@ Grid = {{
         do canvas.rectangle(Color.red,canvas_width-size_bot,0,canvas_width,size_bot)
         do canvas.rectangle(Color.green, 0,f2i(25.*conf_map.size)+size_bot,size_bot,canvas_height)
         do canvas.rectangle(Color.green, canvas_width-size_bot,f2i(25.*conf_map.size)+size_bot,canvas_width,canvas_height)
+        do canvas.line(Color.white, canvas_width/2, 0, [(canvas_width/2, canvas_height)], 5.)
         void
          
 

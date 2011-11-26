@@ -3,7 +3,8 @@
 */
 
 // CONFIG IRC
-server_bot = "10.42.43.94"
+//server_bot = "10.42.43.94"
+server_bot = "127.0.0.1"
 username = "Ihm"
 realname = "Ihm Bot"
 nickname = "IHM"

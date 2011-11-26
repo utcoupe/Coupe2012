@@ -11,3 +11,7 @@ $(EXE): $(FILES)
 
 run: all
 	./$(EXE) --db-local db --port 8181
+
+clean:
+	rm $(EXE)
+	rm _build -r
