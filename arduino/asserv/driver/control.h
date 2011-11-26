@@ -17,7 +17,8 @@
 #define PHASE_4 4
 #define PHASE_5 5
 
-#define PHASE_MAINTIENT	99
+#define PHASE_ARRET			98
+#define PHASE_CORRECTION	99
 
 typedef struct CurrentGoal {
 	int type;
