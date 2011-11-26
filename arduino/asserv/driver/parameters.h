@@ -8,8 +8,6 @@
 #ifndef PARAMETERS_H_
 #define PARAMETERS_H_
 
-#define DEG_TO_RAD M_PI/180.0
-#define RAD_TO_DEG 180.0/M_PI
 
 /* Parametres mecanique du robot */
 #define DIST_MOTOR_AXIS_TO_BACK_MM 122.0 // Distance entre le l'axe des moteurs et l'arriere du robot
