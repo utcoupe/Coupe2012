@@ -92,7 +92,7 @@ void cmd(int id, int id_cmd, int* args, int size){
 			int x_mm = robot.get_x()*ENC_TICKS_TO_MM;
 			int y_mm = robot.get_y()*ENC_TICKS_TO_MM;
 			int a_deg = robot.get_a()*RAD_TO_DEG;
-			int tab[] = {robot.get_x(),robot.get_y(),robot.get_a()};
+			int tab[] = {x_mm,y_mm,a_deg};
 			sendMessage(id,tab,3);
 	        break;
 		}

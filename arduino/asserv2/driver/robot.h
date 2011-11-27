@@ -40,7 +40,7 @@ class Robot
 		void update_state(int dt);
 		void update_motors(int dt);
 		
-		int _x, _y;
+		long int _x, _y;
 		double _a;
 		double _speed;
 		long *_value_left_enc, *_value_right_enc;
