@@ -12,13 +12,13 @@ Rampe::Rampe()
 }
 
 
-void Rampe::compute(int actue, int goal, int speed, int accel, int decel)
+void Rampe::compute(long int actue, long int goal, long int speed, long int accel, long int decel)
 {
-	long time_acc = (long) (speed / accel);
-	int d_acc = (int) (accel * time_acc * time_acc / 2.0);
-	long time_dec = (long) (-speed / decel);
-	int d_dec = (int) (-decel * time_dec * time_dec / 2.0);
-	int d_const = abs(goal - actue) - (d_acc + d_dec);
+	long int time_acc = (long int) (speed / accel);
+	long int d_acc = (long int) (accel * time_acc * time_acc / 2.0);
+	long int time_dec = (long int) (-speed / decel);
+	long int d_dec = (long int) (-decel * time_dec * time_dec / 2.0);
+	long int d_const = abs(goal - actue) - (d_acc + d_dec);
 
 	// cas limite quand la vitesse max ne peut être atteinte
 	if (d_const < 0)
@@ -30,7 +30,7 @@ void Rampe::compute(int actue, int goal, int speed, int accel, int decel)
 		d_acc = accel * time_acc * time_acc / 2.0;
 		d_const = 0;
 	}
-	long time_const = (long) (d_const / speed);
+	long int time_const = (long int) (d_const / speed);
 
 	if (goal > actue)
 		_sens = 1;

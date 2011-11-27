@@ -26,8 +26,8 @@ class Robot
 		Robot(long *value_enc_left, long *value_enc_right, AF_DCMotor * motor_left, AF_DCMotor * motor_right);
 		void update(int dt);
 		void reset_pid();
-		void go_to(int x, int y, double speed = 200);
-		void turn(double a, double speed = 200);
+		void go_to(long int x, long int y, long int speed = 200);
+		void turn(double a, long int speed = 200);
 
 		/* mm */
 		int get_x();
@@ -39,13 +39,20 @@ class Robot
 	private:
 		void update_state(int dt);
 		void update_motors(int dt);
-		
+
+		/* ticks */
 		long int _x, _y;
+		/* rad */
 		double _a;
+		/* ticks/µs */
 		double _speed;
-		long *_value_left_enc, *_value_right_enc;
-		long _prev_value_left_enc, _prev_value_right_enc;
+		/* ticks */
+		long int *_value_left_enc, *_value_right_enc;
+		/* ticks */
+		long int _prev_value_left_enc, _prev_value_right_enc;
+		
 		AF_DCMotor *_motor_left, *_motor_right;
+		
 		Rampe *_rampe_delta, *_rampe_alpha;
 		Goal _goal;
 };

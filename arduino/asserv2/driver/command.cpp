@@ -35,7 +35,11 @@ void cmd(int id, int id_cmd, int* args, int size){
 				sendMessage(id, E_INVALID_PARAMETERS_NUMBERS);
 			else
 			{
-				robot.go_to((double)args[0], (double)args[1], (double)args[2]);
+				robot.go_to(
+					(double)args[0] * ENC_MM_TO_TICKS,
+					(double)args[1] * ENC_MM_TO_TICKS,
+					(double)args[2] * ENC_MM_TO_TICKS / 1000.0
+				);
 				sendMessage(id, 1);
 			}
 			break;
@@ -50,10 +54,13 @@ void cmd(int id, int id_cmd, int* args, int size){
 				double co = cos(robot.get_a());
 				double si = sin(robot.get_a());
 
+				long int dx = (long int)(((double)args[0]*co - (double)args[1]*si) * ENC_MM_TO_TICKS);
+				long int dy = (long int)(((double)args[0]*si + (double)args[1]*co) * ENC_MM_TO_TICKS);
+				
 				robot.go_to(
-					((double)args[0]*co-(double)args[1]*si)*18+robot.get_x(),
-					((double)args[0]*si+(double)args[1]*co)*18+robot.get_y(),
-					(double)args[2]
+					robot.get_x() + dx,
+					robot.get_y() + dy,
+					(double)args[2] * ENC_MM_TO_TICKS / 1000.0
 				);
 				
 				sendMessage(id, 1);
@@ -68,7 +75,7 @@ void cmd(int id, int id_cmd, int* args, int size){
 			else
 			{
 				double angle = fmod(((double)args[0]) * DEG_TO_RAD, M_PI);
-				robot.turn(angle,args[1]);
+				robot.turn(angle,args[1] * ENC_MM_TO_TICKS / 1000.0);
 				sendMessage(id, 1);
 			}
 			break;
@@ -81,7 +88,7 @@ void cmd(int id, int id_cmd, int* args, int size){
 			else
 			{
 				double angle = fmod(((double)args[0]) * DEG_TO_RAD + robot.get_a(), M_PI);
-				robot.turn(angle,args[1]);
+				robot.turn(angle,args[1] * ENC_MM_TO_TICKS / 1000.0);
 				sendMessage(id, 1);
 			}
 			break;

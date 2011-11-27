@@ -5,6 +5,15 @@
 
 #include <math.h>
 
+
+
+double angle_diff(double a, double b)
+{
+	return atan2(sin(a-b), cos(a-b));
+}
+	
+
+
 Robot robot(&value_left_enc, &value_right_enc, &moteurG, &moteurD);
 
 Rampe rampe_delta = Rampe();
@@ -87,7 +96,7 @@ void Robot::reset_pid()
 	pid4DeltaControl.SetMode(AUTO);
 	pid4AlphaControl.Reset();
 	pid4AlphaControl.SetSampleTime(DUREE_CYCLE);
-	pid4AlphaControl.SetInputLimits(-M_PI,M_PI);
+	//pid4AlphaControl.SetInputLimits(-M_PI,M_PI);
 	pid4AlphaControl.SetOutputLimits(-255,255); /*composante lie a la vitesse de rotation*/
 	pid4AlphaControl.SetMode(AUTO);
 }
@@ -97,6 +106,7 @@ void Robot::update_motors(int dt)
 {
 	_rampe_alpha->compute_next_goal(dt);
 	_rampe_delta->compute_next_goal(dt);
+
 
 	switch (_goal.type)
 	{
@@ -110,7 +120,7 @@ void Robot::update_motors(int dt)
 	}
 
 	int sens=1;
-	/* Si le goal est derrière */
+	// Si le goal est derrière 
 	if(_rampe_delta->get_phase() == PHASE_END and abs(currentAlpha) > M_PI/2)
 	{
 		sens = -1;
@@ -123,6 +133,7 @@ void Robot::update_motors(int dt)
 	consigneAlpha = _rampe_alpha->get_goal() - currentAlpha;
 	consigneDelta = _rampe_delta->get_goal() - currentDelta;
 
+	
 	pid4DeltaControl.Compute();
 	pid4AlphaControl.Compute();
 
@@ -151,7 +162,7 @@ void Robot::update_motors(int dt)
 }
 
 
-void Robot::go_to(int x, int y, double speed)
+void Robot::go_to(long int x, long int y, long int speed)
 {
 	_goal.type = G_POS;
 	_goal.x = x;
@@ -159,27 +170,24 @@ void Robot::go_to(int x, int y, double speed)
 	_goal.a = 0;
 	Robot::reset_pid();
 
-
 	double a = atan2(y, x);
-	_rampe_alpha->compute((a-_a), 0, speed, 2000, -500);
+	_rampe_alpha->compute((a-_a)*ENC_CENTER_DIST_TICKS, 0, speed, 2000, -500);
 
-	
  	long dx = x-_x;
 	long dy = y-_y;
 	long d = (long)sqrt(dx*dx+dy*dy);
 	_rampe_delta->compute(d, 0, speed, 2000, -500);
 }
 
-void Robot::turn(double a, double speed)
+void Robot::turn(double a, long int speed)
 {
 	_goal.type = G_ANG;
 	_goal.x = _x;
 	_goal.y = _y;
 	_goal.a = a;
 	Robot::reset_pid();
-
 	
-	_rampe_alpha->compute((a-_a), 0, speed, 2000, -500);
+	_rampe_alpha->compute((long int)(angle_diff(a,_a) * ENC_CENTER_DIST_TICKS), 0, speed, 2000, -500);
 	_rampe_delta->compute(0, 0, 1, 1, -1);
 }
 

@@ -21,7 +21,7 @@ class Rampe
 {
 	public:
 		Rampe();
-		void compute(int actue, int goal, int speed, int accel, int decel);
+		void compute(long int actue, long int goal, long int speed, long int accel, long int decel);
 		void compute_next_goal(long dt);
 		long get_goal();
 		PHASE get_phase();
@@ -29,25 +29,25 @@ class Rampe
 	private:
 		int _sens;
 		/* U position à atteindre */
-		int _goal;
+		long int _goal;
 		/* U/µs vitesse à atteindre */
-		int _speed;
+		long int _speed;
 		/* U/µs² accélération voulue */
-		int _acc;
+		long int _acc;
 		/* U/µs² décélération voulue */
-		int _dec;
+		long int _dec;
 		/* position actuelle dans la rampe */
-		int _pos_actue;
+		long int _pos_actue;
 		/* vitesse actuelle dans la rampe */
-		int _speed_actue;
+		long int _speed_actue;
 		/* accélération actuelle dans la rampe */
-		int _acc_actue;
+		long int _acc_actue;
 		/* µs temps actuel */
-		long _t;
+		long int _t;
 		/* µs temps de chaque étape */
-		long _t01, _t12, _t23;
+		long int _t01, _t12, _t23;
 		/* U position à chaque changement détape */
-		int _pos0, _pos1, _pos2, _pos3;
+		long int _pos0, _pos1, _pos2, _pos3;
 		/* phase actuelle */
 		PHASE _phase;
 };
