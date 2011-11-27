@@ -17,6 +17,7 @@
 #define PHASE_4 4
 #define PHASE_5 5
 
+#define PHASE_DECEL			97
 #define PHASE_ARRET			98
 #define PHASE_CORRECTION	99
 
