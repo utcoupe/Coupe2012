@@ -111,11 +111,11 @@ void Robot::update_motors(int dt)
 	switch (_goal.type)
 	{
 		case G_POS:
-			currentAlpha = fmod(_a - atan2(_goal.y-_y,_goal.x-_x), M_PI);
+			currentAlpha = fmod(atan2(_goal.y-_y,_goal.x-_x) - _a, M_PI);
 		break;
 
 		case G_ANG:
-			currentAlpha = fmod(_a - _goal.a, M_PI);
+			currentAlpha = fmod(_goal.a - _a, M_PI);
 		break;
 	}
 
