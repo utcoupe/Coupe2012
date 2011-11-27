@@ -30,9 +30,10 @@ void loop(){
 	digitalWrite(16, HIGH);
 	
 	/* zone programmation libre */
-
+	
 	robot.update(DUREE_CYCLE);
 	
+	readIncomingData();
 	
 	/* fin zone de programmation libre */
 
