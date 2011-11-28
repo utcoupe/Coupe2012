@@ -4,6 +4,13 @@
 #include "message.h"
 #include "encoder.h"
 #include "WProgram.h"
+#include "tools.h"
+
+
+double convert_speed(int speed)
+{
+	return ((double)speed) * ENC_MM_TO_TICKS / 1000.0;
+}
 
 /**
  * Analyse le message et effectue les actions associees
@@ -38,7 +45,7 @@ void cmd(int id, int id_cmd, int* args, int size){
 				robot.go_to(
 					(double)args[0] * ENC_MM_TO_TICKS,
 					(double)args[1] * ENC_MM_TO_TICKS,
-					(double)args[2] * ENC_MM_TO_TICKS / 1000.0
+					convert_speed(args[2])
 				);
 				sendMessage(id, 1);
 			}
@@ -60,7 +67,7 @@ void cmd(int id, int id_cmd, int* args, int size){
 				robot.go_to(
 					robot.get_x() + dx,
 					robot.get_y() + dy,
-					(double)args[2] * ENC_MM_TO_TICKS / 1000.0
+					convert_speed(args[2])
 				);
 				
 				sendMessage(id, 1);
@@ -74,8 +81,11 @@ void cmd(int id, int id_cmd, int* args, int size){
 				sendMessage(id, E_INVALID_PARAMETERS_NUMBERS);
 			else
 			{
-				double angle = fmod(((double)args[0]) * DEG_TO_RAD, M_PI);
-				robot.turn(angle,args[1] * ENC_MM_TO_TICKS / 1000.0);
+				double angle = moduloPI(((double)args[0]) * DEG_TO_RAD);
+				robot.turn(
+					angle,
+					convert_speed(args[1])
+				);
 				sendMessage(id, 1);
 			}
 			break;
@@ -87,8 +97,11 @@ void cmd(int id, int id_cmd, int* args, int size){
 				sendMessage(id, E_INVALID_PARAMETERS_NUMBERS);
 			else
 			{
-				double angle = fmod(((double)args[0]) * DEG_TO_RAD + robot.get_a(), M_PI);
-				robot.turn(angle,args[1] * ENC_MM_TO_TICKS / 1000.0);
+				double angle = moduloPI(((double)args[0]) * DEG_TO_RAD + robot.get_a());
+				robot.turn(
+					angle,
+					convert_speed(args[1])
+				);
 				sendMessage(id, 1);
 			}
 			break;

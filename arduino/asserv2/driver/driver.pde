@@ -22,7 +22,9 @@ void setup()
 	pinMode(16,OUTPUT);
 }
 
+
 void loop(){
+	
 	/* on note le temps de debut */
 	timeStart = micros();
 
@@ -40,6 +42,8 @@ void loop(){
 	/* On eteint la del */
 	digitalWrite(16, LOW);
 	
+	if (DUREE_CYCLE*1000-(micros()-timeStart) < 0)
+		Serial.println("ouch : mainloop trop longue");
 	/* On attend le temps qu'il faut pour boucler */
 	long udelay = DUREE_CYCLE*1000-(micros()-timeStart);
 	if(udelay>0) delayMicroseconds(udelay);

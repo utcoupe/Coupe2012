@@ -1,8 +1,8 @@
 #include "rampe.h"
-
+#include "robot.h"
+#include "WProgram.h"
 #include <math.h>
 
-#define abs(x) ((x>0) ? x : (-x))
 
 
 Rampe::Rampe()
@@ -12,17 +12,43 @@ Rampe::Rampe()
 }
 
 
-void Rampe::compute(long int actue, long int goal, long int speed, long int accel, long int decel)
+void Rampe::compute(double actue, double goal, double speed, double accel, double decel)
 {
-	long int time_acc = (long int) (speed / accel);
-	long int d_acc = (long int) (accel * time_acc * time_acc / 2.0);
-	long int time_dec = (long int) (-speed / decel);
-	long int d_dec = (long int) (-decel * time_dec * time_dec / 2.0);
-	long int d_const = abs(goal - actue) - (d_acc + d_dec);
+	Serial.println("rampe");
+	Serial.println(actue);
+	Serial.println(goal);
+	Serial.println(speed);
+	Serial.println(accel);
+	Serial.println(decel);
+	Serial.println("fin params");
+	if (decel > 0)
+		decel = -decel;
+	if (accel < 0)
+		accel = -accel;
+	if (speed < 0)
+		speed = -speed;
+	
+	double time_acc = (speed / accel);
+	double d_acc = (accel * time_acc * time_acc / 2.0);
+	double time_dec = (-speed / decel);
+	double d_dec = (-decel * time_dec * time_dec / 2.0);
+	double d_const = abs(goal - actue) - (d_acc + d_dec);
+	
+	Serial.print("time_acc");
+	Serial.println(time_acc);
+	Serial.print("d_acc");
+	Serial.println(d_acc);
+	Serial.print("time_dec");
+	Serial.println(time_dec);
+	Serial.print("d_dec");
+	Serial.println(d_dec);
+	Serial.print("d_const");
+	Serial.println(d_const);
 
 	// cas limite quand la vitesse max ne peut être atteinte
 	if (d_const < 0)
 	{
+		Serial.println("oups");
 		time_dec = sqrt(abs(goal - actue) / ((-decel / (2.0*accel) + 0.5) * -decel));
 		speed = -decel * time_dec;
 		d_acc = accel * time_acc * time_acc / 2.0;
@@ -30,7 +56,9 @@ void Rampe::compute(long int actue, long int goal, long int speed, long int acce
 		d_acc = accel * time_acc * time_acc / 2.0;
 		d_const = 0;
 	}
-	long int time_const = (long int) (d_const / speed);
+	double time_const = (d_const / speed);
+	Serial.print("time_const");
+	Serial.println(time_const);
 
 	if (goal > actue)
 		_sens = 1;
@@ -57,6 +85,16 @@ void Rampe::compute(long int actue, long int goal, long int speed, long int acce
 	_pos2 = _pos1 + _sens * d_const;
 	_pos3 = goal;
 	_phase = PHASE_ACCEL;
+	
+	Serial.print("_pos0");
+	Serial.println(_pos0);
+	Serial.print("_pos1");
+	Serial.println(_pos1);
+	Serial.print("_pos2");
+	Serial.println(_pos2);
+	Serial.print("_pos3");
+	Serial.println(_pos3);
+	Serial.println("rampe end");
 }
 
 void Rampe::compute_next_goal(long dt)
@@ -75,6 +113,7 @@ void Rampe::compute_next_goal(long dt)
 			if (_t >= _t01)
 			{
 				_phase = PHASE_CONST;
+				Serial.println("go const");
 			}
 			break;
 		}
@@ -83,10 +122,11 @@ void Rampe::compute_next_goal(long dt)
 			t = _t - _t01;
 			_acc_actue = 0;
 			_speed_actue = _speed;
-			_pos_actue = _pos1 + _speed * t;
+			_pos_actue = _pos1 + _sens * _speed * t;
 			if (_t >= _t12)
 			{
 				_phase = PHASE_DECEL;
+				Serial.println("go decel");
 			}
 			break;
 		}
@@ -97,7 +137,11 @@ void Rampe::compute_next_goal(long dt)
 			_speed_actue = _speed + _dec * t;
 			_pos_actue = _pos2 + _sens * _speed * t + _sens * _dec * t*t / 2.0;
 			if (_t >= _t23)
+			{
 				_phase = PHASE_END;
+				Serial.println("go end");
+				Serial.println(_pos_actue);
+			}
 			break;
 		}
 		case PHASE_END:
@@ -110,7 +154,7 @@ void Rampe::compute_next_goal(long dt)
 	}
 }
 
-long Rampe::get_goal()
+double Rampe::get_goal()
 {
 	return _pos_actue;
 }

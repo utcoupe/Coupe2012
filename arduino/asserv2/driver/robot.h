@@ -26,8 +26,8 @@ class Robot
 		Robot(long *value_enc_left, long *value_enc_right, AF_DCMotor * motor_left, AF_DCMotor * motor_right);
 		void update(int dt);
 		void reset_pid();
-		void go_to(long int x, long int y, long int speed = 200);
-		void turn(double a, long int speed = 200);
+		void go_to(long int x, long int y, double speed = 200);
+		void turn(double a, double speed = 200);
 
 		/* mm */
 		int get_x();

@@ -1,12 +1,16 @@
 #include "robot.h"
 #include "encoder.h"
+#include "WProgram.h"
 #include "PID_Beta6.h"
 #include "tools.h"
+#include "message.h"
 
 #include <math.h>
 
 
-
+/**
+ * a-b
+ */
 double angle_diff(double a, double b)
 {
 	return atan2(sin(a-b), cos(a-b));
@@ -53,13 +57,16 @@ void Robot::update(int dt)
 
 void Robot::update_state(int dt)
 {
+	long int left_enc = (*_value_left_enc);
+	long int right_enc = (*_value_right_enc);
+	
 	/*calcul du deplacement depuis la derniere fois en ticks */
-	long dl = (*_value_left_enc) - _prev_value_left_enc;
-	long dr = (*_value_right_enc) - _prev_value_right_enc;
+	long dl = left_enc - _prev_value_left_enc;
+	long dr = right_enc - _prev_value_right_enc;
 
 	/*preparation de la prochaine iteration*/
-	_prev_value_left_enc = (*_value_left_enc);
-	_prev_value_right_enc = (*_value_right_enc);
+	_prev_value_left_enc = left_enc;
+	_prev_value_right_enc = right_enc;
 
 	/* calcul de la vitesse en mm/s
 	 * estimation : simple moyenne */
@@ -82,7 +89,7 @@ void Robot::update_state(int dt)
 
 	/*mise a jour de l'etat du robot  */
 	_speed = speed;
-	_a = _a + delta_angle;
+	_a = moduloPI(_a + delta_angle);
 	_x += dx;
 	_y += dy;
 }
@@ -94,54 +101,59 @@ void Robot::reset_pid()
 	pid4DeltaControl.SetSampleTime(DUREE_CYCLE);
 	pid4DeltaControl.SetOutputLimits(-255,255); /*composante liee a la vitesse lineaire*/
 	pid4DeltaControl.SetMode(AUTO);
+	consigneDelta = 0.0;
+	
 	pid4AlphaControl.Reset();
+	pid4AlphaControl.SetInputLimits(-TABLE_DISTANCE_MAX_MM/ENC_TICKS_TO_MM,TABLE_DISTANCE_MAX_MM/ENC_TICKS_TO_MM);
 	pid4AlphaControl.SetSampleTime(DUREE_CYCLE);
-	//pid4AlphaControl.SetInputLimits(-M_PI,M_PI);
 	pid4AlphaControl.SetOutputLimits(-255,255); /*composante lie a la vitesse de rotation*/
 	pid4AlphaControl.SetMode(AUTO);
+	consigneAlpha = 0.0;
 }
 
 
 void Robot::update_motors(int dt)
 {
+	static long int _i = 0;
+	
 	_rampe_alpha->compute_next_goal(dt);
 	_rampe_delta->compute_next_goal(dt);
-
-
+	
+	double goal_a;
 	switch (_goal.type)
 	{
 		case G_POS:
-			currentAlpha = fmod(atan2(_goal.y-_y,_goal.x-_x) - _a, M_PI);
+			goal_a = atan2(_goal.y-_y,_goal.x-_x);
 		break;
 
 		case G_ANG:
-			currentAlpha = fmod(_goal.a - _a, M_PI);
+			goal_a = _goal.a;
 		break;
 	}
+	double angleDiff = angle_diff(goal_a, _a);
+	currentAlpha = _rampe_alpha->get_goal() - (angleDiff * ENC_CENTER_DIST_TICKS);
 
 	int sens=1;
 	// Si le goal est derrière 
-	if(_rampe_delta->get_phase() == PHASE_END and abs(currentAlpha) > M_PI/2)
+	if(_rampe_delta->get_phase() == PHASE_END and abs(angleDiff) > M_PI/2)
 	{
 		sens = -1;
 	}
 	
  	double dx = _goal.x-_x;
 	double dy = _goal.y-_y;
-	currentDelta = sens * sqrt(dx*dx+dy*dy);
+	currentDelta = _rampe_delta->get_goal() - sens * sqrt(dx*dx+dy*dy);
 	
-	consigneAlpha = _rampe_alpha->get_goal() - currentAlpha;
-	consigneDelta = _rampe_delta->get_goal() - currentDelta;
-
 	
-	pid4DeltaControl.Compute();
-	pid4AlphaControl.Compute();
 
 	int value_pwm_left = 0;
 	int value_pwm_right = 0;
-	if ((G_POS == _goal.type and abs(currentDelta) > 5*ENC_MM_TO_TICKS)
-		or (G_ANG == _goal.type and abs(currentAlpha) > 3.0f*M_PI/360.0f))
+	if ((G_POS == _goal.type and abs(currentDelta) > 10*ENC_MM_TO_TICKS)
+		or (G_ANG == _goal.type and abs(angleDiff) > 3.0f*M_PI/180.0f))
 	{
+		pid4DeltaControl.Compute();
+		pid4AlphaControl.Compute();
+		
 		value_pwm_left = output4Delta-output4Alpha;
 		value_pwm_right = output4Delta+output4Alpha;
 		
@@ -159,11 +171,33 @@ void Robot::update_motors(int dt)
 
 	setLeftPWM(value_pwm_left);
 	setRightPWM(value_pwm_right);
+	
+	if (micros() - _i > 1000000) {
+		Serial.println("update_motors");
+		Serial.println(output4Delta);
+		Serial.println(currentDelta);
+		Serial.print("goal");
+		Serial.println(_rampe_delta->get_goal());
+		Serial.print("diff");
+		Serial.println(sens * sqrt(dx*dx+dy*dy));
+		Serial.print("sens");
+		Serial.println(sens);
+		Serial.println("update_motors2");
+		Serial.println(output4Alpha);
+		Serial.println(currentAlpha);
+		Serial.print("goal");
+		Serial.println(_rampe_alpha->get_goal());
+		Serial.print("diff");
+		Serial.println(angle_diff(goal_a,_a) * ENC_CENTER_DIST_TICKS);
+		_i = micros();
+	}
+	
 }
 
-
-void Robot::go_to(long int x, long int y, long int speed)
+void Robot::go_to(long int x, long int y, double speed)
 {
+	sendMessage(42, "goto");
+	
 	_goal.type = G_POS;
 	_goal.x = x;
 	_goal.y = y;
@@ -171,15 +205,16 @@ void Robot::go_to(long int x, long int y, long int speed)
 	Robot::reset_pid();
 
 	double a = atan2(y, x);
-	_rampe_alpha->compute((a-_a)*ENC_CENTER_DIST_TICKS, 0, speed, 2000, -500);
+	_rampe_alpha->compute(angle_diff(a,_a) * ENC_CENTER_DIST_TICKS, 0, speed, 0.5, -0.5);
 
- 	long dx = x-_x;
-	long dy = y-_y;
-	long d = (long)sqrt(dx*dx+dy*dy);
-	_rampe_delta->compute(d, 0, speed, 2000, -500);
+ 	double dx = x-_x;
+	double dy = y-_y;
+	double d = (double)sqrt(dx*dx+dy*dy);
+	_rampe_delta->compute(d, 0, speed, 1.0, -1.0);
+	sendMessage(42, "goto end");
 }
 
-void Robot::turn(double a, long int speed)
+void Robot::turn(double a, double speed)
 {
 	_goal.type = G_ANG;
 	_goal.x = _x;
@@ -187,7 +222,7 @@ void Robot::turn(double a, long int speed)
 	_goal.a = a;
 	Robot::reset_pid();
 	
-	_rampe_alpha->compute((long int)(angle_diff(a,_a) * ENC_CENTER_DIST_TICKS), 0, speed, 2000, -500);
+	_rampe_alpha->compute(angle_diff(a,_a) * ENC_CENTER_DIST_TICKS, 0, speed, 0.5, -0.5);
 	_rampe_delta->compute(0, 0, 1, 1, -1);
 }
 

@@ -67,12 +67,12 @@
 #define KP_ANGLE 14.0
 #define KI_ANGLE 1.5
 #define KD_ANGLE 20000.0
-#define KP_DELTA 14.0
-#define KI_DELTA 1.5
-#define KD_DELTA 5000.0
-#define KP_ALPHA 25.0
-#define KI_ALPHA 1.5
-#define KD_ALPHA 20000.0
+#define KP_DELTA .20
+#define KI_DELTA 0.1
+#define KD_DELTA 50000.0
+#define KP_ALPHA .15
+#define KI_ALPHA 0.1
+#define KD_ALPHA 50000.0
 
 /*Parametre de la file des taches a effectuer*/
 #define SIZE 15
