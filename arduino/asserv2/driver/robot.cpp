@@ -131,18 +131,24 @@ void Robot::update_motors(int dt)
 		break;
 	}
 	double angleDiff = angle_diff(goal_a, _a);
-	currentAlpha = _rampe_alpha->get_goal() - (angleDiff * ENC_CENTER_DIST_TICKS);
 
-	int sens=1;
+	int sens_delta=1;
 	// Si le goal est derrière 
 	if(_rampe_delta->get_phase() == PHASE_END and abs(angleDiff) > M_PI/2)
 	{
-		sens = -1;
+		sens_delta = -1;
+		if (_goal.type == G_POS)
+		{
+			currentAlpha = moduloPI(M_PI + angleDiff - _a);
+		}
 	}
 	
  	double dx = _goal.x-_x;
 	double dy = _goal.y-_y;
-	currentDelta = _rampe_delta->get_goal() - sens * sqrt(dx*dx+dy*dy);
+
+	
+	currentDelta = _rampe_delta->get_goal() - sens_delta * sqrt(dx*dx+dy*dy);
+	currentAlpha = _rampe_alpha->get_goal() - (angleDiff * ENC_CENTER_DIST_TICKS);
 	
 	
 
@@ -179,9 +185,9 @@ void Robot::update_motors(int dt)
 		Serial.print("goal");
 		Serial.println(_rampe_delta->get_goal());
 		Serial.print("diff");
-		Serial.println(sens * sqrt(dx*dx+dy*dy));
+		Serial.println(sens_delta * sqrt(dx*dx+dy*dy));
 		Serial.print("sens");
-		Serial.println(sens);
+		Serial.println(sens_delta);
 		Serial.println("update_motors2");
 		Serial.println(output4Alpha);
 		Serial.println(currentAlpha);
