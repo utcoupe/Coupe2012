@@ -28,7 +28,7 @@
 #define ENC_MM_TO_TICKS (ENC_RESOLUTION*4)/(2*M_PI*ENC_RADIUS) // environ : 17.6839
 
 // Duree d'un cycle (en millisecondes)
-#define DUREE_CYCLE 2
+#define DUREE_CYCLE 5
 
 /* Parametres de la carte asservissement
  * pin 0 -> USB 2 TTL
@@ -60,19 +60,32 @@
 #define TABLE_HEIGHT_MM 3000.0
 #define TABLE_DISTANCE_MAX_MM 3661.96
 
-/*Parametre de l'asservissement*/
+/* Parametre de l'asservissement
+ * 
+ * Quelques trucs sur le PID
+ *
+ * kp : le terme proportionnel qui permet d'augmenter la vitesse de montee (atteint la consigne le plus rapidement possible).
+ * ki : le terme integral qui reduit l'erreur statique.
+ * kd : le terme derive qui reduit le depassement (l'overshoot).
+ * __________________________________________________________________________________________________
+ * Coefficient		|Temps de montee	|Temps de stabilisation	|Depassement	|Erreur statique	|
+ *	kp				|Diminue			|Augmente				|Augmente		|Diminue			|
+ *	ki				|Diminue			|Augmente				|Augmente		|Annule				|
+ *	kd				|-					|Diminue				|Diminue		|-					|
+ * _________________|___________________|_______________________|_______________|___________________|
+ */
 #define KP_SPEED 2.0
 #define KI_SPEED 5.0
 #define KD_SPEED 1.0
 #define KP_ANGLE 14.0
 #define KI_ANGLE 1.5
 #define KD_ANGLE 20000.0
-#define KP_DELTA .20
-#define KI_DELTA 0.1
-#define KD_DELTA 50000.0
-#define KP_ALPHA .15
-#define KI_ALPHA 0.1
-#define KD_ALPHA 50000.0
+#define KP_DELTA 0.5
+#define KI_DELTA 0.0
+#define KD_DELTA 10.0
+#define KP_ALPHA 0.5
+#define KI_ALPHA 0.0
+#define KD_ALPHA 10.0
 
 /*Parametre de la file des taches a effectuer*/
 #define SIZE 15

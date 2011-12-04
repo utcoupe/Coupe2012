@@ -1,8 +1,10 @@
 #ifndef _TOOLS_H
 #define _TOOLS_H
 
-#define abs(x) ((x)>0 ? (x) : -(x))
 
+#ifndef abs
+#	define abs(x) ((x)>0 ? (x) : -(x))
+#endif
 
 
 /* Fonction de calcul du modulo PI ]-PI,PI]

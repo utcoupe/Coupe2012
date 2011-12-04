@@ -28,6 +28,7 @@ class Robot
 		void reset_pid();
 		void go_to(long int x, long int y, double speed = 200);
 		void turn(double a, double speed = 200);
+		void cancel();
 
 		/* mm */
 		int get_x();

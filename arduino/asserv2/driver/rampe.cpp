@@ -110,6 +110,8 @@ void Rampe::compute_next_goal(long dt)
 			_acc_actue = _acc;
 			_speed_actue = _acc * t;
 			_pos_actue = _pos0 + _sens * _acc * t*t / 2.0;
+			if (_sens * _pos_actue > _sens * _pos1)
+				_pos_actue = _pos1;
 			if (_t >= _t01)
 			{
 				_phase = PHASE_CONST;
@@ -123,6 +125,8 @@ void Rampe::compute_next_goal(long dt)
 			_acc_actue = 0;
 			_speed_actue = _speed;
 			_pos_actue = _pos1 + _sens * _speed * t;
+			if (_sens * _pos_actue > _sens * _pos2)
+				_pos_actue = _pos2;
 			if (_t >= _t12)
 			{
 				_phase = PHASE_DECEL;
@@ -136,11 +140,14 @@ void Rampe::compute_next_goal(long dt)
 			_acc_actue = _dec;
 			_speed_actue = _speed + _dec * t;
 			_pos_actue = _pos2 + _sens * _speed * t + _sens * _dec * t*t / 2.0;
+			if (_sens * _pos_actue > _sens * _pos3)
+				_pos_actue = _pos3;
 			if (_t >= _t23)
 			{
 				_phase = PHASE_END;
 				Serial.println("go end");
 				Serial.println(_pos_actue);
+				Serial.println(_pos3);
 			}
 			break;
 		}

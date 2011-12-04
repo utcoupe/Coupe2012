@@ -36,11 +36,11 @@ void loop(){
 	/* on note le temps de debut */
 	timeStart = micros();
 
-	/* zone programmation libre */
-	// La del est allumee pendant le traitement
+	/* La del est allumee pendant le traitement */
 	digitalWrite(16, HIGH);
-	/* fin zone de programmation libre */
 
+	/* zone programmation libre */
+	
 	/*lecture des ordres*/
 	readIncomingData();
 
@@ -82,12 +82,17 @@ void loop(){
 	/*modele d'evolution*/
 	computeRobotState();
 	
+	/* fin zone de programmation libre */
+	
 	/* On eteint la del */
 	digitalWrite(16, LOW);
 	
 	/* On attend le temps qu'il faut pour boucler */
 	long udelay = DUREE_CYCLE*1000-(micros()-timeStart);
-	if(udelay>0) delayMicroseconds(udelay);
+	if(udelay<0)
+		Serial.println("ouch : mainloop trop longue");
+	else
+		 delayMicroseconds(udelay);
 }
 
 

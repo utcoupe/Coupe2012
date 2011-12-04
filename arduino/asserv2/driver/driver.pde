@@ -42,11 +42,12 @@ void loop(){
 	/* On eteint la del */
 	digitalWrite(16, LOW);
 	
-	if (DUREE_CYCLE*1000-(micros()-timeStart) < 0)
-		Serial.println("ouch : mainloop trop longue");
 	/* On attend le temps qu'il faut pour boucler */
 	long udelay = DUREE_CYCLE*1000-(micros()-timeStart);
-	if(udelay>0) delayMicroseconds(udelay);
+	if(udelay<0)
+		Serial.println("ouch : mainloop trop longue");
+	else
+		delayMicroseconds(udelay);
 }
 
 

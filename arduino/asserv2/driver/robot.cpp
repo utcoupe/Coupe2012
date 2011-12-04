@@ -1,7 +1,7 @@
 #include "robot.h"
 #include "encoder.h"
 #include "WProgram.h"
-#include "PID_Beta6.h"
+#include "pid.h"
 #include "tools.h"
 #include "message.h"
 
@@ -13,9 +13,10 @@
  */
 double angle_diff(double a, double b)
 {
-	return atan2(sin(a-b), cos(a-b));
+	//return atan2(sin(a-b), cos(a-b));
+	return moduloPI(a - b);
 }
-	
+
 
 
 Robot robot(&value_left_enc, &value_right_enc, &moteurG, &moteurD);
@@ -26,8 +27,8 @@ Rampe rampe_alpha = Rampe();
 double output4Delta, output4Alpha;
 double currentDelta, currentAlpha;
 double consigneDelta, consigneAlpha;
-PID pid4DeltaControl(&currentDelta,&output4Delta,&consigneDelta,KP_DELTA,KI_DELTA,KD_DELTA);
-PID pid4AlphaControl(&currentAlpha,&output4Alpha,&consigneAlpha,KP_ALPHA,KI_ALPHA,KD_ALPHA);
+PID pid4DeltaControl(KP_DELTA,KI_DELTA,KD_DELTA);
+PID pid4AlphaControl(KP_ALPHA,KI_ALPHA,KD_ALPHA);
 
 
 Robot::Robot(long *value_left_enc, long *value_right_enc, AF_DCMotor * motor_left, AF_DCMotor * motor_right)
@@ -96,18 +97,12 @@ void Robot::update_state(int dt)
 
 void Robot::reset_pid()
 {
-	pid4DeltaControl.Reset();
-	pid4DeltaControl.SetInputLimits(-TABLE_DISTANCE_MAX_MM/ENC_TICKS_TO_MM,TABLE_DISTANCE_MAX_MM/ENC_TICKS_TO_MM);
-	pid4DeltaControl.SetSampleTime(DUREE_CYCLE);
-	pid4DeltaControl.SetOutputLimits(-255,255); /*composante liee a la vitesse lineaire*/
-	pid4DeltaControl.SetMode(AUTO);
+	pid4DeltaControl.reset();
+	pid4DeltaControl.setOutputLimits(-255,255);
 	consigneDelta = 0.0;
 	
-	pid4AlphaControl.Reset();
-	pid4AlphaControl.SetInputLimits(-TABLE_DISTANCE_MAX_MM/ENC_TICKS_TO_MM,TABLE_DISTANCE_MAX_MM/ENC_TICKS_TO_MM);
-	pid4AlphaControl.SetSampleTime(DUREE_CYCLE);
-	pid4AlphaControl.SetOutputLimits(-255,255); /*composante lie a la vitesse de rotation*/
-	pid4AlphaControl.SetMode(AUTO);
+	pid4AlphaControl.reset();
+	pid4AlphaControl.setOutputLimits(-255,255);
 	consigneAlpha = 0.0;
 }
 
@@ -132,14 +127,14 @@ void Robot::update_motors(int dt)
 	}
 	double angleDiff = angle_diff(goal_a, _a);
 
-	int sens_delta=1;
+	int sens_delta=-1;
 	// Si le goal est derrière 
 	if(_rampe_delta->get_phase() == PHASE_END and abs(angleDiff) > M_PI/2)
 	{
-		sens_delta = -1;
+		sens_delta = -sens_delta;
 		if (_goal.type == G_POS)
 		{
-			currentAlpha = moduloPI(M_PI + angleDiff - _a);
+			angleDiff = moduloPI(M_PI + angleDiff);
 		}
 	}
 	
@@ -147,18 +142,20 @@ void Robot::update_motors(int dt)
 	double dy = _goal.y-_y;
 
 	
-	currentDelta = _rampe_delta->get_goal() - sens_delta * sqrt(dx*dx+dy*dy);
+	currentDelta = sens_delta * abs(_rampe_delta->get_goal() - sqrt(dx*dx+dy*dy));
 	currentAlpha = _rampe_alpha->get_goal() - (angleDiff * ENC_CENTER_DIST_TICKS);
-	
 	
 
 	int value_pwm_left = 0;
 	int value_pwm_right = 0;
 	if ((G_POS == _goal.type and abs(currentDelta) > 10*ENC_MM_TO_TICKS)
-		or (G_ANG == _goal.type and abs(angleDiff) > 3.0f*M_PI/180.0f))
+		or (G_ANG == _goal.type and abs(angleDiff) > (3.0f/180.0f*M_PI)))
 	{
-		pid4DeltaControl.Compute();
-		pid4AlphaControl.Compute();
+		if (G_POS == _goal.type)
+			output4Delta = pid4DeltaControl.compute(currentDelta);
+		else
+			output4Delta = 0;
+		output4Alpha = pid4AlphaControl.compute(currentAlpha);
 		
 		value_pwm_left = output4Delta-output4Alpha;
 		value_pwm_right = output4Delta+output4Alpha;
@@ -173,30 +170,40 @@ void Robot::update_motors(int dt)
 			value_pwm_left = 255;
 		else if (value_pwm_left < -255)
 			value_pwm_left = -255;
+			
+		/*
+		if (micros() - _i > 1000000) {
+			Serial.println("update_motors_delta");
+			Serial.println(output4Delta);
+			Serial.println(currentDelta);
+			Serial.print("goal");
+			Serial.println(_rampe_delta->get_goal());
+			Serial.print("diff");
+			Serial.println(sens_delta * sqrt(dx*dx+dy*dy));
+			Serial.print("sens");
+			Serial.println(sens_delta);
+			Serial.println("update_motors_alpha");
+			Serial.println(output4Alpha);
+			Serial.println(currentAlpha);
+			Serial.print("goal");
+			Serial.println(_rampe_alpha->get_goal());
+			Serial.print("diff");
+			Serial.println(angle_diff(goal_a,_a) * 180.0f / M_PI);
+			_i = micros();
+		}//*/
 	}
-
-	setLeftPWM(value_pwm_left);
-	setRightPWM(value_pwm_right);
-	
-	if (micros() - _i > 1000000) {
-		Serial.println("update_motors");
-		Serial.println(output4Delta);
-		Serial.println(currentDelta);
-		Serial.print("goal");
-		Serial.println(_rampe_delta->get_goal());
-		Serial.print("diff");
-		Serial.println(sens_delta * sqrt(dx*dx+dy*dy));
-		Serial.print("sens");
-		Serial.println(sens_delta);
-		Serial.println("update_motors2");
-		Serial.println(output4Alpha);
-		Serial.println(currentAlpha);
-		Serial.print("goal");
-		Serial.println(_rampe_alpha->get_goal());
-		Serial.print("diff");
-		Serial.println(angle_diff(goal_a,_a) * ENC_CENTER_DIST_TICKS);
+	/*else if (micros() - _i > 1000000)
+	{
+		Serial.println("ok");
+		Serial.println(abs(angleDiff));
+		Serial.println((3.0f/180.0f*M_PI));
+		
 		_i = micros();
-	}
+	}*/
+
+	setLeftPWM(-value_pwm_left);
+	setRightPWM(-value_pwm_right);
+	
 	
 }
 
@@ -211,12 +218,12 @@ void Robot::go_to(long int x, long int y, double speed)
 	Robot::reset_pid();
 
 	double a = atan2(y, x);
-	_rampe_alpha->compute(angle_diff(a,_a) * ENC_CENTER_DIST_TICKS, 0, speed, 0.5, -0.5);
+	_rampe_alpha->compute(angle_diff(a,_a) * ENC_CENTER_DIST_TICKS, 0, speed, 0.1, -0.025);
 
  	double dx = x-_x;
 	double dy = y-_y;
 	double d = (double)sqrt(dx*dx+dy*dy);
-	_rampe_delta->compute(d, 0, speed, 1.0, -1.0);
+	_rampe_delta->compute(d, 0, speed, 0.1, -0.05);
 	sendMessage(42, "goto end");
 }
 
@@ -228,10 +235,22 @@ void Robot::turn(double a, double speed)
 	_goal.a = a;
 	Robot::reset_pid();
 	
-	_rampe_alpha->compute(angle_diff(a,_a) * ENC_CENTER_DIST_TICKS, 0, speed, 0.5, -0.5);
+	_rampe_alpha->compute(angle_diff(a,_a) * ENC_CENTER_DIST_TICKS, 0, speed, 0.1, -0.025);
 	_rampe_delta->compute(0, 0, 1, 1, -1);
 }
 
+
+void Robot::cancel()
+{
+	_goal.type = G_ANG;
+	_goal.x = _x;
+	_goal.y = _y;
+	_goal.a = _a;
+	
+	Robot::reset_pid();
+	_rampe_alpha->compute(0, 0, 1, 1, -1);
+	_rampe_delta->compute(0, 0, 1, 1, -1);
+}
 
 
 int Robot::get_x()

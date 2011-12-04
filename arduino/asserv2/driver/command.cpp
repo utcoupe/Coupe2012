@@ -206,17 +206,16 @@ void cmd(int id, int id_cmd, int* args, int size){
 				sendMessage(id, 1);
 			}
 			break;
-		}
-		 */
-		/*case QA_CANCEL: 
+		}*/
+		 
+		case QA_CANCEL: 
 		{
-			clearGoals();
-			current_goal.isCanceled = true;
+			robot.cancel();
 			sendMessage(id, 1);
 			break;
 		}
 
-		case QA_STOP: 
+		/*case QA_STOP: 
 		{
 			current_goal.isPaused = true;
 			sendMessage(id, 1);
