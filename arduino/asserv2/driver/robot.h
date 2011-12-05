@@ -29,6 +29,7 @@ class Robot
 		void go_to(long int x, long int y, double speed = 200);
 		void turn(double a, double speed = 200);
 		void cancel();
+		bool goalIsReached();
 
 		/* mm */
 		int get_x();
@@ -40,6 +41,7 @@ class Robot
 	private:
 		void update_state(int dt);
 		void update_motors(int dt);
+		void setGoal(T_GOAL t, long int x, long int y, double a);
 
 		/* ticks */
 		long int _x, _y;
@@ -56,6 +58,8 @@ class Robot
 		
 		Rampe *_rampe_delta, *_rampe_alpha;
 		Goal _goal;
+
+		bool _goal_reached;
 };
 
 extern Robot robot;

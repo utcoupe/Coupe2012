@@ -4,6 +4,8 @@
 #include "robot.h"
 #include "encoder.h"
 #include "message.h"
+#include "fifo.h"
+#include "fifo_to_robot.h"
 
 unsigned long index = 0;
 unsigned long timeStart = 0;
@@ -36,6 +38,11 @@ void loop(){
 	robot.update(DUREE_CYCLE);
 	
 	readIncomingData();
+
+	if (!robot.goalIsReached() and !fifo.isEmpty())
+	{
+		FifoObj_to_robot(fifo.pop());
+	}
 	
 	/* fin zone de programmation libre */
 

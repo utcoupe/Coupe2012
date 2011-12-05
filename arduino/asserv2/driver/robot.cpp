@@ -47,6 +47,23 @@ Robot::Robot(long *value_left_enc, long *value_right_enc, AF_DCMotor * motor_lef
 	_y = 0;
 	_a = 0.0;
 	_speed = 0.0;
+	
+	_goal_reached = false;
+	
+	Robot::cancel();
+}
+
+void Robot::setGoal(T_GOAL t, long int x, long int y, double a)
+{
+	_goal.type = t;
+	_goal.x = x;
+	_goal.y = y;
+	_goal.a = a;
+}
+	
+bool Robot::goalIsReached()
+{
+	return _goal_reached;
 }
 
 void Robot::update(int dt)
@@ -190,6 +207,11 @@ void Robot::update_motors(int dt)
 			Serial.println(angle_diff(goal_a,_a) * 180.0f / M_PI);
 			_i = micros();
 		}//*/
+		_goal_reached = false;
+	}
+	else
+	{
+		_goal_reached = true;
 	}
 	/*else if (micros() - _i > 1000000)
 	{
@@ -239,10 +261,7 @@ void Robot::turn(double a, double speed)
 
 void Robot::cancel()
 {
-	_goal.type = G_ANG;
-	_goal.x = _x;
-	_goal.y = _y;
-	_goal.a = _a;
+	Robot::setGoal(G_ANG,_x,_y,_a);
 	
 	Robot::reset_pid();
 	_rampe_alpha->compute(0, 0, 1, 1, -1);
