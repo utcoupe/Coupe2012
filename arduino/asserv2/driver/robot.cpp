@@ -3,7 +3,6 @@
 #include "WProgram.h"
 #include "pid.h"
 #include "tools.h"
-#include "message.h"
 
 #include <math.h>
 
@@ -209,7 +208,6 @@ void Robot::update_motors(int dt)
 
 void Robot::go_to(long int x, long int y, double speed)
 {
-	sendMessage(42, "goto");
 	
 	_goal.type = G_POS;
 	_goal.x = x;
@@ -224,7 +222,6 @@ void Robot::go_to(long int x, long int y, double speed)
 	double dy = y-_y;
 	double d = (double)sqrt(dx*dx+dy*dy);
 	_rampe_delta->compute(d, 0, speed, 0.1, -0.05);
-	sendMessage(42, "goto end");
 }
 
 void Robot::turn(double a, double speed)

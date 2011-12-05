@@ -5,12 +5,13 @@
 #include "encoder.h"
 #include "WProgram.h"
 #include "tools.h"
+#include "fifo.h"
 
-
-double convert_speed(int speed)
+/*
+double _convert_speed(int speed)
 {
 	return ((double)speed) * ENC_MM_TO_TICKS / 1000.0;
-}
+}*/
 
 /**
  * Analyse le message et effectue les actions associees
@@ -42,11 +43,12 @@ void cmd(int id, int id_cmd, int* args, int size){
 				sendMessage(id, E_INVALID_PARAMETERS_NUMBERS);
 			else
 			{
-				robot.go_to(
+				fifo.push(CMD_GOTO, args[0], args[1], args[2]);
+				/*robot.go_to(
 					(double)args[0] * ENC_MM_TO_TICKS,
 					(double)args[1] * ENC_MM_TO_TICKS,
-					convert_speed(args[2])
-				);
+					_convert_speed(args[2])
+				);*/
 				sendMessage(id, 1);
 			}
 			break;
@@ -58,7 +60,8 @@ void cmd(int id, int id_cmd, int* args, int size){
 				sendMessage(id, E_INVALID_PARAMETERS_NUMBERS);
 			else
 			{
-				double co = cos(robot.get_a());
+				fifo.push(CMD_GOTOR, args[0], args[1], args[2]);
+				/*double co = cos(robot.get_a());
 				double si = sin(robot.get_a());
 
 				long int dx = (long int)(((double)args[0]*co - (double)args[1]*si) * ENC_MM_TO_TICKS);
@@ -67,8 +70,8 @@ void cmd(int id, int id_cmd, int* args, int size){
 				robot.go_to(
 					robot.get_x() + dx,
 					robot.get_y() + dy,
-					convert_speed(args[2])
-				);
+					_convert_speed(args[2])
+				);*/
 				
 				sendMessage(id, 1);
 			}
@@ -81,11 +84,12 @@ void cmd(int id, int id_cmd, int* args, int size){
 				sendMessage(id, E_INVALID_PARAMETERS_NUMBERS);
 			else
 			{
-				double angle = moduloPI(((double)args[0]) * DEG_TO_RAD);
+				fifo.push(CMD_TURN, args[0], args[1]);
+				/*double angle = moduloPI(((double)args[0]) * DEG_TO_RAD);
 				robot.turn(
 					angle,
-					convert_speed(args[1])
-				);
+					_convert_speed(args[1])
+				);*/
 				sendMessage(id, 1);
 			}
 			break;
@@ -97,11 +101,12 @@ void cmd(int id, int id_cmd, int* args, int size){
 				sendMessage(id, E_INVALID_PARAMETERS_NUMBERS);
 			else
 			{
-				double angle = moduloPI(((double)args[0]) * DEG_TO_RAD + robot.get_a());
+				fifo.push(CMD_TURNR, args[0], args[1]);
+				/*double angle = moduloPI(((double)args[0]) * DEG_TO_RAD + robot.get_a());
 				robot.turn(
 					angle,
-					convert_speed(args[1])
-				);
+					_convert_speed(args[1])
+				);*/
 				sendMessage(id, 1);
 			}
 			break;
