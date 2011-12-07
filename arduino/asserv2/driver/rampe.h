@@ -21,10 +21,12 @@ class Rampe
 {
 	public:
 		Rampe();
-		void compute(double actue, double goal, double speed, double accel, double decel);
+                void compute(double actue, double goal, double speed, double accel, double decel, double current_speed=0);
 		void compute_next_goal(long dt);
 		double get_goal();
+                double get_speed();
 		PHASE get_phase();
+                void delete_decel();
 
 	private:
 		int _sens;
