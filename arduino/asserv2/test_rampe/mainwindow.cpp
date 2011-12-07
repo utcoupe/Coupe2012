@@ -10,7 +10,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
 
     Rampe rampe;
-    rampe.compute(0, 30000, 500, 50, -50, 1000);
+    rampe.compute(0, 30000, 500, 20, -20, 200);
 
     int i = 0;
     double a;

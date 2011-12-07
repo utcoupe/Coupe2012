@@ -109,14 +109,12 @@ void Rampe::compute_next_goal(long dt)
 			_acc_actue = _acc;
 
                         _speed_actue += _acc * dt;
-                        /*if (_speed_actue > _speed) {
+                        /*if ((_acc > 0 and _speed_actue > _speed)
+                                or (_acc < 0 and _speed_actue < _speed)) {
                             _speed_actue = _speed;
                         }*/
 
-                        _pos_actue += _speed * dt;
-                        /*if (_sens * _pos_actue > _sens * _pos1) {
-                            _pos_actue = _pos1;
-                        }*/
+                        _pos_actue += _speed_actue * dt;
 
                         if (_t >= _t01) {
                             _phase = PHASE_CONST;
@@ -128,10 +126,7 @@ void Rampe::compute_next_goal(long dt)
 			_acc_actue = 0;
                         _speed_actue = _speed;
 
-                        _pos_actue +=_speed * dt;
-                        if (_sens * _pos_actue > _sens * _pos2) {
-                            _pos_actue = _pos2;
-                        }
+                        _pos_actue += _speed_actue * dt;
 
                         if (_t >= _t12){
                             _phase = PHASE_DECEL;
@@ -147,10 +142,7 @@ void Rampe::compute_next_goal(long dt)
                             _speed_actue = 0;
                         }
 
-                        _pos_actue += _speed * dt;
-                        if (_sens * _pos_actue > _sens * _pos3) {
-                            _pos_actue = _pos3;
-                        }
+                        _pos_actue += _speed_actue * dt;
 
                         if (_t >= _t23) {
                             _phase = PHASE_END;
