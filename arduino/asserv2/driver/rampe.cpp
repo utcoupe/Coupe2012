@@ -11,12 +11,12 @@ Rampe::Rampe()
 }
 
 
-void Rampe::compute(double actue, double goal, double speed, double accel, double decel, double current_speed)
+void Rampe::compute(double actue, double goal, double max_speed, double accel, double decel, double speed0)
 {
 	Serial.println("rampe");
 	Serial.println(actue);
 	Serial.println(goal);
-	Serial.println(speed);
+        Serial.println(max_speed);
 	Serial.println(accel);
 	Serial.println(decel);
 	Serial.println("fin params");
@@ -24,15 +24,17 @@ void Rampe::compute(double actue, double goal, double speed, double accel, doubl
 		decel = -decel;
 	if (accel < 0)
 		accel = -accel;
-	if (speed < 0)
-                speed = -speed;
+        if (max_speed < 0)
+                max_speed = -max_speed;
+        if (speed0 < 0)
+                speed0 = -speed0;
 
-        if (speed < current_speed)
+        if (max_speed < speed0)
             accel = decel;
-        double time_acc = ((speed - current_speed) / accel);
-        double d_acc = (abs(accel) * time_acc * time_acc / 2.0);
-	double time_dec = (-speed / decel);
-	double d_dec = (-decel * time_dec * time_dec / 2.0);
+        double time_acc = ((max_speed - speed0) / accel);
+        double d_acc = (accel * time_acc * time_acc / 2.0) + speed0 * time_acc;
+        double time_dec = (max_speed / -decel);
+        double d_dec = (decel * time_dec * time_dec / 2.0) + max_speed * time_dec;
 	double d_const = abs(goal - actue) - (d_acc + d_dec);
 	
 	Serial.print("time_acc");
@@ -50,15 +52,30 @@ void Rampe::compute(double actue, double goal, double speed, double accel, doubl
 	if (d_const < 0)
 	{
 		Serial.println("oups");
-		time_dec = sqrt(abs(goal - actue) / ((-decel / (2.0*accel) + 0.5) * -decel));
-		speed = -decel * time_dec;
-		d_acc = accel * time_acc * time_acc / 2.0;
-		time_acc = speed / accel;
-		d_acc = accel * time_acc * time_acc / 2.0;
-		d_const = 0;
-	}
-	double time_const = (d_const / speed);
-	Serial.print("time_const");
+                if (speed0 < max_speed) {
+                    time_dec = sqrt(abs(goal - actue) / ((-decel / (2.0*accel) + 0.5) * -decel));
+                    max_speed = -decel * time_dec;
+                    d_acc = accel * time_acc * time_acc / 2.0;
+                    time_acc = max_speed / accel;
+                    d_acc = accel * time_acc * time_acc / 2.0;
+                    d_const = 0;
+                }
+                else {  // décélération continue
+                    time_acc = 0;
+                    d_acc = 0;
+                    d_const = 0;
+                    time_dec = (speed0 / -decel);
+                    d_dec = (decel * time_dec * time_dec / 2.0) + speed0 * time_dec;
+                    if (d_dec > abs(actue - goal)) {    // pas le temps de ralentir !
+                        decel = -speed0 * speed0 / (2.0 * (goal- actue));
+                        time_dec = (speed0 / -decel);
+                        d_dec = (decel * time_dec * time_dec / 2.0) + speed0 * time_dec;
+                    }
+                    max_speed = speed0;
+                }
+        }
+        double time_const = (d_const / max_speed);
+        Serial.print("time_const");
 	Serial.println(time_const);
 
 	if (goal > actue)
@@ -68,18 +85,18 @@ void Rampe::compute(double actue, double goal, double speed, double accel, doubl
 	
 	// les goals
 	_goal = goal;
-	_speed = speed;
+        _max_speed = max_speed;
 	_acc = accel;
 	_dec = decel;
 	// les valeurs actueelles théoriques
-	_pos_actue = actue;
-        _speed_actue = current_speed;
+        _current_pos = actue;
+        _current_speed = speed0;
 	_acc_actue = 0;
 	_t = 0;
 	// temps de chaque début de phase
-	_t01 = time_acc;
-	_t12 = _t01 + time_const;
-	_t23 = _t12 + time_dec;
+        _t1 = time_acc;
+        _t2 = _t1 + time_const;
+        _t3 = _t2 + time_dec;
 	// position de chaque début de phase
 	_pos0 = actue;
 	_pos1 = _pos0 + _sens * d_acc;
@@ -98,62 +115,64 @@ void Rampe::compute(double actue, double goal, double speed, double accel, doubl
 	Serial.println("rampe end");
 }
 
-void Rampe::compute_next_goal(long dt)
+void Rampe::compute_next_goal(double dt)
 {
         _t += dt;
 
 	switch (_phase)
 	{
-		case PHASE_ACCEL:
+                case PHASE_ACCEL:   // pos0 -> pos1
                 {
 			_acc_actue = _acc;
 
-                        _speed_actue += _acc * dt;
-                        /*if ((_acc > 0 and _speed_actue > _speed)
-                                or (_acc < 0 and _speed_actue < _speed)) {
-                            _speed_actue = _speed;
-                        }*/
-
-                        _pos_actue += _speed_actue * dt;
-
-                        if (_t >= _t01) {
-                            _phase = PHASE_CONST;
+                        if (_t < _t1) {
+                            _current_speed += _acc * dt;
+                            _current_pos += _current_speed * dt;
+                            break;
 			}
-			break;
+                        else {
+                            _phase = PHASE_CONST;
+                            _current_pos = _pos1;
+                            dt = (_t - _t1);
+                        }
+
 		}
-		case PHASE_CONST:
+                case PHASE_CONST:   // pos1 -> pos2
                 {
 			_acc_actue = 0;
-                        _speed_actue = _speed;
+                        _current_speed = _max_speed;
 
-                        _pos_actue += _speed_actue * dt;
-
-                        if (_t >= _t12){
+                        if (_t < _t2){
+                            _current_pos += _current_speed * dt;
+                            break;
+                        }
+                        else {
                             _phase = PHASE_DECEL;
-			}
-			break;
+                            dt = (_t - _t2);
+                            _current_pos = _pos2;
+                        }
 		}
-		case PHASE_DECEL:
+                case PHASE_DECEL:   // pos2 -> pos3
                 {
 			_acc_actue = _dec;
 
-                        _speed_actue += _dec * dt;
-                        if (_speed_actue < 0) {
-                            _speed_actue = 0;
+                        _current_speed += _dec * dt;
+
+                        _current_pos += _current_speed * dt;
+
+                        if (_t < _t3) {
+                            break;
                         }
-
-                        _pos_actue += _speed_actue * dt;
-
-                        if (_t >= _t23) {
+                        else {
                             _phase = PHASE_END;
-			}
-			break;
+                            _current_pos = _pos3;
+                        }
 		}
 		case PHASE_END:
 		{
 			_acc_actue = 0;
-			_speed_actue = 0;
-			_pos_actue = _pos3;
+                        _current_speed = 0;
+                        _current_pos = _pos3;
 			break;
 		}
                 default: break;
@@ -162,12 +181,12 @@ void Rampe::compute_next_goal(long dt)
 
 double Rampe::get_goal()
 {
-	return _pos_actue;
+        return _current_pos;
 }
 
 double Rampe::get_speed()
 {
-        return _speed_actue;
+        return _current_speed;
 }
 
 
@@ -176,6 +195,9 @@ PHASE Rampe::get_phase()
 	return _phase;
 }
 
-
+void Rampe::cancel_decel()
+{
+    // @TODO
+}
 
 	
