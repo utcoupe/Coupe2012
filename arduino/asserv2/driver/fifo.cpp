@@ -15,25 +15,16 @@ Fifo::Fifo()
 
 int Fifo::push(T_FIFO_OBJ t, int data1, int data2, int data3)
 {
+	_fifo[_in].set_t(t);
+	_fifo[_in].set_data(0,data1);
+	_fifo[_in].set_data(1,data2);
+	_fifo[_in].set_data(2,data3);
+	
 	_in++;
-	if (_out == _in)
-	{
-		char msg[50];
-		sprintf(msg, "Error -- %s (%s:%d) -- Fifo is empty", __FUNCTION__, __FILE__, __LINE__);
-		Serial.println(msg);
+	if (_in >= FIFO_SIZE)
+		_in = 0;
 		
-		_in--;
-		return -1;
-	}
-	else
-	{
-		_fifo[_in].set_t(t);
-		_fifo[_in].set_data(0,data1);
-		_fifo[_in].set_data(1,data2);
-		_fifo[_in].set_data(2,data3);
-		
-		return 0;
-	}
+	return 0;
 }
 
 
@@ -43,9 +34,13 @@ FifoObj * Fifo::pop()
 		return NULL;
 	else
 	{
-		_out++;
+		FifoObj * obj = &(_fifo[_out]);
 		
-		return &(_fifo[_out-1]);
+		_out++;
+		if (_out >= FIFO_SIZE)
+			_out = 0;
+		
+		return obj;
 	}
 }
 

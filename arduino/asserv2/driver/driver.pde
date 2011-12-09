@@ -20,6 +20,8 @@ void setup()
 	/*Active la liaison serie*/
 	initSerialLink();
 	
+	robot.init();
+	
 	// LED qui n'en est pas une
 	pinMode(16,OUTPUT);
 }
@@ -39,7 +41,7 @@ void loop(){
 	
 	readIncomingData();
 
-	if (!robot.goalIsReached() and !fifo.isEmpty())
+	if (robot.goalIsReached() and !fifo.isEmpty())
 	{
 		FifoObj_to_robot(fifo.pop());
 	}

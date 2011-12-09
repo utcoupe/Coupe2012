@@ -7,11 +7,11 @@
 #include "tools.h"
 #include "fifo.h"
 
-/*
+
 double _convert_speed(int speed)
 {
 	return ((double)speed) * ENC_MM_TO_TICKS / 1000.0;
-}*/
+}
 
 /**
  * Analyse le message et effectue les actions associees

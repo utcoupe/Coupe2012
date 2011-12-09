@@ -13,7 +13,13 @@ double convert_speed(int speed)
 void FifoObj_to_robot(FifoObj * obj)
 {
 	char err_msg[50];
-	if (obj != NULL)
+	
+	if (obj == NULL)
+	{
+		sprintf(err_msg, "Error -- %s (%s:%d) -- obj=NULL", __FUNCTION__, __FILE__, __LINE__);
+		Serial.println(err_msg);
+	}
+	else
 	{
 		switch (obj->get_t())
 		{

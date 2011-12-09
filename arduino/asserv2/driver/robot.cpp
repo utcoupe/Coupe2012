@@ -51,7 +51,7 @@ void Robot::init()
 	_a = 0.0;
 	_speed = 0.0;
 	
-	_goal_reached = false;
+	_goal_reached = true;
 	
 	Robot::cancel();
 }
@@ -167,8 +167,12 @@ void Robot::update_motors(int dt)
 
 	int value_pwm_left = 0;
 	int value_pwm_right = 0;
-	if ((G_POS == _goal.type and abs(currentDelta) > 10*ENC_MM_TO_TICKS)
-		or (G_ANG == _goal.type and abs(angleDiff) > (3.0f/180.0f*M_PI)))
+	if ((G_POS == _goal.type and abs(currentDelta) < 10*ENC_MM_TO_TICKS)
+		or (G_ANG == _goal.type and abs(angleDiff) < (3.0f/180.0f*M_PI)))
+	{
+		_goal_reached = true;
+	}
+	else
 	{
 		if (G_POS == _goal.type)
 			output4Delta = pid4DeltaControl.compute(currentDelta);
@@ -212,18 +216,6 @@ void Robot::update_motors(int dt)
 		}//*/
 		_goal_reached = false;
 	}
-	else
-	{
-		_goal_reached = true;
-	}
-	/*else if (micros() - _i > 1000000)
-	{
-		Serial.println("ok");
-		Serial.println(abs(angleDiff));
-		Serial.println((3.0f/180.0f*M_PI));
-		
-		_i = micros();
-	}*/
 
 	setLeftPWM(-value_pwm_left);
 	setRightPWM(-value_pwm_right);
