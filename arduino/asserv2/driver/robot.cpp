@@ -42,7 +42,10 @@ Robot::Robot(long *value_left_enc, long *value_right_enc, AF_DCMotor * motor_lef
 
 	_rampe_delta = &rampe_delta;
 	_rampe_alpha = &rampe_alpha;
+}
 
+void Robot::init()
+{
 	_x = 0;
 	_y = 0;
 	_a = 0.0;

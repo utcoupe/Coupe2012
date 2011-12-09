@@ -24,6 +24,7 @@ class Robot
 {
 	public:
 		Robot(long *value_enc_left, long *value_enc_right, AF_DCMotor * motor_left, AF_DCMotor * motor_right);
+		void init();
 		void update(int dt);
 		void reset_pid();
 		void go_to(long int x, long int y, double speed = 200);
