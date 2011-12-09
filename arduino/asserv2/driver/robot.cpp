@@ -133,22 +133,24 @@ void Robot::update_motors(int dt)
 	_rampe_alpha->compute_next_goal(dt);
 	_rampe_delta->compute_next_goal(dt);
 	
-	double goal_a;
+	double angleDiffAlpha = angle_diff(_goal.a, _a);
+	double angleDiffDelta = angle_diff(atan2(_goal.y-_y,_goal.x-_x), _a);
+	
+	double angleDiff = 0.0;
 	switch (_goal.type)
 	{
 		case G_POS:
-			goal_a = atan2(_goal.y-_y,_goal.x-_x);
+			angleDiff = angleDiffDelta;
 		break;
 
 		case G_ANG:
-			goal_a = _goal.a;
+			angleDiff = angleDiffAlpha;
 		break;
 	}
-	double angleDiff = angle_diff(goal_a, _a);
 
 	int sens_delta=-1;
 	// Si le goal est derrière 
-	if(_rampe_delta->get_phase() == PHASE_END and abs(angleDiff) > M_PI/2)
+	if(_rampe_delta->get_phase() == PHASE_END and abs(angleDiffDelta) > M_PI/2)
 	{
 		sens_delta = -sens_delta;
 		if (_goal.type == G_POS)
