@@ -54,6 +54,8 @@ void Robot::init()
 	_goal_reached = true;
 	
 	Robot::cancel();
+	
+	Robot::reset_pid();
 }
 
 void Robot::setGoal(T_GOAL t, long int x, long int y, double a)
@@ -149,7 +151,7 @@ void Robot::update_motors(int dt)
 	}
 
 	int sens_delta=-1;
-	// Si le goal est derrière 
+	// Si le goal est derrière
 	if(_rampe_delta->get_phase() == PHASE_END and abs(angleDiffDelta) > M_PI/2)
 	{
 		sens_delta = -sens_delta;
@@ -232,7 +234,6 @@ void Robot::go_to(long int x, long int y, double speed)
 	_goal.x = x;
 	_goal.y = y;
 	_goal.a = 0;
-	Robot::reset_pid();
 
 	double a = atan2(y, x);
 	_rampe_alpha->compute(angle_diff(a,_a) * ENC_CENTER_DIST_TICKS, 0, speed, 0.1, -0.025);
@@ -249,7 +250,6 @@ void Robot::turn(double a, double speed)
 	_goal.x = _x;
 	_goal.y = _y;
 	_goal.a = a;
-	Robot::reset_pid();
 	
 	_rampe_alpha->compute(angle_diff(a,_a) * ENC_CENTER_DIST_TICKS, 0, speed, 0.1, -0.025);
 	_rampe_delta->compute(0, 0, 1, 1, -1);
@@ -258,9 +258,8 @@ void Robot::turn(double a, double speed)
 
 void Robot::cancel()
 {
-	Robot::setGoal(G_ANG,_x,_y,_a);
+	Robot::setGoal(G_POS,_x,_y,_a);
 	
-	Robot::reset_pid();
 	_rampe_alpha->compute(0, 0, 1, 1, -1);
 	_rampe_delta->compute(0, 0, 1, 1, -1);
 }
