@@ -229,11 +229,7 @@ void Robot::update_motors(int dt)
 
 void Robot::go_to(long int x, long int y, double speed)
 {
-	
-	_goal.type = G_POS;
-	_goal.x = x;
-	_goal.y = y;
-	_goal.a = 0;
+	Robot::setGoal(G_POS,x,y,0);
 
 	double a = atan2(y, x);
 	_rampe_alpha->compute(angle_diff(a,_a) * ENC_CENTER_DIST_TICKS, 0, speed, 0.1, -0.025);
@@ -246,10 +242,7 @@ void Robot::go_to(long int x, long int y, double speed)
 
 void Robot::turn(double a, double speed)
 {
-	_goal.type = G_ANG;
-	_goal.x = _x;
-	_goal.y = _y;
-	_goal.a = a;
+	Robot::setGoal(G_ANG,_x,_y,a);
 	
 	_rampe_alpha->compute(angle_diff(a,_a) * ENC_CENTER_DIST_TICKS, 0, speed, 0.1, -0.025);
 	_rampe_delta->compute(0, 0, 1, 1, -1);
