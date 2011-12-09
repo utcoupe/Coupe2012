@@ -39,20 +39,27 @@ void RenderArea::paintEvent(QPaintEvent * /* event */)
 
     qreal maxX = 0;
     qreal maxY = 0;
+    qreal minY = 0;
+    if (!points.isEmpty()) {
+        maxX = points.first().x();
+        maxY = points.first().y();
+        minY = points.first().y();
+    }
     for(QVector<QPointF>::iterator it = points.begin(); it != points.end(); ++it) {
         maxX = std::max(maxX, it->x());
         maxY = std::max(maxY, it->y());
+        minY = std::min(minY, it->y());
     }
 
     static const int MARGE = 5;
     qreal scaleX = (qreal) (this->width()-2*MARGE) / (qreal) maxX;
-    qreal scaleY = (qreal) (this->height()-2*MARGE) / (qreal) maxY;
+    qreal scaleY = (qreal) (this->height()-2*MARGE) / (qreal) (abs(maxY) + abs(minY));
 
     QPainterPath path;
     if (!points.isEmpty())
-        path.moveTo((qreal)MARGE + scaleX * points.first().x(), (qreal)MARGE + scaleY * points.first().y());
+        path.moveTo((qreal)MARGE + scaleX * points.first().x(), (qreal)MARGE + scaleY * (points.first().y() - minY));
     for(QVector<QPointF>::iterator it = points.begin(); it != points.end(); ++it)
-        path.lineTo((qreal)MARGE + scaleX * it->x(), (qreal)MARGE + scaleY * it->y());
+        path.lineTo((qreal)MARGE + scaleX * it->x(), (qreal)MARGE + scaleY * (it->y() - minY));
 
     painter.drawPath(path);
 

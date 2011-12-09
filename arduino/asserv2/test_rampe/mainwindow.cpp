@@ -10,12 +10,13 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
 
     Rampe rampe;
-    rampe.compute(0, 100, 500, 100, -100, 1000);
+    //rampe.compute(0, 50000, 3000, 100, -100, 0);
+    rampe.compute(50000, 0, 300, 100, -100, 0);
     //rampe.cancel_decel();
 
     int i = 0;
     double a;
-    static const int DT = 1;
+    static const int DT = 5;
     while (rampe.get_phase() != PHASE_END) {
         a = rampe.get_speed();
         ui->renderSpeed->addPoint(QPointF(i,a));

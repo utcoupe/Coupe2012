@@ -31,8 +31,8 @@ class Rampe
 	private:
 		int _sens;
 		/* U position à atteindre */
-		double _goal;
-		/* U/ms vitesse à atteindre */
+                double _goal;
+                /* U/ms vitesse à atteindre */
                 double _max_speed;
 		/* U/ms² accélération voulue */
 		double _acc;
@@ -52,6 +52,8 @@ class Rampe
 		double _pos0, _pos1, _pos2, _pos3;
 		/* phase actuelle */
 		PHASE _phase;
+
+                bool _no_decel, _no_accel;
 };
 
 
