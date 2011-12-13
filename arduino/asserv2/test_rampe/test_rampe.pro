@@ -13,7 +13,8 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
     renderarea.cpp \
-    rampe.cpp
+    rampe.cpp \
+    WProgram.cpp
 
 HEADERS  += mainwindow.h \
     renderarea.h \

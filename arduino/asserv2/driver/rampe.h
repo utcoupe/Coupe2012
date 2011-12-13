@@ -10,29 +10,64 @@ typedef enum {
 } PHASE;
 
 /*
+ * Profile de vitesse en trapèze
+ *
  * U : unité arbitraire
  * µs : micro seconde
  * 
- *    t1 ----- t2
+ *    v1 ----- v2
  *   /           \
- * t0             t3
+ * v0             v3
  */
 class Rampe
 {
 	public:
 		Rampe();
-                void compute(double actue, double goal, double speed, double accel, double decel, double speed0=0);
+                /**
+                  Init the trapezoidal speed profile
+                  @param current
+                  @param goal
+                  @param speed
+                  @param accel
+                  @param decel
+                  @param speed0 initial speed
+                  @param speedf final speed
+                */
+                void compute(double actue, double goal, double goal_speed, double accel, double decel, double speed0=0, double speedf=0);
+                /**
+                  Perform one step
+                  @param dt ellapsed time since last step
+                */
                 void compute_next_goal(double dt);
-		double get_goal();
+                /**
+                  @return current position
+                */
+                double get_pos();
+                /**
+                  @return current speed
+                */
                 double get_speed();
+                /**
+                  @return abs current speed
+                */
+                double get_aspeed();
+                /**
+                  @return current phase
+                */
 		PHASE get_phase();
-                void cancel_decel();
+                /**
+                  Change the final speed keeping the others parameters
+                */
+                void update_speedf(double speedf);
 
-	private:
-		int _sens;
+        private:
 		/* U position à atteindre */
                 double _goal;
                 /* U/ms vitesse à atteindre */
+                double _goal_speed;
+                /* U/ms vitesse finale */
+                double _speedf;
+                /* U/ms vitesse maximale qui sera atteinte */
                 double _max_speed;
 		/* U/ms² accélération voulue */
 		double _acc;
@@ -48,6 +83,8 @@ class Rampe
 		double _t;
                 /* ms moment du début de chaque étape */
                 double _t1, _t2, _t3;
+                /* U/ms vitesse du début de chaque étape */
+                double _v0, _v1, _v2, _v3;
 		/* U position à chaque changement détape */
 		double _pos0, _pos1, _pos2, _pos3;
 		/* phase actuelle */

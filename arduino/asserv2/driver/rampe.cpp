@@ -11,231 +11,248 @@ Rampe::Rampe()
 }
 
 
-void Rampe::compute(double actue, double goal, double max_speed, double accel, double decel, double speed0)
+void Rampe::compute(double actue, double goal, double goal_speed, double accel, double decel, double speed0, double speedf)
 {
-    this->_no_decel = false;
+    // --------------------------------------------------------------------
+    //              Correction des éventuelles erreurs
+    // --------------------------------------------------------------------
 
-	Serial.println("rampe");
-	Serial.println(actue);
-	Serial.println(goal);
-        Serial.println(max_speed);
-	Serial.println(accel);
-	Serial.println(decel);
-	Serial.println("fin params");
+    goal_speed = abs(goal_speed);
+    if (actue > goal)
+        goal_speed = -goal_speed;
 
-        if (actue < goal) {
-            if (decel > 0)
-		decel = -decel;
-            if (accel < 0)
-		accel = -accel;
-            if (max_speed < 0)
-                max_speed = -max_speed;
-            if (speed0 < 0)
-                speed0 = -speed0;
+    decel = abs(decel);
+    if (goal_speed > speedf)
+        decel = -decel;
 
-            if (max_speed < speed0)
-                accel = decel;
-        }
-        else {
-            if (decel < 0)
-                decel = -decel;
-            if (accel > 0)
-                accel = -accel;
-            if (max_speed > 0)
-                max_speed = -max_speed;
-            if (speed0 > 0)
-                speed0 = -speed0;
-
-            if (max_speed > speed0)
-                accel = decel;
-        }
-
-
-
-
-        double time_acc = ((max_speed - speed0) / accel);
-        double d_acc = (accel * time_acc * time_acc / 2.0) + speed0 * time_acc;
-        double time_dec = (max_speed / -decel);
-        double d_dec = (decel * time_dec * time_dec / 2.0) + max_speed * time_dec;
-        double d_const = (goal - actue) - (d_acc + d_dec);
-	
-	Serial.print("time_acc");
-	Serial.println(time_acc);
-	Serial.print("d_acc");
-	Serial.println(d_acc);
-	Serial.print("time_dec");
-	Serial.println(time_dec);
-	Serial.print("d_dec");
-	Serial.println(d_dec);
-	Serial.print("d_const");
-	Serial.println(d_const);
-
-	// cas limite quand la vitesse max ne peut être atteinte
-        if (abs(goal - actue) - (abs(d_acc) + abs(d_dec)) < 0)
-	{
-		Serial.println("oups");
-                if (speed0 < max_speed) {
-                    time_dec = sqrt(abs(goal - actue) / ((-decel / (2.0*accel) + 0.5) * -decel));
-                    max_speed = -decel * time_dec;
-                    d_acc = accel * time_acc * time_acc / 2.0;
-                    time_acc = max_speed / accel;
-                    d_acc = accel * time_acc * time_acc / 2.0;
-                    d_const = 0;
-                }
-                else {  // décélération continue
-                    this->_no_accel = true;
-                    time_acc = 0;
-                    d_acc = 0;
-                    d_const = 0;
-                    time_dec = (speed0 / -decel);
-                    d_dec = (decel * time_dec * time_dec / 2.0) + speed0 * time_dec;
-                    if (d_dec > abs(actue - goal)) {    // pas le temps de ralentir !
-                        decel = -speed0 * speed0 / (2.0 * (goal- actue));
-                        time_dec = (speed0 / -decel);
-                        d_dec = (decel * time_dec * time_dec / 2.0) + speed0 * time_dec;
-                    }
-                    max_speed = speed0;
-                }
-        }
-        double time_const = (d_const / max_speed);
-        Serial.print("time_const");
-	Serial.println(time_const);
-
-        /*if (goal > actue)
-            this->_sens = 1;
+    accel = abs(accel);
+    if (actue < goal)
+    {
+        if (speed0 > goal_speed)
+            accel = decel;
+    }
+    else
+    {
+        if (speed0 < goal_speed)
+            accel = decel;
         else
-            this->_sens = -1;*/
+            accel = -accel;
+    }
 
-        // les goals
-        this->_goal = goal;
-        this->_max_speed = max_speed;
-        this->_acc = accel;
-        this->_dec = decel;
-        // les valeurs actueelles théoriques
-        this->_current_pos = actue;
-        this->_current_speed = speed0;
-        this->_acc_actue = 0;
-        this->_t = 0;
-	// temps de chaque début de phase
-        this->_t1 = time_acc;
-        this->_t2 = this->_t1 + time_const;
-        this->_t3 = this->_t2 + time_dec;
-	// position de chaque début de phase
-        this->_pos0 = actue;
-        this->_pos1 = this->_pos0 + d_acc;
-        this->_pos2 = this->_pos1 + d_const;
-        this->_pos3 = goal;
-        this->_phase = PHASE_ACCEL;
-	
-	Serial.print("_pos0");
-        Serial.println(this->_pos0);
-	Serial.print("_pos1");
-        Serial.println(this->_pos1);
-	Serial.print("_pos2");
-        Serial.println(this->_pos2);
-	Serial.print("_pos3");
-        Serial.println(this->_pos3);
-	Serial.println("rampe end");
+    Serial.println(__PRETTY_FUNCTION__);
+    Serial.println("paramètres");
+    Serial.print("actue: "); Serial.println(actue);
+    Serial.print("goal: "); Serial.println(goal);
+    Serial.print("goal_speed: "); Serial.println(goal_speed);
+    Serial.print("accel: "); Serial.println(accel);
+    Serial.print("decel: "); Serial.println(decel);
+    Serial.print("speed0: "); Serial.println(speed0);
+    Serial.print("speedf: "); Serial.println(speedf);
+    Serial.println("end paramètres");
+
+
+    // --------------------------------------------------------------------
+    //                  Assignement de variables
+    // --------------------------------------------------------------------
+
+    _no_decel = false;
+    _no_accel = false;
+
+    double max_speed = goal_speed;
+
+
+
+
+    // --------------------------------------------------------------------
+    //                  Premiers calculs
+    //
+    // dt = (vf - v0) / a
+    // dx = a * dt² / 2 + v0 * dt
+    // --------------------------------------------------------------------
+
+    double time_acc = (goal_speed - speed0) / accel;
+    double d_acc = (accel * time_acc * time_acc / 2.0) + speed0 * time_acc;
+    double time_dec = (speedf - goal_speed) / decel;
+    double d_dec = (decel * time_dec * time_dec / 2.0) + max_speed * time_dec;
+    double d_const = (goal - actue) - (d_acc + d_dec);
+
+
+    // --------------------------------------------------------------------
+    //              Traitement des cas limites
+    // --------------------------------------------------------------------
+
+    // cas limite quand la vitesse max ne peut être atteinte
+    if (abs(goal - actue) - (abs(d_acc) + abs(d_dec)) < 0)
+    {
+        Serial.println("oups");
+        // cas où la vitesse initiale est inférieur à la vitesse recherchée,
+        // le profile sera un triangle
+        //
+        //   v1|v2
+        //  /    \
+        // v0     v3
+        if (abs(speed0) < abs(max_speed)) {
+            time_dec = sqrt(abs(goal - actue) / ((abs(decel) / (2.0*abs(accel)) + 0.5) * abs(decel)));
+            max_speed = -decel * time_dec;
+            d_acc = accel * time_acc * time_acc / 2.0;
+            time_acc = max_speed / accel;
+            d_acc = accel * time_acc * time_acc / 2.0;
+            d_const = 0;
+        }
+        // cas où la vitesse initiale est supérieure à la vitesse recherchée
+        // le profile sera une décélération constante
+        // Note: la décélération va être changée pour pouvoir atteindre l'objectif
+        //
+        // v0|v1|v2
+        //         \
+        //          \
+        //          v3
+        else {
+            _no_accel = true;
+            time_acc = 0;
+            d_acc = 0;
+            d_const = 0;
+            decel = (speedf * speedf - speed0 * speed0) / (2.0 * (goal- actue));
+            time_dec = (speedf - speed0) / decel;
+            d_dec = (decel * time_dec * time_dec / 2.0) + speed0 * time_dec;
+            max_speed = speed0;
+        }
+    }
+    double time_const = (d_const / max_speed);
+
+
+    // --------------------------------------------------------------------
+    //              Enregistrement de la rampe
+    // --------------------------------------------------------------------
+
+    // les goals
+    _goal = goal;
+    _goal_speed = goal_speed;
+    _speedf = speedf;
+    _max_speed = max_speed;
+    _acc = accel;
+    _dec = decel;
+    // les valeurs actueelles théoriques
+    _current_pos = actue;
+    _current_speed = speed0;
+    _acc_actue = 0;
+    _t = 0;
+    // temps de chaque début de phase
+    _t1 = time_acc;
+    _t2 = _t1 + time_const;
+    _t3 = _t2 + time_dec;
+    // position de chaque début de phase
+    _pos0 = actue;
+    _pos1 = _pos0 + d_acc;
+    _pos2 = _pos1 + d_const;
+    _pos3 = goal;
+    _phase = PHASE_ACCEL;
+
+    Serial.println("times");
+    Serial.println(_t1);
+    Serial.println(_t2);
+    Serial.println(_t3);
+    Serial.println("end times");
+
+    Serial.println(_speedf);
+
+    Serial.print("end ");
+    Serial.println(__PRETTY_FUNCTION__);
+
 }
 
 void Rampe::compute_next_goal(double dt)
 {
-        this->_t += dt;
+        _t += dt;
 
-        switch (this->_phase)
+        switch (_phase)
 	{
                 case PHASE_ACCEL:   // pos0 -> pos1
                 {
-                        this->_acc_actue = this->_acc;
+                        _acc_actue = _acc;
 
-                        if (this->_t < this->_t1) {
-                            this->_current_speed += this->_acc * dt;
-                            this->_current_pos += this->_current_speed * dt;
+                        if (_t < _t1) {
+                            _current_speed += _acc * dt;
+                            _current_pos += _current_speed * dt;
                             break;
 			}
                         else {
-                            this->_phase = PHASE_CONST;
-                            this->_current_pos = this->_pos1;
-                            dt = (this->_t - this->_t1);
+                            _phase = PHASE_CONST;
+                            _current_pos = _pos1;
+                            dt = (_t - _t1);
                         }
 
 		}
                 case PHASE_CONST:   // pos1 -> pos2
                 {
-                        this->_acc_actue = 0;
-                        this->_current_speed = this->_max_speed;
+                        _acc_actue = 0;
+                        _current_speed = _max_speed;
 
-                        if (this->_t < this->_t2){
-                            this->_current_pos += this->_current_speed * dt;
+                        if (_t < _t2){
+                            _current_pos += _current_speed * dt;
                             break;
                         }
                         else {
-                            this->_phase = PHASE_DECEL;
-                            dt = (this->_t - this->_t2);
-                            this->_current_pos = this->_pos2;
+                            _phase = PHASE_DECEL;
+                            dt = (_t - _t2);
+                            _current_pos = _pos2;
                         }
 		}
                 case PHASE_DECEL:   // pos2 -> pos3
                 {
-                        this->_acc_actue = this->_dec;
+                        _acc_actue = _dec;
 
-                        this->_current_speed += this->_dec * dt;
+                        _current_speed += _dec * dt;
 
-                        this->_current_pos += this->_current_speed * dt;
+                        _current_pos += _current_speed * dt;
 
-                        if (this->_t < this->_t3) {
+                        if (_t < _t3) {
                             break;
                         }
                         else {
-                            this->_phase = PHASE_END;
-                            this->_current_pos = this->_pos3;
+                            _phase = PHASE_END;
+                            _current_pos = _pos3;
                         }
 		}
 		case PHASE_END:
 		{
-                        this->_acc_actue = 0;
-                        if (!_no_decel)
-                            this->_current_speed = 0;
+                        _acc_actue = 0;
+                        if (_no_decel)
+                            _current_speed = _max_speed;
                         else
-                            this->_current_speed = this->_max_speed;
-                        this->_current_pos = this->_pos3;
+                            _current_speed = _speedf;
+                        _current_pos = _pos3;
+                        Serial.println(_current_speed);
 			break;
 		}
                 default: break;
 	}
 }
 
-double Rampe::get_goal()
+double Rampe::get_pos()
 {
-        return this->_current_pos;
+        return _current_pos;
 }
 
 double Rampe::get_speed()
 {
-        return this->_current_speed;
+        return _current_speed;
+}
+
+double Rampe::get_aspeed()
+{
+    return abs(Rampe::get_speed());
 }
 
 
 PHASE Rampe::get_phase()
 {
-        return this->_phase;
+        return _phase;
 }
 
-void Rampe::cancel_decel()
+void Rampe::update_speedf(double speedf)
 {
-    if (this->_no_accel) {
-        //@todo
-    }
-    else {
-        // plus de décélération
-        this->_no_decel = true;
-        // augmentation de la durée de la phase constante
-        this->_t2 += (this->_pos3 - this->_pos2) / this->_max_speed;
-        // la position finale de la phase constante devient la position finale
-        this->_pos2 = this->_pos3;
-        // durée phase constante = 0;
-        this->_t3 = this->_t2;
-    }
+    Rampe::compute(_current_pos, _goal, _goal_speed, _acc, _dec, _current_speed, speedf);
 }
 
 	
