@@ -58,17 +58,29 @@ void Robot::init()
 	Robot::reset_pid();
 }
 
-void Robot::setGoal(T_GOAL t, long int x, long int y, double a)
+void Robot::setGoal(T_GOAL t, long int x, long int y, double a, double speed)
 {
 	_goal.type = t;
 	_goal.x = x;
 	_goal.y = y;
 	_goal.a = a;
+	_goal.speed = speed;
 }
 	
 bool Robot::goalIsReached()
 {
 	return _goal_reached;
+}
+
+void Robot::reset_pid()
+{
+	pid4DeltaControl.reset();
+	pid4DeltaControl.setOutputLimits(-255,255);
+	consigneDelta = 0.0;
+	
+	pid4AlphaControl.reset();
+	pid4AlphaControl.setOutputLimits(-255,255);
+	consigneAlpha = 0.0;
 }
 
 void Robot::update(int dt)
@@ -116,17 +128,6 @@ void Robot::update_state(int dt)
 	_y += dy;
 }
 
-void Robot::reset_pid()
-{
-	pid4DeltaControl.reset();
-	pid4DeltaControl.setOutputLimits(-255,255);
-	consigneDelta = 0.0;
-	
-	pid4AlphaControl.reset();
-	pid4AlphaControl.setOutputLimits(-255,255);
-	consigneAlpha = 0.0;
-}
-
 
 void Robot::update_motors(int dt)
 {
@@ -164,17 +165,23 @@ void Robot::update_motors(int dt)
  	double dx = _goal.x-_x;
 	double dy = _goal.y-_y;
 
-	
-	currentDelta = _rampe_delta->get_pos() - sens_delta * sqrt(dx*dx+dy*dy);
+	double deltaDiff = sqrt(dx*dx+dy*dy);
+	currentDelta = _rampe_delta->get_pos() - sens_delta * deltaDiff;
 	currentAlpha = _rampe_alpha->get_pos() - (angleDiff * ENC_CENTER_DIST_TICKS);
 	
 
+		
 	int value_pwm_left = 0;
 	int value_pwm_right = 0;
-	if (abs(currentDelta) < 10*ENC_MM_TO_TICKS
+	if (deltaDiff < 10*ENC_MM_TO_TICKS
 		and (_goal.type == G_POS or abs(angleDiff) < (3.0f/180.0f*M_PI)))
 	{
 		_goal_reached = true;
+		
+		if (micros() - _i > 1000000) {
+			Serial.println("boom");
+			_i = micros();
+		}
 	}
 	else
 	{
@@ -224,34 +231,47 @@ void Robot::update_motors(int dt)
 	
 }
 
-void Robot::go_to(long int x, long int y, double speed)
+void Robot::go_to(long int x, long int y, double speed, double final_speed)
 {
-	Robot::setGoal(G_POS,x,y,0);
+	#define DEBUG_GOTO
+	#ifdef DEBUG_GOTO
+	Serial.println(__PRETTY_FUNCTION__);
+	Serial.print("x "); Serial.println(x);
+	Serial.print("y "); Serial.println(y);
+	Serial.print("speed "); Serial.println(speed);
+	Serial.print("final_speed "); Serial.println(final_speed);
+	#endif
+	
+	Robot::setGoal(G_POS,x,y,0,speed);
 
 	double a = atan2(y, x);
-	_rampe_alpha->compute(angle_diff(a,_a) * ENC_CENTER_DIST_TICKS, 0, speed, 0.1, -0.025);
+	_rampe_alpha->compute(angle_diff(a,_a) * ENC_CENTER_DIST_TICKS, 0, speed, 0.1, -0.025, 0, 0);
 
  	double dx = x-_x;
 	double dy = y-_y;
 	double d = (double)sqrt(dx*dx+dy*dy);
-	_rampe_delta->compute(d, 0, speed, 0.1, -0.05);
+	_rampe_delta->compute(d, 0, speed, 0.1, -0.05, _speed, final_speed);
+	
+	_goal_reached = false;
 }
 
 void Robot::turn(double a, double speed)
 {
-	Robot::setGoal(G_ANG,_x,_y,a);
+	Robot::setGoal(G_ANG,_x,_y,a,speed);
 	
-	_rampe_alpha->compute(angle_diff(a,_a) * ENC_CENTER_DIST_TICKS, 0, speed, 0.1, -0.025);
-	_rampe_delta->compute(0, 0, 1, 1, -1);
+	_rampe_alpha->compute(angle_diff(a,_a) * ENC_CENTER_DIST_TICKS, 0, speed, 0.1, -0.025, 0,0);
+	_rampe_delta->compute(0, 0, 1, 1, -1, 0,0);
+	
+	_goal_reached = false;
 }
 
 
 void Robot::cancel()
 {
-	Robot::setGoal(G_POS,_x,_y,_a);
+	Robot::setGoal(G_POS,_x,_y,_a,0);
 	
-	_rampe_alpha->compute(0, 0, 1, 1, -1);
-	_rampe_delta->compute(0, 0, 1, 1, -1);
+	_rampe_alpha->compute(0, 0, 1, 1, -1,0,0);
+	_rampe_delta->compute(0, 0, 1, 1, -1,0,0);
 }
 
 
@@ -270,8 +290,16 @@ double Robot::get_a()
 	return _a;
 }
 
+Goal Robot::get_goal()
+{
+	return _goal;
+}
 
-
-
+void Robot::update_speedf(double speedf)
+{
+	Serial.println("update_speedf");
+	Robot::go_to(_goal.x, _goal.y, _goal.speed, speedf);
+	
+}
 
 

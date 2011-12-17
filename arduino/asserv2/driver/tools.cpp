@@ -1,5 +1,6 @@
 #include "tools.h"
 #include <math.h>
+#include "parameters.h"
 
 double moduloPI(double Nb){
 	double result;
@@ -10,3 +11,11 @@ double moduloPI(double Nb){
 	else result = Nb;
 	return(result);
 }
+
+
+double convert_speed(int speed)
+{
+	return ((double)speed) * ENC_MM_TO_TICKS / 1000.0;
+}
+
+

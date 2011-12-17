@@ -44,12 +44,27 @@ FifoObj * Fifo::pop()
 	}
 }
 
+FifoObj * Fifo::next()
+{
+	if (Fifo::isEmpty())
+		return NULL;
+	else
+	{
+		return &(_fifo[_out]);
+	}
+}
+
 
 bool Fifo::isEmpty()
 {
 	return _in == _out;
 }
 
+
+void Fifo::clear()
+{
+	_in = _out;
+}
 
 
 
@@ -106,4 +121,5 @@ int FifoObj::get_data(int i)
 		return _datas[i];
 	}
 }
+
 

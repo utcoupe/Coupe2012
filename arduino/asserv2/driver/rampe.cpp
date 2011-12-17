@@ -15,7 +15,10 @@ void Rampe::compute(const double actue, const double goal,
                     const double c_goal_speed, const double c_accel, const double c_decel,
                     const double speed0, const double speedf)
 {
+	//#define DEBUG_RAMPE
+	#ifdef DEBUG_RAMPE
     Serial.println(__PRETTY_FUNCTION__);
+    #endif
 
 
     // --------------------------------------------------------------------
@@ -76,6 +79,7 @@ void Rampe::compute(const double actue, const double goal,
             decel = -abs(c_accel);
     }
 
+	#ifdef DEBUG_RAMPE
     Serial.println("paramètres");
     Serial.print("actue: "); Serial.println(actue);
     Serial.print("goal: "); Serial.println(goal);
@@ -85,6 +89,7 @@ void Rampe::compute(const double actue, const double goal,
     Serial.print("speed0: "); Serial.println(speed0);
     Serial.print("speedf: "); Serial.println(speedf);
     Serial.println("end paramètres");
+    #endif
 
 
     // --------------------------------------------------------------------
@@ -123,7 +128,9 @@ void Rampe::compute(const double actue, const double goal,
     {
         time_const = 0;
         d_const = 0;
+		#ifdef DEBUG_RAMPE
         Serial.println("oups");
+        #endif
         // |v0| < |vm| && |vf| < |vm|
         // cas où la vitesse initiale est inférieur à la vitesse recherchée,
         // le profile sera un triangle
@@ -132,7 +139,9 @@ void Rampe::compute(const double actue, const double goal,
         //  /    \
         // v0     v3
         if (abs(speed0) < abs(max_speed) and abs(speedf) < abs(max_speed)) {
+			#ifdef DEBUG_RAMPE
             Serial.println("triangle");
+            #endif
             time_dec = sqrt(abs(goal - actue) / ((abs(decel) / (2.0*abs(accel)) + 0.5) * abs(decel)));
             max_speed = -decel * time_dec;
             d_acc = accel * time_acc * time_acc / 2.0;
@@ -148,7 +157,9 @@ void Rampe::compute(const double actue, const double goal,
         //          \
         //          v3
         else {
+			#ifdef DEBUG_RAMPE
             Serial.println("no accel");
+            #endif
             _no_accel = true;
             time_acc = 0;
             d_acc = 0;
@@ -187,6 +198,7 @@ void Rampe::compute(const double actue, const double goal,
     _pos3 = goal;
     _phase = PHASE_ACCEL;
 
+	#ifdef DEBUG_RAMPE
     Serial.println("times");
     Serial.println(_t1);
     Serial.println(_t2);
@@ -197,6 +209,7 @@ void Rampe::compute(const double actue, const double goal,
 
     Serial.print("end ");
     Serial.println(__PRETTY_FUNCTION__);
+    #endif
 
 }
 

@@ -8,11 +8,6 @@
 #include "fifo.h"
 
 
-double _convert_speed(int speed)
-{
-	return ((double)speed) * ENC_MM_TO_TICKS / 1000.0;
-}
-
 /**
  * Analyse le message et effectue les actions associees
  *
@@ -43,12 +38,11 @@ void cmd(int id, int id_cmd, int* args, int size){
 				sendMessage(id, E_INVALID_PARAMETERS_NUMBERS);
 			else
 			{
+				if (fifo.isEmpty() and robot.get_goal().type == G_POS)
+					robot.update_speedf(convert_speed(args[2]));
+				
 				fifo.push(CMD_GOTO, args[0], args[1], args[2]);
-				/*robot.go_to(
-					(double)args[0] * ENC_MM_TO_TICKS,
-					(double)args[1] * ENC_MM_TO_TICKS,
-					_convert_speed(args[2])
-				);*/
+				
 				sendMessage(id, 1);
 			}
 			break;
@@ -60,6 +54,10 @@ void cmd(int id, int id_cmd, int* args, int size){
 				sendMessage(id, E_INVALID_PARAMETERS_NUMBERS);
 			else
 			{
+				if (fifo.isEmpty() and robot.get_goal().type == G_POS) {
+					robot.update_speedf(convert_speed(args[2]));
+				}
+				
 				fifo.push(CMD_GOTOR, args[0], args[1], args[2]);
 				/*double co = cos(robot.get_a());
 				double si = sin(robot.get_a());
@@ -216,6 +214,7 @@ void cmd(int id, int id_cmd, int* args, int size){
 		case QA_CANCEL: 
 		{
 			robot.cancel();
+			fifo.clear();
 			sendMessage(id, 1);
 			break;
 		}

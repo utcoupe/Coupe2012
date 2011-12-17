@@ -7,7 +7,7 @@
 
 
 
-void FifoObj_to_robot(FifoObj * obj);
+void FifoObj_to_robot(FifoObj * obj, FifoObj * nextObj);
 
 
 

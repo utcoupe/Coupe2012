@@ -35,8 +35,12 @@ class Fifo
 	public:
 		Fifo();
 		int push(T_FIFO_OBJ t, int data1=0, int data2=0, int data3=0);
+		/* renvoie le prochain objet et change l'index de la FIFO */
 		FifoObj * pop();
+		/* renvoie le prochain objet mais ne change pas d'index */
+		FifoObj * next();
 		bool isEmpty();
+		void clear();
 
 	private:
 		FifoObj _fifo[FIFO_SIZE];

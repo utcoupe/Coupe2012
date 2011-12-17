@@ -33,7 +33,7 @@ class Rampe
                   @param speed0 initial speed
                   @param speedf final speed
                 */
-                void compute(double actue, double goal, double goal_speed, double accel, double decel, double speed0=0, double speedf=0);
+                void compute(double actue, double goal, double goal_speed, double accel, double decel, double speed0, double speedf);
                 /**
                   Perform one step
                   @param dt ellapsed time since last step
