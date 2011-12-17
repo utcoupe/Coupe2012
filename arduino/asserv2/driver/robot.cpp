@@ -150,7 +150,7 @@ void Robot::update_motors(int dt)
 		break;
 	}
 
-	int sens_delta=-1;
+	int sens_delta=1;
 	// Si le goal est derrière
 	if(_rampe_delta->get_phase() == PHASE_END and abs(angleDiffDelta) > M_PI/2)
 	{
@@ -165,23 +165,20 @@ void Robot::update_motors(int dt)
 	double dy = _goal.y-_y;
 
 	
-	currentDelta = sens_delta * abs(_rampe_delta->get_pos() - sqrt(dx*dx+dy*dy));
+	currentDelta = _rampe_delta->get_pos() - sens_delta * sqrt(dx*dx+dy*dy);
 	currentAlpha = _rampe_alpha->get_pos() - (angleDiff * ENC_CENTER_DIST_TICKS);
 	
 
 	int value_pwm_left = 0;
 	int value_pwm_right = 0;
-	if ((G_POS == _goal.type and abs(currentDelta) < 10*ENC_MM_TO_TICKS)
-		or (G_ANG == _goal.type and abs(angleDiff) < (3.0f/180.0f*M_PI)))
+	if (abs(currentDelta) < 10*ENC_MM_TO_TICKS
+		and (_goal.type == G_POS or abs(angleDiff) < (3.0f/180.0f*M_PI)))
 	{
 		_goal_reached = true;
 	}
 	else
 	{
-		if (G_POS == _goal.type)
-			output4Delta = pid4DeltaControl.compute(currentDelta);
-		else
-			output4Delta = 0;
+		output4Delta = pid4DeltaControl.compute(currentDelta);
 		output4Alpha = pid4AlphaControl.compute(currentAlpha);
 		
 		value_pwm_left = output4Delta-output4Alpha;
