@@ -261,7 +261,6 @@ void Rampe::compute_next_goal(double dt)
                         else
                             _current_speed = _speedf;
                         _current_pos = _pos3;
-                        Serial.println(_current_speed);
 			break;
 		}
                 default: break;
