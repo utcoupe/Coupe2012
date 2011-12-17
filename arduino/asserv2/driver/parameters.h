@@ -9,6 +9,8 @@
 #define PARAMETERS_H_
 
 
+#define DEBUG	false
+
 #ifndef M_PI
 #  define M_PI 3.1415926535897932384626433832795
 #endif
@@ -28,7 +30,7 @@
 #define ENC_MM_TO_TICKS (ENC_RESOLUTION*4)/(2*M_PI*ENC_RADIUS) // environ : 17.6839
 
 // Duree d'un cycle (en millisecondes)
-#define DUREE_CYCLE 5
+#define DUREE_CYCLE 2
 
 /* Parametres de la carte asservissement
  * pin 0 -> USB 2 TTL
