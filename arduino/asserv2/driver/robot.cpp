@@ -177,11 +177,6 @@ void Robot::update_motors(int dt)
 		and (_goal.type == G_POS or abs(angleDiff) < (3.0f/180.0f*M_PI)))
 	{
 		_goal_reached = true;
-		
-		if (micros() - _i > 1000000) {
-			Serial.println("boom");
-			_i = micros();
-		}
 	}
 	else
 	{
