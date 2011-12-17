@@ -165,8 +165,8 @@ void Robot::update_motors(int dt)
 	double dy = _goal.y-_y;
 
 	
-	currentDelta = sens_delta * abs(_rampe_delta->get_goal() - sqrt(dx*dx+dy*dy));
-	currentAlpha = _rampe_alpha->get_goal() - (angleDiff * ENC_CENTER_DIST_TICKS);
+	currentDelta = sens_delta * abs(_rampe_delta->get_pos() - sqrt(dx*dx+dy*dy));
+	currentAlpha = _rampe_alpha->get_pos() - (angleDiff * ENC_CENTER_DIST_TICKS);
 	
 
 	int value_pwm_left = 0;
@@ -204,7 +204,7 @@ void Robot::update_motors(int dt)
 			Serial.println(output4Delta);
 			Serial.println(currentDelta);
 			Serial.print("goal");
-			Serial.println(_rampe_delta->get_goal());
+			Serial.println(_rampe_delta->get_pos());
 			Serial.print("diff");
 			Serial.println(sens_delta * sqrt(dx*dx+dy*dy));
 			Serial.print("sens");
@@ -213,7 +213,7 @@ void Robot::update_motors(int dt)
 			Serial.println(output4Alpha);
 			Serial.println(currentAlpha);
 			Serial.print("goal");
-			Serial.println(_rampe_alpha->get_goal());
+			Serial.println(_rampe_alpha->get_pos());
 			Serial.print("diff");
 			Serial.println(angle_diff(goal_a,_a) * 180.0f / M_PI);
 			_i = micros();

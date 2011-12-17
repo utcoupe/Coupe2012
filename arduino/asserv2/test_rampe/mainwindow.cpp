@@ -12,59 +12,117 @@ MainWindow::MainWindow(QWidget *parent) :
     Rampe rampe;
 
     // recul
-    // v0 == 0;
+    // v0 == 0
     // vf == 0
-    rampe.compute(500000, 0, -2000, 50, -50, 0, 0);
+    //
+    //   vm ---- vm
+    //  /         \
+    // v0          vf
+    //rampe.compute(500000, 0, -2000, 50, -50, 0, 0);
 
     // recul
     // v0 != 0
     // vf == 0
+    //
+    //   vm ---- vm
+    //  /         \
+    // v0          \
+    //              vf
     //rampe.compute(500000, 0, -2000, 50, -50, -1000, 0);
 
     // recul
     // v0 == 0
     // vf != 0
+    //
+    //    vm ---- vm
+    //   /          \
+    //  /            vf
+    // v0
     //rampe.compute(500000, 0, -2000, 50, -50, 0, -1000);
 
     // recul
     // |v0| > |vmax|
     // vf == 0
+    //
+    // v0
+    //  \
+    //   vm ---- vm
+    //             \
+    //              vf
     //rampe.compute(500000, 0, -2000, 50, -50, -5000, 0);
 
     // recul
     // |v0| > |vmax|
     // vf != 0
+    //
+    // v0
+    //  \
+    //   vm ---- vm
+    //             \
+    //              vf
+    //
+    // 0 - - - - - - 0
     //rampe.compute(500000, 0, -2000, 50, -50, -5000, -1000);
 
     // recul
     // trop court
     // v0 == 0
     // vf == 0
+    //
+    //    vm
+    //  /    \
+    // v0     vf
     //rampe.compute(50000, 0, -2000, 100, -50, 0, 0);
 
     // recul
     // trop court
     // v0 != 0
     // vf == 0
+    //
+    //    vm
+    //  /    \
+    // v0     \
+    //        vf
     //rampe.compute(50000, 0, -2000, 100, -50, -1000, 0);
 
     // recul
     // trop court
     // v0 == 0
     // vf != 0
+    //
+    //     vm
+    //   /    \
+    //  /      vf
+    // v0
     //rampe.compute(50000, 0, -2000, 100, -50, 0, -1000);
 
     // recul
     // trop court
     // |v0| > |vmax|
     // vf == 0
+    //
+    // v0
+    //   \
+    //    vf
     //rampe.compute(50000, 0, -2000, 50, -50, -5000, 0);
 
     // recul
     // trop court
     // |v0| > |vmax|
     // vf != 0
+    //
+    // v0
+    //   \
+    //    vf
+    //
+    // 0 - - - - - - 0
     //rampe.compute(50000, 0, -2000, 50, -50, -5000, -1000);
+
+    // recul
+    // trop court
+    // v0 == 0
+    // |vf| > |vmax|
+    rampe.compute(50000, 0, -2000, 50, -50, 0, -4000);
 
 
     //rampe.update_speedf(-1000);

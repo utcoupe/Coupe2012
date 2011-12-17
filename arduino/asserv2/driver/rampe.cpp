@@ -11,35 +11,71 @@ Rampe::Rampe()
 }
 
 
-void Rampe::compute(double actue, double goal, double goal_speed, double accel, double decel, double speed0, double speedf)
+void Rampe::compute(const double actue, const double goal,
+                    const double c_goal_speed, const double c_accel, const double c_decel,
+                    const double speed0, const double speedf)
 {
+    Serial.println(__PRETTY_FUNCTION__);
+
+
     // --------------------------------------------------------------------
     //              Correction des éventuelles erreurs
     // --------------------------------------------------------------------
 
-    goal_speed = abs(goal_speed);
-    if (actue > goal)
-        goal_speed = -goal_speed;
+    bool marche_avant = (actue < goal);
+    double  goal_speed = c_goal_speed,
+            accel = c_accel,
+            decel = c_decel;
 
-    decel = abs(decel);
-    if (goal_speed > speedf)
-        decel = -decel;
-
-    accel = abs(accel);
-    if (actue < goal)
+    // si marche avant
+    //      vm > 0
+    // si marche arrière
+    //      vm < 0
+    if (marche_avant)
     {
-        if (speed0 > goal_speed)
-            accel = decel;
+        goal_speed = abs(goal_speed);
+
+        // v0 < vm
+        //      acc > 0
+        // v0 > vm
+        //      acc = dec < 0
+        if (speed0 < goal_speed)
+            accel = abs(c_accel);
+        else
+            accel = -abs(c_decel);
+
+        // vm > vf
+        //      dec < 0
+        // vm < vf
+        //      acc = dec > 0
+        if (goal_speed > speedf)
+            decel = -abs(c_decel);
+        else
+            decel = abs(c_accel);
     }
     else
     {
-        if (speed0 < goal_speed)
-            accel = decel;
+        goal_speed = -abs(goal_speed);
+
+        // v0 > vm
+        //      acc < 0
+        // v0 < vm
+        //      acc = dec > 0
+        if (speed0 > goal_speed)
+            accel = -abs(c_accel);
         else
-            accel = -accel;
+            accel = abs(c_decel);
+
+        // vm < vf
+        //      dec > 0
+        // vm > vf
+        //      acc = dec < 0
+        if (goal_speed < speedf)
+            decel = abs(c_decel);
+        else
+            decel = -abs(c_accel);
     }
 
-    Serial.println(__PRETTY_FUNCTION__);
     Serial.println("paramètres");
     Serial.print("actue: "); Serial.println(actue);
     Serial.print("goal: "); Serial.println(goal);
@@ -75,6 +111,7 @@ void Rampe::compute(double actue, double goal, double goal_speed, double accel, 
     double time_dec = (speedf - goal_speed) / decel;
     double d_dec = (decel * time_dec * time_dec / 2.0) + max_speed * time_dec;
     double d_const = (goal - actue) - (d_acc + d_dec);
+    double time_const = d_const / max_speed;
 
 
     // --------------------------------------------------------------------
@@ -84,20 +121,23 @@ void Rampe::compute(double actue, double goal, double goal_speed, double accel, 
     // cas limite quand la vitesse max ne peut être atteinte
     if (abs(goal - actue) - (abs(d_acc) + abs(d_dec)) < 0)
     {
+        time_const = 0;
+        d_const = 0;
         Serial.println("oups");
+        // |v0| < |vm| && |vf| < |vm|
         // cas où la vitesse initiale est inférieur à la vitesse recherchée,
         // le profile sera un triangle
         //
         //   v1|v2
         //  /    \
         // v0     v3
-        if (abs(speed0) < abs(max_speed)) {
+        if (abs(speed0) < abs(max_speed) and abs(speedf) < abs(max_speed)) {
+            Serial.println("triangle");
             time_dec = sqrt(abs(goal - actue) / ((abs(decel) / (2.0*abs(accel)) + 0.5) * abs(decel)));
             max_speed = -decel * time_dec;
             d_acc = accel * time_acc * time_acc / 2.0;
             time_acc = max_speed / accel;
             d_acc = accel * time_acc * time_acc / 2.0;
-            d_const = 0;
         }
         // cas où la vitesse initiale est supérieure à la vitesse recherchée
         // le profile sera une décélération constante
@@ -108,17 +148,16 @@ void Rampe::compute(double actue, double goal, double goal_speed, double accel, 
         //          \
         //          v3
         else {
+            Serial.println("no accel");
             _no_accel = true;
             time_acc = 0;
             d_acc = 0;
-            d_const = 0;
             decel = (speedf * speedf - speed0 * speed0) / (2.0 * (goal- actue));
             time_dec = (speedf - speed0) / decel;
             d_dec = (decel * time_dec * time_dec / 2.0) + speed0 * time_dec;
             max_speed = speed0;
         }
     }
-    double time_const = (d_const / max_speed);
 
 
     // --------------------------------------------------------------------
