@@ -18,7 +18,7 @@ MainWindow::MainWindow(QWidget *parent) :
     //   vm ---- vm
     //  /         \
     // v0          vf
-    //rampe.compute(500000, 0, -2000, 50, -50, 0, 0);
+    rampe.compute(500000, 0, -2000, 50, -50, 0, 0);
 
     // recul
     // v0 != 0
@@ -122,7 +122,7 @@ MainWindow::MainWindow(QWidget *parent) :
     // trop court
     // v0 == 0
     // |vf| > |vmax|
-    rampe.compute(50000, 0, -2000, 50, -50, 0, -4000);
+    //rampe.compute(50000, 0, -2000, 50, -50, 0, -4000);
 
 
     //rampe.update_speedf(-1000);
@@ -136,6 +136,8 @@ MainWindow::MainWindow(QWidget *parent) :
         a = rampe.get_pos();
         ui->renderGoal->addPoint(QPointF(i,a));
         i += DT;
+        if (i==100)
+            rampe.update_speedf(-1000);
         rampe.compute_next_goal(DT);
     }
     a = rampe.get_speed();

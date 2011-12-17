@@ -290,7 +290,9 @@ PHASE Rampe::get_phase()
 
 void Rampe::update_speedf(double speedf)
 {
+    double t = _t;
     Rampe::compute(_current_pos, _goal, _goal_speed, _acc, _dec, _current_speed, speedf);
+    _t = t;
 }
 
 	
