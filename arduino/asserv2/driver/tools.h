@@ -17,5 +17,8 @@
  * */
 double moduloPI(double Nb);
 
+
+double convert_speed(int speed);
+
 #endif
 

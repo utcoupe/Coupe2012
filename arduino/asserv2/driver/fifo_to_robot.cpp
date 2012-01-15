@@ -5,12 +5,8 @@
 #include "tools.h"
 
 
-double convert_speed(int speed)
-{
-	return ((double)speed) * ENC_MM_TO_TICKS / 1000.0;
-}
 
-void FifoObj_to_robot(FifoObj * obj)
+void FifoObj_to_robot(FifoObj * obj, FifoObj * nextObj)
 {
 	char err_msg[50];
 	
@@ -25,16 +21,28 @@ void FifoObj_to_robot(FifoObj * obj)
 		{
 			case CMD_GOTO:
 			{
+				int final_speed=0;
+				if (nextObj != NULL and (nextObj->get_t() == CMD_GOTO or nextObj->get_t() == CMD_GOTOR))
+					final_speed=nextObj->get_data(2);
+				
+				Serial.println("coucou");
+				Serial.println(obj->get_data(0));
+				Serial.println(obj->get_data(1));
 				robot.go_to(
-					obj->get_data(0) * ENC_MM_TO_TICKS,
-					obj->get_data(1) * ENC_MM_TO_TICKS,
-					convert_speed(obj->get_data(2))
+					(long int)obj->get_data(0) * ENC_MM_TO_TICKS,
+					(long int)obj->get_data(1) * ENC_MM_TO_TICKS,
+					convert_speed(obj->get_data(2)),
+					convert_speed(final_speed)
 				);
 				break;
 			}
 			
 			case CMD_GOTOR:
 			{
+				int final_speed=0;
+				if (nextObj != NULL and (nextObj->get_t() == CMD_GOTO or nextObj->get_t() == CMD_GOTOR))
+					final_speed=nextObj->get_data(2);
+				
 				double co = cos(robot.get_a());
 				double si = sin(robot.get_a());
 
@@ -44,7 +52,8 @@ void FifoObj_to_robot(FifoObj * obj)
 				robot.go_to(
 					robot.get_x() + dx,
 					robot.get_y() + dy,
-					convert_speed(obj->get_data(2))
+					convert_speed(obj->get_data(2)),
+					convert_speed(final_speed)
 				);
 				break;
 			}

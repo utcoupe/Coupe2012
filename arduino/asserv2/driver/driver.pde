@@ -38,13 +38,14 @@ void loop(){
 	/* zone programmation libre */
 	
 	robot.update(DUREE_CYCLE);
-	
-	readIncomingData();
 
 	if (robot.goalIsReached() and !fifo.isEmpty())
 	{
-		FifoObj_to_robot(fifo.pop());
+		Serial.println("next goal");
+		FifoObj_to_robot(fifo.pop(), fifo.next());
 	}
+	
+	readIncomingData();
 	
 	/* fin zone de programmation libre */
 
