@@ -20,12 +20,10 @@ cost_to
 	>>> n1.cost_to(n3)
 	90
 	
-set_cost_to_arrive
-	>>> n1.set_cost_to_arrive(n2)
-	>>> n1.cost_to_arrive
+set_malus
+	>>> n1.set_malus(n2).malus
 	90
-	>>> n1.set_cost_to_arrive(n3)
-	>>> n1.cost_to_arrive
+	>>> n1.set_malus(n3).malus
 	90
 
 try_set_previous
@@ -40,7 +38,7 @@ try_set_previous
 	
 	>>> n1.reset()
 	>>> n2.reset()
-	>>> n2.cost_done = 99
+	>>> n2.current_cost = 99
 	>>> n2.visited = True
 	>>> n2.try_set_previous(n1)
 	True
@@ -49,7 +47,7 @@ try_set_previous
 	
 	>>> n1.reset()
 	>>> n2.reset()
-	>>> n2.cost_done = 99
+	>>> n2.current_cost = 99
 	>>> n2.visited = True
 	>>> n2.try_set_previous(n1)
 	True

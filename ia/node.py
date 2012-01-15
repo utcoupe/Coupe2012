@@ -10,8 +10,8 @@ class Node:
 		self.real_pos = Vec((int(x),int(y)))
 		self.size = size
 		self.collide = False
-		self.cost_done = 0
-		self.cost_to_arrive = 0
+		self.current_cost = 0
+		self.malus = 0
 		self.score = 0
 		self.visited = False		
 		self.previous_node = None		# previous node to get here
@@ -40,28 +40,36 @@ class Node:
 		self.collide = False
 		return False
 
-	def set_cost_to_arrive(self, node_arrive):
-		self.cost_to_arrive = self.dist_manhattan(node_arrive)
-
-	def cost_to(self, next_node):
-		cost = self.dist_manhattan(next_node)
-		return cost
-
 	def dist_manhattan(self, node):
 		return sum(map(abs, self.real_pos - node.real_pos))
+
+	def cost_to(self,node):
+		cost = self.dist_manhattan(node)
+		return cost
+
+	def set_malus(self, node_arrive):
+		malus = self.dist_manhattan(node_arrive)
+		self.malus = malus
+		return self
 	
 	def try_set_previous(self, previous):
-		new_cost_done = previous.cost_done
-		new_cost_done += previous.cost_to(self)
-		if not self.visited or new_cost_done < self.cost_done:
+		new_current_cost = previous.current_cost
+		new_current_cost += previous.cost_to(self)
+		if not self.visited or new_current_cost < self.current_cost:
 			self.previous_node = previous
-			self.cost_done = new_cost_done
-			self.score = self.cost_done + self.cost_to_arrive
+			self.current_cost = new_current_cost
+			self.update_score()
 			self.visited = True
 			return True
 		else:
 			return False
 
+	def get_score(self):
+		return self.current_cost + self.malus
+
+	def update_score(self):
+		self.score = self.get_score()
+	
 	def __str__(self):
 		return "<Node pos=%s previous=%s>" % (self.real_pos,self.previous_node)
 
