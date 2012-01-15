@@ -1,0 +1,66 @@
+
+
+import
+	>>> from node import *
+
+init
+	>>> n1 = Node(0,0,0,0,2)
+	>>> n2 = Node(0,0,50,40,2)
+	>>> n3 = Node(0,0,-50,-40,2)
+
+dist_manhattan
+	>>> n1.dist_manhattan(n2)
+	90
+	>>> n1.dist_manhattan(n3)
+	90
+
+cost_to
+	>>> n1.cost_to(n2)
+	90
+	>>> n1.cost_to(n3)
+	90
+	
+set_cost_to_arrive
+	>>> n1.set_cost_to_arrive(n2)
+	>>> n1.cost_to_arrive
+	90
+	>>> n1.set_cost_to_arrive(n3)
+	>>> n1.cost_to_arrive
+	90
+
+try_set_previous
+	>>> n1.reset()
+	>>> n2.reset()
+	>>> n2.try_set_previous(n1)
+	True
+	>>> n2.previous_node == n1
+	True
+	>>> n2.visited
+	True
+	
+	>>> n1.reset()
+	>>> n2.reset()
+	>>> n2.cost_done = 99
+	>>> n2.visited = True
+	>>> n2.try_set_previous(n1)
+	True
+	>>> n2.previous_node == n1
+	True
+	
+	>>> n1.reset()
+	>>> n2.reset()
+	>>> n2.cost_done = 99
+	>>> n2.visited = True
+	>>> n2.try_set_previous(n1)
+	True
+	>>> n2.previous_node == n1
+	True
+
+get_path
+	>>> n1 = Node(0,0,0,0,2)
+	>>> n2 = Node(0,0,0,0,2)
+	>>> n3 = Node(0,0,0,0,2)
+	>>> n3.previous_node = n2
+	>>> n2.previous_node = n1
+	>>> n3.get_path() == [n3,n2,n1]
+	True

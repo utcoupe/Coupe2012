@@ -1,0 +1,61 @@
+
+
+import
+	>>> from nodelist import *
+
+init
+	>>> n = Node(0,0,0,0,2)
+	>>> l = NodeList(n)
+	>>> l.begin == n
+	True
+	>>> l.begin.in_open_list
+	True
+
+is_empty
+	>>> l.is_empty()
+	False
+	>>> l.begin = None
+	>>> l.is_empty()
+	True
+
+pop
+	>>> n1 = Node(0,0,0,0,2)
+	>>> n2 = Node(0,0,0,0,2)
+	>>> n3 = Node(0,0,0,0,2)
+	>>> n1.score = 2
+	>>> n2.score = 1
+	>>> n3.score = 3
+	>>> l = NodeList(n1)
+
+push
+	>>> l.push_uniq(n2)
+	>>> l.push_uniq(n3)
+	>>> n3.next_in_open == n2
+	True
+	>>> n2.next_in_open == n1
+	True
+	>>> l.push_uniq(n3)
+	>>> n3.next_in_open == n2
+	True
+	>>> len(l)
+	3
+
+pop
+	>>> l.pop_min_score() == n2
+	True
+	>>> l.pop_min_score() == n1
+	True
+	>>> l.pop_min_score() == n3
+	True
+	>>> l.is_empty()
+	True
+
+len
+	>>> n1 = Node(0,0,0,0,2)
+	>>> n2 = Node(0,0,0,0,2)
+	>>> n3 = Node(0,0,0,0,2)
+	>>> l = NodeList(n1)
+	>>> l.push_uniq(n2)
+	>>> l.push_uniq(n3)
+	>>> len(l)
+	3
