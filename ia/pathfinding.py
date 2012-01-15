@@ -44,7 +44,7 @@ class Pathfinder:
 					next_node = self.nodes[ni][nj]
 					if not next_node.collide:
 						if not next_node.visited:
-							next_node.set_cost_to_arrive(node_arrive)
+							next_node.set_malus(node_arrive)
 						if next_node.try_set_previous(current):
 							l.push_uniq(next_node)
 
