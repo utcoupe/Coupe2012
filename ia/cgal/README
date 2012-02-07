@@ -1,0 +1,5 @@
+copier cgal_create_cmake_script dans le repertoire
+$ ./cgal_create_cmake_script
+$ cmake
+$ make
+
