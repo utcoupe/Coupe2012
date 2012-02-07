@@ -1,0 +1,16 @@
+
+
+
+import
+	>>> from segment import Segment
+
+init
+	>>> s = Segment((0,0), (4,0))
+
+position d'un point
+	>>> s.pos_point((2,0)) == 0
+	True
+	>>> s.pos_point((2,2)) > 0
+	True
+	>>> s.pos_point((2,-2)) < 0
+	True

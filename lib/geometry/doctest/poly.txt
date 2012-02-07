@@ -1,0 +1,18 @@
+
+
+
+
+import
+	>>> from poly import Poly
+
+
+init
+	>>> poly = Poly(((0,0),(4,0),(2,2)))
+
+aabb
+	>>> poly.AABB.p == (0,0)
+	True
+	>>> poly.AABB.w
+	4
+	>>> poly.AABB.h
+	2
