@@ -5,7 +5,7 @@ from pathfinding import *
 from tile import *
 from tilesmooth import smooth
 
-W_TILES	= 50
+W_TILES	= 80
 
 class TiledMap:
 	def __init__(self):
