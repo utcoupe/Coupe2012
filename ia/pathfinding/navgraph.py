@@ -57,32 +57,54 @@ class NavGraph:
 		area_depart = self.find_area_for_point(p_depart)
 		area_arrive = self.find_area_for_point(p_arrive)
 		areas = self.pathfinding.compute_path(area_depart, area_arrive)
-		raw_path = [ area.middle for area in areas ]
-		portal_edges = polys_to_portal_edges(areas)
-		smooth_path = funnel(p_depart, p_arrive, portal_edges)
+		if len(areas) > 1:
+			raw_path = list( area.middle for area in areas )
+			portal_edges = polys_to_portal_edges(areas)
+			smooth_path = funnel(p_depart, p_arrive, portal_edges)
+		else:
+			raw_path = [p_depart, p_arrive]
+			smooth_path = [p_depart, p_arrive]
 		return areas,raw_path,smooth_path
 
 	def find_area_for_point(self, p):
 		for area in self.areas.values():
 			if p in area:
 				return area
+		else:
+			raise Exception("%s n'est dans aucune zone" % (p,))
 	
 if __name__ == "__main__":
 	import time
 	import sys
 	filename = sys.argv[1]
 	ng = NavGraph()
-	start = time.time()
 	ng.load_xml(filename)
-	print(time.time() - start)
-	areas,raw_path,smooth_path = ng.get_path((100,200), (1500,1000))
-	print(time.time() - start)
 	
 	sys.path.append("../view")
-	from view import *
+	from interactiveview import *
 	
-	v = View()
+	p_depart = (200,200)
+	p_arrive = (1500,1500)
+
+	def onLeft(x,y):
+		global p_arrive
+		p_arrive = (x,y)
+		calc_path()
+
+	def onRight(x,y):
+		global p_depart
+		p_depart = (x,y)
+		calc_path()
+
+	def calc_path():
+		start = time.time()
+		areas,raw_path,smooth_path = ng.get_path(p_depart,p_arrive)
+		print(time.time() - start)
+		v.clear()
+		v.draw_polygons(ng.areas.values())
+		v.draw_line(raw_path, 'red')
+		v.draw_line(smooth_path, 'blue')
+	
+	v = InteractiveView(onLeft,onRight,onLeft,onRight)
 	v.draw_polygons(ng.areas.values())
-	v.draw_line(raw_path, 'red')
-	v.draw_line(smooth_path, 'blue')
 	v.mainloop()
