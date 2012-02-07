@@ -37,6 +37,9 @@ class Segment:
 	def __repr__(self):
 		return "Segment(%s, %s)" % (self.a, self.b)
 
+	def reverse(self):
+		self.a,self.b = self.b,self.a
+
 
 import doctest
 doctest.testfile("doctest/segment.txt")
