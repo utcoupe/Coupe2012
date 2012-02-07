@@ -44,6 +44,9 @@ class Poly:
 			last = p
 		yield Segment(self.points[-1], self.points[0])
 
+	def __repr__(self):
+		return "Poly%s" % (tuple(self.points),)
+
 
 
 import doctest
