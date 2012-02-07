@@ -9,8 +9,31 @@
 	<vertex x="0" y="520" />
 </polygon>
 
+<polygon>
+	<vertex x="325" y="1200" />
+	<vertex x="345" y="1200" />
+	<vertex x="345" y="2000" />
+	<vertex x="325" y="2000" />
+</polygon>
+
+<polygon>
+	<vertex x="2500" y="500" />
+	<vertex x="3000" y="500" />
+	<vertex x="3000" y="520" />
+	<vertex x="2500" y="520" />
+</polygon>
+
+<polygon>
+	<vertex x="2655" y="1200" />
+	<vertex x="2675" y="1200" />
+	<vertex x="2675" y="2000" />
+	<vertex x="2655" y="2000" />
+</polygon>
+
 <carre x="1100" y="1000" width="250"/>
 
 <carre x="1900" y="1000" width="250"/>
+
+<circle x="1500" y="1000" rayon="75" n="8"/>
 
 </map>
