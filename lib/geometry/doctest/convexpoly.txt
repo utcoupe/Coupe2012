@@ -13,10 +13,6 @@ point dans le poly
 	>>> (-1,4) in poly
 	False
 
-performance test
-	>>> import time
-	>>> N = 100
-	>>> start = time.time()
-	>>> for i in range(N): _ = (2,1) in poly
-	>>> (time.time() - start) / N < 0.0001
-	True
+isclockwise
+	>>> poly.is_clockwise()
+	False
