@@ -40,7 +40,7 @@ class View(tk.Tk):
 			path = []
 			for point in poly.points:
 				path += self.point_to_px(point)
-			r.append(self.canvas.create_polygon(path, outline='green'))
+			r.append(self.canvas.create_polygon(path, outline=poly.outline, fill=poly.color))
 
 		return r
 

@@ -14,7 +14,7 @@ class GraphView(View):
 		self.p_depart = (200,200)
 		self.p_arrive = (1500,1500)
 
-		self.draw_polygons(graph.areas.values())
+		self.draw_polygons(graph.get_polygons())
 
 		self.id_raw_path = None
 		self.id_smooth_path = None
@@ -38,9 +38,9 @@ class GraphView(View):
 
 	def calc_path(self):
 		start = time.time()
-		areas,raw_path,smooth_path = self.graph.get_path(self.p_depart,self.p_arrive)
+		nodes,raw_path,smooth_path = self.graph.get_path(self.p_depart,self.p_arrive)
 		print("pathfinding computing time : %s " % (time.time() - start))
-		if areas:
+		if nodes:
 			self.remove(self.id_raw_path)
 			self.remove(self.id_smooth_path)
 			self.id_raw_path = self.draw_line(raw_path, 'red')

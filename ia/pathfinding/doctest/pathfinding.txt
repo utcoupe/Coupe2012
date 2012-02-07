@@ -44,14 +44,14 @@ init
 	>>> n2.init(2, (100,100), (n1,n4))
 	>>> n3.init(3, (1,1), (n1,n4))
 	>>> n4.init(4, (2,2), (n2,n3))
-	>>> p = Pathfinding((n1,n2,n3,n4))
-	>>> p.compute_path(n1,n4) == [n1,n3,n4]
-	True
-	>>> p.path == [n1,n3,n4]
+	>>> p = Pathfinding((n1,n2,n3,n4), NAVGRAPH)
+	>>> nodes,raw_path = p.compute_path(n1,n4)
+	>>> nodes == [n1,n3,n4]
 	True
 
 	>>> n1.neighbors = ()
-	>>> p.compute_path(n1,n4) == []
+	>>> nodes,raw_path = p.compute_path(n1,n4)
+	>>> nodes == []
 	True
 
 

@@ -5,7 +5,7 @@ from segment import *
 
 
 class ConvexPoly(Poly):
-	def __init__(self, points):
+	def __init__(self, points=[]):
 		Poly.__init__(self, points)
 		
 	def set_cw(self):

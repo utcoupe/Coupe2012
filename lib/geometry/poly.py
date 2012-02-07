@@ -14,6 +14,8 @@ class Poly:
 		self.min_y = None
 		self.middle = None
 		self.AABB = None
+		self.color = 'white'
+		self.outline = 'black'
 		if len(self.points) > 2:
 			self.calc()
 

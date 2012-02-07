@@ -1,6 +1,6 @@
 <map>
 	
-<size width="3000" height="2000" />
+<size width="3000" height="2000" w_tiles="100" />
 
 <polygon>
 	<vertex x="0" y="500" />
