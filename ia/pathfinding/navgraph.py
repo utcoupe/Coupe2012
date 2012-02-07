@@ -28,7 +28,7 @@ class NavGraph:
 		for i,poly in self.partition.polygons.items():
 			neighbors = [ self.areas[neighbor] for neighbor in poly.neighbors ]
 			self.areas[i].init(i, self.areas[i].middle, neighbors)
-		print(self.areas)
+		print("%s areas" % len(self.areas))
 
 
 	def load_xml(self, filename):
@@ -49,9 +49,24 @@ class NavGraph:
 
 			#  polygon
 			for xml_poly in dom.getElementsByTagName("polygon"):
-				poly = [ (int(vertex.getAttribute("x")), int(vertex.getAttribute("y"))) for vertex in xml_poly.getElementsByTagName("vertex") ]
-				self.obstacles.append(poly)
+				self.load_xml_polygon(xml_poly)
+
+			# carre
+			for xml_carre in dom.getElementsByTagName("carre"):
+				self.load_xml_carre(xml_carre)
+			
 		self.calc_areas()
+
+	def load_xml_polygon(self, xml_poly):
+		poly = [ (int(vertex.getAttribute("x")), int(vertex.getAttribute("y"))) for vertex in xml_poly.getElementsByTagName("vertex") ]
+		self.obstacles.append(poly)
+
+	def load_xml_carre(self, xml_carre):
+		x,y,w = int(xml_carre.getAttribute("x")), int(xml_carre.getAttribute("y")), int(xml_carre.getAttribute("width"))
+		x1,x2 = x - w/2, x + w/2
+		y1,y2 = y - w/2, y + w/2
+		poly = [(x1,y1),(x2,y1),(x2,y2),(x1,y2)]
+		self.obstacles.append(poly)
 
 	def get_path(self, p_depart, p_arrive):
 		area_depart = self.find_area_for_point(p_depart)
@@ -78,7 +93,9 @@ if __name__ == "__main__":
 	import sys
 	filename = sys.argv[1]
 	ng = NavGraph()
+	start = time.time()
 	ng.load_xml(filename)
+	print("xml load time : %s" % (time.time() - start))
 	
 	sys.path.append("../view")
 	from interactiveview import *
@@ -99,7 +116,7 @@ if __name__ == "__main__":
 	def calc_path():
 		start = time.time()
 		areas,raw_path,smooth_path = ng.get_path(p_depart,p_arrive)
-		print(time.time() - start)
+		print("pathfinding computing time : %s " % (time.time() - start))
 		v.clear()
 		v.draw_polygons(ng.areas.values())
 		v.draw_line(raw_path, 'red')

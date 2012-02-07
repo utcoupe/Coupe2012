@@ -9,4 +9,8 @@
 	<vertex x="0" y="520" />
 </polygon>
 
+<carre x="1100" y="1000" width="250"/>
+
+<carre x="1900" y="1000" width="250"/>
+
 </map>
