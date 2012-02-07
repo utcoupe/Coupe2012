@@ -25,6 +25,7 @@ class Pathfinder:
 	
 	def compute_raw_path(self, node_depart, node_arrive):
 		time_start = time.time()
+		self.raw_path = []
 		# init
 		for i in range(len(self.nodes)):
 			for j in range(len(self.nodes[0])):
@@ -54,6 +55,7 @@ class Pathfinder:
 
 	def compute_smooth_path(self, path):
 		time_start = time.time()
+		self.smooth_path = []
 		if len(path) > 2:
 			new_path = copy(path)
 			check_point = path[0]

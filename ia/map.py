@@ -13,24 +13,104 @@ import xml.dom.minidom
 class Map(tk.Tk):
 	def __init__(self, filename):
 		tk.Tk.__init__(self,None)
-		self.initialize()
-		self.pathfinder_lines = None
-		self.pathfinder_smooth_lines = None
-		self.canvas_depart = None
-		self.canvas_arrive = None
-		self.canvas_recs = []
-		self.canvas_circles = []
-		self.canvas_nodes = []
-		self.canvas.bind('<Button-1>',self.onmouseleftdown)
-		self.canvas.bind('<Button-3>',self.onmouserightdown)
-		self.depart = None
+		self._initialize()
+		self.node_depart = None
+		self.node_arrive = None
+		self.raw_path = []
+		self.smooth_path = []
 		self.circles = []
 		self.recs = []
 		self.nodes = [ [ Node(i,j,i*NODE_SIZE+NODE_SIZE/2,j*NODE_SIZE+NODE_SIZE/2,NODE_SIZE) for j in range(int(HEIGHT/NODE_SIZE)) ] for i in range(int(WIDTH/NODE_SIZE)) ]
 		self.collision_matrix = [[ False for __ in range(HEIGHT)] for _ in range(WIDTH)]
 		self.pathfinder = Pathfinder(self.nodes, self.collision_matrix)
 		self.load_file(filename)
+		
+	def _initialize(self):
+		self.grid()
+		self._initialize_canvas()
+		self._initialize_buttons()
+		self.canvas.grid(row=0, column=0)
+		self.buttonsFrame.grid(row=0, column=1)
 
+	def _initialize_canvas(self):
+		## graphique
+		self.canvas = tk.Canvas(self, width=600, height=400, background='white')
+		## bindings
+		self.canvas.bind('<Button-3>',self.onmouseleft)
+		self.canvas.bind('<B3-Motion>',self.onmouseleft)
+		self.canvas.bind('<Button-1>',self.onmouseright)
+		self.canvas.bind('<B1-Motion>',self.onmouseright)
+		## variables
+		self.id_raw_path = None
+		self.id_smooth_path = None
+		self.id_depart = None
+		self.id_arrive = None
+		self.ids_recs = []
+		self.ids_circles = []
+		self.ids_nodes = []
+
+	def _initialize_buttons(self):
+		self.buttonsFrame = tk.Frame(self, relief= "solid", bd= 2)
+		self.buttonsFrame.grid()
+		## show/hide raw path
+		self.button_active_show_malus = tk.Button(self.buttonsFrame,text="Show/Hide raw path",command = self.onButtonSwitchRawPath)
+		self.button_active_show_malus.grid(row=0, column=0)
+		## show/hide smooth path
+		self.button_active_show_malus = tk.Button(self.buttonsFrame,text="Show/Hide smooth path",command = self.onButtonSwitchSmoothPath)
+		self.button_active_show_malus.grid(row=0, column=1)
+		## show/hide malus
+		self.button_active_show_malus = tk.Button(self.buttonsFrame,text="Show/Hide malus",command = self.onButtonSwitchMalus)
+		self.button_active_show_malus.grid(row=2, column=0)
+		## variables
+		self.show_malus = False
+		self.show_raw_path = False
+		self.show_smooth_path = True
+		
+	def delete_pathfinding(self):
+		self.delete_depart(self)
+		self.delete_arrive(self)
+		self.delete_raw_path(self)
+		self.delete_smooth_path(self)
+
+	def delete_depart(self):
+		self.canvas.delete(self.id_depart)
+		
+	def delete_arrive(self):
+		self.canvas.delete(self.id_arrive)
+
+	def delete_raw_path(self):
+		self.canvas.delete(self.id_raw_path)
+
+	def delete_smooth_path(self):
+		self.canvas.delete(self.id_smooth_path)
+
+	def draw_pathfinding(self):
+		self.draw_depart()
+		self.draw_arrive()
+		self.draw_raw_path()
+		self.draw_smooth_path()
+
+	def draw_depart(self):
+		self.delete_depart()
+		if self.node_depart:
+			self.id_depart = self.canvas.create_rectangle(self.node_depart.to_rec(), fill='blue')
+		
+	def draw_arrive(self):
+		self.delete_arrive()
+		if self.node_arrive:
+			self.id_arrive = self.canvas.create_rectangle(self.node_arrive.to_rec(), fill='blue')
+
+	def draw_raw_path(self):
+		self.delete_raw_path()
+		if self.raw_path and self.show_raw_path:
+			self.id_raw_path = self.canvas.create_line(self.raw_path, fill='red')
+
+	def draw_smooth_path(self):
+		self.delete_smooth_path()
+		if self.smooth_path and self.show_smooth_path:
+			self.id_smooth_path = self.canvas.create_line(self.smooth_path, fill='green')
+
+	
 	def load_file(self,filename):
 		with open(filename) as f:
 			document = f.read()
@@ -45,19 +125,7 @@ class Map(tk.Tk):
 					int(rec.getAttribute("x1")),int(rec.getAttribute("y1")),
 					int(rec.getAttribute("x2")),int(rec.getAttribute("y2")))
 		self.update_nodes()
-		
-	
-	def initialize(self):
-		self.grid()
-		self.canvas = tk.Canvas(self, width=600, height=400, background='white')
-		self.canvas.grid(row=0, column=0)
-		self.buttonsFrame = tk.Frame(self, relief= "solid", bd= 2)
-		self.buttonsFrame.grid(row=0, column=1)
-		self.buttonsFrame.grid()
-		self.button_active_show_malus = tk.Button(self.buttonsFrame,text="Show malus",command = self.onButtonShowMalus)
-		self.button_active_show_malus.grid(row=0, column=0)
-		self.button_active_hide_malus = tk.Button(self.buttonsFrame,text="Hide malus",command = self.onButtonHideMalus)
-		self.button_active_hide_malus.grid(row=0, column=1)
+
 	
 	def draw(self):
 		self.canvas.delete(tk.ALL)
@@ -67,6 +135,7 @@ class Map(tk.Tk):
 		self.draw_circles()
 		self.draw_recs()
 		self.draw_nodes()
+		self.draw_pathfinding()
 
 	def delete_nodes(self):
 		for o in self.canvas_nodes:
@@ -101,9 +170,9 @@ class Map(tk.Tk):
 	def draw_rec(self,pos):
 		self.canvas_recs.append(self.canvas.create_rectangle(pos))
 
-	def draw_node(self,node,**params):
+	def draw_node(self,node):
 		if not node.collide:
-			self.canvas_nodes.append(self.canvas.create_rectangle(node.to_rec(), **params))
+			self.canvas_nodes.append(self.canvas.create_rectangle(node.to_rec(), fill=self.node_to_color(node)))
 
 	def draw_circles(self):
 		for c in self.circles:
@@ -113,61 +182,57 @@ class Map(tk.Tk):
 		for r in self.recs:
 			self.draw_rec(r)
 
-	def draw_nodes(self, fparams=lambda x: {}):
+	def draw_nodes(self):
 		for i in range(len(self.nodes)):
 			for j in range(len(self.nodes[0])):
-				self.draw_node(self.nodes[i][j], **(fparams(self.nodes[i][j])))
+				self.draw_node(self.nodes[i][j])
 	
 	def update_nodes(self):
 		for i in range(len(self.nodes)):
 			for j in range(len(self.nodes[0])):
 				self.nodes[i][j].calc_collide(self.collision_matrix)
 
-	def onmouseleftdown(self,event):
+	def onmouseleft(self,event):
 		x,y = event.x,event.y
 		r = self.get_node_from_pos(x,y)
 		if r:
 			self.depart = Vec((r[0],r[1]))
-			node_depart = self.nodes[self.depart[0]][self.depart[1]]
-			if self.canvas_depart:
-				self.canvas.delete(self.canvas_depart)
-			if self.canvas_arrive:
-				self.canvas.delete(self.canvas_arrive)
-			if self.pathfinder_lines:
-				self.canvas.delete(self.pathfinder_lines)
-			if self.pathfinder_smooth_lines:
-				self.canvas.delete(self.pathfinder_smooth_lines)
-			self.canvas_depart = self.canvas.create_rectangle(node_depart.to_rec(), fill='green')
+			self.node_depart = self.nodes[self.depart[0]][self.depart[1]]
+			self.draw_depart()
+			if self.node_arrive:
+				self.show_path()
 		else:
 			print("can't find node")
 
-	def onmouserightdown(self,event):
+	def onmouseright(self,event):
 		x,y = event.x,event.y
 		r = self.get_node_from_pos(x,y)
-		if self.depart and r:
-			if self.canvas_arrive:
-				self.canvas.delete(self.canvas_arrive)
-			if self.pathfinder_lines:
-				self.canvas.delete(self.pathfinder_lines)
-			if self.pathfinder_smooth_lines:
-				self.canvas.delete(self.pathfinder_smooth_lines)
-			node_depart = self.nodes[self.depart[0]][self.depart[1]]
-			node_arrive = self.nodes[r[0]][r[1]]
-			self.canvas_arrive = self.canvas.create_rectangle(node_arrive.to_rec(), fill='red')
-			self.show_path(node_depart, node_arrive)
+		if r:
+			self.node_arrive = self.nodes[r[0]][r[1]]
+			self.draw_arrive()
+			if self.node_depart:
+				self.show_path()
 		else:
 			print("can't find node")
 	
-	def show_path(self, node_depart, node_arrive):
-		self.pathfinder.compute_path(node_depart, node_arrive)
+	def show_path(self):
+		self.pathfinder.compute_path(self.node_depart, self.node_arrive)
 		if self.pathfinder.raw_path_ok():
-			self.pathfinder_lines = self.canvas.create_line(self.pathfinder.raw_path_to_canvas_lines_pos(), fill='red')
+			self.raw_path = self.pathfinder.raw_path_to_canvas_lines_pos()
 		else:
+			self.raw_path = []
 			print("no path found")
 		if self.pathfinder.smooth_path_ok():
-			self.pathfinder_smooth_lines = self.canvas.create_line(self.pathfinder.smooth_path_to_canvas_lines_pos(), fill='green')
+			self.smooth_path = self.pathfinder.smooth_path_to_canvas_lines_pos()
 		else:
+			self.smooth_path = []
 			print("no smooth path found")
+		if self.show_malus:
+			self.draw()
+		else:
+			self.draw_raw_path()
+			self.draw_smooth_path()
+			
 	
 	def get_node_from_pos(self,x,y):
 		for i in range(len(self.nodes)):
@@ -178,24 +243,33 @@ class Map(tk.Tk):
 					return (i,j,node)
 		return None
 
-	def onButtonShowMalus(self):
-		self.delete_nodes()
-		def color(node):
+	def node_to_color(self,node):
+		if self.show_malus:
 			if node.visited:
 				intensite = min(255, max(0, 255-int(node.malus * 255 / (WIDTH+HEIGHT))))
 				s_intensite = hex(intensite)[2:]
 				if len(s_intensite) == 1:
 					s_intensite = '0' + s_intensite
-				color = '#'+ s_intensite + s_intensite + '00' 
+				return '#'+ s_intensite + s_intensite + '00' 
 			else:
-				color = 'white'
-			return {'fill': color}
-		self.draw_nodes(color)
+				return 'white'
+		else:
+			return 'white'
+			
 
-	def onButtonHideMalus(self):
-		self.delete_nodes()
-		self.draw_nodes()
+	def onButtonSwitchMalus(self):
+		self.show_malus = not self.show_malus
+		self.draw()
 
+	def onButtonSwitchRawPath(self):
+		self.show_raw_path = not self.show_raw_path
+		self.draw_pathfinding()
+
+	def onButtonSwitchSmoothPath(self):
+		self.show_smooth_path = not self.show_smooth_path
+		self.draw_pathfinding()
+
+		
 
 import doctest
 doctest.testfile("doctest/map.txt")

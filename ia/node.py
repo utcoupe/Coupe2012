@@ -71,18 +71,9 @@ class Node:
 		self.score = self.get_score()
 	
 	def __str__(self):
-		return "<Node pos=%s previous=%s>" % (self.real_pos,self.previous_node)
+		return "<Node pos=%s score=%s previous=%s>" % (self.real_pos,self.score,self.previous_node)
 
 	def get_path(self):
-		"""
-		>>> n1 = Node(0,0,0,0,2)
-		>>> n2 = Node(0,0,0,0,2)
-		>>> n3 = Node(0,0,0,0,2)
-		>>> n3.previous_node = n2
-		>>> n2.previous_node = n1
-		>>> n3.get_path() == [n3,n2,n1]
-		True
-		"""
 		node = self
 		path = []
 		while node:
