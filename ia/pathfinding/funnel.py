@@ -54,13 +54,15 @@ def funnel(p_depart, p_arrive, portal_edges):
 			segGauche.b = gauche
 			i_gauche = i
 			if gauche == p_arrive:
-				smooth_path.append(gauche)
+				smooth_path.append(p_arrive)
+				break
 		if segDroit.pos_point(droit) >= 0:
 			#print("thindroit")
 			segDroit.b = droit
 			i_droit = i
 			if droit == p_arrive:
-				smooth_path.append(droit)
+				smooth_path.append(p_arrive)
+				break
 	
 
 	return smooth_path
