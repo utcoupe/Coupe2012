@@ -61,6 +61,6 @@ class Partition:
 	def _poly_to_str(self, poly):
 		s = "%s\n" % len(poly)
 		for p in poly:
-			s += "%s %s\n" % p
+			s += "%s %s\n" % (p[0],p[1])
 		return s
 		
