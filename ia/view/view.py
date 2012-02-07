@@ -34,25 +34,27 @@ class View(tk.Tk):
 		self.w_to_px = WIDTH / float(maxi_x - mini_x)
 		self.h_to_px = HEIGHT / float(maxi_y - mini_y)
 		#print (maxi_x, maxi_y, mini_x, mini_y, self.w_to_px, self.h_to_px)
-		
+
+		r = []
 		for poly in polygons:
 			path = []
 			for point in poly.points:
 				path += self.point_to_px(point)
-			self.canvas.create_polygon(path, outline='green')
+			r.append(self.canvas.create_polygon(path, outline='green'))
+
+		return r
 
 	def draw_lines(self, lines, color='red'):
-		for line in lines:
-			self.draw_line(line)
+		return ( self.draw_line(line) for line in lines )
 			
 	def draw_line(self, line, color='red'):
 		path = []
 		for p in line:
 			path += self.point_to_px(p)
-		self.canvas.create_line(path, fill=color)
+		return self.canvas.create_line(path, fill=color)
 
 	def point_to_px(self, p):
-		return (p[0] * self.w_to_px, p[1] * self.h_to_px)
+		return (p[0] * self.w_to_px, HEIGHT - (p[1] * self.h_to_px))
 	
 
 
