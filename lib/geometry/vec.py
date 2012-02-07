@@ -95,6 +95,9 @@ class Vec(list):
 				return False
 		return True
 
+	def __ne__(self, o):
+		return not (self == o)
+	
 	def __repr__(self):
 		return "Vec%s" % (tuple(self),)
 
