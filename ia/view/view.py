@@ -16,8 +16,8 @@ class View(tk.Tk):
 		self.w_to_px = 1
 		self.h_to_px = 1
 
-	def clear(self):
-		self.canvas.delete(tk.ALL)
+	def remove(self, i=tk.ALL):
+		self.canvas.delete(i)
 	
 	def draw_polygons(self, polygons):
 		maxi_x = -1E20

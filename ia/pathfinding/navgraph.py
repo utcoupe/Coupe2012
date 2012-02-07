@@ -98,30 +98,7 @@ if __name__ == "__main__":
 	print("xml load time : %s" % (time.time() - start))
 	
 	sys.path.append("../view")
-	from interactiveview import *
+	from graphview import *
 	
-	p_depart = (200,200)
-	p_arrive = (1500,1500)
-
-	def onLeft(x,y):
-		global p_arrive
-		p_arrive = (x,y)
-		calc_path()
-
-	def onRight(x,y):
-		global p_depart
-		p_depart = (x,y)
-		calc_path()
-
-	def calc_path():
-		start = time.time()
-		areas,raw_path,smooth_path = ng.get_path(p_depart,p_arrive)
-		print("pathfinding computing time : %s " % (time.time() - start))
-		v.clear()
-		v.draw_polygons(ng.areas.values())
-		v.draw_line(raw_path, 'red')
-		v.draw_line(smooth_path, 'blue')
-	
-	v = InteractiveView(onLeft,onRight,onLeft,onRight)
-	v.draw_polygons(ng.areas.values())
+	v = GraphView(ng)
 	v.mainloop()
