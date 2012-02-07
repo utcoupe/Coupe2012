@@ -1,12 +1,12 @@
 
+from math import *
+
 from vec import Vec
 from aabb import AABB
 from segment import Segment
 
 class Poly:
-	def __init__(self, points):
-		if len(points) < 3:
-			raise Exception("Un polygon doit être défini par au moins 3 points")
+	def __init__(self, points=[]):
 		self.points = list(map(lambda p: Vec(p), points))
 		self.max_x = None
 		self.min_x = None
@@ -14,10 +14,41 @@ class Poly:
 		self.min_y = None
 		self.middle = None
 		self.AABB = None
+		if len(self.points) > 2:
+			self.calc()
+
+	def calc(self):
 		self.calc_extremums()
 		self.calc_middle()
 		self.calc_AABB()
-		
+	
+	def initFromCircle(self, p, r, n):
+		p = Vec(p)
+		alpha = 2*pi / n
+		r_out = r / cos(alpha/2)
+		teta = 0
+		for i in range(n):
+			A = p + (r_out * cos(teta), r_out * sin(teta))
+			A.round()
+			self.points.append(A)
+			teta += alpha
+		self.calc()
+		return self
+
+	def initFromRectangle(self, p, w, h, center=False):
+		p = Vec(p)
+		if center:
+			p -= (w/2, h/2)
+		self.points.append(p)
+		self.points.append(p + (w,0))
+		self.points.append(p + (w,h))
+		self.points.append(p + (0,h))
+		self.calc()
+		return self
+	
+	def initFromCarre(self, p, w, center=False):
+		return self.initFromRectangle(p, w, w, center)
+	
 	def calc_extremums(self):
 		self.max_x = max(self.points, key=lambda p: p[0])[0]
 		self.min_x = min(self.points, key=lambda p: p[0])[0]
@@ -46,7 +77,6 @@ class Poly:
 
 	def __repr__(self):
 		return "Poly%s" % (tuple(self.points),)
-
 
 
 import doctest
