@@ -1,0 +1,67 @@
+
+
+import
+	>>> from pathfinding import *
+
+init
+	>>> n = Node()
+	>>> n2 = Node()
+	>>> n.init(3,(3,4),[n2])
+	>>> n.id
+	3
+	>>> n.pos == (3,4)
+	True
+	>>> n.neighbors == [n2]
+	True
+	>>> n.reset()
+	>>> n.P == 0
+	True
+	>>> n.H == 0
+	True
+	>>> n.visited
+	False
+	>>> n.previous_in_path == None
+	True
+
+liaison
+	>>> n.liaison(n2)
+	5.0
+
+calc_heuristique
+	>>> n.calc_heuristique(n2)
+	>>> n.H
+	7
+
+
+PATHFINDING
+
+init
+	>>> n1 = Node()
+	>>> n2 = Node()
+	>>> n3 = Node()
+	>>> n4 = Node()
+	>>> n1.init(1, (0,0), (n2,n3))
+	>>> n2.init(2, (100,100), (n1,n4))
+	>>> n3.init(3, (1,1), (n1,n4))
+	>>> n4.init(4, (2,2), (n2,n3))
+	>>> p = Pathfinding((n1,n2,n3,n4))
+	>>> p.compute_path(n1,n4) == [n1,n3,n4]
+	True
+	>>> p.path == [n1,n3,n4]
+	True
+
+	>>> n1.neighbors = ()
+	>>> p.compute_path(n1,n4) == []
+	True
+
+
+
+
+
+
+
+
+
+
+
+	

@@ -1,0 +1,36 @@
+
+
+
+import
+	>>> from funnel import *
+
+funnel
+	>>> d = (0,0)
+	>>> a = (4,0)
+	>>> e1 = ((1,-1),(1,1))
+	>>> e2 = ((2,-1),(2,1))
+	>>> e3 = ((3,-1),(3,1))
+	>>> funnel(d, a, [e1,e2,e3]) == [d,a]
+	True
+	>>> e = ((1.5,7),(1.5,8))
+	>>> funnel(d, a, [e1,e,e2,e3]) == [d, (1,1), (1.5,7), (2,1), a]
+	True
+
+polys_to_portal_edges
+	>>> from geometry.convexpoly import *
+	>>> n1 = ConvexPoly(((-1,0),(1,-1),(1,1)))
+	>>> n2 = ConvexPoly(((1,-1),(2,-1),(1,1)))
+	>>> n3 = ConvexPoly(((1,1),(2,-1),(2,1)))
+	>>> n4 = ConvexPoly(((2,-1),(3,-1),(3,1),(2,1)))
+	>>> n5 = ConvexPoly(((3,1),(3,-1),(5,0)))
+	>>> portal_edges = polys_to_portal_edges((n1,n2,n3,n4,n5))
+	>>> portal_edges == [((1, -1), (1, 1)), ((2, -1), (1, 1)), ((2, -1), (2, 1)), ((3, -1), (3, 1))]
+	True
+
+	>>> funnel(d, a, portal_edges) == [d,a]
+	True
+
+
+
+
+	
