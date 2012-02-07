@@ -1,13 +1,13 @@
 
 
-from vec import *
+from iavec import *
 from params import *
 
 
 class Node:
 	def __init__(self,i,j,x,y,size):
-		self.pos = Vec((int(i),int(j)))
-		self.real_pos = Vec((int(x),int(y)))
+		self.pos = IAVec((int(i),int(j)))
+		self.real_pos = IAVec((int(x),int(y)))
 		self.size = size
 		self.collide = False
 		self.current_cost = 0

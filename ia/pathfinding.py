@@ -4,6 +4,7 @@ from copy import copy
 
 from node import *
 from nodelist import *
+from iavec import *
 
 class Pathfinder:
 	def __init__(self, nodes, collision_matrix):
@@ -79,7 +80,7 @@ class Pathfinder:
 		m = node2.real_pos - node1.real_pos
 		length = round(m.norm())+1
 		m.normalize()
-		point = Vec(node1.real_pos)
+		point = IAVec(node1.real_pos)
 		for t in range(1,length,4):
 			new_point = point + (m * t)
 			new_point.round()

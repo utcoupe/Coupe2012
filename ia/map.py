@@ -1,5 +1,5 @@
 
-from vec import *
+from iavec import *
 from node import *
 from pathfinding import *
 import tkinter as tk
@@ -196,7 +196,7 @@ class Map(tk.Tk):
 		x,y = event.x,event.y
 		r = self.get_node_from_pos(x,y)
 		if r:
-			self.depart = Vec((r[0],r[1]))
+			self.depart = IAVec((r[0],r[1]))
 			self.node_depart = self.nodes[self.depart[0]][self.depart[1]]
 			self.draw_depart()
 			if self.node_arrive:

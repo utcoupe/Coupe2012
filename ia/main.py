@@ -1,13 +1,9 @@
 
 
-from vec import *
 from map import *
-from pathfinding import *
 
 
 
-import doctest
-doctest.testmod()
 
 
 
