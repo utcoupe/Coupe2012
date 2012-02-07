@@ -1,5 +1,5 @@
 
-	
+from math import *
 
 from cgal.partition import *
 from subprocess import *
@@ -54,23 +54,33 @@ class NavGraph:
 			# carre
 			for xml_carre in dom.getElementsByTagName("carre"):
 				self.load_xml_carre(xml_carre)
+
+			# cercle
+			for xml_circle in dom.getElementsByTagName("circle"):
+				self.load_xml_circle(xml_circle)
 			
 		self.calc_areas()
 
 	def load_xml_polygon(self, xml_poly):
-		poly = [ (int(vertex.getAttribute("x")), int(vertex.getAttribute("y"))) for vertex in xml_poly.getElementsByTagName("vertex") ]
-		self.obstacles.append(poly)
+		poly = Poly(((int(vertex.getAttribute("x")), int(vertex.getAttribute("y"))) for vertex in xml_poly.getElementsByTagName("vertex")))
+		self.obstacles.append(poly.points)
 
 	def load_xml_carre(self, xml_carre):
 		x,y,w = int(xml_carre.getAttribute("x")), int(xml_carre.getAttribute("y")), int(xml_carre.getAttribute("width"))
-		x1,x2 = x - w/2, x + w/2
-		y1,y2 = y - w/2, y + w/2
-		poly = [(x1,y1),(x2,y1),(x2,y2),(x1,y2)]
-		self.obstacles.append(poly)
+		poly = Poly().initFromCarre((x,y), w, True)
+		self.obstacles.append(poly.points)
+
+	def load_xml_circle(self, xml_circle):
+		x,y,r,n = int(xml_circle.getAttribute("x")), int(xml_circle.getAttribute("y")), int(xml_circle.getAttribute("rayon")), int(xml_circle.getAttribute("n"))
+		poly = Poly().initFromCircle((x,y), r, n)
+		print(poly.points)
+		self.obstacles.append(poly.points)
 
 	def get_path(self, p_depart, p_arrive):
 		area_depart = self.find_area_for_point(p_depart)
 		area_arrive = self.find_area_for_point(p_arrive)
+		if not area_depart or not area_arrive:
+			return [],[],[]
 		areas = self.pathfinding.compute_path(area_depart, area_arrive)
 		if len(areas) > 1:
 			raw_path = list( area.middle for area in areas )
@@ -85,8 +95,6 @@ class NavGraph:
 		for area in self.areas.values():
 			if p in area:
 				return area
-		else:
-			raise Exception("%s n'est dans aucune zone" % (p,))
 	
 if __name__ == "__main__":
 	import time
