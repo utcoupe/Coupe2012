@@ -58,7 +58,7 @@ class Robot(EngineObject):
 				self.body._set_position((gx,gy))
 				x,y,v = list(map(px_to_mm,self.goals.pop(0)))
 				self.body._set_velocity((0,0))
-				self.to_send.append((self.canal_asserv,"goal ok : {0} {1} {2}".format(x,y,v)))
+				self.send(self.canal_asserv,"reponse","goto",x,y,v)
 			else:
 				a = math.atan2(dy,dx)
 				vx = dx * v / d
@@ -75,7 +75,7 @@ class Robot(EngineObject):
 		@param y mmm
 		@param v ~~
 		"""
-		self.send(self.canal_asserv,"goto ok")
+		self.send(self.canal_asserv,"reponse","goto","ok")
 		self.goals.append(mm_to_px(x,y,v))
 	
 	def cmd_gotor(self, x, y, v): pass
@@ -96,7 +96,7 @@ class Robot(EngineObject):
 		self.stop = False
 	
 	def cmd_pos(self):
-		self.send(self.canal_asserv, self.x(), self.y(), self.a())
+		self.send(self.canal_asserv, "reponse", "pos", self.x(), self.y(), self.a())
 
 	
 	

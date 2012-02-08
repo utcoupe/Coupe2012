@@ -26,6 +26,7 @@ class IABot(ircbot.SingleServerIRCBot):
 		self.chan = {}
 		self.chan["big_asserv"] = chan_big_asserv
 		self.chan["small_asserv"] = chan_small_asserv
+		self.listeners = []
 
 	def on_nicknameinuse(self, serv, e):
 		self.nickname += "_"
@@ -45,12 +46,16 @@ class IABot(ircbot.SingleServerIRCBot):
 		auteur = irclib.nm_to_n(ev.source())
 		canal = ev.target()
 		msg = ev.arguments()[0].strip().lower()
-		print(auteur, canal, msg)
+		for listener in self.listeners:
+			listener(canal, auteur, msg)
 
 	def send_msg(self, chan, msg):
 		if self.serv:
 			for m in str(msg).split("\n"):
 				self.serv.privmsg(chan, m)
+
+	def add_listener(self, listener):
+		self.listeners.append(listener)
 
 
 if __name__ == "__main__":

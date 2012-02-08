@@ -64,7 +64,7 @@ class Poly:
 			sum_x += p[0]
 			sum_y += p[1]
 		n = len(self.points)
-		self.middle = (sum_x/n, sum_y/n)
+		self.middle = Vec((sum_x/n, sum_y/n))
 
 	def calc_AABB(self):
 		self.calc_extremums()

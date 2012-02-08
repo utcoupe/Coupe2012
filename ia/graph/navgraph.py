@@ -12,16 +12,17 @@ from load import *
 
 
 class NavGraph:
-	def __init__(self):
+	def __init__(self, offset=1):
 		self.areas = {}
 		self.width = 0
 		self.height = 0
 		self.obstacles = []
+		self.offset = offset
 		self.partition = Partition()
 		self.pathfinding = Pathfinding(self.areas.values(), NAVGRAPH)
 
 	def calc_areas(self):
-		request = self.partition.make_request(((0,0),(self.width,0),(self.width,self.height),(0,self.height)), self.obstacles)
+		request = self.partition.make_request(((0,0),(self.width,0),(self.width,self.height),(0,self.height)), self.obstacles, self.offset)
 		self.partition.calc(request)
 		for i,poly in self.partition.polygons.items():
 			self.areas[i] = Area(poly.points)
@@ -42,10 +43,18 @@ class NavGraph:
 		self.calc_areas()
 
 	def get_path(self, p_depart, p_arrive):
+		p_depart = Vec(p_depart)
+		p_arrive = Vec(p_arrive)
 		area_depart = self.find_area_for_point(p_depart)
 		area_arrive = self.find_area_for_point(p_arrive)
-		if not area_depart or not area_arrive:
+		depart_incongrue = False
+		# le point d'arrivé est inateignable
+		if not area_arrive:
 			return [],[],[]
+		# aucune aire n'a été trouvée pour le point de départ, on va prendre la plus proche
+		if not area_depart:
+			depart_incongrue = True
+			area_depart = min(self.areas.values(), key=lambda a: (a.middle - p_depart).norm2())
 		areas, raw_path = self.pathfinding.compute_path(area_depart, area_arrive)
 		if len(areas) > 1:
 			portal_edges = polys_to_portal_edges(areas)
@@ -60,6 +69,7 @@ class NavGraph:
 			if p in area:
 				return area
 
+	
 	def get_polygons(self):
 		return self.areas.values()
 	
