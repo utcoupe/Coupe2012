@@ -28,8 +28,9 @@ class Partition:
 		self.polygons = {}
 		self.cmd = os.path.join(os.path.dirname(os.path.abspath(__file__)), "partition")
 
-	def make_request(self, container, obstacles):
-		s = self._poly_to_str(container)
+	def make_request(self, container, obstacles, offset=1):
+		s = str(offset)+"\n"
+		s+= self._poly_to_str(container)
 		s+= "%s\n" % len(obstacles)
 		for o in obstacles:
 			s+= self._poly_to_str(o)

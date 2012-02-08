@@ -44,18 +44,18 @@
  * pin 21 -> A encodeur 2 (droite)
  * pin 20 -> B encodeur 2 (droite)
  * */
-#define PIN_EN_LEFT 3
-#define PIN_DIR_LEFT 12
-#define PIN_EN_RIGHT 11
-#define PIN_DIR_RIGHT 13
-#define PIN_LEFT_A 18
-#define PIN_LEFT_B 19
-#define PIN_RIGHT_A 21
-#define PIN_RIGHT_B 20
-#define INTERRUPT_LEFT_A 5
-#define INTERRUPT_LEFT_B 4
-#define INTERRUPT_RIGHT_A 2
-#define INTERRUPT_RIGHT_B 3
+#define PIN_EN_LEFT 3 		// enable moteur 1 (pwm)
+#define PIN_DIR_LEFT 12 	// direction moteur 1
+#define PIN_EN_RIGHT 11 	// enable moteur 2 (pwm)
+#define PIN_DIR_RIGHT 13 	// direction moteur 2
+#define PIN_LEFT_A 18 		// A encodeur 1 (gauche)
+#define PIN_LEFT_B 19 		// B encodeur 1 (gauche)
+#define PIN_RIGHT_A 21 		// A encodeur 2 (droite)
+#define PIN_RIGHT_B 20 		// B encodeur 2 (droite)
+#define INTERRUPT_LEFT_A 5 
+#define INTERRUPT_LEFT_B 4 
+#define INTERRUPT_RIGHT_A 2 
+#define INTERRUPT_RIGHT_B 3 
 
 /* Parametre de la table en mm*/
 #define TABLE_WIDTH_MM 2100.0

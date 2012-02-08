@@ -78,29 +78,29 @@ class SimuIrcBot(ircbot.SingleServerIRCBot):
 			if len(params) == 3:
 				robot.cmd_goto(*list(map(int, params)))
 			else:
-				send(canal, "pas le bon nombre d'arguments")
+				self.send(canal, "pas le bon nombre d'arguments")
 		elif f_name == "gotor":
 			if len(params) == 3:
 				robot.cmd_gotor(*list(map(int, params)))
 			else:
-				send(canal, "pas le bon nombre d'arguments")
+				self.send(canal, "pas le bon nombre d'arguments")
 		elif f_name == "turn":
 			if len(params) == 3:
 				robot.cmd_turn(*list(map(int, params)))
 			else:
-				send(canal, "pas le bon nombre d'arguments")
+				self.send(canal, "pas le bon nombre d'arguments")
 		elif f_name == "turnr":
 			if len(params) == 3:
 				robot.cmd_turnr(*list(map(int, params)))
 			else:
-				send(canal, "pas le bon nombre d'arguments")
+				self.send(canal, "pas le bon nombre d'arguments")
 		elif f_name == "pos":
 			robot.cmd_pos()
 		elif f_name == "acalib":
 			if len(params) == 1:
 				robot.cmd_acalib(*list(map(int, params)))
 			else:
-				send(canal, "pas le bon nombre d'arguments")
+				self.send(canal, "pas le bon nombre d'arguments")
 		elif f_name == "stop":
 			robot.cmd_stop()
 		elif f_name == "resume":

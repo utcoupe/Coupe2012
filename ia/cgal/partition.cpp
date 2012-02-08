@@ -7,6 +7,10 @@
 #include <list>
 #include <iostream>
 
+#include <CGAL/create_offset_polygons_from_polygon_with_holes_2.h>
+#include <boost/shared_ptr.hpp>
+
+
 struct FaceInfo2
 {
     FaceInfo2(){}
@@ -30,6 +34,14 @@ typedef CDT::Point												Point;
 typedef CGAL::Polygon_2<K>										Polygon;
 typedef CGAL::Polygon_with_holes_2<K>							Polygon_with_holes;
 typedef std::list<Polygon_with_holes>							Pwh_list_2;
+
+
+typedef K::FT							FT;
+typedef CGAL::Straight_skeleton_2<K>	Ss;
+typedef boost::shared_ptr<Polygon_with_holes> PolygonWithHolesPtr;
+typedef boost::shared_ptr<Ss>			SsPtr ;
+typedef std::vector<PolygonWithHolesPtr> PolygonWithHolesPtrVector;
+
 
 
 
@@ -120,10 +132,13 @@ Polygon& ask_polygon(Polygon &poly)
 
 int main()
 {
+	FT lOffset;
     //CGAL::set_ascii_mode(std::cin);
     //CGAL::set_ascii_mode(std::cout);
     CDT cdt;
     Pwh_list_2 difference;
+
+    std::cin >> lOffset;
 	
     Polygon polygon;
     ask_polygon(polygon);
@@ -134,32 +149,44 @@ int main()
     Polygon trou;
     ask_polygon(trou);
     CGAL::difference(polygon, trou, std::back_inserter(difference));
-	
+
     for (int i=1; i<nb_trous; ++i)
     {
-	Pwh_list_2 temp;
-	Polygon trou;
-	ask_polygon(trou);
-	for (Pwh_list_2::const_iterator pwhit=difference.begin(); pwhit != difference.end(); ++pwhit)
-	{
-	    CGAL::difference((*pwhit), trou, std::back_inserter(temp));
-	}
-	difference = temp;
+		Pwh_list_2 temp;
+		Polygon trou;
+		ask_polygon(trou);
+		for (Pwh_list_2::const_iterator pwhit=difference.begin(); pwhit != difference.end(); ++pwhit)
+		{
+			CGAL::difference((*pwhit), trou, std::back_inserter(temp));
+		}
+		difference = temp;
     }
+	
+	Pwh_list_2 temp;
+	difference.swap(temp);
+    for (Pwh_list_2::const_iterator pwhit=temp.begin(); pwhit != temp.end(); ++pwhit)
+    {
+		PolygonWithHolesPtrVector offset_poly_with_holes = CGAL::create_interior_skeleton_and_offset_polygons_with_holes_2(lOffset,*pwhit);
+	
+		for(PolygonWithHolesPtrVector::const_iterator p=offset_poly_with_holes.begin(); p!=offset_poly_with_holes.end(); ++p)
+		{
+			difference.push_back(**p);
+		}
+	}
 	
     for (Pwh_list_2::const_iterator pwhit=difference.begin(); pwhit != difference.end(); ++pwhit)
     {
-	if (! pwhit->is_unbounded() )
-	{
-	    insert_polygon(cdt, pwhit->outer_boundary());
-	    for (Polygon_with_holes::Hole_const_iterator hit = pwhit->holes_begin();
-		hit != pwhit->holes_end(); ++hit)
-	    {
-		insert_polygon(cdt,(*hit));
-	    }
-	}
-	else
-	    std::cout << "erreur" << std::endl;
+		if (! pwhit->is_unbounded() )
+		{
+			insert_polygon(cdt, pwhit->outer_boundary());
+			for (Polygon_with_holes::Hole_const_iterator hit = pwhit->holes_begin();
+			hit != pwhit->holes_end(); ++hit)
+			{
+			insert_polygon(cdt,(*hit));
+			}
+		}
+		else
+			std::cout << "erreur" << std::endl;
     }
 	
 	

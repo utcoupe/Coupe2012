@@ -25,6 +25,8 @@ class NavGraph:
 		self.partition.calc(request)
 		for i,poly in self.partition.polygons.items():
 			self.areas[i] = Area(poly.points)
+			self.areas[i].color = 'black'
+			self.areas[i].outline = 'green'
 		for i,poly in self.partition.polygons.items():
 			neighbors = [ self.areas[neighbor] for neighbor in poly.neighbors ]
 			self.areas[i].init(i, self.areas[i].middle, neighbors)
