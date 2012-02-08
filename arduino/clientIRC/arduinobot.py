@@ -41,10 +41,13 @@ class ArduinoBot(mypyircbot.MyPyIrcBot):
 		self.thread.start()
 	
 	def write_rep(self, msg):
+		""" écrit sur le port série """
 		msg = bytes(msg.strip()+"\n","utf-8")
 		self.serial.write(msg)
 	
 	def loop(self):
+		""" boucle de lecture du port série, le message est lu puis envoyé
+		sur le serveur IRC """
 		while True:
 			try:
 				msg = self.serial.readline()
