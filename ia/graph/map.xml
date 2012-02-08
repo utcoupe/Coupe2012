@@ -4,30 +4,30 @@
 
 <polygon>
 	<vertex x="0" y="500" />
-	<vertex x="500" y="500" />
-	<vertex x="500" y="520" />
+	<vertex x="400" y="500" />
+	<vertex x="400" y="520" />
 	<vertex x="0" y="520" />
 </polygon>
 
 <polygon>
-	<vertex x="325" y="1200" />
-	<vertex x="345" y="1200" />
-	<vertex x="345" y="2000" />
-	<vertex x="325" y="2000" />
+	<vertex x="363" y="1251" />
+	<vertex x="381" y="1251" />
+	<vertex x="361" y="2000" />
+	<vertex x="343" y="2000" />
 </polygon>
 
 <polygon>
-	<vertex x="2500" y="500" />
+	<vertex x="2600" y="500" />
 	<vertex x="3000" y="500" />
 	<vertex x="3000" y="520" />
-	<vertex x="2500" y="520" />
+	<vertex x="2600" y="520" />
 </polygon>
 
 <polygon>
-	<vertex x="2655" y="1200" />
-	<vertex x="2675" y="1200" />
+	<vertex x="2619" y="1251" />
+	<vertex x="2637" y="1251" />
 	<vertex x="2675" y="2000" />
-	<vertex x="2655" y="2000" />
+	<vertex x="2657" y="2000" />
 </polygon>
 
 <carre x="1100" y="1000" width="250"/>
