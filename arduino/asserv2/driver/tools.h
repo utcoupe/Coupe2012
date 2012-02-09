@@ -18,6 +18,9 @@
 double moduloPI(double Nb);
 
 
+/*
+ * mm/s -> ticks/µs
+ */
 double convert_speed(int speed);
 
 #endif

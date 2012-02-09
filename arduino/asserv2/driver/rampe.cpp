@@ -15,7 +15,7 @@ void Rampe::compute(const double actue, const double goal,
                     const double c_goal_speed, const double c_accel, const double c_decel,
                     const double speed0, const double speedf)
 {
-	//#define DEBUG_RAMPE
+	#define DEBUG_RAMPE
 	#ifdef DEBUG_RAMPE
     Serial.println(__PRETTY_FUNCTION__);
     #endif
@@ -204,6 +204,12 @@ void Rampe::compute(const double actue, const double goal,
     Serial.println(_t2);
     Serial.println(_t3);
     Serial.println("end times");
+
+    Serial.println("pos");
+    Serial.println(_pos1);
+    Serial.println(_pos2);
+    Serial.println(_pos3);
+    Serial.println("end pos");
 
     Serial.println(_speedf);
 

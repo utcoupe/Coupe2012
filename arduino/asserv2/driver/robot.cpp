@@ -94,16 +94,18 @@ void Robot::update_state(int dt)
 	long int left_enc = (*_value_left_enc);
 	long int right_enc = (*_value_right_enc);
 	
-	/*calcul du deplacement depuis la derniere fois en ticks */
+	/* calcul du deplacement depuis la derniere fois en ticks */
 	long dl = left_enc - _prev_value_left_enc;
 	long dr = right_enc - _prev_value_right_enc;
 
-	/*preparation de la prochaine iteration*/
+	/* preparation de la prochaine iteration */
 	_prev_value_left_enc = left_enc;
 	_prev_value_right_enc = right_enc;
 
-	/* calcul de la vitesse en mm/s
-	 * estimation : simple moyenne */
+	/*
+	 * calcul de la vitesse en mm/s
+	 * estimation : simple moyenne
+	 */
 	double speed_left = ((double)dl/(double)dt)*1000.0;
 	double speed_right = ((double)dr/(double)dt)*1000.0;
 	double speed = (speed_left+speed_right)/2.0;
@@ -132,6 +134,7 @@ void Robot::update_state(int dt)
 void Robot::update_motors(int dt)
 {
 	static long int _i = 0;
+	static PHASE current_phase = PHASE_END;
 	
 	_rampe_alpha->compute_next_goal(dt);
 	_rampe_delta->compute_next_goal(dt);
@@ -153,7 +156,8 @@ void Robot::update_motors(int dt)
 
 	int sens_delta=1;
 	// Si le goal est derrière
-	if(_rampe_delta->get_phase() == PHASE_END and abs(angleDiffDelta) > M_PI/2)
+	//if(_rampe_delta->get_phase() == PHASE_END and abs(angleDiffDelta) > M_PI/2)
+	if(abs(angleDiffDelta) > M_PI/2)
 	{
 		sens_delta = -sens_delta;
 		if (_goal.type == G_POS)
@@ -168,6 +172,33 @@ void Robot::update_motors(int dt)
 	double deltaDiff = sqrt(dx*dx+dy*dy);
 	currentDelta = _rampe_delta->get_pos() - sens_delta * deltaDiff;
 	currentAlpha = _rampe_alpha->get_pos() - (angleDiff * ENC_CENTER_DIST_TICKS);
+
+	Rampe * r_debug = _rampe_delta;
+	if (r_debug->get_phase() != current_phase)
+	{
+		switch(r_debug->get_phase())
+		{
+			case PHASE_ACCEL:
+			Serial.println("accel");
+			break;
+			case PHASE_CONST:
+			Serial.println("const");
+			break;
+			case PHASE_DECEL:
+			Serial.println("decel");
+			break;
+			case PHASE_END:
+			Serial.println("end");
+			break;
+			default:
+			Serial.println("euh...");
+			break;
+		}
+		Serial.println(deltaDiff);
+		Serial.println((angleDiff * ENC_CENTER_DIST_TICKS));
+		Serial.println(r_debug->get_pos());
+		current_phase = r_debug->get_phase();
+	}
 	
 
 		
@@ -240,12 +271,13 @@ void Robot::go_to(long int x, long int y, double speed, double final_speed)
 	Robot::setGoal(G_POS,x,y,0,speed);
 
 	double a = atan2(y, x);
-	_rampe_alpha->compute(angle_diff(a,_a) * ENC_CENTER_DIST_TICKS, 0, speed, 0.1, -0.025, 0, 0);
+	_rampe_alpha->compute(angle_diff(a,_a) * ENC_CENTER_DIST_TICKS, 0, speed, 0.05, -0.05, 0, 0);
 
  	double dx = x-_x;
 	double dy = y-_y;
 	double d = (double)sqrt(dx*dx+dy*dy);
-	_rampe_delta->compute(d, 0, speed, 0.1, -0.05, _speed, final_speed);
+	_rampe_delta->compute(d, 0, speed, 0.01, -0.01, _speed, final_speed);
+
 	
 	_goal_reached = false;
 }
@@ -254,8 +286,8 @@ void Robot::turn(double a, double speed)
 {
 	Robot::setGoal(G_ANG,_x,_y,a,speed);
 	
-	_rampe_alpha->compute(angle_diff(a,_a) * ENC_CENTER_DIST_TICKS, 0, speed, 0.1, -0.025, 0,0);
-	_rampe_delta->compute(0, 0, 1, 1, -1, 0,0);
+	_rampe_alpha->compute(angle_diff(a,_a) * ENC_CENTER_DIST_TICKS, 0, speed, 0.05, -0.05, 0,0);
+	_rampe_delta->compute(0, 0, 1, 0.05, -0.05, 0,0);
 	
 	_goal_reached = false;
 }

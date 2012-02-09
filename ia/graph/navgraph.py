@@ -77,7 +77,7 @@ if __name__ == "__main__":
 	import time
 	import sys
 	filename = sys.argv[1]
-	ng = NavGraph()
+	ng = NavGraph(230)
 	start = time.time()
 	ng.load_xml(filename)
 	print("xml load time : %s" % (time.time() - start))
