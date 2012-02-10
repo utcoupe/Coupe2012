@@ -24,6 +24,9 @@ class GraphView(View):
 		self.canvas.bind('<B1-Motion>',self.onLeft)
 		self.canvas.bind('<Button-3>',self.onRight)
 		self.canvas.bind('<B3-Motion>',self.onRight)
+
+		self.sum_calc_times = 0
+		self.nb_calc_times = 0
 	
 	def onLeft(self, event):
 		print(event.x / self.w_to_px, event.y / self.h_to_px)
@@ -41,7 +44,10 @@ class GraphView(View):
 	def calc_path(self):
 		start = time.time()
 		nodes,raw_path,smooth_path = self.graph.get_path(self.p_depart,self.p_arrive)
-		print("pathfinding computing time : %s " % (time.time() - start))
+		difference = (time.time() - start)
+		self.sum_calc_times += difference
+		self.nb_calc_times += 1
+		print("pathfinding computing time : %s (moy=%s)" % (difference,self.sum_calc_times/self.nb_calc_times))
 		if smooth_path:
 			self.remove(self.id_raw_path)
 			self.remove(self.id_smooth_path)
