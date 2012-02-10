@@ -5,23 +5,23 @@ from pathfinding import *
 from tile import *
 from tilesmooth import smooth
 
-W_TILES	= 80
+W_TILE	= 50
 
 class TiledMap:
 	def __init__(self):
 		self.obstacles = []
 		self.tiles = []
 		self.pathfinding = Pathfinding(self.tiles, TILED)
-		self.w_tiles = 1
+		self.w_tile = 1
 		self.m = 0
 		self.n = 0
 
 	def load_img(self, filename):
-		width,height,collision_matrix = load_img(filename)
-		w_tiles = W_TILES
-		m,n = width // w_tiles, height // w_tiles
+		width,height,collision_matrix = load_img(filename,W_TILE)
+		w_tiles = W_TILE
+		m,n = int(width / w_tiles), int(height / w_tiles)
 
-		self.w_tiles = w_tiles
+		self.w_tile = w_tiles
 		self.m = m
 		self.n = n
 		self.collision_matrix = collision_matrix
@@ -52,8 +52,8 @@ class TiledMap:
 					neighbors.append(self.tiles[i][j+1])
 				x,y = i*w_tiles+w_tiles//2,j*w_tiles+w_tiles//2
 				self.tiles[i][j].init(i * n + j, (x,y), neighbors)
-				self.tiles[i][j].walkable = not collision_matrix[x][y]
-				if collision_matrix[x][y]:
+				self.tiles[i][j].walkable = not collision_matrix[i][j]
+				if collision_matrix[i][j]:
 					self.tiles[i][j].color = 'black'
 
 	def get_path(self, p_depart, p_arrive):
@@ -61,14 +61,14 @@ class TiledMap:
 		tile_arrive = self.get_node_from_pos(p_arrive)
 		tiles, raw_path = self.pathfinding.compute_path(tile_depart, tile_arrive)
 		if len(tiles) > 1:
-			smooth_path = smooth(raw_path, self.collision_matrix)
+			smooth_path = smooth(raw_path, self.tiles, W_TILE)
 		else:
 			raw_path = [p_depart, p_arrive]
 			smooth_path = [p_depart, p_arrive]
 		return tiles,raw_path,smooth_path
 
 	def get_node_from_pos(self, p):
-		return self.tiles[p[0]//self.w_tiles][p[1]//self.w_tiles]
+		return self.tiles[p[0]//self.w_tile][p[1]//self.w_tile]
 
 	def get_polygons(self):
 		r = []

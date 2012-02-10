@@ -7,11 +7,11 @@ import xml.dom.minidom
 
 from geometry.poly import *
 
-def load_img(filename, seuil=125):
+def load_img(filename, scale=1, seuil=125):
 	surf = im.load(filename)
 	img_width = surf.get_width()
 	img_height = surf.get_height()
-	matrix = [ [ False if surf.get_at((x,y)).r > seuil else True for y in range(img_height) ] for x in range(img_width) ]
+	matrix = [ [ False if surf.get_at((x,y)).r > seuil else True for y in range(0,img_height,scale) ] for x in range(0,img_width,scale) ]
 	return img_width, img_height, matrix
 
 def load_xml(filename):
