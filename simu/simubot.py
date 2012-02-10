@@ -8,6 +8,7 @@ sys.path.append(os.path.join("..","lib","py3irc"))
 
 import irclib
 import ircbot
+from mypyircbot import *
 
 import threading
 import time
@@ -58,53 +59,54 @@ class SimuIrcBot(ircbot.SingleServerIRCBot):
 		
 		auteur = irclib.nm_to_n(ev.source())
 		canal = ev.target()
-		msg = ev.arguments()[0].strip().lower()
+		msg,options = raw_msg_to_msg_n_options(ev.arguments()[0])
 		msg_split = msg.split(" ")
 		f_name = msg_split[0]
 		params = msg_split[1:]
 
 		for r in self.robots:
 			if canal == r.canal_asserv:
-				self.onMsgFromAsserv(canal, r, f_name, params)
+				self.onMsgFromAsserv(canal, r, options['id_msg'], f_name, params)
 
-	def onMsgFromAsserv(self, canal, robot, f_name, params):
+	def onMsgFromAsserv(self, canal, robot, id_msg, f_name, params):
+		print(params)
 		if f_name == "id":
-			send("asserv")
+			self.send(canal, str(id_msg)+SEP+"asserv")
 		elif f_name == "ping":
-			send("pong")
+			self.send(canal, str(id_msg)+SEP+"pong")
 		elif f_name == "cancel":
-			robot.cmd_cancel()
+			robot.cmd_cancel(id_msg)
 		elif f_name == "goto":
 			if len(params) == 3:
-				robot.cmd_goto(*list(map(int, params)))
+				robot.cmd_goto(id_msg, *list(map(int, params)))
 			else:
 				self.send(canal, "pas le bon nombre d'arguments")
 		elif f_name == "gotor":
 			if len(params) == 3:
-				robot.cmd_gotor(*list(map(int, params)))
+				robot.cmd_gotor(id_msg, *list(map(int, params)))
 			else:
 				self.send(canal, "pas le bon nombre d'arguments")
 		elif f_name == "turn":
 			if len(params) == 3:
-				robot.cmd_turn(*list(map(int, params)))
+				robot.cmd_turn(id_msg, *list(map(int, params)))
 			else:
 				self.send(canal, "pas le bon nombre d'arguments")
 		elif f_name == "turnr":
 			if len(params) == 3:
-				robot.cmd_turnr(*list(map(int, params)))
+				robot.cmd_turnr(id_msg, *list(map(int, params)))
 			else:
 				self.send(canal, "pas le bon nombre d'arguments")
 		elif f_name == "pos":
 			robot.cmd_pos()
 		elif f_name == "acalib":
 			if len(params) == 1:
-				robot.cmd_acalib(*list(map(int, params)))
+				robot.cmd_acalib(id_msg, *list(map(int, params)))
 			else:
 				self.send(canal, "pas le bon nombre d'arguments")
 		elif f_name == "stop":
-			robot.cmd_stop()
+			robot.cmd_stop(id_msg)
 		elif f_name == "resume":
-			robot.cmd_resume()
+			robot.cmd_resume(id_msg)
 		
 
 	

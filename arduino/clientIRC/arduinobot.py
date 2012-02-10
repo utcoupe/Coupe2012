@@ -12,11 +12,10 @@ import time
 import re
 
 import mypyircbot
-
+from mypyircbot import *
 
 
 COMPILED_F = None
-SEP = '.'
 
 
 class ArduinoBot(mypyircbot.MyPyIrcBot):

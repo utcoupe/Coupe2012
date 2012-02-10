@@ -78,7 +78,7 @@ class MotorGraphic():
 		body = shape.body
 		ps = shape.get_points()
 		ps.append(ps[0])
-		pg.draw.polygon(self.screen, color, ps,0)
+		pg.draw.polygon(self.screen, color, ps, 0)
 
 	def draw_segment(self, shape, color):
 		body = shape.body

@@ -9,7 +9,7 @@ from define import *
 
 import collections
 
-
+SEP = '.'
 
 class Robot(EngineObject):
 	def __init__(self, mass, position, color, team, poly_points, *custom_objects):
@@ -69,37 +69,43 @@ class Robot(EngineObject):
 	def send(self, canal, *msg):
 		self.to_send.append((self.canal_asserv,SEP.join(map(str, msg))))
 	
-	def cmd_goto(self, x, y, v):
+	def cmd_goto(self, id_msg, x, y, v):
 		"""
 		@param x mm
 		@param y mmm
 		@param v ~~
 		"""
-		self.send(self.canal_asserv,"reponse","goto","ok")
+		self.send_canal_asserv(id_msg,"recu")
 		self.goals.append(mm_to_px(x,y,v))
 	
-	def cmd_gotor(self, x, y, v): pass
+	def cmd_gotor(self, id_msg, x, y, v): pass
 
-	def cmd_turn(self, a, v): pass
+	def cmd_turn(self, id_msg, a, v): pass
 
-	def cmd_turnr(self, a, v): pass
+	def cmd_turnr(self, id_msg, a, v): pass
 
-	def cmd_acalib(self, c): pass
+	def cmd_acalib(self, id_msg, c): pass
 
-	def cmd_cancel(self):
+	def cmd_cancel(self, id_msg):
 		self.goals = []
+		self.send_canal_asserv(id_msg,"recu")
 
-	def cmd_stop(self):
+	def cmd_stop(self, id_msg):
 		self.stop = True
+		self.send_canal_asserv(id_msg,"recu")
 
-	def cmd_resume(self):
+	def cmd_resume(self, id_msg):
 		self.stop = False
+		self.send_canal_asserv(id_msg,"recu")
 	
-	def cmd_pos(self):
-		self.send(self.canal_asserv, "reponse", "pos", self.x(), self.y(), self.a())
+	def cmd_pos(self, id_msg):
+		self.send_canal_asserv(id_msg, self.x(), self.y(), self.a())
 
-	
-	
+	def compute_msg(self, *args):
+		return SEP.join(map(lambda x: str(x), args))
+
+	def send_canal_asserv(self, *args):
+		self.send(self.canal_asserv, self.compute_msg(*args))
 
 	
 			

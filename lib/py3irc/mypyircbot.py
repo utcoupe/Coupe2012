@@ -9,6 +9,30 @@ import re
 import irclib
 import ircbot
 
+SEP = '.'
+
+def raw_msg_to_msg_n_options(raw_msg):
+	raw_msg = raw_msg.strip().lower()
+	if '#' in raw_msg:
+		msg, str_options = raw_msg.split('#')
+		msg.strip()
+		str_options.strip()
+	else:
+		msg, str_options = raw_msg, ""
+		
+	options = {
+		'id_msg': 42
+	}
+	specs = {
+		'id_msg': "id=(?P<id_msg>[0-9]+)"
+	}
+	if str_options:
+		for i,spec in specs.items():
+			t = re.search(spec, str_options)
+			if t:
+				options[i] = t.group(i)
+
+	return msg, options
 
 
 class MyPyIrcBot(ircbot.SingleServerIRCBot):
@@ -60,20 +84,8 @@ class MyPyIrcBot(ircbot.SingleServerIRCBot):
 		
 		auteur = irclib.nm_to_n(ev.source())
 		canal = ev.target().strip().lower()
-		raw_msg = ev.arguments()[0]
-		if '#' in raw_msg:
-			msg, str_options = raw_msg.split('#')
-			msg.strip()
-			str_options.strip()
-		else:
-			msg, str_options = raw_msg, ""
+		msg, options = raw_msg_to_msg_n_options(ev.arguments()[0])
 		msg_split = msg.strip().split(" ")
-		spec_id = "id=(?P<id>[0-9]+)"
-		t = re.search(spec_id, str_options)
-		if t:
-			id_msg = t.group("id")
-		else:
-			id_msg = 42
 		f_name = "cmd_" + msg_split[0]
 		if msg_split[0] == "help":
 			if len(msg_split) > 1:
@@ -87,10 +99,13 @@ class MyPyIrcBot(ircbot.SingleServerIRCBot):
 			f_args = inspect.getargspec(f).args
 			nb_args = len(f_args) - (1 if 'self' in f_args else 0)
 			if len(msg_split)-1 == nb_args:
-				self.write_rep(f(*msg_split[1:])+"\n",id_msg)
+				self.write_rep(f(*msg_split[1:])+"\n",options['id_msg'])
 			else:
 				serv.privmsg(canal, "invalid arg number : need %s and get %s" % (str(inspect.getargspec(f)),msg_split))
 
+	
+			
+	
 	def print_doc(self, f_name, cmd=None):
 		"""
 		Afficher la doc d'une fonction,
