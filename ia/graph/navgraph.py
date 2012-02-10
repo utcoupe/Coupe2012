@@ -80,35 +80,38 @@ class NavGraph:
 		p_arrive = Vec(p_arrive)
 		area_depart = self.find_area_for_point(p_depart)
 		area_arrive = self.find_area_for_point(p_arrive)
+		remove_arrive_at_end = True
 		
 		# le point d'arrivé est inateignable
 		if not area_arrive:
 			return [],[],[]
 			
-		remove_depart_at_end = False
-		remove_arrive_at_end = False
-		if p_depart not in self.vertices:
-			self.vertices[p_depart] = Node()
-			self.vertices[p_depart].init(p_depart.__hash__(),p_depart, [])
-			for p in area_depart.points:
-				self.vertices[p_depart].neighbors.append(self.vertices[p])
-			remove_depart_at_end = True
+		if p_depart in self.vertices:
+			vertex_depart = self.vertices[p.depart]
+		else:
+			vertex_depart = Node()
+			vertex_depart.init(p_depart.__hash__(),p_depart, [])
+			if area_depart:
+				for p in area_depart.points:
+					vertex_depart.neighbors.append(self.vertices[p])
+			else:
+				near_vertex = min(self.vertices.values(), key=lambda vertex: (p_depart - vertex.pos).norm2())
+				vertex_depart.neighbors.append(self.vertices[near_vertex.pos])
 		if p_arrive not in self.vertices:
-			self.vertices[p_arrive] = Node()
-			self.vertices[p_arrive].init(p_arrive.__hash__(),p_arrive, [])
+			vertex_arrive = Node()
+			vertex_arrive.init(p_arrive.__hash__(),p_arrive, [])
 			for p in area_arrive.points:
-				self.vertices[p].neighbors.append(self.vertices[p_arrive])
+				self.vertices[p].neighbors.append(vertex_arrive)
 			remove_arrive_at_end = True
 
 		# application du pathfinding
-		vertices, raw_path = self.pathfinding_vertices.compute_path(self.vertices[p_depart], self.vertices[p_arrive])
+		vertices, raw_path = self.pathfinding_vertices.compute_path(vertex_depart, vertex_arrive)
 
+		
 		# remove des vertices ajoutées
-		if remove_depart_at_end: self.vertices.pop(p_depart)
 		if remove_arrive_at_end:
 			for p in area_arrive.points:
-				self.vertices[p].neighbors.remove(self.vertices[p_arrive])
-			self.vertices.pop(p_arrive)
+				self.vertices[p].neighbors.remove(vertex_arrive)
 
 		# smooth path
 		if len(vertices) > 2:
@@ -135,7 +138,6 @@ class NavGraph:
 		p_arrive = Vec(p_arrive)
 		area_depart = self.find_area_for_point(p_depart)
 		area_arrive = self.find_area_for_point(p_arrive)
-		depart_incongrue = False
 		
 		# le point d'arrivé est inateignable
 		if not area_arrive:
@@ -143,7 +145,6 @@ class NavGraph:
 			
 		# aucune aire n'a été trouvée pour le point de départ, on va prendre la plus proche
 		if not area_depart:
-			depart_incongrue = True
 			area_depart = min(self.areas.values(), key=lambda a: (a.middle - p_depart).norm2())
 
 		#application du pathfinding

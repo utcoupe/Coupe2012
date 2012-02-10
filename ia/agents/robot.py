@@ -4,6 +4,8 @@ import time
 from geometry.vec import *
 from graph import *
 
+SEP = '.'
+
 class Robot:
 	def __init__(self, ircbot, chan_asserv):
 		self.ircbot = ircbot
@@ -26,17 +28,17 @@ class Robot:
 		self.send_asserv("cancel")
 
 	def update_pos(self):
-		self.send_asserv("pos")
+		self.send_asserv("pos 333")
 
 	def send_asserv(self, msg):
 		self.ircbot.send_msg(self.chan_asserv, msg)
 
 	def on_msg(self, canal, auteur, msg):
-		msg_split = msg.split(".")
-		if len(msg_split) > 2 and msg_split[0] == "reponse":
-			cmd = msg_split[1]
-			params = msg_split[2:]
-			if "pos" == msg_split[1] and len(params) == 3:
+		msg_split = msg.split(SEP)
+		if len(msg_split) > 2:
+			id_msg = msg_split[0]
+			params = msg_split[1:]
+			if "333" == id_msg and len(params) == 3:
 				self.pos[0] = int(params[0])
 				self.pos[1] = int(params[1])
 				self.angle = int(params[2])
