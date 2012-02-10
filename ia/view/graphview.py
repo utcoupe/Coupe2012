@@ -6,7 +6,7 @@ import time
 
 
 class GraphView(View):
-	def __init__(self, graph):
+	def __init__(self, graph, dynamic_obstacle):
 		View.__init__(self)
 
 		self.graph = graph
@@ -18,24 +18,48 @@ class GraphView(View):
 
 		self.id_raw_path = None
 		self.id_smooth_path = None
+
+		self.dynamic_obstacle = dynamic_obstacle
 		
 		## bindings
 		self.canvas.bind('<Button-1>',self.onLeft)
 		self.canvas.bind('<B1-Motion>',self.onLeft)
 		self.canvas.bind('<Button-3>',self.onRight)
 		self.canvas.bind('<B3-Motion>',self.onRight)
+		self.canvas.bind('<Button-2>',self.onWheel)
+		self.canvas.bind('<B2-Motion>',self.onWheel)
 
 		self.sum_calc_times = 0
 		self.nb_calc_times = 0
+		self.sum_update = 0
+		self.nb_update = 0
 	
 	def onLeft(self, event):
-		print(event.x / self.w_to_px, event.y / self.h_to_px)
-		self.p_arrive = self.event_to_x_y(event)
+		event = self.event_to_x_y(event)
+		print(event)
+		self.p_arrive = event
 		self.calc_path()
 
 	def onRight(self, event):
-		print(event.x / self.w_to_px, event.y / self.h_to_px)
-		self.p_depart =  self.event_to_x_y(event)
+		event = self.event_to_x_y(event)
+		print(event)
+		self.p_depart =  event
+		self.calc_path()
+
+	def onWheel(self, event):
+		event = self.event_to_x_y(event)
+		print(event)
+		
+		start = time.time()
+		self.dynamic_obstacle.move_to(event)
+		self.graph.update()
+		difference = (time.time() - start)
+		self.sum_update += difference
+		self.nb_update += 1
+		print("update graph time : %s (%s)" % (difference,self.sum_update / self.nb_update))
+		
+		self.remove()
+		self.draw_polygons(self.graph.get_polygons())
 		self.calc_path()
 
 	def event_to_x_y(self, event):

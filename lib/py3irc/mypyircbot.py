@@ -4,7 +4,7 @@
 """
 
 import inspect
-
+import re
 
 import irclib
 import ircbot
@@ -41,12 +41,12 @@ class MyPyIrcBot(ircbot.SingleServerIRCBot):
 		serv.join(self.channel)
 		self.serv = serv
 	
-	def write_rep(self, msg):
+	def write_rep(self, msg, id_msg=42):
 		"""
 		Fonction qui redistribue le message retourné par les fonctions "cmd_*".
 		@param msg le message à envoyer
 		"""
-		self.send(msg)
+		self.send("%s (id=%s)" %(msg,id_msg))
 		
 	def on_pubmsg(self, serv, ev):
 		"""
@@ -59,9 +59,21 @@ class MyPyIrcBot(ircbot.SingleServerIRCBot):
 		self.serv = serv
 		
 		auteur = irclib.nm_to_n(ev.source())
-		canal = ev.target()
-		msg = ev.arguments()[0].strip().lower()
-		msg_split = msg.split(" ")
+		canal = ev.target().strip().lower()
+		raw_msg = ev.arguments()[0]
+		if '#' in raw_msg:
+			msg, str_options = raw_msg.split('#')
+			msg.strip()
+			str_options.strip()
+		else:
+			msg, str_options = raw_msg, ""
+		msg_split = msg.strip().split(" ")
+		spec_id = "id=(?P<id>[0-9]+)"
+		t = re.search(spec_id, str_options)
+		if t:
+			id_msg = t.group("id")
+		else:
+			id_msg = 42
 		f_name = "cmd_" + msg_split[0]
 		if msg_split[0] == "help":
 			if len(msg_split) > 1:
@@ -75,7 +87,7 @@ class MyPyIrcBot(ircbot.SingleServerIRCBot):
 			f_args = inspect.getargspec(f).args
 			nb_args = len(f_args) - (1 if 'self' in f_args else 0)
 			if len(msg_split)-1 == nb_args:
-				self.write_rep(f(*msg_split[1:])+"\n")
+				self.write_rep(f(*msg_split[1:])+"\n",id_msg)
 			else:
 				serv.privmsg(canal, "invalid arg number : need %s and get %s" % (str(inspect.getargspec(f)),msg_split))
 

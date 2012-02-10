@@ -18,6 +18,22 @@ class Poly:
 		self.outline = 'black'
 		if len(self.points) > 2:
 			self.calc()
+
+	def move(self, v):
+		for p in self.points:
+			p += v
+		self.calc()
+		return self
+	
+	def move_to(self, p):
+		p = Vec(p)
+		v = p - self.middle
+		return self.move(v)
+
+	def round(self):
+		for p in self.points:
+			p.round()
+		return self
 			
 	def adjacent(self,o):
 		o_edges = o.iedges()

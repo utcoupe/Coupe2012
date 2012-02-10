@@ -20,16 +20,17 @@ class NavGraph:
 		self.height = 0
 		self.container = None
 		self.obstacles = []
+		self.dynamic_obstacles = []
 		self.offset = offset
 		self.partition = Partition()
 		self.pathfinding_area = Pathfinding(self.areas.values(), NAVGRAPH)
 		self.pathfinding_vertices = Pathfinding(self.vertices.values(), NAVGRAPH)
 
 	def calc_areas(self):
-		for k in self.areas.keys():
+		for k in tuple(self.areas.keys()):
 			self.areas.pop(k)
 		self.container = Poly(((0,0),(self.width,0),(self.width,self.height),(0,self.height)))
-		request = self.partition.make_request(self.container.points, self.obstacles, self.offset)
+		request = self.partition.make_request(self.container.points, self.obstacles + list(map(lambda p: p.points, self.dynamic_obstacles)), self.offset)
 		self.partition.calc(request)
 		for i,poly in self.partition.polygons.items():
 			self.areas[i] = Area(poly.points)
@@ -38,11 +39,10 @@ class NavGraph:
 		for i,poly in self.partition.polygons.items():
 			neighbors = [ self.areas[neighbor] for neighbor in poly.neighbors ]
 			self.areas[i].init(i, self.areas[i].middle, neighbors)
-		print("%s areas" % len(self.areas))
 
 	def calc_vertex_graph(self):
-		for k in self.vertices.keys():
-			self.areas.pop(k)
+		for k in tuple(self.vertices.keys()):
+			self.vertices.pop(k)
 
 		# création des vertices
 		for area in self.areas.values():
@@ -178,19 +178,31 @@ class NavGraph:
 		self.container.neighbors = []
 		return [self.container] + list(self.areas.values()) + l + ll
 
+	def add_dynamic_obstacle(self, poly):
+		self.dynamic_obstacles.append(poly)
+
+	def update(self):
+		""" fonction à appeller après avoir bougé un obstacle dynamic """
+		self.calc_areas()
+		self.calc_vertex_graph()
 
 
 if __name__ == "__main__":
 	import time
 	import sys
-	filename = sys.argv[1]
-	ng = NavGraph(90)
+	filename = "map.xml"
+	offset= sys.argv[1]
+	ng = NavGraph(offset)
 	start = time.time()
 	ng.load_xml(filename)
 	print("xml load time : %s" % (time.time() - start))
 	
 	sys.path.append("../view")
 	from graphview import *
+
+	dynamic_obstacle = Poly().initFromCircle((1500,1500),250,8)
+	ng.add_dynamic_obstacle(dynamic_obstacle)
+	ng.update()
 	
-	v = GraphView(ng)
+	v = GraphView(ng,dynamic_obstacle)
 	v.mainloop()

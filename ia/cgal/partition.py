@@ -37,6 +37,7 @@ class Partition:
 		return s
 
 	def calc(self, request):
+		self.polygons = {}
 		p = Popen(self.cmd, stdout=PIPE, stdin=PIPE)
 		result = str(p.communicate(bytes(request,"utf-8"))[0], "utf-8")
 		spec_points = "<(.+)>"
