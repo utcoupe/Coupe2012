@@ -113,19 +113,16 @@ class NavGraph:
 		# smooth path
 		if len(vertices) > 2:
 			smooth_path = raw_path
-			ng = NavGraph()
-			areas = ng.areas
+			id_areas = set()
 			for vertex in vertices[1:-1]:
 				for area in vertex.areas:
-					if area.id not in areas:
-						areas[area.id] = copy.copy(area)
-			for area in areas.values():
-				neighbors = []
-				for neighbor in area.neighbors:
-					if neighbor.id in areas:
-						neighbors.append(areas[neighbor.id])
-				area.neighbors = neighbors
-			_areas, _raw_path, smooth_path = ng.get_path_areas_mode(p_depart, p_arrive)
+					id_areas.add(area.id)
+			for area in self.areas.values():
+				if area.id not in id_areas:
+					area.walkable = False
+			_areas, _raw_path, smooth_path = self.get_path_areas_mode(p_depart, p_arrive)
+			for area in self.areas.values():
+				area.walkable = True
 		elif len(vertices) == 2:
 			smooth_path = raw_path
 		else:
