@@ -19,6 +19,9 @@ class Vec(list):
 		for i,x in enumerate(self):
 			self[i] = round(x)
 		return self
+
+	def angle(self):
+		return atan2(self[1], self[0])
 	
 	def __add__(self, v2):
 		if len(self) != len(v2):
@@ -100,6 +103,9 @@ class Vec(list):
 	
 	def __repr__(self):
 		return "Vec%s" % (tuple(self),)
+
+	def __hash__(self):
+		return tuple.__hash__(tuple(self))
 
 
 import doctest

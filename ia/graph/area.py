@@ -1,4 +1,6 @@
 
+import copy
+
 from geometry.convexpoly import *
 from pathfinding import Node
 
@@ -9,5 +11,3 @@ class Area(ConvexPoly,Node):
 
 	def __repr__(self):
 		return "Area(%s, %s)" % (ConvexPoly.__repr__(self), Node.__repr__(self))
-
-

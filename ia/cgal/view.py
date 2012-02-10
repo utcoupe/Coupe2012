@@ -33,7 +33,11 @@ class Window(tk.Tk):
 		tk.Tk.__init__(self,None)
 		self.canvas = tk.Canvas(self, width=WIDTH, height=HEIGHT, background='white')
 		self.canvas.pack()
+		self.canvas.bind("<Button-1>", self.callback)
 		self.polygons = {}
+
+	def callback(self, event):
+		print(event.x / self.w_to_px, event.y / self.h_to_px)
 				
 	def draw_polygons(self):
 		self.canvas.delete(tk.ALL)
@@ -51,6 +55,9 @@ class Window(tk.Tk):
 		w_to_px = WIDTH / float(maxi_x - mini_x)
 		h_to_px = HEIGHT / float(maxi_y - mini_y)
 		print (maxi_x, maxi_y, mini_x, mini_y, w_to_px, h_to_px)
+		self.w_to_px = w_to_px
+		self.h_to_px = h_to_px
+		
 		
 		for poly in self.polygons.values():
 			path = []

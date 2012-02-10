@@ -22,3 +22,8 @@ contain
 	True
 	>>> (3,4) in box
 	False
+
+
+aire
+	>>> box.aire()
+	12

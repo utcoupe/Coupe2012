@@ -16,3 +16,12 @@ aabb
 	4
 	>>> poly.AABB.h
 	2
+
+adjacent
+	>>> poly1 = Poly(((0,0),(4,0),(2,2)))
+	>>> poly2 = Poly(((0,0),(2,-2),(4,0)))
+	>>> poly1.adjacent(poly2)
+	True
+	>>> poly3 = Poly(((0,1),(4,1),(2,2)))
+	>>> poly1.adjacent(poly3)
+	False

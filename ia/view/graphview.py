@@ -26,10 +26,12 @@ class GraphView(View):
 		self.canvas.bind('<B3-Motion>',self.onRight)
 	
 	def onLeft(self, event):
+		print(event.x / self.w_to_px, event.y / self.h_to_px)
 		self.p_arrive = self.event_to_x_y(event)
 		self.calc_path()
 
 	def onRight(self, event):
+		print(event.x / self.w_to_px, event.y / self.h_to_px)
 		self.p_depart =  self.event_to_x_y(event)
 		self.calc_path()
 
@@ -40,7 +42,7 @@ class GraphView(View):
 		start = time.time()
 		nodes,raw_path,smooth_path = self.graph.get_path(self.p_depart,self.p_arrive)
 		print("pathfinding computing time : %s " % (time.time() - start))
-		if nodes:
+		if smooth_path:
 			self.remove(self.id_raw_path)
 			self.remove(self.id_smooth_path)
 			self.id_raw_path = self.draw_line(raw_path, 'red')

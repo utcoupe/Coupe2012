@@ -18,6 +18,14 @@ class Poly:
 		self.outline = 'black'
 		if len(self.points) > 2:
 			self.calc()
+			
+	def adjacent(self,o):
+		o_edges = o.iedges()
+		for edge in self.iedges():
+			edge.reverse()
+			if edge in o_edges:
+				return True
+		return False
 
 	def calc(self):
 		self.calc_extremums()

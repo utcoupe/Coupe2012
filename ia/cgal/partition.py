@@ -46,7 +46,7 @@ class Partition:
 			t = re.search(spec_points, line)
 			if t:
 				s = t.group(0)
-				points = [ (float(t.group("x")), float(t.group("y"))) for t in re.finditer(spec_point, s) ]
+				points = [ (round(float(t.group("x"))), round(float(t.group("y")))) for t in re.finditer(spec_point, s) ]
 				ids = [t.group("id") for t in re.finditer(spec_id, line)]
 				if ids:
 					self.polygons[ids[0]] = PartitionPoly(ids[0], points, ids[1:])

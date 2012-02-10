@@ -7,6 +7,7 @@ class Node:
 		self.pos = (0,0)
 		self.neighbors = []
 		self.walkable = True
+		self.reset()
 
 	def init(self, id, pos, neighbors):
 		self.id = id

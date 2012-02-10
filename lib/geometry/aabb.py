@@ -14,6 +14,9 @@ class AABB:
 	def __repr__(self):
 		return "AABB(p=%s, w=%s, h=%s)" % (self.p, self.w, self.h)
 
+	def aire(self):
+		return self.w * self.h
+
 
 
 

@@ -16,6 +16,7 @@ class View(tk.Tk):
 		self.w_to_px = 1
 		self.h_to_px = 1
 
+
 	def remove(self, i=tk.ALL):
 		self.canvas.delete(i)
 	
@@ -41,7 +42,6 @@ class View(tk.Tk):
 			for point in poly.points:
 				path += self.point_to_px(point)
 			r.append(self.canvas.create_polygon(path, outline=poly.outline, fill=poly.color))
-
 		return r
 
 	def draw_lines(self, lines, color='red'):
