@@ -40,9 +40,10 @@ class ArduinoBot(mypyircbot.MyPyIrcBot):
 		self.thread = threading.Thread(None,self.loop,"arduinoloop")
 		self.thread.start()
 	
-	def write_rep(self, msg):
+	def write_rep(self, msg, id_msg=42):
 		""" écrit sur le port série """
-		msg = bytes(msg.strip()+"\n","utf-8")
+		print("%s (id=%s)" %(msg.strip(),id_msg))
+		msg = bytes(str(id_msg)+SEP+msg.strip()+"\n","utf-8")
 		self.serial.write(msg)
 	
 	def loop(self):
