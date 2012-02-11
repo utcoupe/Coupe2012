@@ -8,10 +8,10 @@
 
 
 // all
-#define Q_IDENT 			0 // [] identification
+#define Q_IDENT 			0	// [] identification
 #define Q_PING 				1   // [] pong
 #define Q_DEBUG				99
-#define Q_STOP 				13 // [] stop et vide la fifo
+#define Q_STOP 				13	// [] stop et vide la fifo
 
 ////////////////////////////////////////////////////////////////////////
 ////						OTHERS
@@ -28,58 +28,10 @@
 #define QO_PING				1
 
 /**
- * Valeur d'un microswitch
- * @param face 0:AV 1:AR
- */
-#define QO_MS	 			33
-
-/**
- * trigger microswitch
- * @param face 0:AV 1:AR
- */
-#define QO_TMS	 			34
-
-/**
- * Fixer la position des pinces
- * @param face 0:AV 1:AR
- * @param hauteur
- */
-#define QO_SETPPOSITION 	36
-#define Q_JACK		 		38
-
-/**
- * Fait des resets (see PH for more details)
+ * Fait des resets
  */
 #define QO_RESET		 	45
 
-/**
- * Recaler la pince n
- * @param face 0:AV 1:AR
- */
-#define QO_PRECALAGE	 	46
-
-/**
- * Retourne la couleur du robot
- */
-#define QO_COLOR				50
-
-/**
- * Tourne la tourelle
- * @param face 0:AV 1:AR
- */
-#define QO_ULTRAPING		51
-
-/**
- * Retourne la valeure du ping
- * @param face 0:AV 1:AR
- */
-#define QO_GETULTRAPING		52
-
-/**
- * Debug : valeur du codeur de l'ascenseur d'une pince
- * @param face 0:AV 1:AR
- */
-#define QO_PCODEUR	 		44
 
 ////////////////////////////////////////////////////////////////////////
 ////						ASSERV
@@ -132,20 +84,12 @@
 #define QA_POS		 		6
 
 /**
- * Recalage automatique
- * @param color 0:blue 1:rouge
+ * Définir la position actuelle
+ * @param x mm
+ * @param y mm
+ * @param a degrès
  */
-#define QA_ACALIB			7
-
-/**
- * Pause.
- */
-#define QA_STOP				14
-
-/**
- * Reprendre.
- */
-#define QA_RESUME			15
+#define QA_SET_POS			7
 
 /**
  * Debug : sens du robot.
@@ -157,11 +101,39 @@
  */
 #define QA_GETENC			17
 
-#define QA_MCALIB			8
-#define QA_DELAY 			9
-#define QA_PWM 				10
-#define QA_MODIF_GOAL_ABS 	11
-#define QA_MODIF_GOAL_REL 	12
+/**
+ * Debug : set les valeurs du PID pour l'asservissement des goto (delta)
+ * @param P (1/1000)
+ * @param I (1/1000)
+ * @param D (1/1000)
+ */
+#define QA_SET_PID_POSITION_D	18
+
+/**
+ * Debug : set les valeurs du PID pour l'asservissement des goto (alpha)
+ * @param P (1/1000)
+ * @param I (1/1000)
+ * @param D (1/1000)
+ */
+#define QA_SET_PID_POSITION_A	19
+
+/**
+ * Debug : set les valeurs du PID pour l'asservissement des rotations (delta)
+ * @param P (1/1000)
+ * @param I (1/1000)
+ * @param D (1/1000)
+ */
+#define QA_SET_PID_ANGLE_D	20
+
+/**
+ * Debug : set les valeurs du PID pour l'asservissement des rotations (alpha)
+ * @param P (1/1000)
+ * @param I (1/1000)
+ * @param D (1/1000)
+ */
+#define QA_SET_PID_ANGLE_A	21
+
+
 
 // erreurs
 #define	E_INVALID_CMD						-1

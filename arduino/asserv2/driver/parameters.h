@@ -30,7 +30,7 @@
 #define ENC_MM_TO_TICKS (ENC_RESOLUTION*4)/(2*M_PI*ENC_RADIUS) // environ : 9.36
 
 // Duree d'un cycle (en millisecondes)
-#define DUREE_CYCLE 2
+#define DUREE_CYCLE 5
 
 /* Parametres de la carte asservissement
  * pin 0 -> USB 2 TTL
@@ -76,18 +76,20 @@
  *	kd				|-					|Diminue				|Diminue		|-					|
  * _________________|___________________|_______________________|_______________|___________________|
  */
-#define KP_SPEED 2.0
-#define KI_SPEED 5.0
-#define KD_SPEED 1.0
-#define KP_ANGLE 2.0
-#define KI_ANGLE 0.0
-#define KD_ANGLE 7.0
-#define KP_DELTA 10.0
-#define KI_DELTA 0.01
-#define KD_DELTA 7.0
-#define KP_ALPHA 2.0
-#define KI_ALPHA 0.0
-#define KD_ALPHA 7.0
+#define KP_D_ANGLE 1.0
+#define KI_D_ANGLE 0.0
+#define KD_D_ANGLE 7.0
+#define KP_A_ANGLE 2.0
+#define KI_A_ANGLE 0.0
+#define KD_A_ANGLE 7.0
+
+#define KP_D_POSITION 2.0
+#define KI_D_POSITION 0.0
+#define KD_D_POSITION 7.0
+#define KP_A_POSITION 0.1
+#define KI_A_POSITION 0.0
+#define KD_A_POSITION 0.5
+
 
 /*Parametre de la file des taches a effectuer*/
 #define SIZE 15

@@ -152,7 +152,7 @@ void readIncomingData()
 			{
 				currentArg[currentArgIndex] = '\0';
 				args[argsIndex] = atoi(currentArg);
-				cmd(args[0],args[1],args+2,argsIndex-2); // id_cmd, *args, sizeArgs
+				cmd(args[0],args[1],args+2,argsIndex-1); // id_cmd, *args, sizeArgs
   				argsIndex = 0;
 				currentArgIndex = 0;
 				break;

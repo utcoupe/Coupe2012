@@ -7,10 +7,10 @@ class PID
 {
 	public:
 		PID(double kp, double ki, double kd);
-		void setCoeffs(double kp, double ki, double kd);
-		void setOutputLimits(int a, int b);
+		PID& setCoeffs(double kp, double ki, double kd);
+		PID& setOutputLimits(int a, int b);
 		int compute(int error);
-		void reset();
+		PID& reset();
 	
 	private:
 		void addErr(double error);

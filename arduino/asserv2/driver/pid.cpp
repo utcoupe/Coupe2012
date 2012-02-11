@@ -8,17 +8,21 @@ PID::PID(double kp, double ki, double kd)
 	PID::reset();
 }
 
-void PID::reset()
+PID& PID::reset()
 {
 	PID::resetErrors();
 	_lastError = 0.0;
+
+	return (*this);
 }
 
-void PID::setCoeffs(double kp, double ki, double kd)
+PID& PID::setCoeffs(double kp, double ki, double kd)
 {
 	_kp = kp;
 	_ki = ki;
 	_kd = kd;
+	
+	return (*this);
 }
 
 void PID::resetErrors()
@@ -30,10 +34,12 @@ void PID::resetErrors()
 	_iErr = 0;
 }
 
-void PID::setOutputLimits(int a, int b)
+PID& PID::setOutputLimits(int a, int b)
 {
 	_output_lim_a = a;
 	_output_lim_b = b;
+	
+	return (*this);
 }
 
 

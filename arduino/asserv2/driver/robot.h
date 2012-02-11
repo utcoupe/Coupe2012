@@ -8,6 +8,9 @@
 #include "rampe.h"
 
 
+long int mm_to_robotunit(int x);
+int degrees_to_robotunit(double a);
+
 typedef enum {
 	G_POS,
 	G_ANG
@@ -32,6 +35,11 @@ class Robot
 		void turn(double a, double speed = 200);
 		void update_speedf(double speed);
 		void cancel();
+		void set_x_y_a(long int x, long int y, double a);
+		void set_coeffs_pid_position_d(double p, double i, double d);
+		void set_coeffs_pid_position_a(double p, double i, double d);
+		void set_coeffs_pid_angle_d(double p, double i, double d);
+		void set_coeffs_pid_angle_a(double p, double i, double d);
 		bool goalIsReached();
 		
 		Goal get_goal();
@@ -42,6 +50,7 @@ class Robot
 		int get_y();
 		/* rad */
 		double get_a();
+
 		
 	private:
 		void update_state(int dt);
@@ -49,22 +58,22 @@ class Robot
 		void setGoal(T_GOAL t, long int x, long int y, double a, double speed);
 
 		/* ticks */
-		long int _x, _y;
+		long int x, y;
 		/* rad */
-		double _a;
+		double a;
 		/* ticks/µs */
-		double _speed;
+		double speed;
 		/* ticks */
-		long int *_value_left_enc, *_value_right_enc;
+		long int *value_left_enc, *value_right_enc;
 		/* ticks */
-		long int _prev_value_left_enc, _prev_value_right_enc;
+		long int prev_value_left_enc, prev_value_right_enc;
 		
-		AF_DCMotor *_motor_left, *_motor_right;
+		AF_DCMotor *motor_left, *motor_right;
 		
-		Rampe *_rampe_delta, *_rampe_alpha;
-		Goal _goal;
+		Rampe *rampe_delta, *rampe_alpha;
+		Goal goal;
 
-		bool _goal_reached;
+		bool goal_reached;
 };
 
 extern Robot robot;
