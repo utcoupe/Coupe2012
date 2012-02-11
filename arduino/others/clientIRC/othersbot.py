@@ -12,7 +12,7 @@ import arduinobot
 if __name__ == "__main__":
 	arduinobot.run(
 		nickname="othersbot",
-		channel="other",
+		channel="others",
 		serial_port="/dev/ttyACM0",
 		protocole_file=os.path.join(FILE_DIR,"..","..","protocole.h"),
 		protocole_prefixe="QO_")
