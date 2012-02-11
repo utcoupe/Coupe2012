@@ -18,6 +18,12 @@ class Robot:
 	def goto(self, p, vitesse=500):
 		self.send_asserv("goto %s %s %s" % (p[0], p[1], vitesse))
 
+	def turn(self, a, v):
+		self.send_asserv("turn %s %s" % (round(a),v))
+
+	def pwm(self, pwm):
+		self.send_asserv("pwm %s" % pwm)
+
 	def stop(self):
 		self.send_asserv("stop")
 
@@ -27,7 +33,7 @@ class Robot:
 	def cancel(self):
 		self.send_asserv("cancel")
 
-	def update_pos(self):
+	def refresh_pos(self):
 		self.send_asserv("pos 333")
 
 	def send_asserv(self, msg):

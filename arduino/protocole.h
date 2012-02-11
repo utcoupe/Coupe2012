@@ -92,6 +92,12 @@
 #define QA_SET_POS			7
 
 /**
+ * Mettre une pwm à droite et à gauche
+ * @param pwm [-255,255]
+ */
+#define QA_PWM				8
+
+/**
  * Debug : sens du robot.
  */
 #define QA_GETSENS			16

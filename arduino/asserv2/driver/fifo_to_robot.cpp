@@ -77,6 +77,12 @@ void FifoObj_to_robot(FifoObj * obj, FifoObj * nextObj)
 				);
 				break;
 			}
+
+			case CMD_PWM:
+			{
+				robot.set_pwm_right_left(obj->get_data(0));
+				break;
+			}
 			
 			case CMD_UNDEFINED:
 			{

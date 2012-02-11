@@ -13,7 +13,8 @@ int degrees_to_robotunit(double a);
 
 typedef enum {
 	G_POS,
-	G_ANG
+	G_ANG,
+	G_PWM
 } T_GOAL;
 
 typedef struct {
@@ -22,6 +23,7 @@ typedef struct {
 	long int y;
 	double a;
 	double speed;
+	int pwm;
 } Goal;
 
 class Robot
@@ -32,6 +34,7 @@ class Robot
 		void update(int dt);
 		void reset_pid();
 		void go_to(long int x, long int y, double speed, double final_speed=0);
+		void set_pwm_right_left(int pwm);
 		void turn(double a, double speed = 200);
 		void update_speedf(double speed);
 		void cancel();
@@ -55,7 +58,10 @@ class Robot
 	private:
 		void update_state(int dt);
 		void update_motors(int dt);
-		void setGoal(T_GOAL t, long int x, long int y, double a, double speed);
+		void setGoal(T_GOAL t, long int x, long int y, double a, double speed, int pwm);
+		void setGoalPwm(int pwm);
+		void setGoalPosition(long int x, long int y, double speed);
+		void setGoalAngle(double a, double speed);
 
 		/* ticks */
 		long int x, y;

@@ -66,13 +66,29 @@ void Robot::init()
 	Robot::reset_pid();
 }
 
-void Robot::setGoal(T_GOAL t, long int x, long int y, double a, double speed)
+void Robot::setGoal(T_GOAL t, long int x, long int y, double a, double speed, int pwm)
 {
 	this->goal.type = t;
 	this->goal.x = x;
 	this->goal.y = y;
 	this->goal.a = a;
 	this->goal.speed = speed;
+	this->goal.pwm = pwm;
+}
+
+void Robot::setGoalPosition(long int x, long int y, double speed)
+{
+	Robot::setGoal(G_POS, x, y, 0, speed, 0);
+}
+
+void Robot::setGoalAngle(double a, double speed)
+{
+	Robot::setGoal(G_ANG, this->x, this->y, a, speed, 0);
+}
+
+void Robot::setGoalPwm(int pwm)
+{
+	Robot::setGoal(G_PWM, 0, 0, 0, 0, pwm);
 }
 	
 bool Robot::goalIsReached()
@@ -138,176 +154,163 @@ void Robot::update_state(int dt)
 
 void Robot::update_motors(int dt)
 {
-	static long int _i = 0;
 	static PHASE current_phase_alpha = PHASE_END;
 	static PHASE current_phase_delta = PHASE_END;
-	
-	this->rampe_alpha->compute_next_goal(dt);
-	this->rampe_delta->compute_next_goal(dt);
-	
-	double angleDiffAlpha = angle_diff(this->goal.a, this->a);
-	double angleDiffDelta = angle_diff(atan2(this->goal.y-this->y, this->goal.x-this->x), this->a);
-	
-	double angleDiff = 0.0;
-	switch (this->goal.type)
-	{
-		case G_POS:
-			angleDiff = angleDiffDelta;
-		break;
 
-		case G_ANG:
-			angleDiff = angleDiffAlpha;
-		break;
-	}
-
-	int sens_delta=1;
-	// Si le goal est derrière
-	if(abs(angleDiffDelta) > M_PI/2)
-	{
-		sens_delta = -sens_delta;
-		if (this->goal.type == G_POS)
-		{
-			angleDiff = moduloPI(M_PI + angleDiff);
-		}
-	}
-	
- 	double dx = this->goal.x-this->x;
-	double dy = this->goal.y-this->y;
-
-	double deltaDiff = sqrt(dx*dx+dy*dy);
-	double currentDelta = this->rampe_delta->get_pos() - sens_delta * deltaDiff;
-	double currentAlpha = this->rampe_alpha->get_pos() - (angleDiff * ENC_CENTER_DIST_TICKS);
-
-	if (this->rampe_delta->get_phase() != current_phase_delta)
-	{
-		Serial.println("DELTA");
-		switch(this->rampe_delta->get_phase())
-		{
-			case PHASE_ACCEL:
-			Serial.println("accel");
-			break;
-			case PHASE_CONST:
-			Serial.println("const");
-			break;
-			case PHASE_DECEL:
-			Serial.println("decel");
-			break;
-			case PHASE_END:
-			Serial.println("end");
-			break;
-			default:
-			Serial.println("euh...");
-			break;
-		}
-		Serial.println(deltaDiff);
-		Serial.println(this->rampe_delta->get_pos());
-		current_phase_delta = this->rampe_delta->get_phase();
-	}
-	if (this->rampe_alpha->get_phase() != current_phase_alpha)
-	{
-		Serial.println("ALPHA");
-		switch(this->rampe_alpha->get_phase())
-		{
-			case PHASE_ACCEL:
-			Serial.println("accel");
-			break;
-			case PHASE_CONST:
-			Serial.println("const");
-			break;
-			case PHASE_DECEL:
-			Serial.println("decel");
-			break;
-			case PHASE_END:
-			Serial.println("end");
-			break;
-			default:
-			Serial.println("euh...");
-			break;
-		}
-		Serial.println((angleDiff * ENC_CENTER_DIST_TICKS));
-		Serial.println(this->rampe_alpha->get_pos());
-		current_phase_alpha = this->rampe_alpha->get_phase();
-	}
-	
-
-		
 	int value_pwm_left = 0;
 	int value_pwm_right = 0;
-	if (this->rampe_alpha->get_phase() == PHASE_END and this->rampe_delta->get_phase() == PHASE_END
-		and deltaDiff < 10*ENC_MM_TO_TICKS
-		and (this->goal.type == G_POS or abs(angleDiff) < (3.0f/180.0f*M_PI)))
+	
+	if (this->goal.type == G_PWM)
 	{
-		this->goal_reached = true;
+		value_pwm_left = goal.pwm;
+		value_pwm_right = goal.pwm;
 	}
 	else
 	{
-		double output4Delta=0,output4Alpha=0;
-		if (this->goal.type == G_POS)
+		this->rampe_alpha->compute_next_goal(dt);
+		this->rampe_delta->compute_next_goal(dt);
+		
+		double angleDiffAlpha = angle_diff(this->goal.a, this->a);
+		double angleDiffDelta = angle_diff(atan2(this->goal.y-this->y, this->goal.x-this->x), this->a);
+		
+		double angleDiff = 0.0;
+		switch (this->goal.type)
 		{
-			output4Delta = pid4delta_position_control.compute(currentDelta);
-			output4Alpha = pid4alpha_position_control.compute(currentAlpha);
+			case G_POS:
+				angleDiff = angleDiffDelta;
+			break;
+
+			case G_ANG:
+				angleDiff = angleDiffAlpha;
+			break;
+		}
+
+		int sens_delta=1;
+		// Si le goal est derrière
+		if(abs(angleDiffDelta) > M_PI/2)
+		{
+			sens_delta = -sens_delta;
+			if (this->goal.type == G_POS)
+			{
+				angleDiff = moduloPI(M_PI + angleDiff);
+			}
+		}
+		
+		double dx = this->goal.x-this->x;
+		double dy = this->goal.y-this->y;
+
+		double deltaDiff = sqrt(dx*dx+dy*dy);
+		double currentDelta = this->rampe_delta->get_pos() - sens_delta * deltaDiff;
+		double currentAlpha = this->rampe_alpha->get_pos() - (angleDiff * ENC_CENTER_DIST_TICKS);
+
+		if (this->rampe_delta->get_phase() != current_phase_delta)
+		{
+			Serial.println("DELTA");
+			switch(this->rampe_delta->get_phase())
+			{
+				case PHASE_ACCEL:
+				Serial.println("accel");
+				break;
+				case PHASE_CONST:
+				Serial.println("const");
+				break;
+				case PHASE_DECEL:
+				Serial.println("decel");
+				break;
+				case PHASE_END:
+				Serial.println("end");
+				break;
+				default:
+				Serial.println("euh...");
+				break;
+			}
+			Serial.println(deltaDiff);
+			Serial.println(this->rampe_delta->get_pos());
+			current_phase_delta = this->rampe_delta->get_phase();
+		}
+		if (this->rampe_alpha->get_phase() != current_phase_alpha)
+		{
+			Serial.println("ALPHA");
+			switch(this->rampe_alpha->get_phase())
+			{
+				case PHASE_ACCEL:
+				Serial.println("accel");
+				break;
+				case PHASE_CONST:
+				Serial.println("const");
+				break;
+				case PHASE_DECEL:
+				Serial.println("decel");
+				break;
+				case PHASE_END:
+				Serial.println("end");
+				break;
+				default:
+				Serial.println("euh...");
+				break;
+			}
+			Serial.println((angleDiff * ENC_CENTER_DIST_TICKS));
+			Serial.println(this->rampe_alpha->get_pos());
+			current_phase_alpha = this->rampe_alpha->get_phase();
+		}
+		
+
+		if (this->rampe_alpha->get_phase() == PHASE_END and this->rampe_delta->get_phase() == PHASE_END
+			and deltaDiff < 10*ENC_MM_TO_TICKS
+			and (this->goal.type == G_POS or abs(angleDiff) < (3.0f/180.0f*M_PI)))
+		{
+			this->goal_reached = true;
 		}
 		else
 		{
-			output4Delta = pid4delta_angle_control.compute(currentDelta);
-			output4Alpha = pid4alpha_angle_control.compute(currentAlpha);
-		}
-		
-		value_pwm_left = output4Delta-output4Alpha;
-		value_pwm_right = output4Delta+output4Alpha;
-		
-		// Débordement
-		/*if (value_pwm_right > 255)
-		{
-			value_pwm_left = value_pwm_left * 255 / value_pwm_right;
-			value_pwm_right = 255;
-		}
-		else if (value_pwm_left > 255)
-		{
-			value_pwm_left = value_pwm_right * 255 / value_pwm_left;
-			value_pwm_left = 255;
-		}
-		else if (value_pwm_right < -255)
-		{
-			value_pwm_left = value_pwm_left * -255 / value_pwm_right;
-			value_pwm_right = -255;
-		}
-		else if (value_pwm_left < -255)
-		{
-			value_pwm_right = value_pwm_right * -255 / value_pwm_left;
-			value_pwm_left = -255;
-		}*/
-		if (value_pwm_right > 255)
-			value_pwm_right = 255;
-		else if (value_pwm_right < -255)
-			value_pwm_right = -255;
-		
-		if (value_pwm_left > 255)
-			value_pwm_left = 255;
-		else if (value_pwm_left < -255)
-			value_pwm_left = -255;
+			double output4Delta=0,output4Alpha=0;
+			if (this->goal.type == G_POS)
+			{
+				output4Delta = pid4delta_position_control.compute(currentDelta);
+				output4Alpha = pid4alpha_position_control.compute(currentAlpha);
+			}
+			else
+			{
+				output4Delta = pid4delta_angle_control.compute(currentDelta);
+				output4Alpha = pid4alpha_angle_control.compute(currentAlpha);
+			}
 			
-		/*
-		if (micros() - _i > 1000000) {
-			Serial.println("update_motors_delta");
-			Serial.println(output4Delta);
-			Serial.println(currentDelta);
-			Serial.print("goal");
-			Serial.println(this->rampe_delta->get_pos());
-			Serial.print("diff");
-			Serial.println(sens_delta * sqrt(dx*dx+dy*dy));
-			Serial.print("sens");
-			Serial.println(sens_delta);
-			Serial.println("update_motors_alpha");
-			Serial.println(output4Alpha);
-			Serial.println(currentAlpha);
-			Serial.print("goal");
-			Serial.println(this->rampe_alpha->get_pos());
-			Serial.print("diff");
-			Serial.println(angle_diff(goal_a, this->a) * 180.0f / M_PI);
-			_i = micros();
-		}//*/
-		this->goal_reached = false;
+			value_pwm_left = output4Delta-output4Alpha;
+			value_pwm_right = output4Delta+output4Alpha;
+			
+			// Débordement
+			if (value_pwm_right > 255)
+			{
+				value_pwm_left = value_pwm_left * 255 / value_pwm_right;
+				value_pwm_right = 255;
+			}
+			else if (value_pwm_left > 255)
+			{
+				value_pwm_left = value_pwm_right * 255 / value_pwm_left;
+				value_pwm_left = 255;
+			}
+			else if (value_pwm_right < -255)
+			{
+				value_pwm_left = value_pwm_left * -255 / value_pwm_right;
+				value_pwm_right = -255;
+			}
+			else if (value_pwm_left < -255)
+			{
+				value_pwm_right = value_pwm_right * -255 / value_pwm_left;
+				value_pwm_left = -255;
+			}/*
+			if (value_pwm_right > 255)
+				value_pwm_right = 255;
+			else if (value_pwm_right < -255)
+				value_pwm_right = -255;
+			
+			if (value_pwm_left > 255)
+				value_pwm_left = 255;
+			else if (value_pwm_left < -255)
+				value_pwm_left = -255;*/
+			
+			this->goal_reached = false;
+		}
 	}
 
 	setLeftPWM(-value_pwm_left);
@@ -327,7 +330,7 @@ void Robot::go_to(long int x, long int y, double speed, double final_speed)
 	Serial.print("final_speed "); Serial.println(final_speed);
 	#endif
 	
-	Robot::setGoal(G_POS,x,y,0,speed);
+	Robot::setGoalPosition(x,y,speed);
 
 	double a = atan2(y, x);
 	this->rampe_alpha->compute(angle_diff(a, this->a) * ENC_CENTER_DIST_TICKS, 0, speed, 0.05, -0.05, 0, 0);
@@ -343,7 +346,7 @@ void Robot::go_to(long int x, long int y, double speed, double final_speed)
 
 void Robot::turn(double a, double speed)
 {
-	Robot::setGoal(G_ANG, this->x, this->y,a,speed);
+	Robot::setGoalAngle(a,speed);
 	
 	this->rampe_alpha->compute(angle_diff(a, this->a) * ENC_CENTER_DIST_TICKS, 0, speed, 0.05, -0.05, 0,0);
 	this->rampe_delta->compute(0, 0, 1, 0.05, -0.05, 0,0);
@@ -351,10 +354,15 @@ void Robot::turn(double a, double speed)
 	this->goal_reached = false;
 }
 
+void Robot::set_pwm_right_left(int pwm)
+{
+	Robot::setGoalPwm(pwm);
+}
+
 
 void Robot::cancel()
 {
-	Robot::setGoal(G_POS, this->x, this->y, this->a,0);
+	Robot::setGoalPosition(this->x, this->y, 1);
 	
 	this->rampe_alpha->compute(0, 0, 1, 1, -1,0,0);
 	this->rampe_delta->compute(0, 0, 1, 1, -1,0,0);

@@ -89,6 +89,17 @@ void cmd(int id, int id_cmd, int* args, int size){
 			break;
 		}
 
+		case QA_PWM:
+		{
+			if (size < 1)
+				sendMessage(id, E_INVALID_PARAMETERS_NUMBERS);
+			else
+			{
+				fifo.push(CMD_PWM, args[0]);
+			}
+			break;
+		}
+
 		case QA_POS:
 		{
 			int x_mm = robot.get_x()*ENC_TICKS_TO_MM;
@@ -139,6 +150,7 @@ void cmd(int id, int id_cmd, int* args, int size){
 				robot.set_coeffs_pid_position_d((double)args[0]/100.0,(double)args[1]/100.0,(double)args[2]/100.0);
 				sendMessage(id, 1);
 			}
+			break;
 		}
 		case QA_SET_PID_POSITION_A:
 		{
@@ -149,6 +161,7 @@ void cmd(int id, int id_cmd, int* args, int size){
 				robot.set_coeffs_pid_position_a((double)args[0]/100.0,(double)args[1]/100.0,(double)args[2]/100.0);
 				sendMessage(id, 1);
 			}
+			break;
 		}
 		
 		// ANGLE
@@ -161,6 +174,7 @@ void cmd(int id, int id_cmd, int* args, int size){
 				robot.set_coeffs_pid_angle_d((double)args[0]/100.0,(double)args[1]/100.0,(double)args[2]/100.0);
 				sendMessage(id, 1);
 			}
+			break;
 		}
 		case QA_SET_PID_ANGLE_D:
 		{
@@ -171,6 +185,7 @@ void cmd(int id, int id_cmd, int* args, int size){
 				robot.set_coeffs_pid_angle_a((double)args[0]/100.0,(double)args[1]/100.0,(double)args[2]/100.0);
 				sendMessage(id, 1);
 			}
+			break;
 		}
 
 		default:

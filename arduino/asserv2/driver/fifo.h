@@ -10,6 +10,7 @@ typedef enum {
 	CMD_TURN,
 	CMD_GOTOR,
 	CMD_TURNR,
+	CMD_PWM,
 	CMD_UNDEFINED
 } T_FIFO_OBJ;
 

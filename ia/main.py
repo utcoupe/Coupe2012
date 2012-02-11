@@ -2,6 +2,7 @@
 
 
 import threading
+import time
 
 
 
@@ -14,7 +15,7 @@ CHAN_ASSERV		= "#asserv"
 FILENAME_MAP	= "graph/map.xml"
 
 
-ircbot = IABot("localhost", 6667, CHAN_ASSERV, CHAN_ASSERV+SUFFIX_MINI)
+ircbot = IABot("10.42.43.94", 6667, CHAN_ASSERV, CHAN_ASSERV+SUFFIX_MINI)
 threading.Thread(None, ircbot.start, "loop iabot").start()
 
 bigrobot = Robot(ircbot, CHAN_ASSERV)
@@ -25,7 +26,6 @@ ng.load_xml(FILENAME_MAP)
 
 
 from random import randrange
-import time
 while True:
 	bigrobot.cancel()
 	bigrobot.update_pos()
