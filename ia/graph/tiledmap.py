@@ -75,6 +75,11 @@ class TiledMap:
 		for l in self.tiles:
 			r.extend(l)
 		return r
+		
+	def update(self):
+		""" fonction à appeller après avoir bougé un obstacle dynamic """
+		#todo
+		pass
 	
 if __name__ == "__main__":
 	import time
@@ -88,5 +93,6 @@ if __name__ == "__main__":
 	sys.path.append("../view")
 	from graphview import *
 	
-	v = GraphView(tm)
+	dynamic_obstacle = Poly().initFromCircle((-500,-500),250,8)
+	v = GraphView(tm,dynamic_obstacle)
 	v.mainloop()			
