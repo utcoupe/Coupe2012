@@ -15,7 +15,7 @@ import mypyircbot
 from mypyircbot import *
 
 
-COMPILED_F = None
+_COMPILED_F_ = None
 
 
 class ArduinoBot(mypyircbot.MyPyIrcBot):
@@ -26,14 +26,16 @@ class ArduinoBot(mypyircbot.MyPyIrcBot):
 		mypyircbot.MyPyIrcBot.__init__(self, server_ip, server_port, nickname, channel)
 		
 		print("Récupération du protocole dans %s..." %protocole_file)
-		self._get_protocole(protocole_file, protocole_prefixe)
+		for cmd in self.get_protocole(protocole_file, protocole_prefixe):
+			f_cmd = self.make_cmd_function(cmd['name'], cmd['id'], cmd['params'], cmd['doc'])
+			setattr(self, self.irc_cmd_to_func_name(cmd['name']), f_cmd)
 		print("OK")
 		print("Connection au port série %s..." % serial_port)
 		try:
 			self.serial = serial.Serial(serial_port, serial_baudrate, timeout=1, writeTimeout=1)
 		except serial.SerialException as ex:
 			print(ex)
-			sys.exit(1)
+			#sys.exit(1)
 		print("OK")
 		
 		self.thread = threading.Thread(None,self.loop,"arduinoloop")
@@ -57,50 +59,18 @@ class ArduinoBot(mypyircbot.MyPyIrcBot):
 			else:
 				if msg and self.serv:
 					self.serv.privmsg(self.channel, str(msg,"utf-8"))
-
-	def _get_protocole(self, f_name, prefixe):
+					
+	def make_cmd_function(self, cmd_name, id_cmd, params, doc):
 		"""
-		Récupérer le protocole dans le fichier .h précisé.
-		Les commandes doivent être formater de la sorte :
-		/**
-		Documentation
-		@param abc
-		@param t
-		*/
-		#define {prefixe}NOM_DE_LA_COMMANDE		4
-		il sera alors généré une fonction :
-		def cmd_nom_de_la_commande(abc,t):
-			return SEP.join(['4',abc,t])
-
-		@param f_name le nom du fichier
-		@param prefixe le prefixe des define
+		@param cmd_name nom de la commande dans le protocole
+		@param id_cmd id de la commande dans le protocole
+		@param 
 		"""
-		f = open(f_name)
-		
-		spec_doc = '\/\*\*(?P<doc>(.(?!\*\/))*.)\*\/'
-		spec_define = '#define\s+{prefixe}(?P<cmd>\w+)\s+(?P<id>\d+)'.format(prefixe=prefixe)
-		spec_cmd = spec_doc+"\s"+spec_define
-
-		spec_params = '@param\s+(?P<param>[a-zA-Z_]\w*)'
-		re_params = re.compile(spec_params)
-		for t in re.finditer(spec_cmd,f.read(),re.DOTALL):
-			params = ','.join([p.group("param") for p in re_params.finditer(t.group('doc'))])
-			self._add_cmd_function(t.group('cmd'), t.group('id'), params, t.group('doc'))
-			print(t.group('id'), t.group('cmd')+'('+params+')')
-		f.close()
-
-	
-	def _add_cmd_function(self, cmd_name, id_cmd, params, doc):
-		"""
-		Ajouter une commande à la classe en cours.
-		@param cmd_name le nom de la commande
-		@param id_cmd l'id de la commande dans le protocole
-		"""
-		global COMPILED_F
-		exec("COMPILED_F = lambda {params}: '{SEP}'.join(['{id_cmd}',{params}])".format(params=params,SEP=SEP,id_cmd=str(id_cmd).lower()), globals())
-		COMPILED_F.__doc__ = doc.strip()
-		f_name = "cmd_"+cmd_name.lower()
-		setattr(self, f_name, COMPILED_F)
+		global _COMPILED_F_
+		str_params = ','.join(params)
+		exec("_COMPILED_F_ = lambda {params}: '{SEP}'.join(['{id_cmd}',{params}])".format(params=str_params,SEP=SEP,id_cmd=str(id_cmd).lower()), globals())
+		_COMPILED_F_.__doc__ = doc.strip()
+		return _COMPILED_F_
 
 def run(**args):
 	import sys

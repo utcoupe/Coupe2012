@@ -11,7 +11,11 @@ import ircbot
 
 SEP = '.'
 
+
 def raw_msg_to_msg_n_options(raw_msg):
+	"""
+	
+	"""
 	raw_msg = raw_msg.strip().lower()
 	if '#' in raw_msg:
 		msg, str_options = raw_msg.split('#')
@@ -102,8 +106,6 @@ class MyPyIrcBot(ircbot.SingleServerIRCBot):
 				self.write_rep(f(*msg_split[1:])+"\n",options['id_msg'])
 			else:
 				serv.privmsg(canal, "invalid arg number : need %s and get %s" % (str(inspect.getargspec(f)),msg_split))
-
-	
 			
 	
 	def print_doc(self, f_name, cmd=None):
@@ -130,3 +132,55 @@ class MyPyIrcBot(ircbot.SingleServerIRCBot):
 		@param msg le message à envoyer
 		"""
 		if self.serv: self.serv.privmsg(self.channel, msg)
+		
+
+	def get_protocole(self, f_name, prefixe):
+		"""
+		Récupérer le protocole dans le fichier .h précisé.
+		Les commandes doivent être formater de la sorte :
+		/**
+		Documentation
+		@param abc
+		@param t
+		*/
+		#define {prefixe}NOM_DE_LA_COMMANDE		4
+		il sera alors généré une fonction :
+		def cmd_nom_de_la_commande(abc,t):
+			return SEP.join(['4',abc,t])
+
+		@param f_name le nom du fichier
+		@param prefixe le prefixe des define
+		"""
+		commands = []
+		f = open(f_name)
+		
+		spec_doc = '\/\*\*(?P<doc>(.(?!\*\/))*.)\*\/'
+		spec_define = '#define\s+{prefixe}(?P<name>\w+)\s+(?P<id>\d+)'.format(prefixe=prefixe)
+		spec_cmd = spec_doc+"\s"+spec_define
+
+		spec_params = '@param\s+(?P<param>[a-zA-Z_]\w*)'
+		re_params = re.compile(spec_params)
+		for t in re.finditer(spec_cmd,f.read(),re.DOTALL):
+			params = list([p.group("param") for p in re_params.finditer(t.group('doc'))])
+			commands.append({'id': int(t.group('id')), 'name': t.group('name'), 'params': params, 'doc': t.group('doc')})
+			print(commands[-1])
+		f.close()
+
+		return commands
+	
+	def irc_cmd_to_func_name(self, irc_cmd):
+		return "cmd_" + irc_cmd.lower()
+
+	def add_cmd_function(self, irc_cmd, cmd_function):
+		"""
+		Ajouter une commande à la classe en cours.
+		@param irc_cmd le nom de la commande
+		@param cmd_function la lambda fonction
+		"""
+		setattr(self, self.irc_cmd_to_func_name(irc_cmd), cmd_function)
+
+
+
+
+
+
