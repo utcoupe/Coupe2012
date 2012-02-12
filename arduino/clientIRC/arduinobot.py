@@ -23,12 +23,18 @@ class ArduinoBot(mypyircbot.MyPyIrcBot):
 		"""
 		Constructeur qui pourrait prendre des paramètres dans un "vrai" programme.
 		"""
-		mypyircbot.MyPyIrcBot.__init__(self, server_ip, server_port, nickname, channel)
+		mypyircbot.MyPyIrcBot.__init__(self, server_ip, server_port, nickname, [channel])
+
+		self.channel = channel
+
+		f = open(protocole_file)
+		str_protocole = f.read()
+		f.close()
 		
 		print("Récupération du protocole dans %s..." %protocole_file)
-		for cmd in self.get_protocole(protocole_file, protocole_prefixe):
+		for cmd in self.get_protocole(str_protocole, protocole_prefixe):
 			f_cmd = self.make_cmd_function(cmd['name'], cmd['id'], cmd['params'], cmd['doc'])
-			setattr(self, self.irc_cmd_to_func_name(cmd['name']), f_cmd)
+			setattr(self, self.irc_cmd_to_func_name(channel[1:], cmd['name']), f_cmd)
 		print("OK")
 		print("Connection au port série %s..." % serial_port)
 		try:
@@ -73,14 +79,13 @@ class ArduinoBot(mypyircbot.MyPyIrcBot):
 		return _COMPILED_F_
 
 def run(**args):
-	import sys
 	import optparse
 
 	default = {}
 	default["server_ip"] 		= "localhost"
 	default["server_port"] 		= 6667
 	default["nickname"]			= "pybot"
-	default["channel"]			= "test"
+	default["channel"]			= "#test"
 	default["serial_port"]		= "/dev/ttyACM0"
 	default["serial_baudrate"]	= 115200
 	default["protocole_file"]	= "protocole.h"
@@ -128,13 +133,14 @@ def run(**args):
 		options.server_ip,
 		options.server_port,
 		options.nickname,
-		"#"+options.channel,
+		options.channel,
 		options.serial_port,
 		options.serial_baudrate,
 		options.protocole_file,
 		options.protocole_prefixe)
 	#print(list(filter(lambda x: x[0:4] == 'cmd_', dir(bot))))
 	bot.start()
+	return bot
 
 	
 if __name__ == "__main__":
