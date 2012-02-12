@@ -88,17 +88,17 @@ class MyPyIrcBot(ircbot.SingleServerIRCBot):
 		self.serv = serv
 		
 		auteur = irclib.nm_to_n(ev.source())
-		canal = ev.target().strip().lower()[1:]
+		canal = ev.target().strip().lower()
 		msg, options = raw_msg_to_msg_n_options(ev.arguments()[0])
 		msg_split = msg.strip().split(" ")
 		f_name = self.irc_cmd_to_func_name(canal, msg_split[0])
 		if msg_split[0] == "help":
 			if len(msg_split) > 1:
-				self.print_doc(self.irc_cmd_to_func_name(canal, msg_split[1]))
+				self.print_doc(canal, self.irc_cmd_to_func_name(canal, msg_split[1]))
 			else:
 				for f_name in dir(self):
 					if self.channel_to_prefix_cmd(canal) in f_name:
-						self.print_doc(f_name)
+						self.print_doc(canal, f_name)
 		elif hasattr(self, f_name):
 			f = getattr(self, f_name)
 			f_args = inspect.getargspec(f).args
@@ -108,31 +108,6 @@ class MyPyIrcBot(ircbot.SingleServerIRCBot):
 			else:
 				serv.privmsg(canal, "invalid arg number : need %s and get %s" % (str(inspect.getargspec(f)),msg_split))
 		
-	
-	def print_doc(self, f_name):
-		"""
-		Afficher la doc d'une fonction,
-		ex : print_doc(cmd_bidule, bidule) =>
-		"bidule : voici la documentation de bidule"
-		@param f_name le nom interne de la fonction
-		@param cmd le nom à afficher
-		"""
-		try:
-			doc = getattr(self, f_name).__doc__
-		except AttributeError as ex:
-			self.serv.privmsg(self.channel, str(ex))
-		else:
-			if not doc: doc = "No documentation"
-			irc_cmd = self.func_name_to_irc_cmd(f_name)
-			for line in doc.split("\n"):
-				self.serv.privmsg(self.channel, irc_cmd + ":" + line)
-
-	def send(self, msg):
-		"""
-		Envoie un message au serveur.
-		@param msg le message à envoyer
-		"""
-		if self.serv: self.serv.privmsg(self.channel, msg)
 
 
 	def get_protocole(self, str_protocole, prefix):
@@ -186,11 +161,42 @@ class MyPyIrcBot(ircbot.SingleServerIRCBot):
 
 		return commands
 		
+	def print_doc(self, canal, f_name):
+		"""
+		Afficher la doc d'une fonction,
+		ex : print_doc(cmd_bidule, bidule) =>
+		"bidule : voici la documentation de bidule"
+		@param f_name le nom interne de la fonction
+		@param cmd le nom à afficher
+		"""
+		try:
+			doc = getattr(self, f_name).__doc__
+		except AttributeError as ex:
+			self.serv.privmsg(canal, str(ex))
+		else:
+			if not doc: doc = "No documentation"
+			irc_cmd = self.func_name_to_irc_cmd(f_name)
+			self.serv.privmsg(canal, " ")
+			self.serv.privmsg(canal, "## "+irc_cmd.upper()+" ##")
+			for line in doc.split("\n"):
+				self.serv.privmsg(canal, line)
+			self.serv.privmsg(canal, " ")
+
+	def send(self, canal, msg):
+		"""
+		Envoie un message au serveur.
+		@param msg le message à envoyer
+		"""
+		if self.serv: self.serv.privmsg(canal, msg)
 
 	def channel_to_prefix_cmd(self, canal):
+		if canal[0] == '#':
+			canal = canal[1:]
 		return "cmd_%s_" % canal
 	
 	def irc_cmd_to_func_name(self, canal, irc_cmd):
+		if canal[0] == '#':
+			canal = canal[1:]
 		return self.channel_to_prefix_cmd(canal) + irc_cmd.lower()
 
 	def func_name_to_irc_cmd(self, f_name):

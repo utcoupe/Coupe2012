@@ -34,7 +34,7 @@ class ArduinoBot(mypyircbot.MyPyIrcBot):
 		print("Récupération du protocole dans %s..." %protocole_file)
 		for cmd in self.get_protocole(str_protocole, protocole_prefixe):
 			f_cmd = self.make_cmd_function(cmd['name'], cmd['id'], cmd['params'], cmd['doc'])
-			setattr(self, self.irc_cmd_to_func_name(channel[1:], cmd['name']), f_cmd)
+			setattr(self, self.irc_cmd_to_func_name(channel, cmd['name']), f_cmd)
 		print("OK")
 		print("Connection au port série %s..." % serial_port)
 		try:
