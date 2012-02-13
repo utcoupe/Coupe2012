@@ -15,7 +15,6 @@ import mypyircbot
 from mypyircbot import *
 
 
-_COMPILED_F_ = None
 
 
 class ArduinoBot(mypyircbot.MyPyIrcBot):
@@ -34,7 +33,7 @@ class ArduinoBot(mypyircbot.MyPyIrcBot):
 		print("Récupération du protocole dans %s..." %protocole_file)
 		for cmd in self.get_protocole(str_protocole, protocole_prefixe):
 			f_cmd = self.make_cmd_function(cmd['name'], cmd['id'], cmd['params'], cmd['doc'])
-			setattr(self, self.irc_cmd_to_func_name(channel, cmd['name']), f_cmd)
+			self.add_cmd_function(channel, cmd['name'], f_cmd)
 		print("OK")
 		print("Connection au port série %s..." % serial_port)
 		try:
@@ -47,10 +46,10 @@ class ArduinoBot(mypyircbot.MyPyIrcBot):
 		self.thread = threading.Thread(None,self.loop,"arduinoloop")
 		self.thread.start()
 	
-	def write_rep(self, msg, id_msg=42):
+	def write_rep(self, msg):
 		""" écrit sur le port série """
-		print("%s (id=%s)" %(msg.strip(),id_msg))
-		msg = bytes(str(id_msg)+SEP+msg.strip()+"\n","utf-8")
+		print("%s" % msg.strip())
+		msg = bytes(msg.strip()+"\n","utf-8")
 		self.serial.write(msg)
 	
 	def loop(self):
@@ -73,10 +72,14 @@ class ArduinoBot(mypyircbot.MyPyIrcBot):
 		@param 
 		"""
 		global _COMPILED_F_
-		str_params = ','.join(params)
-		exec("_COMPILED_F_ = lambda {params}: '{SEP}'.join(['{id_cmd}',{params}])".format(params=str_params,SEP=SEP,id_cmd=str(id_cmd).lower()), globals())
-		_COMPILED_F_.__doc__ = doc.strip()
-		return _COMPILED_F_
+		code = '''
+def f(%s):
+	return '%s'.join([str(kwargs["id_msg"]), '%s', %s])
+		''' % (','.join(params+['**kwargs']), SEP, id_cmd, ','.join(params))
+		d = {}
+		exec(code, d)
+		d['f'].__doc__ = doc.strip()
+		return d['f']
 
 def run(**args):
 	import optparse

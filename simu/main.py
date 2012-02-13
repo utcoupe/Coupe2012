@@ -36,11 +36,15 @@ from map import *
 
 if __name__ == "__main__":
 	match = Match()
-	bigrobot = BigRobot(mm_to_px(250,250), "blue", BLUE)
-	minirobot = MiniRobot(mm_to_px(400,250), "blue", BLUE)
-	bigrobot2 = BigRobot(mm_to_px(3000-250,250), "red", RED)
-	minirobot2 = MiniRobot(mm_to_px(3000-400,250), "red", RED)
-	ircbot = SimuIrcBot((bigrobot, minirobot, bigrobot2, minirobot2), "127.0.0.1", 6667)
+	bigrobot = BigRobot("#asserv", mm_to_px(250,250), BLUE)
+	minirobot = MiniRobot("#asservmini", mm_to_px(400,250), BLUE)
+	bigrobot2 = BigRobot("#asserv2", mm_to_px(3000-250,250), RED)
+	minirobot2 = MiniRobot("#asservmini2", mm_to_px(3000-400,250), RED)
+	ircbot = SimuIrcBot("localhost", 6667, ("#asserv","#asservmini","#asserv2","#asservmini2"))
+	ircbot.add_robot(0,bigrobot)
+	ircbot.add_robot(1,minirobot)
+	ircbot.add_robot(2,bigrobot2)
+	ircbot.add_robot(3,minirobot2)
 	engine = Engine(ircbot.stop, match)
 	try:
 		t = threading.Thread(None,ircbot.start,"simuircbot")

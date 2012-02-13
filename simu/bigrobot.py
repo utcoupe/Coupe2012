@@ -18,24 +18,25 @@ class Rouleau(EngineObject):
 
 class BigRobot(robot.Robot):
 	
-	def __init__(self, position, color, team):
+	def __init__(self, canal_asserv, position, team):
+		if team == BLUE:
+			self.mouse_button = 1 # LMB
+			color = 'blue'
+		else:
+			self.mouse_button = 3 # RMB
+			color = 'red'
 		nbCd=0
 		self.rouleau = Rouleau(mm_to_px(0,-85))
 		robot.Robot.__init__(self,
-			10,
-			position,
-			color,
+			canal_asserv,
 			team,
+			position,
+			10,
+			color,
 			mm_to_px((100,0),(160,0),(280,90),(280,230),(160,320),(100,320),(0,290),(0,30)),
 			self.rouleau
 		)
 		self.pince = Pince()
-		if team == BLUE:
-			self.mouse_button = 1 # LMB
-			self.canal_asserv = CANAL_ASSERV
-		else:
-			self.mouse_button = 3 # RMB
-			self.canal_asserv = CANAL_ASSERV+"2"
 
 	def onEvent(self, event):
 		if event.type == KEYDOWN and event.key == K_LSHIFT:
@@ -44,4 +45,4 @@ class BigRobot(robot.Robot):
 			self.shift_on = False
 		if not self.shift_on and event.type == MOUSEBUTTONDOWN and event.button == self.mouse_button:
 			p = event.pos
-			self.cmd_goto(42,*px_to_mm(p[0],p[1],500))
+			self._cmd_asserv_goto(*px_to_mm(p[0],p[1],500), id_msg=42)

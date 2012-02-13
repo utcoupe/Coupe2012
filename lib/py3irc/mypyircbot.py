@@ -11,6 +11,22 @@ import ircbot
 
 SEP = '.'
 
+def channel_to_prefix_cmd(canal):
+	if canal[0] == '#':
+		canal = canal[1:]
+	return "cmd_%s_" % canal
+
+def irc_cmd_to_func_name(canal, irc_cmd):
+	if canal[0] == '#':
+		canal = canal[1:]
+	return channel_to_prefix_cmd(canal) + irc_cmd.lower()
+
+def func_name_to_irc_cmd(f_name):
+	return f_name.split('_',2)[2]
+
+def replace_channel_in_f_name(f_name, new_channel):
+	irc_cmd = func_name_to_irc_cmd(f_name)
+	return irc_cmd_to_func_name(new_channel, irc_cmd)
 
 def raw_msg_to_msg_n_options(raw_msg):
 	"""
@@ -43,7 +59,7 @@ class MyPyIrcBot(ircbot.SingleServerIRCBot):
 	def __init__(self, server_ip, server_port, nickname, channels):
 		self.serv = None
 		self.nickname = nickname
-		self.canaux = channels
+		self.canaux = list(( chan if chan[0] == '#' else '#'+chan for chan in channels ))
 		
 		ircbot.SingleServerIRCBot.__init__(self,
 			[(server_ip, server_port)],
@@ -75,7 +91,7 @@ class MyPyIrcBot(ircbot.SingleServerIRCBot):
 		Fonction qui redistribue le message retourné par les fonctions "cmd_*".
 		@param msg le message à envoyer
 		"""
-		self.send("%s (id=%s)" %(msg,id_msg))
+		print("%s (id=%s)" %(msg,id_msg))
 		
 	def on_pubmsg(self, serv, ev):
 		"""
@@ -97,14 +113,17 @@ class MyPyIrcBot(ircbot.SingleServerIRCBot):
 				self.print_doc(canal, self.irc_cmd_to_func_name(canal, msg_split[1]))
 			else:
 				for f_name in dir(self):
-					if self.channel_to_prefix_cmd(canal) in f_name:
+					if f_name.startswith(self.channel_to_prefix_cmd(canal)):
 						self.print_doc(canal, f_name)
 		elif hasattr(self, f_name):
 			f = getattr(self, f_name)
 			f_args = inspect.getargspec(f).args
-			nb_args = len(f_args) - (1 if 'self' in f_args else 0)
-			if len(msg_split)-1 == nb_args:
-				self.write_rep(f(*msg_split[1:])+"\n",options['id_msg'])
+			nb_args = len(f_args)
+			args = msg_split[1:]
+			if 'self' in f_args:
+				args.insert(0,self)
+			if len(args) == nb_args:
+				self.write_rep(f(*args,**options)+"\n")
 			else:
 				serv.privmsg(canal, "invalid arg number : need %s and get %s" % (str(inspect.getargspec(f)),msg_split))
 		
@@ -187,28 +206,25 @@ class MyPyIrcBot(ircbot.SingleServerIRCBot):
 		Envoie un message au serveur.
 		@param msg le message à envoyer
 		"""
+		print("SEND", canal, msg)
 		if self.serv: self.serv.privmsg(canal, msg)
 
 	def channel_to_prefix_cmd(self, canal):
-		if canal[0] == '#':
-			canal = canal[1:]
-		return "cmd_%s_" % canal
+		return channel_to_prefix_cmd(canal)
 	
 	def irc_cmd_to_func_name(self, canal, irc_cmd):
-		if canal[0] == '#':
-			canal = canal[1:]
-		return self.channel_to_prefix_cmd(canal) + irc_cmd.lower()
+		return irc_cmd_to_func_name(canal, irc_cmd)
 
 	def func_name_to_irc_cmd(self, f_name):
-		return f_name.split('_',2)[2]
+		return func_name_to_irc_cmd(f_name)
 
-	def add_cmd_function(self, irc_cmd, cmd_function):
+	def add_cmd_function(self, canal, irc_cmd, cmd_function):
 		"""
 		Ajouter une commande à la classe en cours.
 		@param irc_cmd le nom de la commande
 		@param cmd_function la lambda fonction
 		"""
-		setattr(self, self.irc_cmd_to_func_name(irc_cmd), cmd_function)
+		setattr(self, self.irc_cmd_to_func_name(canal, irc_cmd), cmd_function)
 
 
 
