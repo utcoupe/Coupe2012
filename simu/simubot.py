@@ -51,6 +51,7 @@ class SimuIrcBot(MyPyIrcBot):
 			code += "	self.robots[{i}].{f_name}({args})\n".format(f_name=f_name, i=i, args=','.join(robot_args))
 			code += "	return '%s'" % f_name
 			exec(code, d)
+			d['f'].__doc__ = f.__doc__
 			setattr(self, f_name, d['f'])
 
 	def stop(self):
