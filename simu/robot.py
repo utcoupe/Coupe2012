@@ -3,7 +3,7 @@
 
 import sys
 import os
-sys.path.append(os.path.join("..","lib","py3irc"))
+sys.path.append(os.path.join("..","lib"))
 
 
 import random
@@ -12,7 +12,7 @@ import math
 import pymunk
 
 
-from mypyircbot import *
+from py3irc.mypyircbot import *
 
 
 from define import *
