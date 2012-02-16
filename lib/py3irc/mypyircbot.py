@@ -5,6 +5,10 @@
 
 import inspect
 import re
+import threading
+import collections
+import time
+import types
 
 import irclib
 import ircbot
@@ -41,7 +45,7 @@ def raw_msg_to_msg_n_options(raw_msg):
 		msg, str_options = raw_msg, ""
 		
 	options = {
-		'id_msg': 42
+		'id_msg': '42'
 	}
 	specs = {
 		'id_msg': "id=(?P<id_msg>[0-9]+)"
@@ -55,11 +59,82 @@ def raw_msg_to_msg_n_options(raw_msg):
 	return msg, options
 
 
+class Executer:
+	"""
+	Classe permettant de lier facilement un objet à des commandes irc,
+	Il suffit de faire hériter un objet de cette classe, puis d'utiliser
+	la fonction mypyircbot.add_executer pour que toutes les fonctions
+	de type "cmd_canal_irccmd" soient liées au bot.
+
+	{@code
+	class MaClass(Executer):
+		cmd_test_hello(self, **kwargs):
+			self.send("#test", 'coucou')
+
+	bot = MyPyIrcBot(...)
+	a = MaClass()
+	bot.add_executer(a)
+	
+	--------------------------------------
+	
+	irc #test
+	me : hello
+	bot : coucou
+	}
+	"""
+	def __init__(self):
+		# messages à envoyer
+		self.to_send = collections.deque()
+	
+	def get_msg(self):
+		if self.to_send:
+			return self.to_send.popleft()
+		else:
+			return (None,None)
+
+	def send(self, canal, *msg):
+		self.to_send.append((canal,self.compute_msg(*msg)))
+	
+	def compute_msg(self, *args):
+		return SEP.join(map(lambda x: str(x), args))
+
+
 class MyPyIrcBot(ircbot.SingleServerIRCBot):
+	"""
+	Classe de base pour tous les clients IRC de ce projet, elle permet de
+	facilité l'ajout de commandes et la génération automatique d'un texte
+	d'aide en réponse à la commande 'help'
+	Il y a deux façons d'ajouter une commande, soit en créant une classe
+	qui hérite de cette classe, soit en utilisant la méthode "add_executer"
+
+	Hériter de cette classe:
+	Il suffit d'ajouter des méthodes avec un nom de type "cmd_<canal>_<irccmd>"
+	{@code
+	class Bot(MyPyIrcBot):
+		cmd_test_hello(self, **kwargs):
+			''' cette commande renvoie coucou '''
+			self.send("#test", "id=%s coucou" % kwargs['id_msg'])
+	
+	--------------------------------------
+	
+	IRC #test:
+	me : help
+	bot : <affiche les commandes possibles>
+	bot : help hello
+	bot : cette commande renvoie coucou
+	me : hello
+	bot : id=<id_par_default> coucou
+	me : hello # id=56
+	bot : id=56 coucou
+	}
+	"""
 	def __init__(self, server_ip, server_port, nickname, channels):
 		self.serv = None
 		self.nickname = nickname
 		self.canaux = list(( chan if chan[0] == '#' else '#'+chan for chan in channels ))
+
+		# objets contenants des commandes à executer
+		self.executers = {}
 		
 		ircbot.SingleServerIRCBot.__init__(self,
 			[(server_ip, server_port)],
@@ -67,6 +142,9 @@ class MyPyIrcBot(ircbot.SingleServerIRCBot):
 			"Bot réalisé en Python avec ircbot",
 			1
 		)
+		
+		self.t = threading.Thread(None, self._loop_executers, "mypyircbot-loop_executers")
+		self.t.start()
 	
 	def on_nicknameinuse(self, serv, e):
 		"""
@@ -121,7 +199,7 @@ class MyPyIrcBot(ircbot.SingleServerIRCBot):
 			nb_args = len(f_args)
 			args = msg_split[1:]
 			if 'self' in f_args:
-				args.insert(0,self)
+				nb_args -= 1
 			if len(args) == nb_args:
 				self.write_rep(f(*args,**options)+"\n")
 			else:
@@ -226,7 +304,39 @@ class MyPyIrcBot(ircbot.SingleServerIRCBot):
 		"""
 		setattr(self, self.irc_cmd_to_func_name(canal, irc_cmd), cmd_function)
 
+	def add_executer(self, executer):
+		i = id(executer)
+		self.executers[i] = executer
+		for f_name in filter(lambda s: s.startswith("cmd_"), dir(executer)):
+			f = getattr(executer, f_name)
+			f_args = inspect.getargspec(f).args
+			if len(f_args) > 0 and 'self' == f_args[0]:
+				f_params = f_args+['**kwargs']
+			else:
+				f_params = ['self']+f_args+['**kwargs']
+			if len(f_args) > 0 and 'self' == f_args[0]:
+				robot_args = f_args[1:]
+			else:
+				robot_args == f_args
+			robot_args = list(map(lambda s: 'int(%s)' %s, robot_args))
+			robot_args.append('**kwargs')
+			d = {}
+			code = "def f(%s):\n" % ','.join(f_params)
+			code += "	self.executers[{i}].{f_name}({args})\n".format(f_name=f_name, i=i, args=','.join(robot_args))
+			code += "	return '%s'" % f_name
+			exec(code, d)
+			d['f'].__doc__ = f.__doc__
+			f = types.MethodType(d['f'], self)
+			setattr(self, f_name, f)
 
+	def _loop_executers(self):
+		while self.running:
+			for e in self.executers.values():
+				canal, msg = e.get_msg()
+				while canal:
+					self.send(canal,msg)
+					canal, msg = e.get_msg()
+			time.sleep(0.01)
 
 
 

@@ -673,7 +673,9 @@ EXCLUDE_PATTERNS       = */gen/* \
                          */build/* \
                          */__pycache__/* \
                          */simulateur/lib/* \
-                         */arduino-0022/*
+                         */arduino-0022/* \
+                         */.git/* \
+                         */CMakeFiles/*
 
 # The EXCLUDE_SYMBOLS tag can be used to specify one or more symbol names 
 # (namespaces, classes, functions, etc.) that should be excluded from the 

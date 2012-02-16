@@ -8,7 +8,6 @@ sys.path.append(os.path.join("..","lib","py3irc"))
 
 import random
 import math
-import collections
 
 import pymunk
 
@@ -19,11 +18,11 @@ from mypyircbot import *
 from define import *
 
 
-SEP = '.'
 
-class Robot(EngineObject):
+class Robot(EngineObject, Executer):
 	def __init__(self, canal_asserv, team, position, mass, color, poly_points, *custom_objects):
 		EngineObject.__init__(self, *custom_objects)
+		Executer.__init__(self)
 
 		# variables requises dans un EngineObject
 		self.t = POLY
@@ -38,9 +37,6 @@ class Robot(EngineObject):
 
 		# les goals
 		self.goals = []
-
-		# messages à envoyer
-		self.to_send = collections.deque()
 		
 		self.stop = False
 
@@ -66,12 +62,6 @@ class Robot(EngineObject):
 
 	def a(self):
 		return int(math.degrees(self.body.angle))
-	
-	def get_msg(self):
-		if self.to_send:
-			return self.to_send.popleft()
-		else:
-			return (None,None)
 
 	def step(self, dt):
 		self.body._set_torque(0)
@@ -93,9 +83,6 @@ class Robot(EngineObject):
 				vy = dy * v / d
 				self.body._set_velocity((vx,vy))
 				self.body._set_angle(a)
-
-	def send(self, canal, *msg):
-		self.to_send.append((canal,self.compute_msg(*msg)))
 
 	def _cmd_asserv_id(self,**options):
 		self.send_canal_asserv(options['id_msg'], 'asserv')
@@ -132,9 +119,6 @@ class Robot(EngineObject):
 	
 	def _cmd_asserv_pos(self, **options):
 		self.send_canal_asserv(options['id_msg'], self.x(), self.y(), self.a())
-
-	def compute_msg(self, *args):
-		return SEP.join(map(lambda x: str(x), args))
 
 	def send_canal_asserv(self, *args):
 		self.send(self.canal_asserv, *args)
