@@ -14,7 +14,7 @@ import irclib
 
 
 class IABot(ircbot.SingleServerIRCBot):
-	def __init__(self, server_ip, server_port, chan_big_asserv, chan_small_asserv):
+	def __init__(self, server_ip, server_port, channels):
 		self.nickname = "iabot"
 		ircbot.SingleServerIRCBot.__init__(self,
 			[(server_ip, server_port)],
@@ -23,9 +23,7 @@ class IABot(ircbot.SingleServerIRCBot):
 			1
 		)
 		self.serv = None
-		self.chan = {}
-		self.chan["big_asserv"] = chan_big_asserv
-		self.chan["small_asserv"] = chan_small_asserv
+		self.chans = channels
 		self.listeners = []
 
 	def on_nicknameinuse(self, serv, e):
@@ -34,7 +32,7 @@ class IABot(ircbot.SingleServerIRCBot):
 	
 	def on_welcome(self, serv, ev):
 		self.serv = serv
-		for chan in self.chan.values():
+		for chan in self.chans:
 			serv.join(chan)
 
 	def on_pubmsg(self, serv, ev):
@@ -49,7 +47,7 @@ class IABot(ircbot.SingleServerIRCBot):
 		for listener in self.listeners:
 			listener(canal, auteur, msg)
 
-	def send_msg(self, chan, msg):
+	def send(self, chan, msg):
 		if self.serv:
 			for m in str(msg).split("\n"):
 				self.serv.privmsg(chan, m)

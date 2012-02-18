@@ -12,7 +12,7 @@ import math
 import pymunk
 
 
-from py3irc.mypyircbot import *
+from mypyirc.mypyircbot import *
 
 
 from define import *
@@ -43,15 +43,13 @@ class Robot(EngineObject, Executer):
 		# touche shift enfoncée ?
 		self.shift_on = False
 
-		# canal asserv
+		# être sûr que le canal commance par #
 		if canal_asserv[0] != '#': canal_asserv = '#'+canal_asserv
 		self.canal_asserv = canal_asserv
 
 		# rajouts des fonctions utilisées par le bot irc
-		# cmd_asserv_<cmd> => cmd_<canal_asserv>_<cmd>
-		for f_name in filter(lambda s: s.startswith('_'+channel_to_prefix_cmd("asserv")), dir(self)):
-			new_f_name = replace_channel_in_f_name(f_name[1:], canal_asserv)
-			setattr(self, new_f_name, getattr(self, f_name))
+		# _cmd_asserv_<cmd> => cmd_<canal_asserv>_<cmd>
+		self.transform("asserv", canal_asserv)
 
 
 	def x(self):
@@ -76,7 +74,6 @@ class Robot(EngineObject, Executer):
 				self.body._set_position((gx,gy))
 				x,y,v = list(map(px_to_mm,self.goals.pop(0)))
 				self.body._set_velocity((0,0))
-				self.send_canal_asserv("reponse","goto",x,y,v)
 			else:
 				a = math.atan2(dy,dx)
 				vx = dx * v / d

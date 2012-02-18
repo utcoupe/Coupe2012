@@ -39,17 +39,17 @@ if __name__ == "__main__":
 	match = Match()
 
 	# robots
-	bigrobot = BigRobot("#asserv", mm_to_px(250,250), BLUE)
-	minirobot = MiniRobot("#asservmini", mm_to_px(400,250), BLUE)
-	bigrobot2 = BigRobot("#asserv2", mm_to_px(3000-250,250), RED)
-	minirobot2 = MiniRobot("#asservmini2", mm_to_px(3000-400,250), RED)
+	bigrobot = BigRobot(CANAL_BIG_ASSERV, mm_to_px(250,250), BLUE)
+	minirobot = MiniRobot(CANAL_MINI_ASSERV, mm_to_px(400,250), BLUE)
+	bigrobot2 = BigRobot(CANAL_BIG_ASSERV+'2', mm_to_px(3000-250,250), RED)
+	minirobot2 = MiniRobot(CANAL_MINI_ASSERV+'2', mm_to_px(3000-400,250), RED)
 	robots = (bigrobot, minirobot, bigrobot2, minirobot2)
 
 	# hokyo
-	hokyo = Hokyo("#hokyo", robots)
+	hokyo = Hokyo(CANAL_HOKYO, robots)
 
 	# ircbot
-	ircbot = SimuIrcBot("localhost", 6667, ("#asserv","#asservmini","#asserv2","#asservmini2","#hokyo"))
+	ircbot = SimuIrcBot("localhost", 6667, (CANAL_BIG_ASSERV,CANAL_MINI_ASSERV,CANAL_BIG_ASSERV+'2',CANAL_MINI_ASSERV+'2',CANAL_HOKYO))
 	ircbot.add_executer(hokyo)
 	for i,robot in enumerate(robots):
 		ircbot.add_executer(robot)

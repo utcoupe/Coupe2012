@@ -7,7 +7,7 @@ sys.path.append(os.path.join("..","lib"))
 
 import types
 
-from py3irc.mypyircbot import *
+from mypyirc.mypyircbot import *
 
 
 from define import *

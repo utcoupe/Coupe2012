@@ -1,10 +1,14 @@
 
 import time
+import re
 
 from geometry.vec import *
 from graph import *
 
+
 SEP = '.'
+
+ID_MSG_POS		= -1
 
 class Robot:
 	def __init__(self, ircbot, chan_asserv):
@@ -34,24 +38,29 @@ class Robot:
 		self.send_asserv("cancel")
 
 	def refresh_pos(self):
-		self.send_asserv("pos 333")
+		self.send_asserv("pos # id=%s" % ID_MSG_POS)
 
 	def send_asserv(self, msg):
-		self.ircbot.send_msg(self.chan_asserv, msg)
+		self.ircbot.send(self.chan_asserv, msg)
 
 	def on_msg(self, canal, auteur, msg):
-		msg_split = msg.split(SEP)
-		if len(msg_split) > 2:
-			id_msg = msg_split[0]
-			params = msg_split[1:]
-			if "333" == id_msg and len(params) == 3:
-				self.pos[0] = int(params[0])
-				self.pos[1] = int(params[1])
-				self.angle = int(params[2])
-				self.last_update_pos = time.time()
-				print("UPDATE POS", self.pos)
+		if canal == self.chan_asserv:
+			msg_split = msg.split(SEP)
+			if len(msg_split) > 2:
+				id_msg = int(msg_split[0])
+				params = msg_split[1:]
 				
-
+				if ID_MSG_POS == id_msg:
+					self.on_pos_recv(params)
+					
+	def on_pos_recv(self, params):
+		if len(params) == 3:
+			self.pos[0] = int(params[0])
+			self.pos[1] = int(params[1])
+			self.angle = int(params[2])
+			self.last_update_pos = time.time()
+		else:
+			print("ERROR on_pos_recv : pas assez de paramètres, '%s'" % (params,))
 
 
 

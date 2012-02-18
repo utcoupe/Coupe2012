@@ -4,15 +4,15 @@
 import sys
 import os
 FILE_DIR  = os.path.dirname(os.path.abspath(__file__))
-sys.path.append(os.path.join(FILE_DIR,"..","..","lib","py3irc"))
+sys.path.append(os.path.join(FILE_DIR,"..","..","lib"))
 
 import threading
 import serial
 import time
 import re
 
-import mypyircbot
-from mypyircbot import *
+from mypyirc import mypyircbot
+from mypyirc.ircdefine import *
 
 
 

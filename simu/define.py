@@ -1,6 +1,12 @@
 # -*- coding: utf-8 -*-
 
-SEP		= '.'
+import sys
+import os
+FILE_DIR  = os.path.dirname(os.path.abspath(__file__))
+sys.path.append(os.path.join(FILE_DIR,"..","lib"))
+
+from mypyirc.ircdefine import *
+
 
 FPS					= 60
 PX_TO_MM			= 4
@@ -77,12 +83,6 @@ def px_to_mm(*args):
 	else:
 		return tuple(map(lambda v: f(v), args))
 
-#####
-### IRC
-#####
-
-SUFFIX_MINI			= "mini"
-CANAL_ASSERV		= "#asserv"
 
 
 if __name__ == "__main__":

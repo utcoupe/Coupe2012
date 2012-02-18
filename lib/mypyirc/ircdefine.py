@@ -1,0 +1,13 @@
+
+
+SEP					= '.'
+
+CANAL_BIG_ASSERV	= "#asserv"
+CANAL_MINI_ASSERV	= "#asservmini"
+CANAL_HOKYO			= "#hokyo"
+
+CANAUX				= (CANAL_BIG_ASSERV, CANAL_MINI_ASSERV, CANAL_HOKYO)
+
+
+ID_MSG_POS		= -1
+ID_MSG_HOKYO	= -2

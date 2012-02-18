@@ -3,6 +3,8 @@
 	@author: Thomas Recouvreux
 """
 
+
+
 import inspect
 import re
 import threading
@@ -10,10 +12,10 @@ import collections
 import time
 import types
 
-import irclib
-import ircbot
+from py3irc import ircbot,irclib
 
-SEP = '.'
+from ircdefine import *
+
 
 def channel_to_prefix_cmd(canal):
 	if canal[0] == '#':
@@ -48,7 +50,7 @@ def raw_msg_to_msg_n_options(raw_msg):
 		'id_msg': '42'
 	}
 	specs = {
-		'id_msg': "id=(?P<id_msg>[0-9]+)"
+		'id_msg': "id=(?P<id_msg>[-0-9]+)"
 	}
 	if str_options:
 		for i,spec in specs.items():
@@ -98,6 +100,20 @@ class Executer:
 	def compute_msg(self, *args):
 		return SEP.join(map(lambda x: str(x), args))
 
+	def transform(self, old_canal, new_canal):
+		"""
+		Renomme toutes les fonctions "_cmd_<old_canal>_irc_cmd en "cmd_<new_canal>_irc_cmd.
+		Note : les aciennes fonctions ne sont pas supprimées.
+		"""
+		# être sûr qu'on ne se trimbal pas le '#'
+		if old_canal[0] == '#': old_canal = old_canal[1:]
+		if new_canal[0] == '#': new_canal = new_canal[1:]
+		# effectuer le changement
+		for f_name in dir(self):
+			if f_name.startswith('_'+channel_to_prefix_cmd(old_canal)):
+				new_f_name = replace_channel_in_f_name(f_name[1:], new_canal)
+				setattr(self, new_f_name, getattr(self, f_name))
+
 
 class MyPyIrcBot(ircbot.SingleServerIRCBot):
 	"""
@@ -108,6 +124,7 @@ class MyPyIrcBot(ircbot.SingleServerIRCBot):
 	qui hérite de cette classe, soit en utilisant la méthode "add_executer"
 
 	Hériter de cette classe:
+	
 	Il suffit d'ajouter des méthodes avec un nom de type "cmd_<canal>_<irccmd>"
 	{@code
 	class Bot(MyPyIrcBot):
@@ -127,6 +144,8 @@ class MyPyIrcBot(ircbot.SingleServerIRCBot):
 	me : hello # id=56
 	bot : id=56 coucou
 	}
+
+	Hériter de Executer: #see mypyircbot.Executer
 	"""
 	def __init__(self, server_ip, server_port, nickname, channels):
 		self.serv = None
@@ -211,15 +230,14 @@ class MyPyIrcBot(ircbot.SingleServerIRCBot):
 		"""
 		Récupérer le protocole dans le fichier .h précisé.
 		Les commandes doivent être formater de la sorte :
+		{@code
 		/**
 		Documentation
-		@param abc
-		@param t
+		\@param abc
+		\@param t
 		*/
 		#define {prefixe}NOM_DE_LA_COMMANDE		4
-		il sera alors généré une fonction :
-		def cmd_nom_de_la_commande(abc,t):
-			return SEP.join(['4',abc,t])
+		}
 
 		@param f_name le nom du fichier
 		@param prefixes les prefixes des define
@@ -330,7 +348,7 @@ class MyPyIrcBot(ircbot.SingleServerIRCBot):
 			setattr(self, f_name, f)
 
 	def _loop_executers(self):
-		while self.running:
+		while 1:
 			for e in self.executers.values():
 				canal, msg = e.get_msg()
 				while canal:
