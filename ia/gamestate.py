@@ -4,7 +4,7 @@
 import sys
 import os
 FILE_DIR  = os.path.dirname(os.path.abspath(__file__))
-sys.path.append(os.path.join(FILE_DIR,"..","..","lib"))
+sys.path.append(os.path.join(FILE_DIR,"..","lib"))
 
 
 import re
@@ -22,8 +22,8 @@ def permutation_k_parmis_4(k):
 
 
 class RobotState:
-	def __init__(self):
-		self.pos = Vec((0,0))
+	def __init__(self, p):
+		self.pos = Vec(p)
 		self.a = 0
 		self.time_pos_updated = 0
 
@@ -54,25 +54,25 @@ class StopableLoop:
 		
 
 class GameState:
-	def __init__(self, ircbot, canal_big_asserv, canal_mini_asserv):
+	def __init__(self, ircbot, canal_big_asserv, canal_mini_asserv, dpos):
 		self.ircbot 			= ircbot
 		self.canal_big_asserv 	= canal_big_asserv
 		self.canal_mini_asserv 	= canal_mini_asserv
-		self.bigrobot 			= RobotState()
-		self.minirobot 			= RobotState()
-		self.enemy1		 		= RobotState()
-		self.enemy2			 	= RobotState()
+		self.bigrobot 			= RobotState(dpos['big'])
+		self.minirobot 			= RobotState(dpos['mini'])
+		self.enemy1		 		= RobotState(dpos['enemy1'])
+		self.enemy2			 	= RobotState(dpos['enemy2'])
 		
 		self.loops 				= []
 		self.loops.append(StopableLoop(self._loop_ask_asserv_for_pos, 0.1))
 		self.loops.append(StopableLoop(self._loop_ask_hokyo_for_pos, 0.1))
 
-		self.ircbot.add_listener(self.on_msg)
+		if ircbot: # pour les doctest ircbot sera à None
+			self.ircbot.add_listener(self.on_msg)
 
 	def start(self):
 		for loop in self.loops:
 			threading.Thread(None, loop.start).start()
-		
 
 	def ask_hokyo_for_pos(self):
 		self.ircbot.send(CANAL_HOKYO, "get # id=%s" % ID_MSG_HOKYO)
@@ -116,7 +116,6 @@ class GameState:
 	
 
 	def on_msg_hokyo(self, params):
-		start = time.time()
 		if len(params) >= 1:
 			lpos = tuple(( eval(s) for s in params ))
 			robots = self.robots()
@@ -125,11 +124,10 @@ class GameState:
 				return sum(l)
 			best_permut = min(permutation_k_parmis_4(len(lpos)), key=lambda permut: test_permut(permut))
 			for i,j in enumerate(best_permut):
-				if robots[j] != self.bigrobot and robots[i] != self.minirobot:
+				if robots[j] in self.enemyrobots():
 					robots[j].update_pos(lpos[i])
 		else:
 			print("Error %s.on_msg_hokyo (%s:%d) : pas assez de paramètres " % (self.__class__.__name__, currentframe().f_code.co_filename, currentframe().f_lineno, canal))
-		print(time.time() - start)
 
 	def robots(self):
 		return (self.bigrobot, self.minirobot, self.enemy1, self.enemy2)
@@ -139,3 +137,7 @@ class GameState:
 
 	def __repr__(self):
 		return "GameState(%s)" % (self.robots(),)
+
+
+import doctest
+doctest.testfile("doctest/gamestate.txt")

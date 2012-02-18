@@ -1,0 +1,48 @@
+
+
+
+import
+>>> from gamestate import *
+
+
+some defines
+>>> CANAL_BIG_ASSERV = "#asserv"
+>>> CANAL_MINI_ASSERV = "#aservmini"
+>>> dpos = {}
+>>> dpos['big'] = (0,0)
+>>> dpos['mini'] = (0,0)
+>>> dpos['enemy1'] = (3000,0)
+>>> dpos['enemy2'] = (3000,0)
+
+init
+>>> gamestate = GameState(None, CANAL_BIG_ASSERV, CANAL_MINI_ASSERV, dpos)
+
+on_msg_pos
+>>> gamestate.on_msg_pos(CANAL_BIG_ASSERV, ("400","300","40"))
+>>> gamestate.on_msg_pos(CANAL_MINI_ASSERV, ("200","100","-50"))
+>>> gamestate.bigrobot.pos == (400,300)
+True
+>>> gamestate.bigrobot.a
+40
+>>> gamestate.minirobot.pos == (200,100)
+True
+>>> gamestate.minirobot.a
+-50
+
+on_msg_hokyo
+>>> gamestate.on_msg_hokyo(("(450,350)", "(150,150)", "(2000,1000)", "(2500,500)"))
+>>> gamestate.bigrobot.pos == (400,300)
+True
+>>> gamestate.minirobot.pos == (200,100)
+True
+>>> gamestate.enemy1.pos in ((2000,1000), (2500,500))
+True
+>>> gamestate.enemy2.pos in ((2000,1000), (2500,500))
+True
+
+
+
+
+
+
+

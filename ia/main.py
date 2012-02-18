@@ -25,6 +25,11 @@ minirobot = Robot(ircbot, CANAL_MINI_ASSERV)
 ng = NavGraph(230)
 ng.load_xml(FILENAME_MAP)
 
+dpos = {}
+dpos['big'] = (0,0)
+dpos['mini'] = (0,0)
+dpos['enemy1'] = (3000,0)
+dpos['enemy2'] = (3000,0)
 gamestate = GameState(ircbot, CANAL_BIG_ASSERV, CANAL_MINI_ASSERV)
 
 threading.Thread(None, ircbot.start, "loop iabot").start()
