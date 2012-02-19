@@ -4,7 +4,6 @@
 
 // cf. protocole
 #define C_SEP_SEND	'.' // tout est séparé par ça.
-#define V_SEP		'.'
 
 
 // all

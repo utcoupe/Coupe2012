@@ -7,19 +7,19 @@ FILE_DIR  = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(os.path.join(FILE_DIR,"..","..","lib"))
 
 import threading
-import serial
+import subprocess
 
 from mypyirc import bridgebot
 
 
 
 
-class ArduinoBot(bridgebot.BridgeBot):
-	def __init__(self, server_ip, server_port, nickname, channel, serial_port, serial_baudrate, protocole_file, protocole_prefixe):
-		self.serial = None
+class ExecutableBot(bridgebot.BridgeBot):
+	def __init__(self, server_ip, server_port, nickname, channel, exec_name, exec_params, protocole_file, protocole_prefixe):
+		self.process = None
 		try:
-			self.serial = serial.Serial(serial_port, serial_baudrate, timeout=1, writeTimeout=1)
-		except serial.SerialException as ex:
+			self.process = subprocess.Popen([exec_name]+exec_params, stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
+		except Exception as ex:
 			print(ex)
 			#sys.exit(1)
 		print("OK")
@@ -28,26 +28,28 @@ class ArduinoBot(bridgebot.BridgeBot):
 
 	
 	def write_rep(self, msg):
-		""" écrit sur le port série """
+		""" écrit sur l'input standart """
 		print("%s" % msg.strip())
 		msg = bytes(msg.strip()+"\n","utf-8")
-		self.serial.write(msg)
+		self.process.stdin.write(msg)
+		self.process.stdin.flush()
 
 	def read(self):
-		return str(self.serial.readline(),"utf-8")
+		self.process.stdout.flush()
+		return str(self.process.stdout.readline(),"utf-8")
 
 def run(**args):
 	import optparse
 
 	default = {}
-	default["server_ip"] 		= "localhost"
-	default["server_port"] 		= 6667
-	default["nickname"]			= "pybot"
-	default["channel"]			= "#test"
-	default["serial_port"]		= "/dev/ttyACM0"
-	default["serial_baudrate"]	= 115200
-	default["protocole_file"]	= "protocole.h"
-	default["protocole_prefixe"]= "Q_"
+	default["server_ip"] 			= "localhost"
+	default["server_port"] 			= 6667
+	default["nickname"]				= "pybot"
+	default["channel"]				= "#test"
+	default["exec_name"]			= "./a.out"
+	default["exec_params"]			= ""
+	default["protocole_file"]		= "testprotocole.h"
+	default["protocole_prefixe"]	= "Q_"
 	default.update(args)
 	
 	usage = "usage: %prog [options]"
@@ -64,12 +66,12 @@ def run(**args):
 	parser.add_option("-c", "--channel",
 						action="store", dest="channel", default=default["channel"],
 						help="channel on irc")
-	parser.add_option("-s", "--serial-port",
-						action="store", dest="serial_port", default=default["serial_port"],
-						help="serial port")
-	parser.add_option("-p", "--serial-baudrate",
-						action="store", dest="serial_baudrate", default=default["serial_baudrate"],
-						help="serial baudrate")
+	parser.add_option("-e", "--exec-name",
+						action="store", dest="exec_name", default=default["exec_name"],
+						help="nom de l'executable")
+	parser.add_option("-p", "--exec-params",
+						action="store", dest="exec_params", default=default["exec_params"],
+						help="paramètres de l'executable séparés par ','")
 	parser.add_option("-f", "--protocole-file",
 						action="store", dest="protocole_file", default=default["protocole_file"],
 						help="protocole file")
@@ -83,17 +85,17 @@ def run(**args):
 		options.server_port,
 		options.nickname,
 		options.channel,
-		options.serial_port,
-		options.serial_baudrate,
+		options.exec_name,
+		options.exec_params,
 		options.protocole_file,
 		options.protocole_prefixe)
-	bot = ArduinoBot(
+	bot = ExecutableBot(
 		options.server_ip,
 		options.server_port,
 		options.nickname,
 		options.channel,
-		options.serial_port,
-		options.serial_baudrate,
+		options.exec_name,
+		options.exec_params.split(','),
 		options.protocole_file,
 		options.protocole_prefixe)
 	#print(list(filter(lambda x: x[0:4] == 'cmd_', dir(bot))))

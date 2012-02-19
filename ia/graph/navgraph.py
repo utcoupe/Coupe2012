@@ -201,7 +201,7 @@ if __name__ == "__main__":
 	sys.path.append("../view")
 	from graphview import *
 
-	dynamic_obstacle = Poly().initFromCircle((1500,1500),250,8)
+	dynamic_obstacle = Poly().initFromCircle((1500,1500),200,8)
 	ng.add_dynamic_obstacle(dynamic_obstacle)
 	ng.update()
 	

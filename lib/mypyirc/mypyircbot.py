@@ -320,7 +320,7 @@ class MyPyIrcBot(ircbot.SingleServerIRCBot):
 		@param irc_cmd le nom de la commande
 		@param cmd_function la lambda fonction
 		"""
-		setattr(self, self.irc_cmd_to_func_name(canal, irc_cmd), cmd_function)
+		setattr(self, self.irc_cmd_to_func_name(canal, irc_cmd), types.MethodType(cmd_function, self))
 
 	def add_executer(self, executer):
 		i = id(executer)
