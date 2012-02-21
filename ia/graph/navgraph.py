@@ -87,7 +87,7 @@ class NavGraph:
 			return [],[],[]
 			
 		if p_depart in self.vertices:
-			vertex_depart = self.vertices[p.depart]
+			vertex_depart = self.vertices[p_depart]
 		else:
 			vertex_depart = Node()
 			vertex_depart.init(p_depart.__hash__(),p_depart, [])
