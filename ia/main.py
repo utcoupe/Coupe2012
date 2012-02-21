@@ -82,7 +82,7 @@ def mainloop():
 				print(gamestate.bigrobot.pos, final_pos, path)
 				if len(path) > 1:
 					goal = path[1]
-					if len(path) > 2 and (gamestate.bigrobot.pos - goal).norm2() <= 10000:
+					if len(path) > 2 and (gamestate.bigrobot.pos - goal).norm2() <= 100:
 						goal = path[2]
 					if not gamestate.bigrobot.current_goal or goal != gamestate.bigrobot.current_goal:
 						print("goto %s" % goal)
