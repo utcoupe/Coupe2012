@@ -22,7 +22,7 @@ void send(TYPE_IDCMD idCmd)
 	
 	for(int i=0 ; i<NB_MAX_ROBOT ; i++)
 	{
-		//if(robot[i].x!=-1){
+		//if(robot[i].x!=-1){ // (x,y) == (-1,-1) signifie pas de robot
 		mess << SEP << "(" << robot[i].x << "." << robot[i].y << ")";
 		//}
 	}
