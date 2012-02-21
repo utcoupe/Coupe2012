@@ -26,6 +26,8 @@ class RobotState:
 		self.pos = Vec(p)
 		self.a = 0
 		self.time_pos_updated = 0
+		self.in_action = False
+		self.current_goal = None
 
 	def update_pos(self, p):
 		self.pos = Vec(p)
@@ -72,7 +74,9 @@ class GameState:
 
 	def start(self):
 		for loop in self.loops:
-			threading.Thread(None, loop.start).start()
+			t = threading.Thread(None, loop.start)
+			t.daemon = True
+			t.start()
 
 	def ask_hokyo_for_pos(self):
 		self.ircbot.send(CANAL_HOKYO, "get # id=%s" % ID_MSG_HOKYO)

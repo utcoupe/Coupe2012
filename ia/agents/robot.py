@@ -3,7 +3,6 @@ import time
 import re
 
 from geometry.vec import *
-from graph import *
 
 
 SEP = '.'
@@ -62,6 +61,7 @@ class Robot:
 		else:
 			print("ERROR on_pos_recv : pas assez de paramètres, '%s'" % (params,))
 
+		
 
 
 

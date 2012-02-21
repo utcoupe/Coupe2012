@@ -25,6 +25,7 @@ class BridgeBot(mypyircbot.MyPyIrcBot):
 		print("OK")
 
 		self.thread = threading.Thread(None,self.loop,"executablebotloop")
+		self.thread.daemon = True
 		self.thread.start()
 
 

@@ -98,7 +98,9 @@ def run(**args):
 		options.protocole_prefixe)
 	#print(list(filter(lambda x: x[0:4] == 'cmd_', dir(bot))))
 	
-	threading.Thread(None, bot.start).start()
+	t = threading.Thread(None, bot.start)
+	t.daemon = True
+	t.start()
 	
 	return bot
 

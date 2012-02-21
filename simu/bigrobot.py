@@ -45,4 +45,5 @@ class BigRobot(robot.Robot):
 			self.shift_on = False
 		if not self.shift_on and event.type == MOUSEBUTTONDOWN and event.button == self.mouse_button:
 			p = event.pos
-			self._cmd_asserv_goto(*px_to_mm(p[0],p[1],500), id_msg=42)
+			print(px_to_mm(p[0],p[1]))
+			self._cmd_asserv_goto(*px_to_mm(p[0],p[1],mm_to_px(1000)), id_msg=42)

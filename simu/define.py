@@ -71,7 +71,7 @@ def mm_to_px(*args):
 def px_to_mm(*args):
 	"""
 	@param args une liste ou un atom de valeurs ou de positions
-	@param la veleur ou la liste convertie
+	@param la valeur ou la liste convertie
 	"""
 	def f(a):
 		if type(a) == tuple or type(a) == list:
@@ -82,6 +82,7 @@ def px_to_mm(*args):
 		return f(args[0])
 	else:
 		return tuple(map(lambda v: f(v), args))
+
 
 
 
