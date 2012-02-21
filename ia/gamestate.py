@@ -75,7 +75,7 @@ class GameState:
 	def start(self):
 		for loop in self.loops:
 			t = threading.Thread(None, loop.start)
-			t.daemon = True
+			t.setDaemon(True)
 			t.start()
 
 	def ask_hokyo_for_pos(self):

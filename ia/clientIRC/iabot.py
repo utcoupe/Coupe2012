@@ -68,7 +68,7 @@ if __name__ == "__main__":
 			bot.send_msg("#asservmini", "goto %s %s 2000" % (x,y))
 			time.sleep(3)
 	t = threading.Thread(None, bidon, "send")
-	t.daemon = True
+	t.setDaemon(True)
 	t.start()
 	bot.start()
 

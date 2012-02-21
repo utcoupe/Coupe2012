@@ -57,7 +57,7 @@ if __name__ == "__main__":
 	engine = Engine(ircbot.stop, match)
 	try:
 		t = threading.Thread(None,ircbot.start,"simuircbot")
-		t.daemon = True
+		t.setDaemon(True)
 		t.start()
 	except Exception as ex:
 		print(ex)

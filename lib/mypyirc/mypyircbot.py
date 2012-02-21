@@ -163,7 +163,7 @@ class MyPyIrcBot(ircbot.SingleServerIRCBot):
 		)
 		
 		self.t = threading.Thread(None, self._loop_executers, "mypyircbot-loop_executers")
-		self.t.daemon = True
+		self.t.setDaemon(True)
 		self.t.start()
 	
 	def on_nicknameinuse(self, serv, e):

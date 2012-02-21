@@ -99,7 +99,7 @@ def run(**args):
 	#print(list(filter(lambda x: x[0:4] == 'cmd_', dir(bot))))
 	
 	t = threading.Thread(None, bot.start)
-	t.daemon = True
+	t.setDaemon(True)
 	t.start()
 	
 	return bot

@@ -198,7 +198,7 @@ if __name__ == "__main__":
 	ng.load_xml(filename)
 	print("xml load time : %s" % (time.time() - start))
 	
-	sys.path.append("../view")
+	sys.path.append("../visualisation")
 	from graphview import *
 
 	dynamic_obstacle = Poly().initFromCircle((1500,1500),200,8)

@@ -72,14 +72,17 @@ class GraphView(View):
 		self.sum_calc_times += difference
 		self.nb_calc_times += 1
 		print("pathfinding computing time : %s (moy=%s)" % (difference,self.sum_calc_times/self.nb_calc_times))
+
+		self.show_result_calc_path(nodes,raw_path,smooth_path)
+		
+		return nodes,raw_path,smooth_path
+
+	def show_result_calc_path(self, nodes,raw_path,smooth_path):
 		if smooth_path:
 			self.remove(self.id_raw_path)
 			self.remove(self.id_smooth_path)
 			self.id_raw_path = self.draw_line(raw_path, 'red')
 			self.id_smooth_path = self.draw_line(smooth_path, 'blue')
-
-
-
 
 
 
