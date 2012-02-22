@@ -27,18 +27,38 @@ class Debug(Executer):
 	def __init__(self):
 		Executer.__init__(self)
 
-		self.circles = []
-		self.segments = []
+		self.circles = {}
+		self.segments = {}
+
+		self.lock = threading.Lock()
 		
-	def cmd_debug_draw_circle(self, x, y, radius, r, g, b, **kwargs):
-		self.circles.append(ShapeCircle(mm_to_px(x,y),mm_to_px(radius), r, g, b))
+	def cmd_debug_draw_circle(self, x, y, radius, r, g, b, i, **kwargs):
+		o = ShapeCircle(mm_to_px(x,y),mm_to_px(radius), r, g, b)
+		self.lock.acquire()
+		self.circles[i] = o
+		self.lock.release()
 
-	def cmd_debug_draw_segment(self, x1, y1, x2, y2, r, g, b, **kwargs):
-		self.segments.append(ShapeSegment(mm_to_px(x1,y1), mm_to_px(x2,y2), r, g, b))
+	def cmd_debug_draw_segment(self, x1, y1, x2, y2, r, g, b, i, **kwargs):
+		o = ShapeSegment(mm_to_px(x1,y1), mm_to_px(x2,y2), r, g, b)
+		self.lock.acquire()
+		self.segments[i] = o
+		self.lock.release()
 
+	def cmd_debug_remove_circle(self, i, **kwargs):
+		if i in self.circles:
+			self.lock.acquire()
+			self.circles.pop(i)
+			self.lock.release()
+
+	def cmd_debug_remove_segment(self, i, **kwargs):
+		if i in self.segments:
+			self.lock.acquire()
+			self.segments.pop(i)
+			self.lock.release()
+	
 	def cmd_debug_clear_all(self, **kwargs):
-		self.circles = []
-		self.segments = []
+		self.circles = {}
+		self.segments = {}
 
 
 

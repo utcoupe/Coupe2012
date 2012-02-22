@@ -24,6 +24,14 @@ from actions import *
 
 FILENAME_MAP	= "graph/map.xml"
 RED				= (255,0,0)
+GREEN			= (0,255,0)
+BLUE			= (0,0,255)
+R_ROBOT			= 200
+R_ENEMY			= 200
+ID_DEBUG_BIGROBOT	= 42
+ID_DEBUG_MINIROBOT	= 43
+ID_DEBUG_ENEMY1		= 56
+ID_DEBUG_ENEMY2		= 57
 
 
 # création bot irc
@@ -39,7 +47,7 @@ minirobot = Robot(ircbot, CANAL_MINI_ASSERV)
 
 
 # création du graph de déplacement
-ng = NavGraph(200)
+ng = NavGraph(R_ROBOT)
 ng.load_xml(FILENAME_MAP)
 
 
@@ -102,8 +110,20 @@ def mainloop():
 					bigrobot.cancel()
 					if goal:
 						bigrobot.goto(goal, 800)
-				
-				
+
+		# debug
+		debug.remove_circle(ID_DEBUG_ENEMY1)
+		debug.draw_circle(gamestate.enemy1.pos, R_ENEMY, BLUE, ID_DEBUG_ENEMY1)
+		
+		debug.remove_circle(ID_DEBUG_ENEMY2)
+		debug.draw_circle(gamestate.enemy2.pos, R_ENEMY, BLUE, ID_DEBUG_ENEMY2)
+		
+		debug.remove_circle(ID_DEBUG_BIGROBOT)
+		debug.draw_circle(gamestate.bigrobot.pos, R_ENEMY, RED, ID_DEBUG_BIGROBOT)
+		
+		debug.remove_circle(ID_DEBUG_MINIROBOT)
+		debug.draw_circle(gamestate.minirobot.pos, R_ENEMY, RED, ID_DEBUG_MINIROBOT)
+		
 		
 		time_ellapsed = time.time() - start
 		print(time_ellapsed)
