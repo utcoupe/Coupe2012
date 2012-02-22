@@ -16,6 +16,9 @@ import itertools
 from geometry.vec import *
 from mypyirc.ircdefine import *
 
+
+# petite optimisation pour le calcul de k parmis 4, seul les valeurs de
+# l'interval [0;4] sont calculées
 C_K_PARMIS_4 = list(( tuple(itertools.permutations(range(4), i)) for i in range(5) ))
 def permutation_k_parmis_4(k):
 	return C_K_PARMIS_4[k]
@@ -27,7 +30,37 @@ class RobotState:
 		self.a = 0
 		self.time_pos_updated = 0
 		self.in_action = False
-		self.current_goal = None
+		self.path = []
+		self.target_action = None
+
+	def reset_target_action(self):
+		self.path = []
+		self.target_action = None
+	
+	def set_new_path(self, path):
+		self.path = path
+		self.current_goal = path[0]
+
+	def set_target_action(self, action, path):
+		self.reset_target_action()
+		self.target_action = action
+		self.set_new_path(path)
+
+	def reach_next_checkpoint(self):
+		return (self.pos - self.path[0]).norm2() <= 100
+
+	def get_next_checkpoint(self):
+		self.path.pop(0)
+		if self.path:
+			return self.path[0]
+		else:
+			return None
+
+	def is_arrive(self):
+		return len(self.path) == 0
+
+	def is_new_action(self, action):
+		return action != self.target_action
 
 	def update_pos(self, p):
 		self.pos = Vec(p)

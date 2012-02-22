@@ -34,6 +34,7 @@ class IABot(ircbot.SingleServerIRCBot):
 		self.serv = serv
 		for chan in self.chans:
 			serv.join(chan)
+		print("CONNECTION SERVEUR IRC OK")
 
 	def on_pubmsg(self, serv, ev):
 		"""

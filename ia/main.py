@@ -18,6 +18,9 @@ from gamestate import GameState
 from graph.navgraph import *
 from visualisation.graphview import *
 from action import *
+from actions import *
+
+
 
 FILENAME_MAP	= "graph/map.xml"
 
@@ -58,38 +61,48 @@ t.start()
 gamestate.start()
 
 
-def ramasser_totem():
-	print("YOUHOU")
-action_totem = Action((1100,1350), gamestate, ramasser_totem)
-actions = [action_totem]
+actions = get_actions_bigrobot(gamestate, bigrobot)
 
 # mainloop
 def mainloop():
 	while 1:
 		start = time.time()
 
+		if not actions:
+			print("PLUS D'ACTIONS A RÉALISER !")
+		
+		# si le robot n'est pas en action et qu'il reste des actions
 		if not gamestate.bigrobot.in_action and actions:
+			# recherche de la mailleur action à effectuer
 			for action in actions:
 				action.compute_score(gamestate.bigrobot.pos)
 			best_action = min(actions, key=lambda a: a.score)
-			if best_action.dist_from(gamestate.bigrobot.pos) <= 100:
-				print("YEEEEES")
-				gamestate.bigrobot.in_action = True
-			else:
-				print("COUCOU")
+
+			print(best_action)
+			# si cette action n'est pas déjà celle que le robot veut atteindre
+			if gamestate.bigrobot.is_new_action(best_action):
+				print("CHANGEMENT D'ACTION")
+				# calcul du chemin
 				final_pos = best_action.point_acces
 				n,r,path = ng.get_path(gamestate.bigrobot.pos, final_pos)
+				graphview.show_result_calc_path(n,r,path)
 				print(gamestate.bigrobot.pos, final_pos, path)
-				if len(path) > 1:
-					goal = path[1]
-					if len(path) > 2 and (gamestate.bigrobot.pos - goal).norm2() <= 100:
-						goal = path[2]
-					if not gamestate.bigrobot.current_goal or goal != gamestate.bigrobot.current_goal:
-						print("goto %s" % goal)
-						graphview.show_result_calc_path(n,r,path)
-						gamestate.bigrobot.current_goal = goal
-						bigrobot.cancel()
+				gamestate.bigrobot.set_target_action(best_action, path)
+
+			# si le robot est arrivé
+			if gamestate.bigrobot.is_arrive():
+				print("YEEEES")
+				actions.remove(best_action)
+			else:
+				# si le robot a atteind le prochain point de passage,
+				# on passe au suivant
+				if gamestate.bigrobot.reach_next_checkpoint():
+					goal = gamestate.bigrobot.get_next_checkpoint()
+					print("goto %s" % goal)
+					bigrobot.cancel()
+					if goal:
 						bigrobot.goto(goal, 800)
+				
 				
 		
 		time_ellapsed = time.time() - start
@@ -99,7 +112,7 @@ def mainloop():
 
 t = threading.Thread(target=mainloop, name="ia-mainloop")
 t.setDaemon(True)
-input("appuyez sur une touche pour commencer")
+input("appuyez sur une touche pour commencer\n")
 t.start()
 
 
