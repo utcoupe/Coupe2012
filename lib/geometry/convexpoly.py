@@ -33,6 +33,16 @@ class ConvexPoly(Poly):
 		else:
 			return False
 
+	def intersect(self, o):
+		"""
+			Intersection d'un segment avec le polygon
+		"""
+		if o.a in self or o.b in self:
+			return True
+		for edge in self.iedges():
+			if edge.intersect(o):
+				return True
+		return False
 
 
 import doctest
