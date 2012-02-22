@@ -7,8 +7,8 @@ class ActionTotem(Action):
 	DIRECTION_HAUT		= 0
 	DIRECTION_BAS		= 1
 	
-	def __init__(self, gamestate, robot, point_acces, direction):
-		Action.__init__(self, point_acces, gamestate, self.action)
+	def __init__(self, gamestate, robot, graph, point_acces, direction):
+		Action.__init__(self, gamestate, graph, point_acces, self.action)
 		self.robot = robot
 		self.direction = direction
 
@@ -18,13 +18,13 @@ class ActionTotem(Action):
 
 
 
-def get_actions_bigrobot(gamestate, robot):
+def get_actions_bigrobot(gamestate, robot, graph):
 	actions = []
 	#totems
-	actions.append(ActionTotem(gamestate, robot, (1100,1350), ActionTotem.DIRECTION_BAS))
-	actions.append(ActionTotem(gamestate, robot, (1900,1350), ActionTotem.DIRECTION_BAS))
-	actions.append(ActionTotem(gamestate, robot, (1100,650), ActionTotem.DIRECTION_HAUT))
-	actions.append(ActionTotem(gamestate, robot, (1900,650), ActionTotem.DIRECTION_HAUT))
+	actions.append(ActionTotem(gamestate, robot, graph, (1100,1350), ActionTotem.DIRECTION_BAS))
+	actions.append(ActionTotem(gamestate, robot, graph, (1900,1350), ActionTotem.DIRECTION_BAS))
+	actions.append(ActionTotem(gamestate, robot, graph, (1100,650), ActionTotem.DIRECTION_HAUT))
+	actions.append(ActionTotem(gamestate, robot, graph, (1900,650), ActionTotem.DIRECTION_HAUT))
 
 
 	return actions
