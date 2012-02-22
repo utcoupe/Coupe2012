@@ -33,7 +33,7 @@ void* urgAnalyse(void* arg)
 {
 	initRobotLocation();
 
-#if 1
+#if 0
 		// Recupération des données
 		MainParameters* data=(MainParameters*)arg;
 
