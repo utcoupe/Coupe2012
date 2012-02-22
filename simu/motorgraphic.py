@@ -9,7 +9,7 @@ from pygame.color import *
 
 
 class MotorGraphic():	
-	def __init__(self):
+	def __init__(self, debug):
 		pg.init()
 		self.screen = pg.display.set_mode(mm_to_px(3000, 2000))
 		self.clock = pg.time.Clock()
@@ -18,14 +18,15 @@ class MotorGraphic():
 		self.collisions_to_draw = []
 		self.map_img = pg.image.load("map.jpg")
 		self.map_img=pg.transform.scale(self.map_img,(self.screen.get_width(),self.screen.get_height()))
+		self.debug = debug
 
 	def draw_obj(self, obj):
 		if obj.t == CIRCLE:
-			self.draw_circle(obj.shape, THECOLORS[obj.color])
+			self.draw_circle_from_obj(obj.shape, THECOLORS[obj.color])
 		elif obj.t == POLY:
-			self.draw_poly(obj.shape, THECOLORS[obj.color])
+			self.draw_poly_from_obj(obj.shape, THECOLORS[obj.color])
 		elif obj.t == WALL:
-			self.draw_segment(obj.shape, THECOLORS[obj.color])
+			self.draw_segment_from_obj(obj.shape, THECOLORS[obj.color])
 		else:
 			raise Exception("MotorGraphic.draw_obj : type '%s' doesn't exist"%obj.t)
 		for o in obj.custom_objects:
@@ -35,8 +36,14 @@ class MotorGraphic():
 		### Clear screen
 		self.screen.fill(THECOLORS["white"])
 		
-		### draw background
+		### Draw background
 		self.screen.blit(self.map_img,(0,0))
+
+		### Draw debug
+		for o in self.debug.circles:
+			self.draw_circle(o.position, o.radius, o.color)
+		for o in self.debug.segments:
+			self.draw_segment(o.p1, o.p2, o.color)
 
 		### Draw
 		for obj in self.objects :
@@ -70,20 +77,26 @@ class MotorGraphic():
 		except:
 			pass
 
-	def draw_circle(self, shape, color):
+	def draw_circle_from_obj(self, shape, color):
 		p = tuple(map(int, shape.body.position))
-		pg.draw.circle(self.screen, color, p, int(shape.radius), 0)
+		self.draw_circle(p, int(shape.radius), color)
+
+	def draw_circle(self, p, r, color):
+		pg.draw.circle(self.screen, color, p, r, 0)
 	
-	def draw_poly(self, shape, color):
+	def draw_poly_from_obj(self, shape, color):
 		body = shape.body
 		ps = shape.get_points()
 		ps.append(ps[0])
 		pg.draw.polygon(self.screen, color, ps, 0)
 
-	def draw_segment(self, shape, color):
+	def draw_segment_from_obj(self, shape, color):
 		body = shape.body
 		p1 = body.position + shape.a.rotated(body.angle)
 		p2 = body.position + shape.b.rotated(body.angle)
+		self.draw_segment(p1, p2, color)
+
+	def draw_segment(self, p1, p2, color):
 		pg.draw.lines(self.screen, color, False, [p1,p2])
 	
 	def draw_collision(self, space, arb):

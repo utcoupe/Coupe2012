@@ -16,17 +16,21 @@ from clientIRC.iabot import *
 from agents.robot import *
 from gamestate import GameState
 from graph.navgraph import *
-from visualisation.graphview import *
+from debug import *
 from action import *
 from actions import *
 
 
 
 FILENAME_MAP	= "graph/map.xml"
+RED				= (255,0,0)
 
 
 # création bot irc
-ircbot = IABot("localhost", 6667, (CANAL_BIG_ASSERV, CANAL_MINI_ASSERV, CANAL_HOKYO))
+ircbot = IABot("localhost", 6667, (CANAL_BIG_ASSERV, CANAL_MINI_ASSERV, CANAL_HOKYO, CANAL_DEBUG))
+
+# création du module de débug
+debug = Debug(ircbot, CANAL_DEBUG)
 
 # création des deux robots
 bigrobot = Robot(ircbot, CANAL_BIG_ASSERV)
@@ -37,10 +41,6 @@ minirobot = Robot(ircbot, CANAL_MINI_ASSERV)
 # création du graph de déplacement
 ng = NavGraph(200)
 ng.load_xml(FILENAME_MAP)
-
-# visualisation du navgraph
-dynamic_obstacle = Poly().initFromCircle((4000,3000),200,8)
-graphview = GraphView(ng,dynamic_obstacle)
 
 
 # création du gamestate qui se rafraichi automatiquement
@@ -85,7 +85,7 @@ def mainloop():
 				# calcul du chemin
 				final_pos = best_action.point_acces
 				n,r,path = ng.get_path(gamestate.bigrobot.pos, final_pos)
-				graphview.show_result_calc_path(n,r,path)
+				debug.draw_path(path, RED)
 				print(gamestate.bigrobot.pos, final_pos, path)
 				gamestate.bigrobot.set_target_action(best_action, path)
 
@@ -110,13 +110,10 @@ def mainloop():
 		delay = max(0, 0.2 - time_ellapsed)
 		time.sleep(delay)
 
-t = threading.Thread(target=mainloop, name="ia-mainloop")
-t.setDaemon(True)
 input("appuyez sur une touche pour commencer\n")
-t.start()
+mainloop()
 
 
-graphview.mainloop()
 
 
 
