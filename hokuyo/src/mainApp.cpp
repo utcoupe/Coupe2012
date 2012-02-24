@@ -12,6 +12,7 @@
 #include <cstdlib>
 #include <string.h>
 #include <pthread.h>
+#include <math.h>
 
 #include "delay.h"
 
@@ -26,10 +27,17 @@ bool stop=false;
 pthread_mutex_t mutex;
 coord robot[NB_MAX_ROBOT];
 
+// Largeur et longueur de la table en mm
+#define LX 3000
+#define LY 2000
+#define TETA_DIAG 0.59 // en radian, sinon 33.69 degree
+#define RAD90 1.57
+
+#define ABS(a)	   (((a) < 0) ? -(a) : (a))
+
 #include "checkParameters.h"
 #include "protocoleCom.h"
 #include "urgFile.h"
-
 
 //! --- MAIN ^^ ---
 int main(int argc, char *argv[])

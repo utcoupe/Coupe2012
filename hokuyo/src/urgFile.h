@@ -4,17 +4,41 @@
 #include "UrgCtrl.h"
 using namespace qrk;
 
+// A calculer une seule fois 
+long indexMax;
+long indexMin;
+long *distanceMax;
+ 
+//! initalisation des valeurs de références
+void initRef(std::vector<long> data, int n, UrgCtrl* urg)
+{
+	indexMax = urg->index2deg(0);
+	indexMin = urg->index2deg(-90);
+	
+	distanceMax = new long[data.size()];
+	for(int ind=indexMin ; ind<indexMax ; ind++)
+	{
+		double radian = urg->index2rad(ind);
+		radian = ABS(radian);
+		if(radian<TETA_DIAG){
+			distanceMax[ind]=LX*cos(radian);
+		}
+		else{
+			distanceMax[ind]=LY*cos(RAD90-radian);	
+		}
+		std::cout << distanceMax[ind] << std::endl;
+	}
+	
+} 
 
 //! Traitement des données venant de l'hokuyo
 void interpretData(std::vector<long> data, int n, UrgCtrl* urg)
-{
-	
+{	
 	for (int j = 0; j < n; ++j) {
-		//double radian = urg->index2rad(j);
-		int degree = urg->index2deg(j);
-		std::cout << "Angle " << degree << "° : " << data[j] << std::endl; 
+		
+		//distanceMax
+		
 	}
-    
 }
 
 
@@ -32,7 +56,8 @@ void initRobotLocation()
 void* urgAnalyse(void* arg)
 {
 	initRobotLocation();
-
+	
+	
 #if 0
 		// Recupération des données
 		MainParameters* data=(MainParameters*)arg;
@@ -67,8 +92,10 @@ void* urgAnalyse(void* arg)
 		enum { CaptureTimes = 10 };
 		urg.setCaptureTimes(CaptureTimes);
 		*/
+		
 
 		// Boucle d'acuqisitions, traitements
+		bool initRefe = false;
 		while(!stop)
 		{
 			long timestamp = 0;
@@ -79,6 +106,12 @@ void* urgAnalyse(void* arg)
 			if(n <= 0){
 				delay(scan_msec);
 				continue;
+			}
+			
+			//
+			if(!initRefe){
+				initRef(n, &urg);
+				initRefe = true;
 			}
 			
 			// C'est ici que l'on traite les données
