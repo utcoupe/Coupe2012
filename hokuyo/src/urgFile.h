@@ -47,6 +47,9 @@ coord computeBotLocation(std::list<coord> bot)
 		rob.y/=2;
 	}
 	
+	// Changement de repére
+	rob.y = LY - rob.y;
+	
 	return rob;
 }
 
