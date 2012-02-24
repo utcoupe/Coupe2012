@@ -26,39 +26,103 @@ void initRef(std::vector<long> data, int n, UrgCtrl* urg)
 		else{
 			distanceMax[ind]=LY*cos(RAD90-radian);	
 		}
+		#if DEBUG
 		std::cout << distanceMax[ind] << std::endl;
+		#endif
 	}
 	
+}
+
+//! calcul la position d'un robot en fonction d'un groupe de points
+coord computeBotLocation(std::list<coord> bot)
+{
+	coord rob;
+	
+	std::list<coord>::iterator it;
+	for ( it=bot.begin() ; it!=bot.end(); it++ )
+	{
+		rob.x+=(*it).x;
+		rob.y+=(*it).y;
+		rob.x/=2;
+		rob.y/=2;
+	}
+	
+	return rob;
+}
+
+//! vérifie si deux points sont suffisement prés pour appartenir au même robot
+bool checkPointBot(coord p1, coord p2)
+{
+	int cox=p1.x-p2.x;
+	int coy=p1.y-p2.y;
+
+	int distance = sqrt( cox*cox + coy*coy );
+	if(distance>TOLERANCE){
+		return false;
+	}
+
+	return true;
 } 
 
 //! Traitement des données venant de l'hokuyo
 void interpretData(std::vector<long> data, int n, UrgCtrl* urg)
 {	
-	for (int j = 0; j < n; ++j) {
+	std::list<coord> bot;
+	
+	for(int j = indexMin; j < indexMax; ++j) {
+		long l = data[j];
 		
-		//distanceMax
+		
+		if(l<distanceMax[j])
+		{
+			coord c;
+			double radian = urg->index2rad(j);
+			radian = ABS(radian);
+			c.x = l*cos(radian); 
+			c.y = l*cos(radian);
+
+			#if DEBUG
+				std::cout << "(" << c.x << "," << c.y << ")" << std::endl;
+			#endif
+			
+			
+			if(bot.empty())
+			{
+				bot.push_front(c);
+			}
+			else
+			{
+				if(checkPointBot(bot.front(), c))
+				{
+					bot.push_front(c);
+				}
+				else
+				{
+					robot.push_front(computeBotLocation(bot));
+					bot.clear();
+					bot.push_front(c);
+				}
+			}
+		}
+		else
+		{
+			if(!bot.empty())
+			{
+				robot.push_front(computeBotLocation(bot));
+				bot.clear();
+			}
+		}
 		
 	}
 }
 
-
-//! intialisation des valeurs
-void initRobotLocation()
-{
-	for(int i=0 ; i<NB_MAX_ROBOT ; i++)
-	{
-		robot[i].x=-1;
-		robot[i].y=-1;
-	}
-}
 
 //! Fonction de traitement des données de l'hokuyo
 void* urgAnalyse(void* arg)
 {
-	initRobotLocation();
+
 	
-	
-#if 0
+#if 1
 		// Recupération des données
 		MainParameters* data=(MainParameters*)arg;
 
@@ -110,7 +174,7 @@ void* urgAnalyse(void* arg)
 			
 			//
 			if(!initRefe){
-				initRef(n, &urg);
+				initRef(data,n,&urg);
 				initRefe = true;
 			}
 			

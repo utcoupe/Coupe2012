@@ -13,21 +13,23 @@
 
 
 //! Fonction d'envoie des données
-//! Format idCMD_SEP_(x,y)_SEP_(x,y)  
+//! Format (idCMD_SEP_(x,y)_SEP_(x,y)) 
 void send(TYPE_IDCMD idCmd)
 {
 	std::ostringstream mess;
 	mess.str(""); 
+	mess << ("[");
 	mess << idCmd;
 	
-	for(int i=0 ; i<NB_MAX_ROBOT ; i++)
+	std::list<coord>::iterator it;
+	for ( it=robot.begin() ; it!=robot.end(); it++ )
 	{
-		//if(robot[i].x!=-1){ // (x,y) == (-1,-1) signifie pas de robot
-		mess << SEP << "(" << robot[i].x << "," << robot[i].y << ")";
-		//}
+		mess << SEP << "(" << (*it).x << "," << (*it).y << ")";
 	}
 	
-	std::cout << mess.str() << std::cout;
+	mess << "]";
+
+	std::cout << mess.str() << std::endl; 
 }
 
 //! Fonction de gestion de la communication
