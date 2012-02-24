@@ -14,8 +14,9 @@ import time
 from mypyirc.ircdefine import *
 
 from clientIRC.iabot import *
-from agents.robot import *
+from clientIRC.asservissement import *
 from gamestate import *
+from robot import *
 from graph.navgraph import *
 from debug import *
 from action import *
@@ -50,13 +51,12 @@ class IA:
 		self.t_ircbot.start()
 
 		
-		# création du module de débug
+		#####
+		## Module de debug
+		#####
 		self.debug = Debug(self.ircbot, canal_debug)
 
 
-		# création des deux robots
-		self.bigrobot = Robot(self.ircbot, canal_big_asserv)
-		self.minirobot = Robot(self.ircbot, canal_mini_asserv)
 
 
 		self.init_pos = {}
@@ -64,9 +64,15 @@ class IA:
 		self.init_pos['mini'] = pos_mini_robot
 		self.init_pos['enemy1'] = pos_enemy1
 		self.init_pos['enemy2'] = pos_enemy2
-		enemy1 = RobotState(self.init_pos['enemy1'], None)
-		enemy2 = RobotState(self.init_pos['enemy1'], None)
+		enemy1 = Robot(self.init_pos['enemy1'], None)
+		enemy2 = Robot(self.init_pos['enemy1'], None)
 		enemies = (enemy1, enemy2)
+
+
+
+		#####
+		## Création gros robot
+		#####
 
 		# création du graph de déplacement
 		ng = NavGraph(R_BIGROBOT)
@@ -75,9 +81,22 @@ class IA:
 		ng.add_dynamic_obstacle(ConvexPoly().initFromCircle(self.init_pos['enemy2'],200,8))
 		ng.add_dynamic_obstacle(ConvexPoly().initFromCircle(self.init_pos['mini'],R_MINIROBOT,8))
 		ng.update()
-
+		
 		# robot
-		bigrobot = RobotState(self.init_pos['big'], ng)
+		bigrobot = Robot(self.init_pos['big'], ng)
+
+		# création de l'asserv
+		asserv = Asservissement(self.ircbot, canal_big_asserv)
+		bigrobot.set_asserv(asserv)
+
+		# actions
+		actions = get_actions_bigrobot(bigrobot, asserv, enemies)
+		bigrobot.set_actions(actions)
+		
+
+		#####
+		## Création mini robot
+		#####
 		
 		# création du graph de déplacement
 		ng = NavGraph(R_BIGROBOT)
@@ -88,18 +107,29 @@ class IA:
 		ng.update()
 
 		#robot
-		minirobot = RobotState(self.init_pos['mini'], ng)
-
-		# création du gamestate
-		self.gamestate = GameState(self.ircbot, canal_big_asserv, canal_mini_asserv, bigrobot, minirobot, enemy1, enemy2)
+		minirobot = Robot(self.init_pos['mini'], ng)
 		
+		# création de l'asserv
+		asserv = Asservissement(self.ircbot, canal_mini_asserv)
+		minirobot.set_asserv(asserv)
+
 		# actions
-		actions = get_actions_bigrobot(bigrobot, self.bigrobot, enemies)
-		bigrobot.set_actions(actions)
-		actions = get_actions_minirobot(minirobot, self.minirobot, enemies)
+		actions = get_actions_minirobot(minirobot, asserv, enemies)
 		minirobot.set_actions(actions)
 
-		# sert à faire les statistiques
+
+
+		#####
+		## Gamestate
+		#####
+		self.gamestate = GameState(self.ircbot, canal_big_asserv, canal_mini_asserv, bigrobot, minirobot, enemy1, enemy2)
+
+
+		
+
+		#####
+		## Statistiques
+		#####
 		self.time_last_show_stats	= 0
 		self.sums = {}
 		self.sums['mainloop'] = {'t':0, 'n':0}
@@ -109,6 +139,7 @@ class IA:
 
 	def reset(self):
 		self.gamestate.reset()
+		self.debug.reset()
 
 
 	def start(self):
@@ -123,6 +154,9 @@ class IA:
 		#input("appuyez sur une touche pour démarrer")
 		self.mainloop()
 
+	def stop(self):
+		self.ircbot.stop()
+		print("Exit")
 
 	def mainloop(self):
 		while 1:
@@ -133,25 +167,24 @@ class IA:
 
 			self.gamestate.update_robots()
 
-			if self.gamestate.bigrobot.is_path_intersected():
-				start_update_ng = time.time()
-				self.gamestate.bigrobot.ng.update()
-				self.sums['update_big_ng']['t'] += time.time() - start_update_ng
-				self.sums['update_big_ng']['n'] += 1
+			#if self.gamestate.bigrobot.is_path_intersected():
+			start_update_ng = time.time()
+			self.gamestate.bigrobot.ng.update()
+			self.sums['update_big_ng']['t'] += time.time() - start_update_ng
+			self.sums['update_big_ng']['n'] += 1
 				
-			if self.gamestate.minirobot.is_path_intersected():
-				start_update_ng = time.time()
-				self.gamestate.minirobot.ng.update()
-				self.sums['update_mini_ng']['t'] += time.time() - start_update_ng
-				self.sums['update_mini_ng']['n'] += 1
+			#if self.gamestate.minirobot.is_path_intersected():
+			start_update_ng = time.time()
+			self.gamestate.minirobot.ng.update()
+			self.sums['update_mini_ng']['t'] += time.time() - start_update_ng
+			self.sums['update_mini_ng']['n'] += 1
 
 
 
 			
 			# gogogo robots !
-			robot = self.gamestate.bigrobot
-			asservissement = self.bigrobot
-			self.loopRobot(robot, asservissement)
+			self.loopRobot(self.gamestate.bigrobot)
+			self.loopRobot(self.gamestate.minirobot)
 			
 			# debug
 			"""self.debug.remove_circle(ID_DEBUG_ENEMY1)
@@ -179,15 +212,15 @@ class IA:
 			delay = max(0.001, 0.2 - time.time() - start_main_loop)
 			time.sleep(delay)
 	
-	def loopRobot(self, robot, asserv):
+	def loopRobot(self, robot):
 
 		actions = robot.actions
 		ng = robot.ng
+		asserv = robot.asserv
 		
-		if not actions:
+		if not self.gamestate.bigrobot.actions and not self.gamestate.minirobot.actions:
 			print("PLUS D'ACTIONS A RÉALISER !")
 			self.reset()
-			print (self.gamestate.bigrobot.actions)
 			return
 		
 		# si le robot n'est pas en action et qu'il reste des actions
@@ -206,7 +239,7 @@ class IA:
 				if robot.is_new_action(best_action):
 					print("CHANGEMENT D'ACTION")
 					asserv.cancel()
-					self.debug.draw_path(best_action.path, RED)
+					self.debug.draw_path(best_action.path, RED, id(robot))
 					print(robot.pos, best_action.point_acces, best_action.path)
 					robot.set_target_action(best_action, best_action.path)
 
@@ -223,6 +256,8 @@ class IA:
 						#self.bigrobot.cancel()
 						if goal:
 							asserv.goto(goal, 800)
+			else:
+				print("No reachable actions")
 
 	def stats(self):
 		time_since_last_show_stats = time.time() - self.time_last_show_stats
@@ -231,6 +266,8 @@ class IA:
 				if s['n'] != 0:
 					print(k, s['t']/s['n'])
 			self.time_last_show_stats = time.time()
+			print(self.gamestate.bigrobot.actions)
+			print(self.gamestate.minirobot.actions)
 				
 
 

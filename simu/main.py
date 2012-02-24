@@ -74,6 +74,5 @@ if __name__ == "__main__":
 	engine.add(bigrobot2)
 	engine.add(minirobot2)
 
-	
 	engine.start()
 	

@@ -71,12 +71,19 @@ class Engine:
 		self.motorgraphic.add(obj)
 		self.motorphysic.add(obj)
 
+	def stop(self):
+		self.running = False
+	
 	def start(self):
 		"""
 		Démarrer l'engine
 		"""
 		while self.running:
-			self.step()
+			try:
+				self.step()
+			except KeyboardInterrupt as ex:
+				print("Exit")
+				break
 		self.stop_irc()
 
 	def step(self):

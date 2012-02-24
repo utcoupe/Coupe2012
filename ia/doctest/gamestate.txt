@@ -2,6 +2,7 @@
 
 
 import
+>>> from robot import *
 >>> from gamestate import *
 
 
@@ -10,10 +11,10 @@ some defines
 >>> CANAL_MINI_ASSERV = "#aservmini"
 
 init
->>> big = RobotState((0,0), None)
->>> mini = RobotState((0,0), None)
->>> enemy1 = RobotState((3000,0), None)
->>> enemy2 = RobotState((3000,0), None)
+>>> big = Robot((0,0), None)
+>>> mini = Robot((0,0), None)
+>>> enemy1 = Robot((3000,0), None)
+>>> enemy2 = Robot((3000,0), None)
 >>> gamestate = GameState(None, CANAL_BIG_ASSERV, CANAL_MINI_ASSERV, big, mini, enemy1, enemy2)
 
 on_msg_pos

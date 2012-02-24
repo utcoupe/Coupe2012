@@ -7,18 +7,8 @@ import os
 FILE_DIR  = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(os.path.join(FILE_DIR,"..","lib"))
 
-import threading
-import time
 
 from mypyirc.ircdefine import *
-
-from clientIRC.iabot import *
-from agents.robot import *
-from gamestate import GameState
-from graph.navgraph import *
-from debug import *
-from action import *
-from actions import *
 from ia_utcoupe.ia import *
 
 myia = IA("localhost", 6667,
@@ -26,7 +16,11 @@ myia = IA("localhost", 6667,
 	(0,0), (0,0), (3000,0), (3000,0)
 )
 
-myia.start()
+try:
+	myia.start()
+except KeyboardInterrupt as ex:
+	myia.stop()
+
 
 
 

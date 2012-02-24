@@ -29,6 +29,10 @@ class IABot(ircbot.SingleServerIRCBot):
 		
 		self.event_on_connect = threading.Event()
 
+	def stop(self):
+		if self.serv:
+			self.serv.disconnect("Tchuss")
+	
 	def on_nicknameinuse(self, serv, e):
 		self.nickname += "_"
 		serv.nick(self.nickname + "_")

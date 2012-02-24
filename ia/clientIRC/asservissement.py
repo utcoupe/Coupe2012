@@ -1,15 +1,24 @@
 
+
+
+import sys
+import os
+sys.path.append(os.path.join("..","lib"))
+
+import types
+
+from mypyirc.ircdefine import *
+
+
+
 import time
 import re
 
 from geometry.vec import *
 
 
-SEP = '.'
 
-ID_MSG_POS		= -1
-
-class Robot:
+class Asservissement:
 	def __init__(self, ircbot, chan_asserv):
 		self.ircbot = ircbot
 		ircbot.add_listener(self.on_msg)

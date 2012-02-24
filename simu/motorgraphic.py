@@ -41,10 +41,12 @@ class MotorGraphic():
 
 		### Draw debug
 		self.debug.lock.acquire()
-		for o in self.debug.circles.values():
-			self.draw_circle(o.position, o.radius, o.color)
-		for o in self.debug.segments.values():
-			self.draw_segment(o.p1, o.p2, o.color)
+		for d in self.debug.circles.values():
+			for o in d.values():
+				self.draw_circle(o.position, o.radius, o.color)
+		for d in self.debug.segments.values():
+			for o in d.values():
+				self.draw_segment(o.p1, o.p2, o.color)
 		self.debug.lock.release()
 		
 
