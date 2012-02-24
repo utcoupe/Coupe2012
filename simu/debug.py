@@ -60,6 +60,8 @@ class Debug(Executer):
 		self.circles = {}
 		self.segments = {}
 
+	def cmd_debug_reset(self, **kwargs):
+		self.cmd_debug_clear_all()
 
 
 	

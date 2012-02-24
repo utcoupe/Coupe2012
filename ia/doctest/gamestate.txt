@@ -8,14 +8,13 @@ import
 some defines
 >>> CANAL_BIG_ASSERV = "#asserv"
 >>> CANAL_MINI_ASSERV = "#aservmini"
->>> dpos = {}
->>> dpos['big'] = (0,0)
->>> dpos['mini'] = (0,0)
->>> dpos['enemy1'] = (3000,0)
->>> dpos['enemy2'] = (3000,0)
 
 init
->>> gamestate = GameState(None, CANAL_BIG_ASSERV, CANAL_MINI_ASSERV, dpos)
+>>> big = RobotState((0,0), None)
+>>> mini = RobotState((0,0), None)
+>>> enemy1 = RobotState((3000,0), None)
+>>> enemy2 = RobotState((3000,0), None)
+>>> gamestate = GameState(None, CANAL_BIG_ASSERV, CANAL_MINI_ASSERV, big, mini, enemy1, enemy2)
 
 on_msg_pos
 >>> gamestate.on_msg_pos(CANAL_BIG_ASSERV, ("400","300","40"))

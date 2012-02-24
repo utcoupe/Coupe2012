@@ -39,6 +39,10 @@ class Debug:
 
 	def remove_segment(self, i):
 		self.send_debug("remove_segment %s" % i)
+
+	def reset(self):
+		self.send_debug("reset")
 		
 	def send_debug(self, msg):
 		self.ircbot.send(self.canal_debug, msg)
+		

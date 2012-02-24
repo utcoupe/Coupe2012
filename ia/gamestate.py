@@ -12,9 +12,14 @@ import time
 import threading
 from inspect import currentframe
 import itertools
+import copy
 
 from geometry.vec import *
+from geometry.segment import *
 from mypyirc.ircdefine import *
+
+from action import *
+from actions import *
 
 
 # petite optimisation pour le calcul de k parmis 4, seul les valeurs de
@@ -25,13 +30,26 @@ def permutation_k_parmis_4(k):
 
 
 class RobotState:
-	def __init__(self, p):
-		self.pos = Vec(p)
+	def __init__(self, p, ng):
+		self.init_actions = []
+		self.init_pos = p
+		self.ng = ng
+		self.reset()
+
+	def set_actions(self, actions):
+		self.init_actions = actions
+		self.actions = copy.copy(actions)
+
+	def reset(self):
+		self.pos = Vec(self.init_pos)
 		self.a = 0
 		self.time_pos_updated = 0
 		self.in_action = False
 		self.path = []
 		self.target_action = None
+
+		self.actions = copy.copy(self.init_actions)
+		
 
 	def reset_target_action(self):
 		self.path = []
@@ -66,19 +84,33 @@ class RobotState:
 		self.pos = Vec(p)
 		self.time_pos_updated = time.time()
 
+	def is_path_intersected(self):
+		for poly in self.ng.dynamic_obstacles:
+			if self.poly_intersect_path(poly):
+				return True
+		return False
+	
+	def poly_intersect_path(self, poly):
+		last = self.pos
+		for current in self.path:
+			s = Segment(last, current)
+			if poly.intersect(s):
+				return True
+		return False
+
 	def __repr__(self):
 		return "RobotState(%s, %s, %s)" % (self.pos, self.a, self.time_pos_updated)
 
 
 class GameState:
-	def __init__(self, ircbot, canal_big_asserv, canal_mini_asserv, dpos):
+	def __init__(self, ircbot, canal_big_asserv, canal_mini_asserv, bigrobot, minirobot, enemy1, enemy2):
 		self.ircbot 			= ircbot
 		self.canal_big_asserv 	= canal_big_asserv
 		self.canal_mini_asserv 	= canal_mini_asserv
-		self.bigrobot 			= RobotState(dpos['big'])
-		self.minirobot 			= RobotState(dpos['mini'])
-		self.enemy1		 		= RobotState(dpos['enemy1'])
-		self.enemy2			 	= RobotState(dpos['enemy2'])
+		self.bigrobot 			= bigrobot
+		self.minirobot 			= minirobot
+		self.enemy1		 		= enemy1
+		self.enemy2			 	= enemy2
 
 		self.event_bigrobot_pos_update = threading.Event()
 		self.event_minirobot_pos_update = threading.Event()
@@ -88,6 +120,30 @@ class GameState:
 		if ircbot: # pour les doctest ircbot sera à None
 			self.ircbot.add_listener(self.on_msg)
 
+	def reset(self):
+		self.bigrobot.reset()
+		self.minirobot.reset()
+		self.enemy1.reset()
+		self.enemy2.reset()
+		
+		self.bigrobot.ng.dynamic_obstacles[0].move_to(self.enemy1.pos)
+		self.bigrobot.ng.dynamic_obstacles[1].move_to(self.enemy2.pos)
+		self.bigrobot.ng.dynamic_obstacles[2].move_to(self.minirobot.pos)
+		self.bigrobot.ng.update()
+		self.minirobot.ng.dynamic_obstacles[0].move_to(self.enemy1.pos)
+		self.minirobot.ng.dynamic_obstacles[1].move_to(self.enemy2.pos)
+		self.minirobot.ng.dynamic_obstacles[2].move_to(self.bigrobot.pos)
+		self.minirobot.ng.update()
+
+
+	def update_robots(self):
+		self.bigrobot.ng.dynamic_obstacles[0].move_to(self.enemy1.pos)
+		self.bigrobot.ng.dynamic_obstacles[1].move_to(self.enemy2.pos)
+		self.bigrobot.ng.dynamic_obstacles[2].move_to(self.minirobot.pos)
+		self.minirobot.ng.dynamic_obstacles[0].move_to(self.enemy1.pos)
+		self.minirobot.ng.dynamic_obstacles[1].move_to(self.enemy2.pos)
+		self.minirobot.ng.dynamic_obstacles[2].move_to(self.bigrobot.pos)
+	
 	def ask_update(self):
 		self.event_bigrobot_pos_update.clear()
 		self.event_minirobot_pos_update.clear()

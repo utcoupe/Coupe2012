@@ -37,7 +37,7 @@ class IABot(ircbot.SingleServerIRCBot):
 		self.serv = serv
 		for chan in self.chans:
 			serv.join(chan)
-		time.sleep(1)
+		time.sleep(0.5)
 		print("CONNECTION SERVEUR IRC OK")
 		self.event_on_connect.set()
 
