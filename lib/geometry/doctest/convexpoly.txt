@@ -16,3 +16,11 @@ point dans le poly
 isclockwise
 	>>> poly.is_clockwise()
 	False
+
+intersection
+	>>> from segment import *
+	>>> poly.intersect(Segment((-1,-1), (-3,-3)))
+	False
+	>>> poly.intersect(Segment((-1,-1), (5,5)))
+	True
+	

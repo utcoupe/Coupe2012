@@ -9,6 +9,9 @@ class Segment:
 		self.a = Vec(a)
 		self.b = Vec(b)
 
+	def norm2(self):
+		return (self.b - self.a).norm2()
+	
 	def pos_point(self, p):
 		"""
 			>0 : à gauche
@@ -39,6 +42,38 @@ class Segment:
 
 	def reverse(self):
 		self.a,self.b = self.b,self.a
+
+	def intersect(self, o):
+		"""
+			Intersection avec un autre segment
+			
+				(Ay-Cy)(Dx-Cx)-(Ax-Cx)(Dy-Cy)
+			r = -----------------------------  (eqn 1)
+				(Bx-Ax)(Dy-Cy)-(By-Ay)(Dx-Cx)
+
+				(Ay-Cy)(Bx-Ax)-(Ax-Cx)(By-Ay)
+			s = -----------------------------  (eqn 2)
+				(Bx-Ax)(Dy-Cy)-(By-Ay)(Dx-Cx)
+
+			P=A+r(B-A) (intersection point)
+			
+			If 0<=r<=1 & 0<=s<=1, intersection exists
+				r<0 or r>1 or s<0 or s>1 line segments do not intersect
+		"""
+		A,B,C,D = self.a, self.b, o.a, o.b
+
+		numerateur_r = (A[1]-C[1])*(D[0]-C[0])-(A[0]-C[0])*(D[1]-C[1])
+		denominateur_r = (B[0]-A[0])*(D[1]-C[1])-(B[1]-A[1])*(D[0]-C[0])
+		if denominateur_r == 0: return False
+		r = numerateur_r / denominateur_r
+		
+		numerateur_s = (A[1]-C[1])*(B[0]-A[0])-(A[0]-C[0])*(B[1]-A[1])
+		denominateur_s = (B[0]-A[0])*(D[1]-C[1])-(B[1]-A[1])*(D[0]-C[0])
+		if denominateur_s == 0: return False
+		s = numerateur_s / denominateur_s
+
+		return 0 <= r <= 1 and 0 <= s <= 1
+		
 
 
 import doctest

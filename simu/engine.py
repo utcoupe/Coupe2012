@@ -9,13 +9,13 @@ class Engine:
 	Engine, cette classe permet de coupler un moteur physique et un
 	moteur graphique.
 	"""
-	def __init__(self, stop_irc, match):
+	def __init__(self, stop_irc, match, debug):
 		"""
 		@param stop_irc fonction permettant d'arreter le client irc (il
 		tourne dans un thread à part).
 		"""
 		self.match = match
-		self.motorgraphic = MotorGraphic()
+		self.motorgraphic = MotorGraphic(debug)
 		self.motorphysic = MotorPhysic()
 		self.motorphysic.add_collision_handler(COLLTYPE_ROBOT, COLLTYPE_WALL, self.motorgraphic.draw_collision)
 		self.motorphysic.add_collision_handler(COLLTYPE_ROULEAU, COLLTYPE_CD, self.on_collision_rouleau_cd)

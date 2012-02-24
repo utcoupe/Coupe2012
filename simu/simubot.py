@@ -25,11 +25,9 @@ class SimuIrcBot(MyPyIrcBot):
 
 		self.running = True
 
-
 	def stop(self):
 		self.running = False
 		if self.serv:
 			self.serv.disconnect("Tchuss")
-
 				
 	

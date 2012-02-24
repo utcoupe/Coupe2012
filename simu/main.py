@@ -31,12 +31,16 @@ from totem import *
 from tour import *
 from match import *
 from hokyo import *
+from debug import *
 
 import threading
 from map import *
 
 if __name__ == "__main__":
 	match = Match()
+
+	# debug
+	debug = Debug()
 
 	# robots
 	bigrobot = BigRobot(CANAL_BIG_ASSERV, mm_to_px(250,250), BLUE)
@@ -49,12 +53,13 @@ if __name__ == "__main__":
 	hokyo = Hokyo(CANAL_HOKYO, robots)
 
 	# ircbot
-	ircbot = SimuIrcBot("localhost", 6667, (CANAL_BIG_ASSERV,CANAL_MINI_ASSERV,CANAL_BIG_ASSERV+'2',CANAL_MINI_ASSERV+'2',CANAL_HOKYO))
+	ircbot = SimuIrcBot("localhost", 6667, (CANAL_BIG_ASSERV,CANAL_MINI_ASSERV,CANAL_BIG_ASSERV+'2',CANAL_MINI_ASSERV+'2',CANAL_HOKYO, CANAL_DEBUG))
+	ircbot.add_executer(debug)
 	ircbot.add_executer(hokyo)
 	for i,robot in enumerate(robots):
 		ircbot.add_executer(robot)
 	
-	engine = Engine(ircbot.stop, match)
+	engine = Engine(ircbot.stop, match, debug)
 	try:
 		t = threading.Thread(None,ircbot.start,"simuircbot")
 		t.setDaemon(True)
