@@ -8,6 +8,7 @@ sys.path.append(os.path.join(FILE_DIR,"..","..","lib","py3irc"))
 
 
 import threading
+import time
 
 import ircbot
 import irclib
@@ -25,6 +26,8 @@ class IABot(ircbot.SingleServerIRCBot):
 		self.serv = None
 		self.chans = channels
 		self.listeners = []
+		
+		self.event_on_connect = threading.Event()
 
 	def on_nicknameinuse(self, serv, e):
 		self.nickname += "_"
@@ -34,7 +37,9 @@ class IABot(ircbot.SingleServerIRCBot):
 		self.serv = serv
 		for chan in self.chans:
 			serv.join(chan)
+		time.sleep(1)
 		print("CONNECTION SERVEUR IRC OK")
+		self.event_on_connect.set()
 
 	def on_pubmsg(self, serv, ev):
 		"""

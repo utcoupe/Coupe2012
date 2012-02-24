@@ -49,13 +49,13 @@ if __name__ == "__main__":
 	minirobot2 = MiniRobot(CANAL_MINI_ASSERV+'2', mm_to_px(3000-400,250), RED)
 	robots = (bigrobot, minirobot, bigrobot2, minirobot2)
 
-	# hokyo
-	hokyo = Hokyo(CANAL_HOKYO, robots)
+	# hokuyo
+	hokuyo = Hokuyo(CANAL_HOKUYO, robots)
 
 	# ircbot
-	ircbot = SimuIrcBot("localhost", 6667, (CANAL_BIG_ASSERV,CANAL_MINI_ASSERV,CANAL_BIG_ASSERV+'2',CANAL_MINI_ASSERV+'2',CANAL_HOKYO, CANAL_DEBUG))
+	ircbot = SimuIrcBot("localhost", 6667, (CANAL_BIG_ASSERV,CANAL_MINI_ASSERV,CANAL_BIG_ASSERV+'2',CANAL_MINI_ASSERV+'2',CANAL_HOKUYO, CANAL_DEBUG))
 	ircbot.add_executer(debug)
-	ircbot.add_executer(hokyo)
+	ircbot.add_executer(hokuyo)
 	for i,robot in enumerate(robots):
 		ircbot.add_executer(robot)
 	

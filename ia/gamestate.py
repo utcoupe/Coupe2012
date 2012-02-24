@@ -97,39 +97,53 @@ class GameState:
 		self.minirobot 			= RobotState(dpos['mini'])
 		self.enemy1		 		= RobotState(dpos['enemy1'])
 		self.enemy2			 	= RobotState(dpos['enemy2'])
-		
-		self.loops 				= []
-		self.loops.append(StopableLoop(self._loop_ask_asserv_for_pos, 0.1))
-		self.loops.append(StopableLoop(self._loop_ask_hokyo_for_pos, 0.1))
+
+		self.event_bigrobot_pos_update = threading.Event()
+		self.event_minirobot_pos_update = threading.Event()
+		self.event_hokuyo_update = threading.Event()
+		self.event_on_pong = threading.Event()
 
 		if ircbot: # pour les doctest ircbot sera à None
 			self.ircbot.add_listener(self.on_msg)
 
-	def start(self):
-		for loop in self.loops:
-			t = threading.Thread(None, loop.start)
-			t.setDaemon(True)
-			t.start()
+	def ask_update(self):
+		self.event_bigrobot_pos_update.clear()
+		self.event_minirobot_pos_update.clear()
+		self.event_hokuyo_update.clear()
+		
+		self.ask_asserv_for_pos(self.canal_big_asserv)
+		self.ask_asserv_for_pos(self.canal_mini_asserv)
+		self.ask_hokyo_for_pos()
+		
+	def wait_update(self):
+		self.event_bigrobot_pos_update.wait()
+		self.event_minirobot_pos_update.wait()
+		self.event_hokuyo_update.wait()
+
+	def ping(self, canal):
+		n = 10
+		start = time.time()
+		for i in range(n):
+			self.event_on_pong.clear()
+			self.ircbot.send(canal, "ping # id=%s" % ID_MSG_PING)
+			self.event_on_pong.wait()
+		return (time.time() - start) / n
+		
 
 	def ask_hokyo_for_pos(self):
-		self.ircbot.send(CANAL_HOKYO, "get # id=%s" % ID_MSG_HOKYO)
+		self.ircbot.send(CANAL_HOKUYO, "get # id=%s" % ID_MSG_HOKUYO)
 
 	def ask_asserv_for_pos(self, canal):
 		self.ircbot.send(canal, "pos # id=%s" % ID_MSG_POS)
-	
-	def _loop_ask_asserv_for_pos(self):
-		self.ask_asserv_for_pos(self.canal_big_asserv)
-		self.ask_asserv_for_pos(self.canal_mini_asserv)
-
-	def _loop_ask_hokyo_for_pos(self):
-		self.ask_hokyo_for_pos()
 
 	def on_msg(self, canal, auteur, msg):
 		msg_split = msg.split(SEP)
-		if len(msg_split) > 2:
+		if len(msg_split) > 1:
 			id_msg = int(msg_split[0])
 			params = msg_split[1:]
-			if ID_MSG_HOKYO == id_msg:
+			if ID_MSG_PING == id_msg:
+				self.event_on_pong.set()
+			elif ID_MSG_HOKUYO == id_msg:
 				self.on_msg_hokyo(params)
 			elif ID_MSG_POS == id_msg:
 				self.on_msg_pos(canal,params)
@@ -141,8 +155,10 @@ class GameState:
 			# choix du robot à update
 			if canal == self.canal_big_asserv:
 				robot_to_update = self.bigrobot
+				self.event_bigrobot_pos_update.set()
 			elif canal == self.canal_mini_asserv:
 				robot_to_update = self.minirobot
+				self.event_minirobot_pos_update.set()
 			else:
 				print("Error %s.on_msg_pos (%s:%d) : canal non connu : %s " % (self.__class__.__name__, currentframe().f_code.co_filename, currentframe().f_lineno, canal))
 			# update
@@ -163,6 +179,7 @@ class GameState:
 			for i,j in enumerate(best_permut):
 				if robots[j] in self.enemyrobots():
 					robots[j].update_pos(lpos[i])
+			self.event_hokuyo_update.set()
 		else:
 			print("Error %s.on_msg_hokyo (%s:%d) : pas assez de paramètres " % (self.__class__.__name__, currentframe().f_code.co_filename, currentframe().f_lineno, canal))
 
