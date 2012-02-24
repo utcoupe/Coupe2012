@@ -11,26 +11,24 @@ radbot=40
 
 p = Popen(["./hokuyoApp"], stdout=PIPE, stderr=PIPE, stdin=PIPE)
 
-
 class thRead(threading.Thread):
 	def run(self):
-		r = p.stdout.readline()
-		p.stdout.flush()
-		strCoor = r.split('.')
-		for stc in strCoor:
-			li=[]
-			if stc.find(',')!=-1:
-				stc=stc.replace('(','') 
-				stc=stc.replace(')','')
-				stc=stc.split(',')
-				li.append(string.atoi(stc[0]))
-				li.append(string.atoi(stc[1]))
-			robot.append(li)
-
+		while gbool:
+			r = p.stdout.readline()
+			p.stdout.flush()
+			print r
+			if(r.find('.')!=-1):
+				listCoor = eval(r)
+				listCoor = listCoor[1:]
+				for li in listCoor:				
+					robot.append(li)
+			
+			
 class thWrite(threading.Thread):
 	def run(self):
 		while gbool:
-			cmd='1.1'
+			print 'CMD'
+			cmd='1.1'			
 			p.stdin.write(cmd.encode("utf-8"))
 			p.stdin.flush()
 			time.sleep(1)
@@ -56,15 +54,15 @@ def drawZone(canv):
 # ---
 t1=thRead()
 t2=thWrite()
+t1.setDaemon(True)
+t2.setDaemon(True)
 t1.start()
 t2.start()
-
 # ---
 root = Tk()
 
 canvas = Canvas(width=600, height=400, bg='blue')  
 canvas.pack(expand=YES, fill=BOTH) 
-
 
 root.mainloop()
 

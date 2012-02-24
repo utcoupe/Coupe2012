@@ -2,7 +2,7 @@
  * Application de gestion de l'hokuyo
  * 
  * */
-#define DEBUG 1
+#define DEBUG 0
 #define NB_MAX_ROBOT 4
 #define URG_AUTO_CAPTURE 1
 
@@ -12,6 +12,8 @@
 #include <cstdlib>
 #include <string.h>
 #include <pthread.h>
+#include <math.h>
+#include <list>
 
 #include "delay.h"
 
@@ -24,16 +26,33 @@ struct coord{
 
 bool stop=false;
 pthread_mutex_t mutex;
-coord robot[NB_MAX_ROBOT];
+std::list<coord> robot;
+
+// Largeur et longueur de la table en mm
+#define LX 3000
+#define LY 2000
+#define TETA_DIAG 0.59 // en radian, sinon 33.69 degree
+#define RAD90 1.57
+
+#define TOLERANCE 50
+
+#define ABS(a)	   (((a) < 0) ? -(a) : (a))
 
 #include "checkParameters.h"
 #include "protocoleCom.h"
 #include "urgFile.h"
 
-
 //! --- MAIN ^^ ---
 int main(int argc, char *argv[])
 {
+/*
+	coord a;
+	a.x=5; a.y=5;
+	robot.push_front(a);
+	a.x=50; a.y=10;
+	robot.push_front(a);
+*/
+	
 	// Check appliation parameters
 	MainParameters mParameters; 
 	checkParameters(&mParameters,argc,argv);
@@ -66,5 +85,6 @@ int main(int argc, char *argv[])
         return -1;
     }
 
+	delete[] distanceMax;
 	return 0;
 }
