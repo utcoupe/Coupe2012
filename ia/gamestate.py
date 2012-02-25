@@ -46,6 +46,12 @@ class GameState:
 		if ircbot: # pour les doctest ircbot sera à None
 			self.ircbot.add_listener(self.on_msg)
 
+
+		self.sums = {}
+		self.sums['update_big_ng'] = {'t':0, 'n':0}
+		self.sums['update_mini_ng'] = {'t':0, 'n':0}
+			
+
 	def reset(self):
 		self.bigrobot.reset()
 		self.minirobot.reset()
@@ -61,6 +67,11 @@ class GameState:
 		self.minirobot.ng.dynamic_obstacles[2].move_to(self.bigrobot.pos)
 		self.minirobot.ng.update()
 
+		
+		self.sums = {}
+		self.sums['update_big_ng'] = {'t':0, 'n':0}
+		self.sums['update_mini_ng'] = {'t':0, 'n':0}
+
 
 	def update_robots(self):
 		self.bigrobot.ng.dynamic_obstacles[0].move_to(self.enemy1.pos)
@@ -69,6 +80,19 @@ class GameState:
 		self.minirobot.ng.dynamic_obstacles[0].move_to(self.enemy1.pos)
 		self.minirobot.ng.dynamic_obstacles[1].move_to(self.enemy2.pos)
 		self.minirobot.ng.dynamic_obstacles[2].move_to(self.bigrobot.pos)
+		
+		#if self.bigrobot.is_path_intersected():
+		start_update_ng = time.time()
+		self.bigrobot.ng.update()
+		self.sums['update_big_ng']['t'] += time.time() - start_update_ng
+		self.sums['update_big_ng']['n'] += 1
+			
+		#if self.minirobot.is_path_intersected():
+		start_update_ng = time.time()
+		self.minirobot.ng.update()
+		self.sums['update_mini_ng']['t'] += time.time() - start_update_ng
+		self.sums['update_mini_ng']['n'] += 1
+		
 	
 	def ask_update(self):
 		self.event_bigrobot_pos_update.clear()
@@ -156,6 +180,10 @@ class GameState:
 	def __repr__(self):
 		return "GameState(%s)" % (self.robots(),)
 
+	def print_stats(self):
+		for k, s in self.sums.items():
+			if s['n'] != 0:
+				print(k, s['t']/s['n'])
 
 import doctest
 doctest.testfile("doctest/gamestate.txt")

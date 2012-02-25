@@ -44,7 +44,7 @@ def get_actions_bigrobot(robot, asservissement, enemies):
 def get_actions_minirobot(robot, asservissement, enemies):
 	actions = []
 	# bouteilles
-	actions.append(ActionBouteille(robot, asservissement, enemies, (640, 1650)))
-	actions.append(ActionBouteille(robot, asservissement, enemies, (1883, 1650)))
+	actions.append(ActionBouteille(robot, asservissement, enemies, (640, 1750)))
+	actions.append(ActionBouteille(robot, asservissement, enemies, (1883, 1750)))
 
 	return actions

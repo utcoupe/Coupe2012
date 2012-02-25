@@ -133,8 +133,6 @@ class IA:
 		self.time_last_show_stats	= 0
 		self.sums = {}
 		self.sums['mainloop'] = {'t':0, 'n':0}
-		self.sums['update_big_ng'] = {'t':0, 'n':0}
-		self.sums['update_mini_ng'] = {'t':0, 'n':0}
 
 
 	def reset(self):
@@ -166,20 +164,6 @@ class IA:
 			self.gamestate.ask_update()
 
 			self.gamestate.update_robots()
-
-			#if self.gamestate.bigrobot.is_path_intersected():
-			start_update_ng = time.time()
-			self.gamestate.bigrobot.ng.update()
-			self.sums['update_big_ng']['t'] += time.time() - start_update_ng
-			self.sums['update_big_ng']['n'] += 1
-				
-			#if self.gamestate.minirobot.is_path_intersected():
-			start_update_ng = time.time()
-			self.gamestate.minirobot.ng.update()
-			self.sums['update_mini_ng']['t'] += time.time() - start_update_ng
-			self.sums['update_mini_ng']['n'] += 1
-
-
 
 			
 			# gogogo robots !
@@ -262,13 +246,15 @@ class IA:
 	def stats(self):
 		time_since_last_show_stats = time.time() - self.time_last_show_stats
 		if time_since_last_show_stats >= 2:
-			for k, s in self.sums.items():
-				if s['n'] != 0:
-					print(k, s['t']/s['n'])
+			self.print_stats()
 			self.time_last_show_stats = time.time()
 			print(self.gamestate.bigrobot.actions)
 			print(self.gamestate.minirobot.actions)
-				
+
+	def print_stats(self):
+		for k, s in self.sums.items():
+			if s['n'] != 0:
+				print(k, s['t']/s['n'])
 
 
 		
