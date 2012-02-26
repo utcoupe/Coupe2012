@@ -1,6 +1,11 @@
 /**
  * Application de gestion de l'hokuyo
  * 
+ * TODO
+ * - Réorganiser le code 
+ * - Calibrage auto
+ * - Choix de la couleur
+ * 
  * */
 #define DEBUG 0
 #define NB_MAX_ROBOT 4
@@ -44,15 +49,7 @@ std::list<coord> robot;
 
 //! --- MAIN ^^ ---
 int main(int argc, char *argv[])
-{
-/*
-	coord a;
-	a.x=5; a.y=5;
-	robot.push_front(a);
-	a.x=50; a.y=10;
-	robot.push_front(a);
-*/
-	
+{	
 	// Check appliation parameters
 	MainParameters mParameters; 
 	checkParameters(&mParameters,argc,argv);

@@ -7,7 +7,7 @@
 struct MainParameters
 {
 	std::string comPort;
-	
+	int color;	
 };
 
 int checkParameters(MainParameters* mp, int argc, char *argv[])

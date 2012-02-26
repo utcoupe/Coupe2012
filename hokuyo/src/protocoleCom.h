@@ -16,19 +16,22 @@
 //! Format (idCMD_SEP_(x,y)_SEP_(x,y)) 
 void send(TYPE_IDCMD idCmd)
 {
+	bool pass=false;
 	std::ostringstream mess;
 	mess.str(""); 
-	mess << ("[");
-	mess << idCmd;
 	
+	mess << idCmd << SEP;
+	mess << ("(");
 	std::list<coord>::iterator it;
-	for ( it=robot.begin() ; it!=robot.end(); it++ )
+	for ( it=robot.begin() ; it!=robot.end() ; it++ )
 	{
-		mess << SEP << "(" << (*it).x << "," << (*it).y << ")";
+		if(pass){
+			mess << SEP; 
+		}
+		mess << "(" << (*it).x << "," << (*it).y << ")";
+		pass=true;
 	}
-	
-	mess << "]";
-
+	mess << ")";
 	std::cout << mess.str() << std::endl; 
 }
 

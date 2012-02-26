@@ -17,7 +17,7 @@ class thRead(threading.Thread):
 			r = p.stdout.readline()
 			p.stdout.flush()
 			print r
-			if(r.find('.')!=-1):
+			if(r.find(',')!=-1):
 				listCoor = eval(r)
 				listCoor = listCoor[1:]
 				for li in listCoor:				

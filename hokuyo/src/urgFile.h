@@ -8,12 +8,19 @@ using namespace qrk;
 long indexMax;
 long indexMin;
 long *distanceMax;
+
+const long min_length=20;
+const long max_length=3000;
  
 //! initalisation des valeurs de références
 void initRef(std::vector<long> data, int n, UrgCtrl* urg)
-{
-	indexMax = urg->index2deg(0);
-	indexMin = urg->index2deg(-90);
+{	
+	indexMax = urg->deg2index(0);
+	indexMin = urg->deg2index(-90);
+	
+	#if DEBUG
+	std::cout << "InitRef" << std::endl;
+	#endif
 	
 	distanceMax = new long[data.size()];
 	for(int ind=indexMin ; ind<indexMax ; ind++)
@@ -26,25 +33,43 @@ void initRef(std::vector<long> data, int n, UrgCtrl* urg)
 		else{
 			distanceMax[ind]=LY*cos(RAD90-radian);	
 		}
+		
 		#if DEBUG
-		std::cout << distanceMax[ind] << std::endl;
+			std::cout << urg->index2deg(ind) << ":" << distanceMax[ind] << "||";
 		#endif
 	}
 	
+	#if DEBUG
+	std::cout << std::endl;
+	std::cout << std::endl;
+	#endif
 }
 
 //! calcul la position d'un robot en fonction d'un groupe de points
 coord computeBotLocation(std::list<coord> bot)
 {
 	coord rob;
+	rob.x=0;
+	rob.y=0;
+	int nb=0;
 	
 	std::list<coord>::iterator it;
 	for ( it=bot.begin() ; it!=bot.end(); it++ )
 	{
 		rob.x+=(*it).x;
 		rob.y+=(*it).y;
+		
+		if(nb>0){
 		rob.x/=2;
 		rob.y/=2;
+		}
+		
+		nb++;
+		
+		#if DEBUG
+		std::cout << (*it).x << ":" << (*it).y << std::endl;
+		std::cout << "__" << rob.x << ":" << rob.y << std::endl;
+		#endif
 	}
 	
 	// Changement de repére
@@ -63,32 +88,33 @@ bool checkPointBot(coord p1, coord p2)
 	if(distance>TOLERANCE){
 		return false;
 	}
-
+	
 	return true;
 } 
 
 //! Traitement des données venant de l'hokuyo
 void interpretData(std::vector<long> data, int n, UrgCtrl* urg)
 {	
+	robot.clear();
 	std::list<coord> bot;
 	
 	for(int j = indexMin; j < indexMax; ++j) {
 		long l = data[j];
 		
-		
-		if(l<distanceMax[j])
+		if(l>min_length && l<distanceMax[j])
 		{
 			coord c;
 			double radian = urg->index2rad(j);
 			radian = ABS(radian);
 			c.x = l*cos(radian); 
-			c.y = l*cos(radian);
-
+			c.y = l*sin(radian);
+			
 			#if DEBUG
-				std::cout << "(" << c.x << "," << c.y << ")" << std::endl;
+			double degr = urg->index2deg(j);
+			std::cout << "(" << c.x << "," << c.y << ")" << degr << ":" << l << "|||";
 			#endif
 			
-			
+		
 			if(bot.empty())
 			{
 				bot.push_front(c);
@@ -115,8 +141,8 @@ void interpretData(std::vector<long> data, int n, UrgCtrl* urg)
 				bot.clear();
 			}
 		}
-		
 	}
+	
 }
 
 
@@ -124,7 +150,6 @@ void interpretData(std::vector<long> data, int n, UrgCtrl* urg)
 void* urgAnalyse(void* arg)
 {
 
-	
 #if 1
 		// Recupération des données
 		MainParameters* data=(MainParameters*)arg;
@@ -135,7 +160,7 @@ void* urgAnalyse(void* arg)
 			std::cout << "UrgCtrl::connect: " << urg.what() << std::endl;
 			exit(1);
 		}
-
+		
 		// Capture Mode
 	#if URG_AUTO_CAPTURE
 		urg.setCaptureMode(AutoCapture);
@@ -148,9 +173,11 @@ void* urgAnalyse(void* arg)
 		int scan_msec = urg.scanMsec();
 
 		// Défintion de l'angle de traitement
+		//! TODO changer les angles en fonction du coté jouer
 	#if 1
-		const double rad90 = 90.0 * M_PI / 180.0;
-		urg.setCaptureRange(urg.rad2index(-rad90), urg.rad2index(rad90));
+		double radMin = -(90.0 * M_PI / 180.0);
+		double radMax = 00.0 * M_PI / 180.0;
+		urg.setCaptureRange(urg.rad2index(radMin), urg.rad2index(radMax));
 	#endif
 
 		/*
@@ -160,11 +187,20 @@ void* urgAnalyse(void* arg)
 		urg.setCaptureTimes(CaptureTimes);
 		*/
 		
-
 		// Boucle d'acuqisitions, traitements
 		bool initRefe = false;
+#if DEBUG
+		int h=10;
+		while(h>0)
+#else
 		while(!stop)
+#endif
 		{
+			#if DEBUG
+			h--;
+			std::cout << std::endl;
+			#endif
+			
 			long timestamp = 0;
 			std::vector<long> data;
 
@@ -176,13 +212,15 @@ void* urgAnalyse(void* arg)
 			}
 			
 			//
-			if(!initRefe){
+			if(!initRefe && n>0){
 				initRef(data,n,&urg);
 				initRefe = true;
 			}
 			
-			// C'est ici que l'on traite les données
-			interpretData(data,n,&urg);	
+			if(n>0){
+				// C'est ici que l'on traite les données
+				interpretData(data,n,&urg);	
+			}	
 		}
 
 #endif
