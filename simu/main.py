@@ -17,6 +17,9 @@ Chaque robot défini les canaux sur les quels il veut se connecter
 @author Pierre-Henry Fricot
 @author Cédric Bache
 """
+
+import optparse
+
 from define import *
 
 
@@ -37,6 +40,24 @@ import threading
 from map import *
 
 if __name__ == "__main__":
+	
+	default = {}
+	default["server_ip"] 		= "localhost"
+	default["server_port"] 		= 6667
+	default.update(args)
+
+	usage = "usage: %prog [options]"
+	parser = optparse.OptionParser(usage,version="%prog 0.0")
+	parser.add_option("-S", "--server-ip",
+						action="store", dest="server_ip", default=default["server_ip"],
+						help="ip irc server")
+	parser.add_option("-P", "--server-port",
+						action="store", dest="server_port", type="int", default=default["server_port"],
+						help="port irc server")
+	(options, args) = parser.parse_args()
+
+
+	
 	match = Match()
 
 	# debug
@@ -53,7 +74,7 @@ if __name__ == "__main__":
 	hokuyo = Hokuyo(CANAL_HOKUYO, robots)
 
 	# ircbot
-	ircbot = SimuIrcBot("localhost", 6667, (CANAL_BIG_ASSERV,CANAL_MINI_ASSERV,CANAL_BIG_ASSERV+'2',CANAL_MINI_ASSERV+'2',CANAL_HOKUYO, CANAL_DEBUG))
+	ircbot = SimuIrcBot(options.server_ip, options.server_port, (CANAL_BIG_ASSERV,CANAL_MINI_ASSERV,CANAL_BIG_ASSERV+'2',CANAL_MINI_ASSERV+'2',CANAL_HOKUYO, CANAL_DEBUG))
 	ircbot.add_executer(debug)
 	ircbot.add_executer(hokuyo)
 	for i,robot in enumerate(robots):
