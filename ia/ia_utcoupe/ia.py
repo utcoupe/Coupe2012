@@ -196,7 +196,7 @@ class IA:
 
 			self.stats()
 				
-			delay = max(0.1, 0.3 - time.time() - start_main_loop)
+			delay = max(0.05, 0.2 - time.time() - start_main_loop)
 			time.sleep(delay)
 	
 	def loopRobot(self, robot):
