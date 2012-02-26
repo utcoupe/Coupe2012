@@ -16,7 +16,6 @@ from ia_utcoupe.ia import *
 default = {}
 default["server_ip"] 		= "localhost"
 default["server_port"] 		= 6667
-default.update(args)
 
 usage = "usage: %prog [options]"
 parser = optparse.OptionParser(usage,version="%prog 0.0")
