@@ -43,7 +43,7 @@ class IA:
 		pos_bigrobot, pos_mini_robot, pos_enemy1, pos_enemy2):
 
 		# création bot irc
-		self.ircbot = IABot("localhost", 6667, (canal_big_asserv, canal_mini_asserv, canal_hokuyo, canal_debug))
+		self.ircbot = IABot(server_ip, server_port, (canal_big_asserv, canal_mini_asserv, canal_hokuyo, canal_debug))
 		
 		# démarage du bot irc
 		self.t_ircbot = threading.Thread(None, self.ircbot.start, "loop iabot")

@@ -44,7 +44,6 @@ if __name__ == "__main__":
 	default = {}
 	default["server_ip"] 		= "localhost"
 	default["server_port"] 		= 6667
-	
 
 	usage = "usage: %prog [options]"
 	parser = optparse.OptionParser(usage,version="%prog 0.0")
