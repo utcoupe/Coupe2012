@@ -75,8 +75,7 @@ class IA:
 		#####
 
 		# création du graph de déplacement
-		ng = NavGraph(R_BIGROBOT)
-		ng.load_xml(FILENAME_MAP)
+		ng = NavGraph(R_BIGROBOT,FILENAME_MAP)
 		ng.add_dynamic_obstacle(ConvexPoly().initFromCircle(self.init_pos['enemy1'],200,8))
 		ng.add_dynamic_obstacle(ConvexPoly().initFromCircle(self.init_pos['enemy2'],200,8))
 		ng.add_dynamic_obstacle(ConvexPoly().initFromCircle(self.init_pos['mini'],R_MINIROBOT,8))
@@ -99,8 +98,7 @@ class IA:
 		#####
 		
 		# création du graph de déplacement
-		ng = NavGraph(R_BIGROBOT)
-		ng.load_xml(FILENAME_MAP)
+		ng = NavGraph(R_BIGROBOT,FILENAME_MAP)
 		ng.add_dynamic_obstacle(ConvexPoly().initFromCircle(self.init_pos['enemy1'],200,8))
 		ng.add_dynamic_obstacle(ConvexPoly().initFromCircle(self.init_pos['enemy2'],200,8))
 		ng.add_dynamic_obstacle(ConvexPoly().initFromCircle(self.init_pos['big'],R_BIGROBOT,8))
@@ -157,6 +155,11 @@ class IA:
 		print("Exit")
 
 	def mainloop(self):
+		self.debug.reset()
+		# premier rafraichissement
+		self.gamestate.ask_update()
+		self.gamestate.wait_update()
+		# mainloop
 		while 1:
 			start_main_loop = time.time()
 
@@ -193,7 +196,7 @@ class IA:
 
 			self.stats()
 				
-			delay = max(0.001, 0.2 - time.time() - start_main_loop)
+			delay = max(0.1, 0.3 - time.time() - start_main_loop)
 			time.sleep(delay)
 	
 	def loopRobot(self, robot):
@@ -255,6 +258,7 @@ class IA:
 		for k, s in self.sums.items():
 			if s['n'] != 0:
 				print(k, s['t']/s['n'])
+		self.gamestate.print_stats()
 
 
 		
