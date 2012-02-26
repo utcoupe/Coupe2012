@@ -29,12 +29,15 @@ class Poly:
 	
 
 class Window(tk.Tk):
-	def __init__(self):
+	def __init__(self, init_file):
 		tk.Tk.__init__(self,None)
 		self.canvas = tk.Canvas(self, width=WIDTH, height=HEIGHT, background='white')
 		self.canvas.pack()
 		self.canvas.bind("<Button-1>", self.callback)
 		self.polygons = {}
+		f = open(filename)
+		self.partition = Partition(None,None,None,f.read())
+		f.close()
 
 	def callback(self, event):
 		print(event.x / self.w_to_px, event.y / self.h_to_px)
@@ -66,24 +69,46 @@ class Window(tk.Tk):
 				path.append(point[1] * h_to_px)
 			self.canvas.create_polygon(path, outline='green')
 		
-		for poly in self.polygons.values():
+		"""for poly in self.polygons.values():
 			for n in poly.neighbors:
 				if n in self.polygons:
 					neighbor = self.polygons[n]
 					points = [poly.middle()[0] * w_to_px, poly.middle()[1] * h_to_px, neighbor.middle()[0] * w_to_px, neighbor.middle()[1] * h_to_px]
 					self.canvas.create_line(points, fill='blue')
-	
+		"""
 		
 	def load_file(self,filename):
-		request = open(filename).read()
-		partition = Partition()
-		partition.calc(request)
-		self.polygons = partition.polygons
-		
-		
+		f = open(filename)
+		request = f.read()
+		f.close()
+		self.partition.calc(request)
+		self.polygons = self.partition.polygons
+
+
 import sys
+import threading
+
+def loop():
+	"""while 1:
+		filename = input("filename?")
+		w.load_file(filename)
+		w.draw_polygons()"""
+	filename = "data/obstacles/data.cin"
+	w.load_file(filename)
+	w.draw_polygons()
+	input()
+	filename = "data/obstacles/data2.cin"
+	w.load_file(filename)
+	w.draw_polygons()
+	input()
+	filename = "data/obstacles/data3.cin"
+	w.load_file(filename)
+	w.draw_polygons()
+	w.partition.stop()
+		
 filename = sys.argv[1]
-w = Window()
-w.load_file(filename)
-w.draw_polygons()
+w = Window(filename)
+t = threading.Thread(target=loop)
+t.setDaemon(True)
+t.start()
 w.mainloop()

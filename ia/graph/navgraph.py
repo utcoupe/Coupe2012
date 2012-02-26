@@ -13,24 +13,31 @@ from vertexnode import *
 
 
 class NavGraph:
-	def __init__(self, offset=1):
+	def __init__(self, offset, xml_filename):
 		self.areas = {}
 		self.vertices = {}
 		self.width = 0
 		self.height = 0
-		self.container = None
 		self.obstacles = []
 		self.dynamic_obstacles = []
 		self.offset = offset
-		self.partition = Partition()
+		
+		self.load_xml(xml_filename)
+		self.container = Poly(((0,0),(self.width,0),(self.width,self.height),(0,self.height)))
+		self.partition = Partition(
+			offset,
+			self.container.points,
+			self.obstacles
+			)
+		self.calc_areas()
+		self.calc_vertex_graph()
 		self.pathfinding_area = Pathfinding(self.areas.values(), NAVGRAPH)
 		self.pathfinding_vertices = Pathfinding(self.vertices.values(), NAVGRAPH)
 
 	def calc_areas(self):
 		for k in tuple(self.areas.keys()):
 			self.areas.pop(k)
-		self.container = Poly(((0,0),(self.width,0),(self.width,self.height),(0,self.height)))
-		request = self.partition.make_request(self.container.points, self.obstacles + list(map(lambda p: p.points, self.dynamic_obstacles)), self.offset)
+		request = self.partition.obstacles_to_str(list(map(lambda p: p.points, self.dynamic_obstacles)))
 		self.partition.calc(request)
 		for i,poly in self.partition.polygons.items():
 			self.areas[i] = Area(poly.points)
@@ -68,8 +75,6 @@ class NavGraph:
 		"""
 		self.width, self.height, polys = load_xml(filename)
 		self.obstacles = list([ poly.points for poly in polys])
-		self.calc_areas()
-		self.calc_vertex_graph()
 
 	def get_path(self, p_depart, p_arrive):
 		return self.get_path_vertex_mode(p_depart, p_arrive)
@@ -193,10 +198,9 @@ if __name__ == "__main__":
 	import sys
 	filename = "map.xml"
 	offset= sys.argv[1]
-	ng = NavGraph(offset)
 	start = time.time()
-	ng.load_xml(filename)
-	print("xml load time : %s" % (time.time() - start))
+	ng = NavGraph(offset, filename)
+	print("init time : %s" % (time.time() - start))
 	
 	sys.path.append("../visualisation")
 	from graphview import *

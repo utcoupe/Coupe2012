@@ -159,7 +159,7 @@ class MyPyIrcBot(ircbot.SingleServerIRCBot):
 			[(server_ip, server_port)],
 			nickname,
 			"Bot réalisé en Python avec ircbot",
-			1
+			2
 		)
 		
 		self.t = threading.Thread(None, self._loop_executers, "mypyircbot-loop_executers")

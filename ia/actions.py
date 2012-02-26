@@ -24,7 +24,13 @@ class ActionBouteille(Action):
 	def action(self):
 		print("YOUHOU")
 		
+class ActionCarte(Action):
+	def __init__(self, robot, enemies, point_acces):
+		Action.__init__(self, robot, enemies, point_acces)
 
+	def action(self):
+		print("YOUHOU")
+		
 
 
 def get_actions_bigrobot(robot, asservissement, enemies):
@@ -46,5 +52,6 @@ def get_actions_minirobot(robot, asservissement, enemies):
 	# bouteilles
 	actions.append(ActionBouteille(robot, asservissement, enemies, (640, 1750)))
 	actions.append(ActionBouteille(robot, asservissement, enemies, (1883, 1750)))
+	actions.append(ActionCarte(robot, enemies, (1500, 250)))
 
 	return actions
