@@ -1,13 +1,11 @@
 /**
+ * \file 	urgFile.h
+ * \author 	Xavier RODRIGUEZ
+ * \date	19/02/2012
  * 
  * */
-#include "UrgCtrl.h"
-using namespace qrk;
 
-// A calculer une seule fois 
-long indexMax;
-long indexMin;
-long *distanceMax;
+
 
 const long min_length=20;
 const long max_length=3000;
@@ -155,7 +153,7 @@ void* urgAnalyse(void* arg)
 		MainParameters* data=(MainParameters*)arg;
 
 		// Check connection
-		UrgCtrl urg;
+		
 		if (! urg.connect(data->comPort.c_str())) {
 			std::cout << "UrgCtrl::connect: " << urg.what() << std::endl;
 			exit(1);
@@ -226,3 +224,41 @@ void* urgAnalyse(void* arg)
 #endif
 	return NULL;
 }
+
+
+
+
+
+
+//! Fonction pour retrouver le port ttyAcm de l'hokuyo automatiquement
+#if REGLAGE_AUTO
+string getTtyAcm()
+{
+	ostringstream device;
+	
+	// Test des 10 ports ACM ^^
+	for(int port=0 ; port<10 ; port++)
+	{
+		device.str(""); 
+		device << "/dev/ttyACM";
+		device << port; 
+		
+		#if DEBUG
+			cout << device.str() << " : ";
+		#endif
+		if( urg.connect(device.str().c_str()) ) {
+			#if DEBUG
+			cout << " OK " << endl;
+			#endif
+			return device.str();
+		}
+		#if DEBUG
+			cout << " Fail " << endl;
+		#endif
+	}
+	
+	return NULL;
+}
+#endif
+
+

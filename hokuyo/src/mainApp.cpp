@@ -1,5 +1,7 @@
 /**
- * Application de gestion de l'hokuyo
+ * \file 	mainApp.cpp
+ * \author 	Xavier RODRIGUEZ
+ * \date	29/02/2012
  * 
  * TODO
  * - Réorganiser le code 
@@ -7,42 +9,8 @@
  * - Choix de la couleur
  * 
  * */
-#define DEBUG 0
-#define NB_MAX_ROBOT 4
-#define URG_AUTO_CAPTURE 1
-
-#include <iostream>
-#include <sstream>
-#include <stdio.h>
-#include <cstdlib>
-#include <string.h>
-#include <pthread.h>
-#include <math.h>
-#include <list>
-
-#include "delay.h"
-
-// Définition Globale, la façon la plus simple de faire communiquer des
-// threads ^^
-struct coord{
-	int x;
-	int y;
-};
-
-bool stop=false;
-pthread_mutex_t mutex;
-std::list<coord> robot;
-
-// Largeur et longueur de la table en mm
-#define LX 3000
-#define LY 2000
-#define TETA_DIAG 0.59 // en radian, sinon 33.69 degree
-#define RAD90 1.57
-
-#define TOLERANCE 50
-
-#define ABS(a)	   (((a) < 0) ? -(a) : (a))
-
+ 
+#include "global.h"
 #include "checkParameters.h"
 #include "protocoleCom.h"
 #include "urgFile.h"
@@ -50,6 +18,9 @@ std::list<coord> robot;
 //! --- MAIN ^^ ---
 int main(int argc, char *argv[])
 {	
+	
+	string ahahah = getTtyAcm();
+	
 	// Check appliation parameters
 	MainParameters mParameters; 
 	checkParameters(&mParameters,argc,argv);
@@ -70,7 +41,7 @@ int main(int argc, char *argv[])
         return -1;
     }
 	
-	// Kill des threads
+	// Kill propre des threads
     if(pthread_join(thrCom, NULL))
     {
         printf("Could not join thread\n");
