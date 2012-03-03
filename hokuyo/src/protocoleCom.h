@@ -5,8 +5,6 @@
  * 
  * */
 
-
-
 #define SEP "."
 #define TYPE_IDCMD int
 

@@ -8,10 +8,9 @@
 #define GLOBAL_H
  
 // Paramétres
-#define DEBUG 0
+#define DEBUG 1
 #define NB_MAX_ROBOT 4
 #define URG_AUTO_CAPTURE 1
-#define REGLAGE_AUTO 1
  
 // Libs
 #include <iostream>
@@ -45,19 +44,36 @@ struct coord{
 
 #define ABS(a)	   (((a) < 0) ? -(a) : (a))
 
+#define VIOLET 1
+#define ROUGE 2
+
 
 // Variables globals de controles
+
+	// Thread control
 bool stop=false;
 pthread_mutex_t mutex;
-
+	
+	// Result control
 std::list<coord> robot;
 
-UrgCtrl urg;
+	// Urg control
+std::string g_comPort;
+UrgCtrl 	g_urg;
+int 		g_scan_msec;
 
-long indexMax;
-long indexMin;
-long *distanceMax;
+	// Environment information
+short 		g_color;	
+	
+double 		g_radMin;
+double 		g_radMax;
+	
+long 		g_indexMax;
+long 		g_indexMin;
 
+long* 		g_distanceMax;
 
- 
+const long 	min_length=20;
+const long 	max_length=3000;
+
 #endif  //GLOBAL_H

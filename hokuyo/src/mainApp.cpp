@@ -4,9 +4,10 @@
  * \date	29/02/2012
  * 
  * TODO
- * - Réorganiser le code 
- * - Calibrage auto
- * - Choix de la couleur
+ * - Traiter les données incohérentes
+ * 		-> nbRobot > 4
+ * 		-> pas de données sur les robots présents sur la table 
+ * 
  * 
  * */
  
@@ -14,16 +15,18 @@
 #include "checkParameters.h"
 #include "protocoleCom.h"
 #include "urgFile.h"
+#include "urgStartFunction.h"
 
 //! --- MAIN ^^ ---
 int main(int argc, char *argv[])
 {	
-	
-	string ahahah = getTtyAcm();
-	
+	/*
 	// Check appliation parameters
 	MainParameters mParameters; 
 	checkParameters(&mParameters,argc,argv);
+	*/
+	
+	initHokuyo();
 
 	// Création thread
 	pthread_mutex_init(&mutex, NULL);	
@@ -35,7 +38,7 @@ int main(int argc, char *argv[])
         return -1;
     }
 	pthread_t thrHok;
-    if(pthread_create(&thrHok, NULL, &urgAnalyse, (void*)&mParameters))
+    if(pthread_create(&thrHok, NULL, &urgAnalyse, NULL))
     {
         printf("Could not create thread hok\n");
         return -1;
@@ -53,6 +56,6 @@ int main(int argc, char *argv[])
         return -1;
     }
 
-	delete[] distanceMax;
+	delete[] g_distanceMax;
 	return 0;
 }
