@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-from define import *
-from motorphysic import *
-from motorgraphic import *
+from ..define import *
+from .motorphysic import MotorPhysic
+from .motorgraphic import MotorGraphic
 
 
 		

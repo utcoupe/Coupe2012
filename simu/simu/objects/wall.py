@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
 
-from define import *
-from engineobject import EngineObjectWall
+from ..define import *
+from ..engine.engineobject import EngineObjectWall
 
 
 
@@ -13,6 +13,7 @@ class Wall(EngineObjectWall):
 			posA			= posa,
 			posB			= posb,
 			color			= "black"
+			mass			= MASS_INF
 		)
 
 	def __repr__(self):

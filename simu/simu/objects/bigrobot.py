@@ -2,11 +2,9 @@
 
 from pygame.locals import *
 
-from define import *
-import robot
-from pince import *
-
-from engineobject import EngineObjectPoly
+from . import robot
+from ..define import *
+from ..engine.engineobject import EngineObjectPoly
 
 class BigRobot(robot.Robot):
 	
@@ -35,7 +33,6 @@ class BigRobot(robot.Robot):
 			mm_to_px((100,0),(160,0),(280,90),(280,230),(160,320),(100,320),(0,290),(0,30)),
 			[self.rouleau]
 		)
-		self.pince = Pince()
 
 	def onEvent(self, event):
 		if event.type == KEYDOWN and event.key == K_LSHIFT:

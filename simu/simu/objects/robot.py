@@ -1,22 +1,12 @@
 # -*- coding: utf-8 -*-
 
 
-import sys
-import os
-sys.path.append(os.path.join("..","lib"))
-
-
 import random
 import math
 
-import pymunk
 
-
-from mypyirc.mypyircbot import *
-
-
-from define import *
-from engineobject import EngineObjectPoly
+from lib.mypyirc.mypyircbot import Executer
+from ..engine.engineobject import EngineObjectPoly
 
 
 class GoalPWM:

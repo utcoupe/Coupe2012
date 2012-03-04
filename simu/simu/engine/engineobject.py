@@ -1,5 +1,6 @@
 
-from define import *
+
+from ..define import *
 
 
 CIRCLE				= 0

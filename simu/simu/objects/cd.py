@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-from define import *
 
-from engineobject import EngineObjectCircle
+from ..define import *
+from ..engine.engineobject import EngineObjectCircle
 
 
 class Cd(EngineObjectCircle):

@@ -12,9 +12,9 @@ import collections
 import time
 import types
 
-from py3irc import ircbot,irclib
+from ..py3irc import ircbot,irclib
 
-from ircdefine import *
+from .ircdefine import *
 
 
 def channel_to_prefix_cmd(canal):

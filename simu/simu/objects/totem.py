@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-from define import *
-import pymunk as pm
 
-from engineobject import EngineObjectPoly
+
+from ..define import *
+from ..engine.engineobject import EngineObjectPoly
 
 
 class Totem(EngineObjectPoly):
@@ -12,7 +12,7 @@ class Totem(EngineObjectPoly):
 			colltype		= COLLTYPE_WALL,
 			posinit			= posinit,
 			color			= "brown",
-			mass			= pm.inf,
+			mass			= MASS_INF,
 			poly_points		= map(lambda p: mm_to_px(*p),[(0,0),(250,0),(250,250),(0,250)])
 		)
 

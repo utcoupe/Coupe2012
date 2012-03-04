@@ -4,13 +4,13 @@ import threading
 import time
 
 
-import mypyircbot
-from ircdefine import *
+from .mypyircbot import MyPyIrcBot
+from .ircdefine import *
 
 
-class BridgeBot(mypyircbot.MyPyIrcBot):
+class BridgeBot(MyPyIrcBot):
 	def __init__(self, server_ip, server_port, nickname, channel, protocole_file, protocole_prefixe):
-		mypyircbot.MyPyIrcBot.__init__(self, server_ip, server_port, nickname, [channel])
+		MyPyIrcBot.__init__(self, server_ip, server_port, nickname, [channel])
 
 		self.channel = channel
 

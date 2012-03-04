@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 
-from define import *
-import pymunk as pm
 
-from engineobject import EngineObjectCircle
+from ..define import *
+from ..engine.engineobject import EngineObjectCircle
 
 
 
@@ -11,7 +10,7 @@ class Tour(EngineObjectCircle):
 	def __init__(self):
 		EngineObjectCircle.__init__(self,
 			colltype		= COLLTYPE_WALL,
-			mass			= pm.inf,
+			mass			= MASS_INF,
 			posinit			= mm_to_px(1500,1000),
 			color			= "green",
 			radius			= mm_to_px(75)

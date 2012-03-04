@@ -2,8 +2,8 @@
 
 from pygame.locals import *
 
-from define import *
-import robot
+from ..define import *
+from . import robot
 
 
 

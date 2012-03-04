@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 
 
-from define import *
 
 import pymunk as pm
 from pymunk import Vec2d
 
-from engineobject import *
+from ..define import *
+from .engineobject import *
 
 class MotorPhysic:
 	""" unité : mm """

@@ -27,10 +27,10 @@ write simpler bots.
 import sys
 import copy
 
-from irclib import SimpleIRCClient
-from irclib import nm_to_n, irc_lower, all_events
-from irclib import parse_channel_modes, is_channel
-from irclib import ServerConnectionError
+from .irclib import SimpleIRCClient
+from .irclib import nm_to_n, irc_lower, all_events
+from .irclib import parse_channel_modes, is_channel
+from .irclib import ServerConnectionError
 
 class SingleServerIRCBot(SimpleIRCClient):
     """A single-server IRC bot class.

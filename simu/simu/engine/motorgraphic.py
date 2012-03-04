@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-from define import *
 
 import math
 
@@ -8,8 +7,8 @@ import pygame as pg
 from pygame.locals import *
 from pygame.color import *
 
-
-from engineobject import *
+from ..define import *
+from .engineobject import CIRCLE, POLY, WALL
 
 class MotorGraphic():	
 	def __init__(self, debug):

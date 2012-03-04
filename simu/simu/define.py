@@ -1,11 +1,8 @@
 # -*- coding: utf-8 -*-
 
-import sys
-import os
-FILE_DIR  = os.path.dirname(os.path.abspath(__file__))
-sys.path.append(os.path.join(FILE_DIR,"..","lib"))
+from pymunk import inf as MASS_INF
 
-from mypyirc.ircdefine import *
+from lib.mypyirc.ircdefine import *
 
 
 FPS					= 60
