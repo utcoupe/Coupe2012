@@ -8,13 +8,18 @@ from pince import *
 
 class Rouleau(EngineObject):
 	def __init__(self, offset):
-		EngineObject.__init__(self)
-		self.t = POLY
-		self.color = "orange"
-		self.poly_points = list(map(lambda p: mm_to_px(*p),[(0,0),(170,0),(170,170),(0,170)]))
-		self.offset = offset
-		self.collision_type = COLLTYPE_ROULEAU
-
+		EngineObject.__init__(self,
+			POLY,
+			COLLTYPE_ROULEAU,
+			1,
+			(0,0),
+			"orange",
+			map(lambda p: mm_to_px(*p),[(0,0),(170,0),(170,170),(0,170)]),
+			0,
+			(None,None),
+			offset,
+			[]
+		)
 
 class BigRobot(robot.Robot):
 	
@@ -34,7 +39,7 @@ class BigRobot(robot.Robot):
 			10,
 			color,
 			mm_to_px((100,0),(160,0),(280,90),(280,230),(160,320),(100,320),(0,290),(0,30)),
-			self.rouleau
+			[self.rouleau]
 		)
 		self.pince = Pince()
 

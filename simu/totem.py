@@ -6,13 +6,7 @@ import pymunk as pm
 
 
 class Totem(EngineObject):
-	def __init__(self,position):
-		EngineObject.__init__(self)
-		self.t = POLY
-		self.color = "brown"
-		self.mass = pm.inf
-		self.poly_points = list(map(lambda p: mm_to_px(*p),[(0,0),(250,0),(250,250),(0,250)]))
-		self.posinit = position
-		self.collision_type = COLLTYPE_WALL
+	def __init__(self,posinit):
+		EngineObject.__init__(self, POLY, COLLTYPE_WALL, pm.inf, posinit, "brown", map(lambda p: mm_to_px(*p),[(0,0),(250,0),(250,250),(0,250)]), 0, (None,None), (0,0), [])
 
 

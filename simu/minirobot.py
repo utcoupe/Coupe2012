@@ -21,7 +21,8 @@ class MiniRobot(robot.Robot):
 			position,
 			5,
 			color,
-			mm_to_px((0,0),(0,200),(200,200),(200,0))
+			mm_to_px((0,0),(0,200),(200,200),(200,0)),
+			[]
 		)
 
 	def onEvent(self, event):

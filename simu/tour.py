@@ -7,12 +7,6 @@ import pymunk as pm
 
 class Tour(EngineObject):
 	def __init__(self):
-		EngineObject.__init__(self)
-		self.posinit = mm_to_px(1500,1000)
-		self.t = CIRCLE
-		self.mass = pm.inf
-		self.radius = mm_to_px(75)
-		self.color = "green"
-		self.collision_type = COLLTYPE_WALL
+		EngineObject.__init__(self, CIRCLE, COLLTYPE_WALL, pm.inf, mm_to_px(1500,1000), "green", [], mm_to_px(75), (None,None), (0,0), [])
 
 

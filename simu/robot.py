@@ -29,17 +29,9 @@ class GoalPOS:
 
 
 class Robot(EngineObject, Executer):
-	def __init__(self, canal_asserv, team, position, mass, color, poly_points, *custom_objects):
-		EngineObject.__init__(self, *custom_objects)
+	def __init__(self, canal_asserv, team, posinit, mass, color, poly_points, custom_objects):
+		EngineObject.__init__(self, POLY, COLLTYPE_ROBOT, mass, posinit, color, poly_points, 0, (None,None), (0,0), custom_objects)
 		Executer.__init__(self)
-
-		# variables requises dans un EngineObject
-		self.t = POLY
-		self.collision_type = COLLTYPE_ROBOT
-		self.mass = mass
-		self.posinit = position
-		self.color = color
-		self.poly_points = list(poly_points)
 
 		# vitesse maximale (quand pwm=255)
 		self.max_speed = 1000

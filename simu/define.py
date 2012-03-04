@@ -29,9 +29,29 @@ T_CD				= 0
 T_LINGOT			= 1
 
 class EngineObject:
-	def __init__(self, *custom_objects):
+	def __init__(self, t, colltype, mass, posinit, color, poly_points, radius, posa_posb, offset, custom_objects):
+		"""
+		@param t type d'objet CIRCLE|POLY|WALL
+		@param colltype mask de collision
+		@param mass la masse de l'objet
+		@param posinit position initiale de l'objet
+		@param color la couleur de l'objet
+		@param poly_points (pour type=POLY) les points déterminants le polygon (shape) de l'objet
+		@param radius (pour type=CIRCLE)
+		@param posa_posb (pour type=WALL) point A, point B
+		@param offset l'offset à appliquer aux points
+		@param custom_objects les objets à "greffer"
+		"""
+		self.t = t
+		self.collision_type = colltype
+		self.mass = mass
+		self.posinit = posinit
+		self.color = color
+		self.poly_points = list(poly_points)
+		self.radius = radius
+		self.inita,self.initb = posa_posb
+		self.offset = offset
 		self.custom_objects = list(custom_objects)
-		self.offset = (0,0)
 	
 	def step(self, dt):
 		pass
