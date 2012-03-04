@@ -1,3 +1,10 @@
+/**
+ * \file 	protocole.h
+ * \author 	Xavier RODRIGUEZ
+ * \date	19/02/2012
+ * 
+ * */
+
 #define SEP "."
 #define TYPE_IDCMD int
 

@@ -1,3 +1,9 @@
+/**
+ * \file 	checkParameters.h
+ * \author 	Xavier RODRIGUEZ
+ * \date	19/02/2012
+ * 
+ * */
 #ifndef CHECKPARAMETERS_H
 #define CHECKPARAMETERS_H
 /**
