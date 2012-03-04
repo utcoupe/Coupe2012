@@ -1,7 +1,7 @@
 
 
 import
-	>>> from vec import *
+	>>> from .vec import *
 
 init
 	>>> v = Vec([1,2,3])

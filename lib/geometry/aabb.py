@@ -1,5 +1,5 @@
 
-from vec import Vec
+from .vec import Vec
 
 
 class AABB:

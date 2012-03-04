@@ -1,9 +1,9 @@
 
 from math import *
 
-from vec import Vec
-from aabb import AABB
-from segment import Segment
+from .vec import Vec
+from .aabb import AABB
+from .segment import Segment
 
 class Poly:
 	def __init__(self, points=[]):

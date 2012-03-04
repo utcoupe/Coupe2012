@@ -1,7 +1,7 @@
 
 
-from poly import Poly
-from segment import *
+from .poly import Poly
+from .segment import *
 
 
 class ConvexPoly(Poly):

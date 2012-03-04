@@ -3,7 +3,7 @@
 
 
 import
-	>>> from poly import Poly
+	>>> from .poly import Poly
 
 
 init

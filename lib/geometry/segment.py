@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 
-from vec import Vec
+from .vec import Vec
 
 
 class Segment:
