@@ -1,6 +1,6 @@
 
 
-from lib.mypyirc.mypyircbot import Executer
+from py3irc.mypyirc.mypyircbot import Executer
 
 
 class Hokuyo(Executer):

@@ -4,7 +4,7 @@
 
 import types
 
-from lib.mypyirc.mypyircbot import MyPyIrcBot
+from py3irc.mypyirc.mypyircbot import MyPyIrcBot
 
 from .define import *
 

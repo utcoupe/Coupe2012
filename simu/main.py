@@ -30,7 +30,7 @@ import optparse
 import threading
 
 from simu import *
-from lib.mypyirc.ircdefine import *
+from py3irc.mypyirc.ircdefine import *
 
 
 if __name__ == "__main__":

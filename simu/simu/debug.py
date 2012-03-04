@@ -3,7 +3,7 @@
 
 import threading
 
-from lib.mypyirc.mypyircbot import Executer
+from py3irc.mypyirc.mypyircbot import Executer
 
 from .define import *
 
