@@ -6,20 +6,7 @@ from define import *
 import robot
 from pince import *
 
-class Rouleau(EngineObject):
-	def __init__(self, offset):
-		EngineObject.__init__(self,
-			POLY,
-			COLLTYPE_ROULEAU,
-			1,
-			(0,0),
-			"orange",
-			map(lambda p: mm_to_px(*p),[(0,0),(170,0),(170,170),(0,170)]),
-			0,
-			(None,None),
-			offset,
-			[]
-		)
+from engineobject import EngineObjectPoly
 
 class BigRobot(robot.Robot):
 	
@@ -31,7 +18,14 @@ class BigRobot(robot.Robot):
 			self.mouse_button = 3 # RMB
 			color = 'red'
 		nbCd=0
-		self.rouleau = Rouleau(mm_to_px(0,-85))
+		
+		self.rouleau = EngineObjectPoly(
+			colltype	= COLLTYPE_ROULEAU,
+			offset		= mm_to_px(0,-85),
+			color		= "orange",
+			poly_points = map(lambda p: mm_to_px(*p),[(0,0),(170,0),(170,170),(0,170)])
+		)
+		
 		robot.Robot.__init__(self,
 			canal_asserv,
 			team,

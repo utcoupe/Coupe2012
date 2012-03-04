@@ -2,11 +2,14 @@
 
 from define import *
 
+import math
 
 import pygame as pg
 from pygame.locals import *
 from pygame.color import *
 
+
+from engineobject import *
 
 class MotorGraphic():	
 	def __init__(self, debug):

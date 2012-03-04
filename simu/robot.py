@@ -16,6 +16,7 @@ from mypyirc.mypyircbot import *
 
 
 from define import *
+from engineobject import EngineObjectPoly
 
 
 class GoalPWM:
@@ -28,9 +29,16 @@ class GoalPOS:
 		self.v = v
 
 
-class Robot(EngineObject, Executer):
+class Robot(EngineObjectPoly, Executer):
 	def __init__(self, canal_asserv, team, posinit, mass, color, poly_points, custom_objects):
-		EngineObject.__init__(self, POLY, COLLTYPE_ROBOT, mass, posinit, color, poly_points, 0, (None,None), (0,0), custom_objects)
+		EngineObjectPoly.__init__(self,
+			colltype		= COLLTYPE_ROBOT,
+			mass			= mass,
+			posinit			= posinit,
+			color			= color,
+			poly_points		= poly_points,
+			custom_objects	= custom_objects
+		)
 		Executer.__init__(self)
 
 		# vitesse maximale (quand pwm=255)
@@ -143,5 +151,7 @@ class Robot(EngineObject, Executer):
 	def send_canal_asserv(self, *args):
 		self.send(self.canal_asserv, *args)
 
-	
+
+	def __repr__(self):
+		return "Robot"
 			
