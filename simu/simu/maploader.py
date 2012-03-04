@@ -1,13 +1,10 @@
 
 import xml.dom.minidom
 
-from lingot import *
-from wall import *
-from cd import *
-from totem import *
-from tour import *
+from .objects import *
+from .define import *
 
-def loadMap(filename,engine):
+def load_map(filename,engine):
 	
 	ofi = open(filename, 'r')
 	document = ofi.read()

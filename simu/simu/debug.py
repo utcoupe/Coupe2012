@@ -1,14 +1,11 @@
 # -*- coding: utf-8 -*-
 
 
+import threading
 
-import sys
-import os
-sys.path.append(os.path.join("..","lib"))
+from lib.mypyirc.mypyircbot import Executer
 
-from mypyirc.mypyircbot import *
-
-from define import *
+from .define import *
 
 
 class ShapeCircle:

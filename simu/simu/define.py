@@ -2,11 +2,11 @@
 
 from pymunk import inf as MASS_INF
 
-from lib.mypyirc.ircdefine import *
 
 
 FPS					= 60
 PX_TO_MM			= 4
+
 
 
 COLLTYPE_DEFAULT	= 0

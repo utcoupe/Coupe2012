@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from define import *
+from .define import *
 
 
 points = {

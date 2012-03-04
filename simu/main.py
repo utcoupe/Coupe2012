@@ -18,26 +18,20 @@ Chaque robot défini les canaux sur les quels il veut se connecter
 @author Cédric Bache
 """
 
+
+import sys
+import os
+DIR_PATH = os.path.dirname(os.path.abspath(__file__))
+sys.path.append(os.path.join(DIR_PATH, ".."))
+
+
+
 import optparse
-
-from define import *
-
-
-from simubot import *
-from engine import *
-from bigrobot import *
-from minirobot import *
-from lingot import *
-from wall import *
-from cd import *
-from totem import *
-from tour import *
-from match import *
-from hokyo import *
-from debug import *
-
 import threading
-from map import *
+
+from simu import *
+from lib.mypyirc.ircdefine import *
+
 
 if __name__ == "__main__":
 	
@@ -87,7 +81,7 @@ if __name__ == "__main__":
 	except Exception as ex:
 		print(ex)
 		
-	loadMap("map.xml",engine)
+	load_map("map.xml",engine)
 	
 	engine.add(bigrobot)
 	engine.add(minirobot)

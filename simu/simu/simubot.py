@@ -1,16 +1,12 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
-import sys
-import os
-sys.path.append(os.path.join("..","lib"))
 
 import types
 
-from mypyirc.mypyircbot import *
+from lib.mypyirc.mypyircbot import MyPyIrcBot
 
-
-from define import *
+from .define import *
 
 
 

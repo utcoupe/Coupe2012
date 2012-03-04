@@ -1,10 +1,6 @@
 
-import sys
-import os
-sys.path.append(os.path.join("..","lib","py3irc"))
 
-
-from mypyircbot import *
+from lib.mypyirc.mypyircbot import Executer
 
 
 class Hokuyo(Executer):
