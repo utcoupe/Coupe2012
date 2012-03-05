@@ -223,7 +223,7 @@ class MyPyIrcBot(ircbot.SingleServerIRCBot):
 			if len(args) == nb_args:
 				self.write_rep(f(*args,**options)+"\n")
 			else:
-				serv.privmsg(canal, "invalid arg number : need %s and get %s" % (str(inspect.getargspec(f)),msg_split))
+				self.send(canal, "invalid arg number : need %s and get %s" % (str(inspect.getargspec(f)),msg_split))
 		
 
 
@@ -288,15 +288,15 @@ class MyPyIrcBot(ircbot.SingleServerIRCBot):
 		try:
 			doc = getattr(self, f_name).__doc__
 		except AttributeError as ex:
-			self.serv.privmsg(canal, str(ex))
+			self.send(canal, str(ex))
 		else:
 			if not doc: doc = "No documentation"
 			irc_cmd = self.func_name_to_irc_cmd(f_name)
-			self.serv.privmsg(canal, " ")
-			self.serv.privmsg(canal, "## "+irc_cmd.upper()+" ##")
+			self.send(canal, " ")
+			self.send(canal, "## "+irc_cmd.upper()+" ##")
 			for line in doc.split("\n"):
-				self.serv.privmsg(canal, line)
-			self.serv.privmsg(canal, " ")
+				self.send(canal, line)
+			self.send(canal, " ")
 
 	def send(self, canal, msg):
 		"""
@@ -304,7 +304,11 @@ class MyPyIrcBot(ircbot.SingleServerIRCBot):
 		@param msg le message à envoyer
 		"""
 		print("SEND", canal, msg)
-		if self.serv: self.serv.privmsg(canal, msg)
+		if self.serv:
+			try:
+				self.serv.privmsg(canal, msg)
+			except irclib.ServerNotConnectedError as ex:
+				print("send error", ex)
 
 	def channel_to_prefix_cmd(self, canal):
 		return channel_to_prefix_cmd(canal)

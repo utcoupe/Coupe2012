@@ -55,7 +55,10 @@ class IABot(ircbot.SingleServerIRCBot):
 	def send(self, chan, msg):
 		if self.serv:
 			for m in str(msg).split("\n"):
-				self.serv.privmsg(chan, m)
+				try:
+					self.serv.privmsg(chan, m)
+				except irclib.ServerNotConnectedError as ex:
+					print("send error", ex)
 
 	def add_listener(self, listener):
 		self.listeners.append(listener)

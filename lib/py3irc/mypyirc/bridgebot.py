@@ -70,7 +70,7 @@ class BridgeBot(MyPyIrcBot):
 				print(ex)
 				time.sleep(2)
 			else:
-				if msg and self.serv:
-					self.serv.privmsg(self.channel, msg)
+				if msg:
+					self.send(self.channel, msg)
 					
 
