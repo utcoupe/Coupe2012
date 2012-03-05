@@ -193,23 +193,3 @@ class NavGraph:
 		""" fonction à appeller après avoir bougé un obstacle dynamic """
 		self.calc_areas()
 		self.calc_vertex_graph()
-
-
-if __name__ == "__main__":
-	import time
-	import sys
-	filename = "map.xml"
-	offset= sys.argv[1]
-	start = time.time()
-	ng = NavGraph(offset, filename)
-	print("init time : %s" % (time.time() - start))
-	
-	sys.path.append("../visualisation")
-	from graphview import *
-
-	dynamic_obstacle = Poly().initFromCircle((1500,1500),200,8)
-	ng.add_dynamic_obstacle(dynamic_obstacle)
-	ng.update()
-	
-	v = GraphView(ng,dynamic_obstacle)
-	v.mainloop()
