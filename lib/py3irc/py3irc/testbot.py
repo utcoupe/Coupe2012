@@ -75,13 +75,13 @@ class TestBot(SingleServerIRCBot):
             for chname, chobj in self.channels.items():
                 c.notice(nick, "--- Channel statistics ---")
                 c.notice(nick, "Channel: " + chname)
-                users = chobj.users()
+                users = list(chobj.users())
                 users.sort()
                 c.notice(nick, "Users: " + ", ".join(users))
-                opers = chobj.opers()
+                opers = list(chobj.opers())
                 opers.sort()
                 c.notice(nick, "Opers: " + ", ".join(opers))
-                voiced = chobj.voiced()
+                voiced = list(chobj.voiced())
                 voiced.sort()
                 c.notice(nick, "Voiced: " + ", ".join(voiced))
         elif cmd == "dcc":
@@ -94,6 +94,7 @@ class TestBot(SingleServerIRCBot):
 
 def main():
     import sys
+    
     if len(sys.argv) != 4:
         print ("Usage: testbot <server[:port]> <channel> <nickname>")
         sys.exit(1)
