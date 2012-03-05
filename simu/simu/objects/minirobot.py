@@ -8,7 +8,7 @@ from . import robot
 
 
 class MiniRobot(robot.Robot):
-	def __init__(self, canal_asserv, position, team):
+	def __init__(self, *, canal_asserv, canal_others, posinit, team):
 		if team == BLUE:
 			self.mouse_button = 1 # LMB
 			color = 'blue'
@@ -16,13 +16,13 @@ class MiniRobot(robot.Robot):
 			self.mouse_button = 3 # RMB
 			color = 'red'
 		robot.Robot.__init__(self,
-			canal_asserv,
-			team,
-			position,
-			5,
-			color,
-			mm_to_px((0,0),(0,200),(200,200),(200,0)),
-			[]
+			canal_asserv		= canal_asserv,
+			canal_others		= canal_others,
+			team				= team,
+			posinit				= posinit,
+			mass				= 10,
+			color				= color,
+			poly_points			= mm_to_px((0,0),(0,200),(200,200),(200,0)),
 		)
 
 	def onEvent(self, event):

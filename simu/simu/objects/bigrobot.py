@@ -27,15 +27,11 @@ class BigRobot(robot.Robot):
 			canal_others		= canal_others,
 			team				= team,
 			posinit				= posinit,
-			10,
-			color,
-			mm_to_px((100,0),(160,0),(280,90),(280,230),(160,320),(100,320),(0,290),(0,30)),
-			[self.rouleau]
+			mass				= 10,
+			color				= color,
+			poly_points			= mm_to_px((100,0),(160,0),(280,90),(280,230),(160,320),(100,320),(0,290),(0,30)),
+			custom_objects		= [self.rouleau]
 		)
-		
-		# rajouts des fonctions utilisées par le bot irc
-		# _cmd_asserv_<cmd> => cmd_<canal_asserv>_<cmd>
-		self.transform("others", canal_others)
 
 		self.nb_white_cds = 0
 		self.nb_black_cds = 0
@@ -51,14 +47,18 @@ class BigRobot(robot.Robot):
 			print(px_to_mm(p[0],p[1]))
 			self._cmd_asserv_goto(*px_to_mm(p[0],p[1],mm_to_px(1000)), id_msg=42)
 
-	def _cmd_others_drop(self):
-		pass
+	def _cmd_others_drop(self, **kwargs):
+		self.nb_white_cds = 0
+		self.nb_black_cds = 0
+		self.send_canal_asserv(kwargs['id_msg'], 1)
 	
-	def _cmd_others_vider_totem(self):
+	def _cmd_others_vider_totem(self, **kwargs):
 		pass
 
-	def _cmd_others_is_full(self):
-		
+	def _cmd_others_is_full(self, **kwargs):
+		nb_cds = self.nb_white_cds + self.nb_black_cds
+		r = 0 if nb_cds < MAX_CDS_IN_BIG_ROBOT else 1
+		self.send_canal_asserv(kwargs['id_msg'], r)
 
 	def eat_cd(self, color):
 		if color == 'white':

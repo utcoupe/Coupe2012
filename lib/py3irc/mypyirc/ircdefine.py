@@ -4,6 +4,8 @@ SEP					= "_"
 
 CANAL_BIG_ASSERV	= "#asserv"
 CANAL_MINI_ASSERV	= "#asservmini"
+CANAL_BIG_OTHERS	= "#others"
+CANAL_MINI_OTHERS	= "#othersmini"
 CANAL_HOKUYO		= "#hokuyo"
 CANAL_DEBUG			= "#debug"
 
