@@ -46,7 +46,7 @@ def run(**args):
 	default["channel"]			= "#test"
 	default["serial_port"]		= "/dev/ttyACM0"
 	default["serial_baudrate"]	= 115200
-	default["protocole_file"]	= "protocole.h"
+	default["protocole_file"]	= os.path.join(FILE_DIR,"..","protocole.h")
 	default["protocole_prefixe"]= "Q_"
 	default.update(args)
 	

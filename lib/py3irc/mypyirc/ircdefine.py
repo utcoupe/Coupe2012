@@ -1,6 +1,6 @@
 
 
-SEP					= '.'
+SEP					= "_"
 
 CANAL_BIG_ASSERV	= "#asserv"
 CANAL_MINI_ASSERV	= "#asservmini"
