@@ -1,5 +1,5 @@
 
-
+import re
 
 
 def canal_ircnormalize(canal):

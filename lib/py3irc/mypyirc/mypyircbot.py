@@ -107,7 +107,7 @@ class MyPyIrcBot(ircbot.SingleServerIRCBot):
 	def __init__(self, server_ip, server_port, nickname, channels):
 		self.serv = None
 		self.nickname = nickname
-		self.canaux = list(( chan if chan[0] == '#' else '#'+chan for chan in channels ))
+		self.canaux = list( map(canal_ircnormalize, channels) )
 
 		# objets contenants des commandes à executer
 		self.executers = {}
@@ -332,6 +332,8 @@ class MyPyIrcBot(ircbot.SingleServerIRCBot):
 					canal, msg = e.get_msg()
 			time.sleep(0.01)
 
-
+	def stop(self):
+		if self.serv:
+			self.serv.disconnect("Tchuss")
 
 
