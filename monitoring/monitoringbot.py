@@ -4,10 +4,11 @@
 import sys
 import os
 FILE_DIR  = os.path.dirname(os.path.abspath(__file__))
-sys.path.append(os.path.join(FILE_DIR,"..","lib","py3irc"))
+sys.path.append(os.path.join(FILE_DIR,"..","lib"))
 
 
-import mypyircbot
+from py3irc.mypyirc import mypyircbot
+from py3irc.mypyirc.ircdefine import *
 
 import subprocess
 import glob
@@ -16,7 +17,8 @@ import re
 
 class MonitoringBot(mypyircbot.MyPyIrcBot):
 	def __init__(self, server_ip, server_port):
-		mypyircbot.MyPyIrcBot.__init__(self, server_ip, server_port, "monitoringbot", "#monitoring")
+		self.canal = "#monitoring"
+		mypyircbot.MyPyIrcBot.__init__(self, server_ip, server_port, "monitoringbot", [self.canal])
 		self.load_all_bash()
 
 	def load_all_bash(self):
@@ -51,14 +53,13 @@ class MonitoringBot(mypyircbot.MyPyIrcBot):
 		@param cmd_name le nom de la commande
 		@param params liste des paramètres
 		"""
-		global COMPILED_F
+		global _RESULT_EXEC_
 		print("Generate function cmd_%s(%s)" % (cmd_name,params))
-		params = ','.join(params)
-		exec(("COMPILED_F = lambda {params}:"+
-			"MonitoringBot._MonitoringBot__cmd('{path}',{params})").format(path=path,params=params), globals())
-		COMPILED_F.__doc__ = "doc not available for the moment"
-		f_name = "cmd_"+cmd_name.lower()
-		setattr(self, f_name, COMPILED_F)
+		code = "def _RESULT_EXEC_(%s):\n" % ','.join(['self']+params+['**kwargs'])
+		code += "	return MonitoringBot._MonitoringBot__cmd('{path}',{params})".format(path=path, params=','.join(params))
+		exec(code, globals())
+		_RESULT_EXEC_.__doc__ = "doc not available for the moment"
+		self.add_cmd_function(self.canal, cmd_name, _RESULT_EXEC_)
 
 	@staticmethod
 	def __cmd(exec_file, *params):
@@ -67,10 +68,14 @@ class MonitoringBot(mypyircbot.MyPyIrcBot):
 		@param exec_file chemin vers l'exec bash
 		@param params les paramètres à envoyer à l'executable
 		"""
+		print(params)
 		p = subprocess.Popen([exec_file]+list(params), stdout=subprocess.PIPE)
 		msg = str(p.communicate()[0], "utf-8").strip()
-		return msg if msg else "No return"
-	
+		return msg if msg else "-1"
+
+	def write_rep(self, msg, id_msg=42):
+		""" Surcharge de la classe parente """
+		self.send(self.canal, SEP.join([str(id_msg), str(msg)]))
 
 
 if __name__ == "__main__":
