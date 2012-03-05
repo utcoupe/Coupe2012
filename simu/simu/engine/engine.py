@@ -24,6 +24,7 @@ class Engine:
 		self.motorphysic = MotorPhysic()
 		self.motorphysic.add_collision_handler(COLLTYPE_ROBOT, COLLTYPE_WALL, self.motorgraphic.draw_collision)
 		self.motorphysic.add_collision_handler(COLLTYPE_ROULEAU, COLLTYPE_CD, self.on_collision_rouleau_cd)
+		self.motorphysic.add_collision_handler(COLLTYPE_ROULEAU, COLLTYPE_LINGO, self.on_collision_rouleau_lingo)
 		self.running = True
 		self.objects = []
 		self.stop_irc = stop_irc
@@ -63,8 +64,27 @@ class Engine:
 			print("robot not found")
 		else:
 			cd = self.find_obj_by_shape(arb.shapes[1])
-			robot.eat_cd(cd.color)
-			self.objects_to_remove.append(cd)
+			if not cd:
+				print("Cd not found")
+			else:
+				robot.eat_cd(cd.color)
+				self.objects_to_remove.append(cd)
+
+	def on_collision_rouleau_lingo(self, space, arb):
+		"""
+		Quand un rouleau touche un cd
+		"""
+		robot = self.find_robot_by_rouleau_shape(arb.shapes[0])
+		if not robot:
+			print("robot not found")
+		else:
+			lingo = self.find_obj_by_shape(arb.shapes[1])
+			if not lingo:
+				print("Lingo not found")
+			else:
+				robot.eat_lingo()
+				self.objects_to_remove.append(lingo)
+		
 
 	def add(self, obj):
 		"""

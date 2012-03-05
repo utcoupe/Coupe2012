@@ -35,7 +35,7 @@ class BigRobot(robot.Robot):
 
 		self.nb_white_cds = 0
 		self.nb_black_cds = 0
-		self.nb_lingots = 0
+		self.nb_lingos = 0
 
 	def onEvent(self, event):
 		if event.type == KEYDOWN and event.key == K_LSHIFT:
@@ -56,8 +56,9 @@ class BigRobot(robot.Robot):
 		pass
 
 	def _cmd_others_is_full(self, **kwargs):
-		nb_cds = self.nb_white_cds + self.nb_black_cds
-		r = 0 if nb_cds < MAX_CDS_IN_BIG_ROBOT else 1
+		coeff_engorgement = (self.nb_white_cds+self.nb_black_cds) * COEFF_ENGORGEMENT_CD
+		coeff_engorgement += self.nb_lingos * COEFF_ENGORGEMENT_LINGO
+		r = 0 if coeff_engorgement < 1 else 1
 		self.send_canal_asserv(kwargs['id_msg'], r)
 
 	def eat_cd(self, color):
@@ -67,4 +68,7 @@ class BigRobot(robot.Robot):
 			self.nb_black_cds += 1
 		else:
 			print ("Couleur de Cd inconnue : %s" % color)
+
+	def eat_lingo(self):
+		self.nb_lingos += 1
 

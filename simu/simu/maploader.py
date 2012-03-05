@@ -22,3 +22,6 @@ def load_map(filename,engine):
 	
 	for tour in dom.getElementsByTagName("tour"):
 		engine.add(Tour())
+		
+	for lingo in dom.getElementsByTagName("lingo"):
+		engine.add(Lingo(mm_to_px(int(lingo.getAttribute("x")),int(lingo.getAttribute("y")))))

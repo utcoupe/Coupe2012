@@ -14,6 +14,7 @@ COLLTYPE_WALL		= 1
 COLLTYPE_ROBOT		= 2
 COLLTYPE_CD			= 3
 COLLTYPE_ROULEAU	= 4
+COLLTYPE_LINGO		= 5
 
 
 BLUE				= 0
@@ -22,9 +23,8 @@ RED					= 1
 T_CD				= 0
 T_LINGOT			= 1
 
-MAX_CDS_IN_BIG_ROBOT	= 20
-
-
+COEFF_ENGORGEMENT_CD	= 0.05 # eq : on peut mettre 20 Cds avant d'être plein (0.05 * 20 = 1)
+COEFF_ENGORGEMENT_LINGO	= 0.2
 
 def mm_to_px(*args):
 	"""

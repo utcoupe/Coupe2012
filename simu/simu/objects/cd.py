@@ -14,6 +14,5 @@ class Cd(EngineObjectCircle):
 			radius			= mm_to_px(60)
 		)
 
-
 	def __repr__(self):
 		return "Cd %s " % (self.posinit,)

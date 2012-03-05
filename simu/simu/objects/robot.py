@@ -147,7 +147,7 @@ class Robot(EngineObjectPoly, Executer):
 		self.send(self.canal_asserv, *args)
 	
 	def send_canal_others(self, *args):
-		self.send(self.canal_asserv, *args)
+		self.send(self.canal_others, *args)
 
 	def __repr__(self):
 		return "Robot"
