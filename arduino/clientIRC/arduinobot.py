@@ -20,8 +20,8 @@ class ArduinoBot(BridgeBot):
 		try:
 			self.serial = serial.Serial(serial_port, serial_baudrate, timeout=1, writeTimeout=1)
 		except serial.SerialException as ex:
-			print(ex)
-			#sys.exit(1)
+			print("Erreur lors de l'ouverture du port série",ex)
+			sys.exit(1)
 		print("OK")
 		
 		BridgeBot.__init__(self, server_ip, server_port, nickname, channel, protocole_file, protocole_prefixe)
