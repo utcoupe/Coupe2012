@@ -10,7 +10,8 @@ sys.path.append(os.path.join(FILE_DIR,"..","lib"))
 import optparse
 
 from py3irc.mypyirc.ircdefine import *
-from ia_utcoupe.ia import *
+from ia import IaUtcoupe
+
 
 
 default = {}
@@ -27,7 +28,7 @@ parser.add_option("-P", "--server-port",
 					help="port irc server")
 (options, args) = parser.parse_args()
 
-myia = IA(options.server_ip, options.server_port,
+myia = IaUtcoupe(options.server_ip, options.server_port,
 	CANAL_BIG_ASSERV, CANAL_MINI_ASSERV, CANAL_HOKUYO, CANAL_DEBUG,
 	(0,0), (0,0), (3000,0), (3000,0)
 )
