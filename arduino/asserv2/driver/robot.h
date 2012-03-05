@@ -33,9 +33,9 @@ class Robot
 		void init();
 		void update(int dt);
 		void reset_pid();
-		void go_to(long int x, long int y, double speed, double final_speed=0);
+		void go_to(long int x, long int y, double speed, double final_speed);
 		void set_pwm_right_left(int pwm);
-		void turn(double a, double speed = 200);
+		void turn(double a, double speed);
 		void update_speedf(double speed);
 		void cancel();
 		void set_x_y_a(long int x, long int y, double a);

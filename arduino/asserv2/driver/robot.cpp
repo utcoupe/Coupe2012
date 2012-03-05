@@ -319,7 +319,7 @@ void Robot::update_motors(int dt)
 	
 }
 
-void Robot::go_to(long int x, long int y, double speed, double final_speed)
+void Robot::go_to(long int x, long int y, double goal_speed, double final_speed)
 {
 	#define DEBUG_GOTO
 	#ifdef DEBUG_GOTO
@@ -333,18 +333,18 @@ void Robot::go_to(long int x, long int y, double speed, double final_speed)
 	Robot::setGoalPosition(x,y,speed);
 
 	double a = atan2(y, x);
-	this->rampe_alpha->compute(angle_diff(a, this->a) * ENC_CENTER_DIST_TICKS, 0, speed, 0.05, -0.05, 0, 0);
+	this->rampe_alpha->compute(angle_diff(a, this->a) * ENC_CENTER_DIST_TICKS, 0, goal_speed, 0.05, -0.05, 0, 0);
 
  	double dx = x-this->x;
 	double dy = y-this->y;
 	double d = (double)sqrt(dx*dx+dy*dy);
-	this->rampe_delta->compute(d, 0, speed, 0.01, -0.01, this->speed, final_speed);
+	this->rampe_delta->compute(d, 0, goal_speed, 0.01, -0.01, this->speed, final_speed);
 
 	
 	this->goal_reached = false;
 }
 
-void Robot::turn(double a, double speed)
+void Robot::turn(double a, double goal_speed)
 {
 	Robot::setGoalAngle(a,speed);
 	
