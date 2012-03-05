@@ -40,7 +40,7 @@ def raw_msg_to_msg_n_options(raw_msg):
 	"""
 	raw_msg = raw_msg.strip().lower()
 	if '#' in raw_msg:
-		msg, str_options = raw_msg.split('#')
+		msg, str_options = raw_msg.split('#',1)
 		msg.strip()
 		str_options.strip()
 	else:
