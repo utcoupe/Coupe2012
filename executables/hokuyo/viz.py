@@ -5,20 +5,25 @@ from subprocess import *
 import time
 from Tkinter import *
 
+robotSize= 150
+sizeFact = 5.0
+
 gbool = True
 robot=[]
-radbot=40
+radbot=robotSize/sizeFact
 
 p = Popen(["./hokuyoApp"], stdout=PIPE, stderr=PIPE, stdin=PIPE)
 
 class thRead(threading.Thread):
 	def run(self):
+		global robot
 		while gbool:
 			r = p.stdout.readline()
 			p.stdout.flush()
-			print r
-			if(r.find(',')!=-1):
-				listCoor = eval(r)
+			if(r.find('.')!=-1):
+				del(robot[:])
+				r = r.split('.')
+				listCoor = eval(r[1])
 				listCoor = listCoor[1:]
 				for li in listCoor:				
 					robot.append(li)
@@ -26,9 +31,9 @@ class thRead(threading.Thread):
 			
 class thWrite(threading.Thread):
 	def run(self):
+		time.sleep(1)
 		while gbool:
-			print 'CMD'
-			cmd='1.1'			
+			cmd='1.1\n'			
 			p.stdin.write(cmd.encode("utf-8"))
 			p.stdin.flush()
 			time.sleep(1)
@@ -46,10 +51,17 @@ def drawZone(canv):
 		y=-1
 		for c in coor:
 			if x==-1:
-				x=c
+				x=c/sizeFact
 			else:
-				y=c
+				y=c/sizeFact
 		drawcircle(canv,x,y,radbot)
+
+
+
+
+
+
+
 
 # ---
 t1=thRead()
@@ -61,7 +73,7 @@ t2.start()
 # ---
 root = Tk()
 
-canvas = Canvas(width=600, height=400, bg='blue')  
+canvas = Canvas(width=3000/sizeFact, height=2000/sizeFact, bg='blue')  
 canvas.pack(expand=YES, fill=BOTH) 
 
 root.mainloop()

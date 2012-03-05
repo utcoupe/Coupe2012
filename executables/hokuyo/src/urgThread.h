@@ -1,9 +1,54 @@
 /**
- * \file 	urgFile.h
+ * \file 	urgThread.h
  * \author 	Xavier RODRIGUEZ
- * \date	19/02/2012
+ * \date	05/03/2012
  * 
  * */
+#ifndef URGTHREAD_H
+#define URGTHREAD_H
+
+//! ---
+coord computeBotLocation(std::list<coord> bot);
+bool checkPointBot(coord p1, coord p2);
+void interpretData(std::vector<long> data, int n);
+//! ---
+
+void* urgLoop(void* arg)
+{
+	
+#if DEBUG
+	int h=10;
+	while(h>0)
+#else
+	while(!g_stop)
+#endif
+	{
+		#if DEBUG
+		h--;
+		std::cout << std::endl;
+		#endif
+			
+		long timestamp = 0;
+		std::vector<long> data;
+
+		// Get data
+		int n = g_urg.capture(data, &timestamp);
+		if(n <= 0){
+			delay(g_scanMsec);
+			continue;
+		}
+			
+		if(n>0){
+			// C'est ici que l'on traite les données
+			interpretData(data,n);	
+		}	
+	}
+
+	return NULL;
+}
+
+
+
 
 
 
@@ -108,54 +153,5 @@ void interpretData(std::vector<long> data, int n)
 }
 
 
-//! Fonction de traitement des données de l'hokuyo
-void* urgAnalyse(void* arg)
-{
-		/*
-		// Logiquement il est demandé de définir la fréquence de lecture des données
-		// mais il n'y a aucun détails sur l'unité utilisé, a tester.
-		enum { CaptureTimes = 10 };
-		urg.setCaptureTimes(CaptureTimes);
-		*/
-		
-		// Boucle d'acuqisitions, traitements
-#if DEBUG
-		int h=10;
-		while(h>0)
-#else
-		while(!stop)
-#endif
-		{
-			#if DEBUG
-			h--;
-			std::cout << std::endl;
-			#endif
-			
-			long timestamp = 0;
-			std::vector<long> data;
 
-			// Get data
-			int n = g_urg.capture(data, &timestamp);
-			if(n <= 0){
-				delay(g_scan_msec);
-				continue;
-			}
-			
-			if(n>0){
-				// C'est ici que l'on traite les données
-				interpretData(data,n);	
-			}	
-		}
-
-
-	return NULL;
-}
-
-
-
-
-
-
-
-
-
+#endif // URGTHREAD_H
