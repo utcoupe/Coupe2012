@@ -9,7 +9,7 @@ sys.path.append(os.path.join(FILE_DIR,"..","..","lib"))
 import threading
 import subprocess
 
-from mypyirc import bridgebot
+from py3irc.mypyirc import bridgebot
 
 
 
@@ -79,7 +79,7 @@ def run(**args):
 						action="store", dest="protocole_prefixe", default=default["protocole_prefixe"],
 						help="protocole prefixe")
     
-	(options, args) = parser.parse_args()
+	(options, _args) = parser.parse_args()
 
 	print(options.server_ip,
 		options.server_port,
@@ -100,9 +100,14 @@ def run(**args):
 		options.protocole_prefixe)
 	#print(list(filter(lambda x: x[0:4] == 'cmd_', dir(bot))))
 	
-	t = threading.Thread(None, bot.start)
-	t.setDaemon(True)
-	t.start()
+	if not args.get('blocking', True):
+		t = threading.Thread(None, bot.start)
+		t.setDaemon(True)
+		t.start()
+		return bot
+	else:
+		bot.start()
+
 	
 	return bot
 

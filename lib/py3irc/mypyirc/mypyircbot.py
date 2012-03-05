@@ -165,6 +165,8 @@ class MyPyIrcBot(ircbot.SingleServerIRCBot):
 		self.t = threading.Thread(None, self._loop_executers, "mypyircbot-loop_executers")
 		self.t.setDaemon(True)
 		self.t.start()
+
+		self.e_welcome = threading.Event()
 	
 	def on_nicknameinuse(self, serv, e):
 		"""
@@ -183,6 +185,10 @@ class MyPyIrcBot(ircbot.SingleServerIRCBot):
 		for chan in self.canaux:
 			serv.join(chan)
 		self.serv = serv
+		self.e_welcome.set()
+
+	def wait_connection(self, timeout=None):
+		self.e_welcome.wait(timeout)
 	
 	def write_rep(self, msg, id_msg=42):
 		"""
@@ -203,7 +209,12 @@ class MyPyIrcBot(ircbot.SingleServerIRCBot):
 		
 		auteur = irclib.nm_to_n(ev.source())
 		canal = ev.target().strip().lower()
-		msg, options = raw_msg_to_msg_n_options(ev.arguments()[0])
+		msg = ev.arguments()[0]
+
+		self._on_pubmsg(auteur, canal, msg)
+
+	def _on_pubmsg(self, auteur, canal, msg):
+		msg, options = raw_msg_to_msg_n_options(masg)
 		msg_split = msg.strip().split(" ")
 		f_name = self.irc_cmd_to_func_name(canal, msg_split[0])
 		if msg_split[0] == "help":
@@ -240,8 +251,8 @@ class MyPyIrcBot(ircbot.SingleServerIRCBot):
 		#define {prefixe}NOM_DE_LA_COMMANDE		4
 		}
 
-		@param f_name le nom du fichier
-		@param prefixes les prefixes des define
+		@param str_protocole
+		@param prefix le prefixes des defines
 		@return une liste de dictionnaires {id: ?, name: ?, params: ?, doc: ?}
 		"""
 		
@@ -250,7 +261,7 @@ class MyPyIrcBot(ircbot.SingleServerIRCBot):
 		# spec des regexp
 		spec_doc = '\/\*\*(?P<doc>(.(?!\*\/))*.)\*\/'
 		spec_define = '#define\s+{prefix}(?P<name>\w+)\s+(?P<id>\d+)'.format(prefix=prefix)
-		spec_cmd = spec_doc+"\s"+spec_define
+		spec_cmd = spec_doc+"\s*"+spec_define
 		spec_params = '@param\s+(?P<param>[a-zA-Z_]\w*)'
 
 		# compilation de la regexp pour les paramètres
@@ -260,7 +271,7 @@ class MyPyIrcBot(ircbot.SingleServerIRCBot):
 		for t in re.finditer(spec_cmd,str_protocole,re.DOTALL):
 			params = list([p.group("param") for p in re_params.finditer(t.group('doc'))])
 			commands.append({'id': int(t.group('id')), 'name': t.group('name'), 'params': params, 'doc': t.group('doc')})
-			print(commands[-1])
+			#print(commands[-1])
 
 		return commands
 		
