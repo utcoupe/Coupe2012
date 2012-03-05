@@ -1,7 +1,7 @@
 
 
 from ..load import *
-from ..pathfinding import AStar
+from ..pathfinding import AStar, TILED
 from .tile import *
 from .tilesmooth import smooth
 
@@ -14,7 +14,7 @@ class TiledMap:
 	def __init__(self):
 		self.obstacles = []
 		self.tiles = []
-		self.pathfinding = Pathfinding(self.tiles, TILED)
+		self.pathfinding = AStar(self.tiles, TILED)
 		self.w_tile = 1
 		self.m = 0
 		self.n = 0
@@ -84,18 +84,3 @@ class TiledMap:
 		#todo
 		pass
 	
-if __name__ == "__main__":
-	import time
-	import sys
-	filename = sys.argv[1]
-	tm = TiledMap()
-	start = time.time()
-	tm.load_img(filename)
-	print("img load time : %s" % (time.time() - start))
-	
-	sys.path.append("../view")
-	from graphview import *
-	
-	dynamic_obstacle = Poly().initFromCircle((-500,-500),250,8)
-	v = GraphView(tm,dynamic_obstacle)
-	v.mainloop()			
