@@ -22,7 +22,7 @@ RED					= 1
 T_CD				= 0
 T_LINGOT			= 1
 
-
+MAX_CDS_IN_BIG_ROBOT	= 20
 
 
 

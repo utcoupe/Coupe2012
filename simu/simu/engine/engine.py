@@ -52,6 +52,7 @@ class Engine:
 			return objs[0]
 		else:
 			return None
+
 	
 	def on_collision_rouleau_cd(self, space, arb):
 		"""
@@ -61,10 +62,8 @@ class Engine:
 		if not robot:
 			print("robot not found")
 		else:
-			team = robot.team
-			self.match.add_points(team, T_CD)
-			print(self.match.score)
 			cd = self.find_obj_by_shape(arb.shapes[1])
+			robot.eat_cd(cd.color)
 			self.objects_to_remove.append(cd)
 
 	def add(self, obj):

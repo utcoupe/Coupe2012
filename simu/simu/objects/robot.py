@@ -21,7 +21,7 @@ class GoalPOS:
 
 
 class Robot(EngineObjectPoly, Executer):
-	def __init__(self, canal_asserv, team, posinit, mass, color, poly_points, custom_objects):
+	def __init__(self, *, canal_asserv, team, posinit, mass, color, poly_points, custom_objects):
 		EngineObjectPoly.__init__(self,
 			colltype		= COLLTYPE_ROBOT,
 			mass			= mass,
@@ -46,6 +46,10 @@ class Robot(EngineObjectPoly, Executer):
 		# touche shift enfoncée ?
 		self.shift_on = False
 
+		# être sûr que le canal commance par #
+		if canal_asserv[0] != '#': canal_asserv = '#'+canal_asserv
+		self.canal_asserv = canal_asserv
+		
 		# être sûr que le canal commance par #
 		if canal_asserv[0] != '#': canal_asserv = '#'+canal_asserv
 		self.canal_asserv = canal_asserv
@@ -139,7 +143,11 @@ class Robot(EngineObjectPoly, Executer):
 		self.goals.append(GoalPWM(pwm))
 		self.send_canal_asserv(kwargs['id_msg'], 1)
 
+
 	def send_canal_asserv(self, *args):
+		self.send(self.canal_asserv, *args)
+	
+	def send_canal_others(self, *args):
 		self.send(self.canal_asserv, *args)
 
 
