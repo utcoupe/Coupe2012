@@ -8,7 +8,7 @@
 #define GLOBAL_H
  
 // Paramétres
-#define DEBUG 1
+#define DEBUG 0
 #define NB_MAX_ROBOT 4
 #define URG_AUTO_CAPTURE 1
  
@@ -40,7 +40,8 @@ struct coord{
 #define LY 2000
 #define TETA_DIAG 0.59 // en radian, sinon 33.69 degree
 #define RAD90 1.57
-#define TOLERANCE 50 // Tolérence de distance entre deux points du même robot
+#define TOLERANCE 80  // Tolérence de distance entre deux points du même robot
+					  // Représente le diametre de la balise posée sur le robot
 
 #define ABS(a)	   (((a) < 0) ? -(a) : (a))
 

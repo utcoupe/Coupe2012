@@ -8,6 +8,9 @@
  * 		-> nbRobot > 4
  * 		-> pas de données sur les robots présents sur la table 
  * 
+ * -Caler l'angle sur la balise
+ * -ignorer la balise de départ dans le calcul des robots
+ * -Ajuster le (0,0) réel de l'hokuyo avec le théorique
  * 
  * */
  
@@ -27,6 +30,8 @@ int main(int argc, char *argv[])
 	*/
 	
 	initHokuyo();
+	
+	
 
 	// Création thread
 	pthread_mutex_init(&mutex, NULL);	
@@ -57,5 +62,6 @@ int main(int argc, char *argv[])
     }
 
 	delete[] g_distanceMax;
+ 
 	return 0;
 }
