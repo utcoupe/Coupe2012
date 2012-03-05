@@ -41,10 +41,8 @@ class BridgeBot(MyPyIrcBot):
 		@param id_cmd id de la commande dans le protocole
 		@param 
 		"""
-		code = '''
-def f(%s):
-	return '%s'.join([str(kwargs["id_msg"]), '%s', %s])
-		''' % (','.join(['self']+params+['**kwargs']), SEP, id_cmd, ','.join(params))
+		code = "def f(%s):" % ','.join(['self']+params+['**kwargs'])
+		code += "    return '%s'.join([str(kwargs['id_msg']), '%s', %s])" % (SEP, id_cmd, ','.join(params))
 		d = {}
 		exec(code, d)
 		d['f'].__doc__ = doc.strip()
