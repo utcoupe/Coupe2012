@@ -128,7 +128,7 @@ class MyPyIrcBot(ircbot.SingleServerIRCBot):
 	Il suffit d'ajouter des méthodes avec un nom de type "cmd_<canal>_<irccmd>"
 	{@code
 	class Bot(MyPyIrcBot):
-		cmd_test_hello(self, **kwargs):
+		def cmd_test_hello(self, **kwargs):
 			''' cette commande renvoie coucou '''
 			self.send("#test", "id=%s coucou" % kwargs['id_msg'])
 	
@@ -214,7 +214,7 @@ class MyPyIrcBot(ircbot.SingleServerIRCBot):
 		self._on_pubmsg(auteur, canal, msg)
 
 	def _on_pubmsg(self, auteur, canal, msg):
-		msg, options = raw_msg_to_msg_n_options(masg)
+		msg, options = raw_msg_to_msg_n_options(msg)
 		msg_split = msg.strip().split(" ")
 		f_name = self.irc_cmd_to_func_name(canal, msg_split[0])
 		if msg_split[0] == "help":

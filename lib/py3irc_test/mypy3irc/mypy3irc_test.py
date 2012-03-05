@@ -4,22 +4,41 @@
 import unittest
 
 import threading
+import time
+
 
 from py3irc.mypyirc.mypyircbot import *
+from py3irc.mypyirc.ircdefine import SEP
 
+
+class DummyExecuter(Executer):
+	def cmd_unittest_hello(self, a, **kwargs):
+		""" Dummy ! """
+		self.a = a
+		self.id_msg = kwargs['id_msg']
 
 class MyPyIrcBotConnTestCase(unittest.TestCase):
 	def test_connection(self):
-		"""bot = MyPyIrcBot("localhost", 6667, "unittestbot", "unittest")
+		bot = MyPyIrcBot("localhost", 6667, "unittestbot", "unittest")
+		executer = DummyExecuter()
+		bot.add_executer(executer)
 		
 		t = threading.Thread(target=bot.start)
 		t.setDaemon(True)
 		t.start()
 		
 		bot.wait_connection(10)
+		self.assertTrue(bot.e_welcome.is_set())
 
-		self.assertTrue(bot.e_welcome.is_set())"""
-		pass
+		id_msg = 57
+		a = 42
+		bot._on_pubmsg("test", "#unittest", "hello %s # id=%s" % (a, id_msg))
+
+		time.sleep(1)
+
+		self.assertEqual(str(executer.id_msg), str(id_msg))
+		self.assertEqual(executer.a, a)
+
 
 
 class MyPyIrcBotParseTestCase(unittest.TestCase):
