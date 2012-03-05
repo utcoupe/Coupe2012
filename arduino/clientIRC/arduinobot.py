@@ -9,12 +9,12 @@ sys.path.append(os.path.join(FILE_DIR,"..","..","lib"))
 import threading
 import serial
 
-from mypyirc import bridgebot
+from py3irc.mypyirc import BridgeBot
 
 
 
 
-class ArduinoBot(bridgebot.BridgeBot):
+class ArduinoBot(BridgeBot):
 	def __init__(self, server_ip, server_port, nickname, channel, serial_port, serial_baudrate, protocole_file, protocole_prefixe):
 		self.serial = None
 		try:
@@ -24,7 +24,7 @@ class ArduinoBot(bridgebot.BridgeBot):
 			#sys.exit(1)
 		print("OK")
 		
-		bridgebot.BridgeBot.__init__(self, server_ip, server_port, nickname, channel, protocole_file, protocole_prefixe)
+		BridgeBot.__init__(self, server_ip, server_port, nickname, channel, protocole_file, protocole_prefixe)
 
 	
 	def write_rep(self, msg):

@@ -25,8 +25,8 @@ The known commands are:
     dcc -- Let the bot invite you to a DCC CHAT connection.
 """
 
-from ircbot import SingleServerIRCBot
-from irclib import nm_to_n, nm_to_h, irc_lower, ip_numstr_to_quad, ip_quad_to_numstr
+from .ircbot import SingleServerIRCBot
+from .irclib import nm_to_n, nm_to_h, irc_lower, ip_numstr_to_quad, ip_quad_to_numstr
 
 class TestBot(SingleServerIRCBot):
     def __init__(self, channel, nickname, server, port=6667):
@@ -95,7 +95,7 @@ class TestBot(SingleServerIRCBot):
 def main():
     import sys
     if len(sys.argv) != 4:
-        print "Usage: testbot <server[:port]> <channel> <nickname>"
+        print ("Usage: testbot <server[:port]> <channel> <nickname>")
         sys.exit(1)
 
     s = sys.argv[1].split(":", 1)
@@ -104,7 +104,7 @@ def main():
         try:
             port = int(s[1])
         except ValueError:
-            print "Error: Erroneous port."
+            print ("Error: Erroneous port.")
             sys.exit(1)
     else:
         port = 6667
