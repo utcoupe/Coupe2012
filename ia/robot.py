@@ -11,8 +11,7 @@ import copy
 import time
 
 
-from geometry.vec import *
-from geometry.segment import *
+from geometry import Segment, Vec
 
 
 

@@ -2,7 +2,7 @@
 
 
 import
-	>>> from .segment import Segment
+	>>> from geometry import Segment
 
 init
 	>>> a = (0,0)

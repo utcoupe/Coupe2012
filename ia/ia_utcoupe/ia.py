@@ -11,7 +11,7 @@ sys.path.append(os.path.join(FILE_DIR,"..","..","lib"))
 import threading
 import time
 
-from mypyirc.ircdefine import *
+from py3irc.mypyirc.ircdefine import *
 
 from clientIRC.iabot import *
 from clientIRC.asservissement import *

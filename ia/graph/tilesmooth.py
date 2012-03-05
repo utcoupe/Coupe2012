@@ -1,7 +1,7 @@
 
 from copy import copy
 
-from geometry.vec import *
+from geometry import Vec
 
 
 UP			= 0

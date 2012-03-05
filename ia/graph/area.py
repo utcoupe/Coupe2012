@@ -1,7 +1,7 @@
 
 import copy
 
-from geometry.convexpoly import *
+from geometry import ConvexPoly
 from pathfinding import Node
 
 class Area(ConvexPoly,Node):

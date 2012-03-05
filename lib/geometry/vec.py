@@ -107,6 +107,3 @@ class Vec(list):
 	def __hash__(self):
 		return tuple.__hash__(tuple(self))
 
-
-import doctest
-doctest.testfile("doctest/vec.txt")

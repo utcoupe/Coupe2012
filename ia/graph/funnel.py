@@ -1,6 +1,6 @@
 
 
-from geometry.segment import *
+from geometry import Segment
 
 
 def polys_to_portal_edges(nodes):

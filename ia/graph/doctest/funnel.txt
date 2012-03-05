@@ -17,7 +17,7 @@ funnel
 	True
 
 polys_to_portal_edges
-	>>> from geometry.convexpoly import *
+	>>> from geometry import ConvexPoly
 	>>> n1 = ConvexPoly(((-1,0),(1,-1),(1,1)))
 	>>> n2 = ConvexPoly(((1,-1),(2,-1),(1,1)))
 	>>> n3 = ConvexPoly(((1,1),(2,-1),(2,1)))

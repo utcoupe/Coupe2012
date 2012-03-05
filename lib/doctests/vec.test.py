@@ -1,7 +1,7 @@
 
 
 import
-	>>> from .vec import *
+	>>> from geometry import Vec
 
 init
 	>>> v = Vec([1,2,3])

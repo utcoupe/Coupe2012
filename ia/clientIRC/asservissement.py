@@ -1,20 +1,17 @@
 
 
 
-import sys
-import os
-sys.path.append(os.path.join("..","lib"))
 
 import types
 
-from mypyirc.ircdefine import *
+from py3irc.mypyirc.ircdefine import *
 
 
 
 import time
 import re
 
-from geometry.vec import *
+from geometry import Vec
 
 
 

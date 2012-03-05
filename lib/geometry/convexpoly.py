@@ -45,5 +45,3 @@ class ConvexPoly(Poly):
 		return False
 
 
-import doctest
-doctest.testfile("doctest/convexpoly.txt")

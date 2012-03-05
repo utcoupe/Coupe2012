@@ -105,5 +105,3 @@ class Poly:
 		return "Poly%s" % (tuple(self.points),)
 
 
-import doctest
-doctest.testfile("doctest/poly.txt")

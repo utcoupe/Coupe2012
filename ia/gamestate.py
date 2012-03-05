@@ -14,7 +14,7 @@ from inspect import currentframe
 import itertools
 
 
-from mypyirc.ircdefine import *
+from py3irc.mypyirc.ircdefine import *
 
 
 

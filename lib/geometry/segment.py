@@ -76,5 +76,3 @@ class Segment:
 		
 
 
-import doctest
-doctest.testfile("doctest/segment.txt")

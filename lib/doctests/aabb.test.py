@@ -1,6 +1,6 @@
 
 import
-	>>> from .aabb import AABB
+	>>> from geometry import AABB
 
 init
 	>>> box = AABB((0,0), 3, 4)

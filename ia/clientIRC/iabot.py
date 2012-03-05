@@ -1,17 +1,12 @@
 # -*- coding: utf-8 -*-
 
 
-import sys
-import os
-FILE_DIR  = os.path.dirname(os.path.abspath(__file__))
-sys.path.append(os.path.join(FILE_DIR,"..","..","lib","py3irc"))
 
 
 import threading
 import time
 
-import ircbot
-import irclib
+from py3irc.py3irc import ircbot, irclib
 
 
 class IABot(ircbot.SingleServerIRCBot):

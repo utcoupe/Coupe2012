@@ -5,7 +5,7 @@ import pygame.image as im
 import xml.dom.minidom
 
 
-from geometry.poly import *
+from geometry import Poly
 
 def load_img(filename, scale=1, seuil=125):
 	surf = im.load(filename)

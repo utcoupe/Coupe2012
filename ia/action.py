@@ -1,5 +1,5 @@
 
-from geometry.vec import *
+from geometry import Vec
 
 
 MAX_DIST = 1E50

@@ -9,7 +9,7 @@ sys.path.append(os.path.join(FILE_DIR,"..","lib"))
 
 import optparse
 
-from mypyirc.ircdefine import *
+from py3irc.mypyirc.ircdefine import *
 from ia_utcoupe.ia import *
 
 

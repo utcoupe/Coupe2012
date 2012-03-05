@@ -2,7 +2,7 @@
 
 
 import
-	>>> from .convexpoly import *
+	>>> from geometry import ConvexPoly
 
 init
 	>>> poly = ConvexPoly(((0,0),(4,0),(2,2)))
@@ -18,7 +18,7 @@ isclockwise
 	False
 
 intersection
-	>>> from segment import *
+	>>> from geometry import Segment
 	>>> poly.intersect(Segment((-1,-1), (-3,-3)))
 	False
 	>>> poly.intersect(Segment((-1,-1), (5,5)))

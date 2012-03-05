@@ -22,5 +22,3 @@ class AABB:
 
 
 
-import doctest
-doctest.testfile("doctest/aabb.txt")

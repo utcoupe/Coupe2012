@@ -1,7 +1,6 @@
 
 
-from geometry.convexpoly import *
-from geometry.vec import *
+from geometry import ConvexPoly,Vec
 from pathfinding import Node
 
 
