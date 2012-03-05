@@ -55,7 +55,7 @@ bool checkPointBot(coord p1, coord p2)
 } 
 
 //! Traitement des données venant de l'hokuyo
-void interpretData(std::vector<long> data, int n, UrgCtrl* urg)
+void interpretData(std::vector<long> data, int n)
 {	
 	robot.clear();
 	std::list<coord> bot;
@@ -143,7 +143,7 @@ void* urgAnalyse(void* arg)
 			
 			if(n>0){
 				// C'est ici que l'on traite les données
-				interpretData(data,n,&g_urg);	
+				interpretData(data,n);	
 			}	
 		}
 

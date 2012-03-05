@@ -40,6 +40,7 @@ void send(TYPE_IDCMD idCmd)
 	}
 	mess << ")";
 	std::cout << mess.str() << std::endl; 
+	cout.flush();
 }
 
 //! Fonction de gestion de la communication
