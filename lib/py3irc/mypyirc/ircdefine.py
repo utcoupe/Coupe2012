@@ -1,6 +1,6 @@
 
 
-SEP					= "°"
+SEP					= "+"
 
 CANAL_BIG_ASSERV	= "#asserv"
 CANAL_MINI_ASSERV	= "#asservmini"

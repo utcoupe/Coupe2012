@@ -3,7 +3,7 @@
 
 
 // cf. protocole
-#define C_SEP_SEND	'°' // tout est séparé par ça.
+#define C_SEP_SEND	'+' // tout est séparé par ça.
 
 
 // all
