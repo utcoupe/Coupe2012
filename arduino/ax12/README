@@ -1,0 +1,16 @@
+Ce code permet de contrôler les AX12.
+
+Il faut relier les bornes TX1 et RX1 de l'Arduino au bus de données.
+
+Il faut empêcher Serial1 de prendre l'interruption arrivant pour l'USART1. Il faut pour cela patcher le fichier arduino-1.0/hardware/arduino/cores/arduino/HardwareSerial.cpp avec le fichier HardwareSerial.cpp.patch présent ici.
+
+Ensuite, regarder le fichier .ino pour comprendre le fonctionnement de la lib. Le fichier ax12.h contient les constantes utilisables comme adresse.
+
+Concrètement :
+
+ * On écrit avec writeInfo à une adresse
+ * On lit avec readInfo depuis une adresse
+
+read/writeInfo renvoient juste le code d'erreur. Lorsqu'on lit une donnée depuis le servomoteur, la valeur va dans motor.status_data.
+
+Arthur, 06/03/2012

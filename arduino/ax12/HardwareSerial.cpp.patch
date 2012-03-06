@@ -1,0 +1,22 @@
+*** HardwareSerial.cpp.base	2012-03-06 22:03:14.514568281 +0100
+--- HardwareSerial.cpp	2012-03-06 22:02:24.934322426 +0100
+***************
+*** 120,125 ****
+--- 120,126 ----
+  #endif
+  #endif
+  
++ #ifndef NOUSART1
+  #if defined(USART1_RX_vect)
+    void serialEvent1() __attribute__((weak));
+    void serialEvent1() {}
+***************
+*** 132,137 ****
+--- 133,139 ----
+  #elif defined(SIG_USART1_RECV)
+    #error SIG_USART1_RECV
+  #endif
++ #endif
+  
+  #if defined(USART2_RX_vect) && defined(UDR2)
+    void serialEvent2() __attribute__((weak));
