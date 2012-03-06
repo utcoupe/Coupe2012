@@ -25,7 +25,7 @@ void setLeftPWM(int value){
 
 void setRightPWM(int value){
 	moteurD.setSpeed(abs(value));
-	if(value>0)
+	if(value<0)
 		moteurD.run(FORWARD);
 	else
 		moteurD.run(BACKWARD);
