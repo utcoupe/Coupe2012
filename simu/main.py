@@ -57,17 +57,42 @@ if __name__ == "__main__":
 	debug = Debug()
 
 	# robots
-	bigrobot = BigRobot(CANAL_BIG_ASSERV, mm_to_px(250,250), BLUE)
-	minirobot = MiniRobot(CANAL_MINI_ASSERV, mm_to_px(400,250), BLUE)
-	bigrobot2 = BigRobot(CANAL_BIG_ASSERV+'2', mm_to_px(3000-250,250), RED)
-	minirobot2 = MiniRobot(CANAL_MINI_ASSERV+'2', mm_to_px(3000-400,250), RED)
+	bigrobot = BigRobot(
+		canal_asserv		= CANAL_BIG_ASSERV,
+		canal_others		= CANAL_BIG_OTHERS,
+		posinit				= mm_to_px(250,250),
+		team				= BLUE
+	)
+	minirobot = MiniRobot(
+		canal_asserv		= CANAL_MINI_ASSERV,
+		canal_others		= CANAL_MINI_OTHERS,
+		posinit				= mm_to_px(400,250),
+		team				= BLUE
+	)
+	bigrobot2 = BigRobot(
+		canal_asserv		= CANAL_BIG_ASSERV+'2',
+		canal_others		= CANAL_BIG_OTHERS+'2',
+		posinit				= mm_to_px(3000-250,250),
+		team				= RED
+	)
+	minirobot2 = MiniRobot(
+		canal_asserv		= CANAL_MINI_ASSERV+'2',
+		canal_others		= CANAL_MINI_OTHERS+'2',
+		posinit				= mm_to_px(3000-400,250),
+		team				= RED
+	)
 	robots = (bigrobot, minirobot, bigrobot2, minirobot2)
 
 	# hokuyo
 	hokuyo = Hokuyo(CANAL_HOKUYO, robots)
 
 	# ircbot
-	ircbot = SimuIrcBot(options.server_ip, options.server_port, (CANAL_BIG_ASSERV,CANAL_MINI_ASSERV,CANAL_BIG_ASSERV+'2',CANAL_MINI_ASSERV+'2',CANAL_HOKUYO, CANAL_DEBUG))
+	canaux = (
+		CANAL_BIG_ASSERV,CANAL_MINI_ASSERV,CANAL_BIG_ASSERV+'2',CANAL_MINI_ASSERV+'2',
+		CANAL_BIG_OTHERS,CANAL_MINI_OTHERS,CANAL_BIG_OTHERS+'2',CANAL_MINI_OTHERS+'2',
+		CANAL_HOKUYO, CANAL_DEBUG
+	)
+	ircbot = SimuIrcBot(options.server_ip, options.server_port, canaux)
 	ircbot.add_executer(debug)
 	ircbot.add_executer(hokuyo)
 	for i,robot in enumerate(robots):

@@ -7,15 +7,13 @@ from ..define import *
 from ..engine.engineobject import EngineObjectPoly
 
 class BigRobot(robot.Robot):
-	
-	def __init__(self, canal_asserv, position, team):
+	def __init__(self, *, canal_asserv, canal_others, posinit, team):
 		if team == BLUE:
 			self.mouse_button = 1 # LMB
 			color = 'blue'
 		else:
 			self.mouse_button = 3 # RMB
 			color = 'red'
-		nbCd=0
 		
 		self.rouleau = EngineObjectPoly(
 			colltype	= COLLTYPE_ROULEAU,
@@ -25,14 +23,19 @@ class BigRobot(robot.Robot):
 		)
 		
 		robot.Robot.__init__(self,
-			canal_asserv,
-			team,
-			position,
-			10,
-			color,
-			mm_to_px((100,0),(160,0),(280,90),(280,230),(160,320),(100,320),(0,290),(0,30)),
-			[self.rouleau]
+			canal_asserv		= canal_asserv,
+			canal_others		= canal_others,
+			team				= team,
+			posinit				= posinit,
+			mass				= 10,
+			color				= color,
+			poly_points			= mm_to_px((100,0),(160,0),(280,90),(280,230),(160,320),(100,320),(0,290),(0,30)),
+			custom_objects		= [self.rouleau]
 		)
+
+		self.nb_white_cds = 0
+		self.nb_black_cds = 0
+		self.nb_lingos = 0
 
 	def onEvent(self, event):
 		if event.type == KEYDOWN and event.key == K_LSHIFT:
@@ -43,3 +46,29 @@ class BigRobot(robot.Robot):
 			p = event.pos
 			print(px_to_mm(p[0],p[1]))
 			self._cmd_asserv_goto(*px_to_mm(p[0],p[1],mm_to_px(1000)), id_msg=42)
+
+	def _cmd_others_drop(self, **kwargs):
+		self.nb_white_cds = 0
+		self.nb_black_cds = 0
+		self.send_canal_asserv(kwargs['id_msg'], 1)
+	
+	def _cmd_others_vider_totem(self, **kwargs):
+		pass
+
+	def _cmd_others_is_full(self, **kwargs):
+		coeff_engorgement = (self.nb_white_cds+self.nb_black_cds) * COEFF_ENGORGEMENT_CD
+		coeff_engorgement += self.nb_lingos * COEFF_ENGORGEMENT_LINGO
+		r = 0 if coeff_engorgement < 1 else 1
+		self.send_canal_asserv(kwargs['id_msg'], r)
+
+	def eat_cd(self, color):
+		if color == 'white':
+			self.nb_white_cds += 1
+		elif color == 'black':
+			self.nb_black_cds += 1
+		else:
+			print ("Couleur de Cd inconnue : %s" % color)
+
+	def eat_lingo(self):
+		self.nb_lingos += 1
+

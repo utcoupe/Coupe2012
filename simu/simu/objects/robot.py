@@ -6,6 +6,7 @@ import math
 
 
 from py3irc.mypyirc.mypyircbot import Executer
+from py3irc.mypyirc.ircutils import *
 from ..define import *
 from ..engine.engineobject import EngineObjectPoly
 
@@ -21,7 +22,7 @@ class GoalPOS:
 
 
 class Robot(EngineObjectPoly, Executer):
-	def __init__(self, canal_asserv, team, posinit, mass, color, poly_points, custom_objects):
+	def __init__(self, *, canal_asserv, canal_others, team, posinit, mass, color, poly_points, custom_objects=[]):
 		EngineObjectPoly.__init__(self,
 			colltype		= COLLTYPE_ROBOT,
 			mass			= mass,
@@ -47,12 +48,14 @@ class Robot(EngineObjectPoly, Executer):
 		self.shift_on = False
 
 		# être sûr que le canal commance par #
-		if canal_asserv[0] != '#': canal_asserv = '#'+canal_asserv
-		self.canal_asserv = canal_asserv
+		self.canal_asserv = canal_ircnormalize(canal_asserv)
+		self.canal_others = canal_ircnormalize(canal_asserv)
+		
 
 		# rajouts des fonctions utilisées par le bot irc
 		# _cmd_asserv_<cmd> => cmd_<canal_asserv>_<cmd>
 		self.transform("asserv", canal_asserv)
+		self.transform("others", canal_others)
 
 
 	def x(self):
@@ -139,9 +142,12 @@ class Robot(EngineObjectPoly, Executer):
 		self.goals.append(GoalPWM(pwm))
 		self.send_canal_asserv(kwargs['id_msg'], 1)
 
+
 	def send_canal_asserv(self, *args):
 		self.send(self.canal_asserv, *args)
-
+	
+	def send_canal_others(self, *args):
+		self.send(self.canal_others, *args)
 
 	def __repr__(self):
 		return "Robot"

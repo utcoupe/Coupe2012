@@ -4,6 +4,8 @@ SEP					= "_"
 
 CANAL_BIG_ASSERV	= "#asserv"
 CANAL_MINI_ASSERV	= "#asservmini"
+CANAL_BIG_OTHERS	= "#others"
+CANAL_MINI_OTHERS	= "#othersmini"
 CANAL_HOKUYO		= "#hokuyo"
 CANAL_DEBUG			= "#debug"
 
@@ -13,3 +15,5 @@ CANAUX				= (CANAL_BIG_ASSERV, CANAL_MINI_ASSERV, CANAL_HOKUYO, CANAL_DEBUG)
 ID_MSG_PING		= 100
 ID_MSG_POS		= 101
 ID_MSG_HOKUYO	= 102
+
+

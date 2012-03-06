@@ -19,7 +19,7 @@ PID& PID::reset()
 PID& PID::setCoeffs(double kp, double ki, double kd)
 {
 	_kp = kp;
-	_ki = ki;
+	_ki = ki / NB_ERRORS;
 	_kd = kd;
 	
 	return (*this);
