@@ -8,99 +8,81 @@
 #define COMMANAGER_H
 
 #define SEP "."
-#define TYPE_IDCMD int
+
 
 /**
- * Fonction retournant la postion des robots en coordonnées cartésiennes  
- * */ 
-#define QH_GETDATA 1 
-
-/**
- * Signal pour stoper l'application hokuyo
- * */ 
-#define QH_KILL 9
-
-
-
-
-//! Fonction d'envoie des données
-//! Format (idCMD_SEP_(x,y)_SEP_(x,y)) 
-void send(TYPE_IDCMD idCmd)
-{
-	bool pass=false;
-	std::ostringstream mess;
-	mess.str(""); 
-
-	mess << idCmd << SEP;
-	mess << ("(");
-	std::list<coord>::iterator it;
-	for ( it=robot.begin() ; it!=robot.end() ; it++ )
-	{
-		if(pass){
-			mess << ","; 
-		}
-		mess << "(" << (*it).x << "," << (*it).y << ")";
-		pass=true;
-	}
-	mess << ")";
-	std::cout << mess.str() << std::endl; 
-	cout.flush();
-}
-
-
-
+ * \class comManager
+ * 
+ * classe de gestion de la communication en C++
+ * */
 class comManager
 {
 
 private:
+	int idCmd;
+	int killCmd;
+	int command;
+	string request;
+	ostringstream mess;
 	
+	list<pair<int,void(*)()> > fonctions;
+	list<pair<int,void(*)()> >::iterator ite;
 	
 	
 public:
-	comManager();
+	// Création de l'objet avec commande de kill obligatoire
+	comManager(int killCmd);				
+	void addFunction(int id,void(*)());
 	void* loop(void* arg);
 	
 };
 
 //!
-comManager::comManager()
+comManager::comManager(int kC)
 {
-	
+	killCmd = kC;
+	command=0;
+}
+
+//!
+void comManager::addFunction(int id,void(*fct)())
+{
+	this->fonctions.push_front(pair<int,void(*)()>(id,fct));
 }
 
 //!
 void* comManager::loop(void* arg)
-{
-	TYPE_IDCMD id=0;
-		int command=0;
-		size_t pos;
-		std::string request;
-	
+{	
+	size_t pos;	
 	for( ; ; )
 	{
-		
+		// Command Recovery
+		cin >> request;
+		pos = request.find(SEP); 
+		this->idCmd   = atoi(request.substr(0,pos).c_str());
+		this->command = atoi(request.substr(pos+1).c_str()); 
 			
+		mess.str(""); 
+		cout << idCmd << SEP << ("(");
 		
-			cin >> request;
-			pos = request.find(SEP); 
-			id = atoi(request.substr(0,pos).c_str());
-			command = atoi(request.substr(pos+1).c_str()); 
+		//cout << mess.str();
 				
-			// Send data
-			if(command==QH_GETDATA)
+		for ( ite=fonctions.begin() ; ite!=fonctions.end() ; ite++ )
+		{
+			if( command == (*ite).first )
 			{
-				pthread_mutex_lock(&mutex);
-				send(id);
-				pthread_mutex_unlock(&mutex);
+				(*((*ite).second))();
 			}
+		}
 		
-			// KILL
-			if(command==QH_KILL)
-			{
-				return NULL;
-			}
+		cout << ")" << endl; 
+		cout.flush();
 		
-		
+		// KILL
+		if(command==killCmd)
+		{
+			return NULL;
+		}
 	}
 	return NULL;
 }
