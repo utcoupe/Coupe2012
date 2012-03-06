@@ -12,14 +12,19 @@ gbool = True
 robot=[]
 radbot=robotSize/sizeFact
 
-p = Popen(["./hokuyoApp"], stdout=PIPE, stderr=PIPE, stdin=PIPE)
+p = Popen(["./hokuyoApp"], stdout=PIPE, stdin=PIPE)
 
 class thRead(threading.Thread):
 	def run(self):
 		global robot
 		while gbool:
-			r = p.stdout.readline()
-			p.stdout.flush()
+			try:
+				p.stdout.flush()
+				r = p.stdout.readline()
+			except Exception as ex:
+				print ex
+				exit()
+	
 			if(r.find('.')!=-1):
 				del(robot[:])
 				r = r.split('.')
@@ -33,10 +38,11 @@ class thWrite(threading.Thread):
 	def run(self):
 		time.sleep(1)
 		while gbool:
+			start = time.time()
 			cmd='1.1\n'			
 			p.stdin.write(cmd.encode("utf-8"))
 			p.stdin.flush()
-			time.sleep(1)
+			time.sleep(0.1 - (time.time()-start) )
 			drawZone(canvas)
 
 
@@ -53,7 +59,7 @@ def drawZone(canv):
 			if x==-1:
 				x=c/sizeFact
 			else:
-				y=c/sizeFact
+				y=(2000/sizeFact)-(c/sizeFact)
 		drawcircle(canv,x,y,radbot)
 
 
