@@ -5,7 +5,7 @@
  *	  Author: HoHen
  */
 #include "encoder.h"
-#include "wiring.h"
+#include "Arduino.h"
 
 int state_left_pinA;
 int state_left_pinB;

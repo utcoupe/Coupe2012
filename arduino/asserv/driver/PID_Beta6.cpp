@@ -1,6 +1,6 @@
 
-#include <wiring.h>
 #include "PID_Beta6.h"
+#include "Arduino.h"
 
 /* Standard Constructor (...)***********************************************
  *    constructor used by most users.  the parameters specified are those for

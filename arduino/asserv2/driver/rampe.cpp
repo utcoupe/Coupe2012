@@ -1,5 +1,5 @@
 #include "rampe.h"
-#include "WProgram.h"
+#include "Arduino.h"
 #include <math.h>
 
 

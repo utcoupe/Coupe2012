@@ -19,6 +19,6 @@ SOURCES += main.cpp\
 HEADERS  += mainwindow.h \
     renderarea.h \
     rampe.h \
-    WProgram.h
+    Arduino.h
 
 FORMS    += mainwindow.ui

@@ -4,7 +4,7 @@ from pymunk import inf as MASS_INF
 
 
 
-FPS					= 60
+FPS					= 30
 PX_TO_MM			= 4
 
 

@@ -5,7 +5,7 @@
 #include "message.h"
 #include "encoder.h"
 #include "pwm.h"
-#include "WProgram.h"
+#include "Arduino.h"
 
 /**
  * Analyse le message et effectue les actions associees
@@ -94,7 +94,7 @@ void cmd(int id, int id_cmd, int* args, int size){
 			sendMessage(id,tab,3);
 	        break;
 		}
-
+/*
 		case QA_MCALIB: //TODO a eclater en calibration manuel de l'angle ,de x et de y
 		{
 			if (size < 3)
@@ -150,7 +150,7 @@ void cmd(int id, int id_cmd, int* args, int size){
 			}
 			break;
 		}
-		/*
+		
 		case Q_MODIF_GOAL_ABS:
 		{
 			if (size < 3)
@@ -185,7 +185,7 @@ void cmd(int id, int id_cmd, int* args, int size){
 			}
 			break;
 		}
-		 */
+		*/
 		case QA_CANCEL: /* comme stop */
 		{
 			clearGoals();

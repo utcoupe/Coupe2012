@@ -1,4 +1,5 @@
-#include "WProgram.h"
+
+#include "Arduino.h"
 #include "message.h"
 #include "command.h"
 

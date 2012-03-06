@@ -1,6 +1,6 @@
 #include "fifo_to_robot.h"
 
-#include "WProgram.h"
+#include "Arduino.h"
 #include "parameters.h"
 #include "tools.h"
 

@@ -3,7 +3,7 @@
 #include "parameters.h"
 #include "message.h"
 #include "encoder.h"
-#include "WProgram.h"
+#include "Arduino.h"
 #include "tools.h"
 #include "fifo.h"
 

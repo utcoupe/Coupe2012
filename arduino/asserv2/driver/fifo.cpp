@@ -1,6 +1,6 @@
 #include "fifo.h"
 
-#include "WProgram.h"
+#include "Arduino.h"
 
 
 Fifo fifo;

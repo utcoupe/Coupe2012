@@ -1,6 +1,6 @@
 #include "robot.h"
 #include "encoder.h"
-#include "WProgram.h"
+#include "Arduino.h"
 #include "pid.h"
 #include "tools.h"
 

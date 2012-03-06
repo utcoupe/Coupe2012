@@ -19,14 +19,13 @@
  * _________________|___________________|_______________________|_______________|___________________|
  */
 
-#include "WProgram.h"
+#include "Arduino.h"
 #include "control.h"
 #include "encoder.h"
 #include "robotstate.h"
 #include "PID_Beta6.h"
 #include "fifo.h"
 #include "message.h"
-#include "wiring.h"
 
 
 CurrentGoal current_goal;

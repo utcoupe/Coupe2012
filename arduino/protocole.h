@@ -138,6 +138,16 @@
  */
 #define QA_SET_PID_ANGLE_A	21
 
+/**
+ * Stop
+ */
+#define QA_STOP				22
+
+
+/**
+ * Reprendre
+ */
+#define QA_RESUME			23
 
 
 // erreurs

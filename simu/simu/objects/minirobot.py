@@ -22,7 +22,7 @@ class MiniRobot(robot.Robot):
 			posinit				= posinit,
 			mass				= 10,
 			color				= color,
-			poly_points			= mm_to_px((0,0),(0,200),(200,200),(200,0)),
+			poly_points			= mm_to_px((0,0),(184,0),(184,200),(0,200)),
 		)
 
 	def onEvent(self, event):

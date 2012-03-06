@@ -17,9 +17,9 @@ class BigRobot(robot.Robot):
 		
 		self.rouleau = EngineObjectPoly(
 			colltype	= COLLTYPE_ROULEAU,
-			offset		= mm_to_px(0,-85),
+			offset		= mm_to_px(6,-137),
 			color		= "orange",
-			poly_points = map(lambda p: mm_to_px(*p),[(0,0),(170,0),(170,170),(0,170)])
+			poly_points = map(lambda p: mm_to_px(*p),[(0,0),(138,0),(138,274),(0,274)])
 		)
 		
 		robot.Robot.__init__(self,
@@ -29,7 +29,7 @@ class BigRobot(robot.Robot):
 			posinit				= posinit,
 			mass				= 10,
 			color				= color,
-			poly_points			= mm_to_px((100,0),(160,0),(280,90),(280,230),(160,320),(100,320),(0,290),(0,30)),
+			poly_points			= mm_to_px((0,0),(288,0),(288,314),(0,314)),
 			custom_objects		= [self.rouleau]
 		)
 
