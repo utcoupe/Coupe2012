@@ -79,6 +79,8 @@ canvas.pack(expand=YES, fill=BOTH)
 root.mainloop()
 
 
-
+cmd='1.9\n'			
+p.stdin.write(cmd.encode("utf-8"))
+p.stdin.flush()
 
 
