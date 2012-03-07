@@ -47,20 +47,6 @@ class BigRobot(robot.Robot):
 			print(px_to_mm(p[0],p[1]))
 			self._cmd_asserv_goto(*px_to_mm(p[0],p[1],mm_to_px(1000)), id_msg=42)
 
-	def _cmd_others_drop(self, **kwargs):
-		self.nb_white_cds = 0
-		self.nb_black_cds = 0
-		self.send_canal_asserv(kwargs['id_msg'], 1)
-	
-	def _cmd_others_vider_totem(self, **kwargs):
-		pass
-
-	def _cmd_others_is_full(self, **kwargs):
-		coeff_engorgement = (self.nb_white_cds+self.nb_black_cds) * COEFF_ENGORGEMENT_CD
-		coeff_engorgement += self.nb_lingos * COEFF_ENGORGEMENT_LINGO
-		r = 0 if coeff_engorgement < 1 else 1
-		self.send_canal_asserv(kwargs['id_msg'], r)
-
 	def eat_cd(self, color):
 		if color == 'white':
 			self.nb_white_cds += 1
@@ -71,4 +57,19 @@ class BigRobot(robot.Robot):
 
 	def eat_lingo(self):
 		self.nb_lingos += 1
+
+	def _cmd_others_drop(self, **kwargs):
+		self.nb_white_cds = 0
+		self.nb_black_cds = 0
+		self.send_canal_asserv(kwargs['id_msg'], 1)
+	
+	def _cmd_others_vider_totem(self, **kwargs):
+		self.nb_white_cds += 4
+		self.nb_lingos += 1
+
+	def _cmd_others_is_full(self, **kwargs):
+		coeff_engorgement = (self.nb_white_cds+self.nb_black_cds) * COEFF_ENGORGEMENT_CD
+		coeff_engorgement += self.nb_lingos * COEFF_ENGORGEMENT_LINGO
+		r = 0 if coeff_engorgement < 1 else 1
+		self.send_canal_asserv(kwargs['id_msg'], r)
 
