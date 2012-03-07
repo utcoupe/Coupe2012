@@ -6,8 +6,9 @@ from ..engine.engineobject import EngineObjectWall
 
 
 class Wall(EngineObjectWall):
-	def __init__(self, posa, posb):
+	def __init__(self, engine, posa, posb):
 		EngineObjectWall.__init__(self,
+			engine			= engine,
 			colltype		= COLLTYPE_WALL,
 			posA			= posa,
 			posB			= posb,

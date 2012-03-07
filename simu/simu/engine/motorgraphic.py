@@ -13,7 +13,7 @@ from .engineobject import CIRCLE, POLY, WALL
 
 
 class MotorGraphic():	
-	def __init__(self, debug):
+	def __init__(self):
 		pg.init()
 		self.screen = pg.display.set_mode(mm_to_px(3000, 2000))
 		self.clock = pg.time.Clock()
@@ -22,6 +22,8 @@ class MotorGraphic():
 		self.collisions_to_draw = []
 		self.map_img = pg.image.load("map.jpg")
 		self.map_img=pg.transform.scale(self.map_img,(self.screen.get_width(),self.screen.get_height()))
+
+	def init(self, debug):
 		self.debug = debug
 
 	def draw_obj(self, obj):

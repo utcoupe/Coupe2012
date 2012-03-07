@@ -7,8 +7,9 @@ from .robot import Robot, MINI
 
 
 class MiniRobot(Robot):
-	def __init__(self, *, canal_asserv, canal_others, posinit, team, match):
+	def __init__(self, *, engine, canal_asserv, canal_others, posinit, team, match):
 		Robot.__init__(self,
+			engine 				= engine,
 			canal_asserv		= canal_asserv,
 			canal_others		= canal_others,
 			team				= team,

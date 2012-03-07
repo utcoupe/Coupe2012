@@ -13,15 +13,18 @@ from .cd import Cd
 from .lingo import Lingo
 
 class BigRobot(Robot):
-	def __init__(self, *, canal_asserv, canal_others, posinit, team):
+	def __init__(self, *, engine, canal_asserv, canal_others, posinit, team):
 		self.rouleau = EngineObjectPoly(
+			engine 		= engine,
 			colltype	= COLLTYPE_ROULEAU,
 			offset		= mm_to_px(6,-137),
 			color		= "orange",
-			poly_points = map(lambda p: mm_to_px(*p),[(0,0),(138,0),(138,274),(0,274)])
+			poly_points = map(lambda p: mm_to_px(*p),[(0,0),(138,0),(138,274),(0,274)]),
+			is_extension= True
 		)
 		
 		Robot.__init__(self,
+			engine		 		= engine,
 			canal_asserv		= canal_asserv,
 			canal_others		= canal_others,
 			team				= team,
@@ -61,16 +64,16 @@ class BigRobot(Robot):
 		pos = Vec(self.pos())
 		angle = self.angle() + math.pi
 		pos_drop = pos + mm_to_px(random.randint(-50,50),random.randint(-50,50)) + mm_to_px(DIST * math.cos(angle), DIST * math.sin(angle))
-
+		pos_drop = tuple(pos_drop)
 		# création des objets
 		for _ in range(self.nb_white_cds):
-			cd = Cd(pos_drop, "white")
+			cd = Cd(self.engine, pos_drop, "white")
 			self.engine.add(cd)
 		for _ in range(self.nb_black_cds):
-			cd = Cd(pos_drop, "black")
+			cd = Cd(self.engine, pos_drop, "black")
 			self.engine.add(cd)
 		for _ in range(self.nb_lingos):
-			lingo = Lingo(pos_drop)
+			lingo = Lingo(self.engine, pos_drop)
 			self.engine.add(lingo)
 		
 		self.nb_white_cds = 0
