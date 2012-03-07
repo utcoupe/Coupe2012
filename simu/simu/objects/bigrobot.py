@@ -38,9 +38,11 @@ class BigRobot(Robot):
 
 	def onEvent(self, event):
 		if not Robot.onEvent(self,event):
-			if KEYDOWN == event.type:
-				if KEY_DROP == event.key:
-					self._cmd_others_drop(id_msg=42)
+			if self._event_concerns_me(event):
+				if KEYDOWN == event.type:
+					if KEY_DROP == event.key:
+						self._cmd_others_drop(id_msg=42)
+						return True
 
 	def eat_cd(self, color):
 		if color == 'white':

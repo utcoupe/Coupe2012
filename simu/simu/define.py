@@ -36,6 +36,7 @@ KEY_CHANGE_ROBOT	= K_LCTRL		# changer d'équipe
 KEY_STOP_RESUME		= K_SPACE		# apppui = stop, relache = resume
 KEY_CANCEL			= K_ESCAPE		# cancel
 KEY_DROP			= K_d			# vider le gros robot
+KEY_ARRACHE			= K_a			# arracher la carte
 
 BIG			= 0
 MINI		= 1

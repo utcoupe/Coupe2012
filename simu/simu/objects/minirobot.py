@@ -22,7 +22,12 @@ class MiniRobot(Robot):
 
 	def onEvent(self, event):
 		if not Robot.onEvent(self, event):
-			pass
+			if self._event_concerns_me(event):
+				if KEYDOWN == event.type:
+					if KEY_ARRACHE == event.key:
+						self._cmd_others_arrachercarte(id_msg=42)
+						return True
 
-	def arracher_carte(self):
+	def _cmd_others_arrachercarte(self, **kwargs):
 		self.match.arracher_carte(self.team)
+		self.send_canal_others(kwargs['id_msg'], 1)

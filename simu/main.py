@@ -28,6 +28,7 @@ sys.path.append(os.path.join(DIR_PATH, ".."))
 
 import optparse
 import threading
+import time
 
 from simu import *
 from py3irc.mypyirc.ircdefine import *
@@ -122,5 +123,16 @@ if __name__ == "__main__":
 	engine.add(bigrobot2)
 	engine.add(minirobot2)
 
-	engine.start()
+	t=threading.Thread(target=engine.start)
+	t.setDaemon(True)
+	t.start()
+
+	while not engine.e_stop.is_set():
+		try:
+			engine.e_stop.wait(3)
+			print(match.score(BLUE))
+			print(match.score(RED))
+		except KeyboardInterrupt:
+			engine.stop()
+			break
 	

@@ -1,7 +1,11 @@
 # -*- coding: utf-8 -*-
 
-from .define import *
+
 from geometry import ConvexPoly
+
+
+from .define import *
+from .objects import Cd, Lingo
 
 points = {
 	T_CD: 1,
@@ -25,7 +29,7 @@ class Match:
 		score  = self.carte_arrache[team] * points[T_CARTE]
 		score += cds * points[T_CD]
 		score += lingos * points[T_LINGO]
-		return score
+		return score, {'arrachercarte': self.carte_arrache[team], 'cds':cds, 'lingos':lingos}
 
 	def get_cds_lingos(self, team):
 		if team == BLUE:
@@ -48,7 +52,9 @@ class Match:
 			(500,500),
 			(0,500)
 		))
-		return self._get_cds_lingos_in_poly(poly) + self._get_cds_lingos_in_poly(poly2)
+		cds,lingos = self._get_cds_lingos_in_poly(poly)
+		cds2,lingos2 = self._get_cds_lingos_in_poly(poly2)
+		return cds+cds2, lingos+lingos2
 		
 	def get_cds_lingos_for_red(self):
 		poly = ConvexPoly(mm_to_px(
@@ -63,19 +69,22 @@ class Match:
 			(3000,500),
 			(2500,500)
 		))
-		return self._get_cds_lingos_in_poly(poly) + self._get_cds_lingos_in_poly(poly2)
+		cds,lingos = self._get_cds_lingos_in_poly(poly)
+		cds2,lingos2 = self._get_cds_lingos_in_poly(poly2)
+		return cds+cds2, lingos+lingos2
 
 	def _get_cds_lingos_in_poly(self, poly):
-		cds = []
+		cds = 0
+		lingos = 0
 		for obj in self.engine.objects:
 			if isinstance(obj, Cd):
-				if cd.pos() in poly:
-					cds.append(cd)
+				if obj.pos() in poly:
+					cds += 1
 			if isinstance(obj, Lingo):
-				if lingo.pos() in poly:
-					lingos.append(obj)
+				if obj.pos() in poly:
+					lingos += 1
 		return cds,lingos
-		
+
 
 
 

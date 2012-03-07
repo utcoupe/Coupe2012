@@ -181,7 +181,7 @@ class Robot(EngineObjectPoly, Executer):
 				return True
 
 		# actions
-		if self.current_team == self.team and self.typerobot == self.current_robot:
+		if self._event_concerns_me(event):
 			# keydown
 			if KEYDOWN == event.type:
 				if KEY_STOP_RESUME == event.key:
@@ -199,6 +199,9 @@ class Robot(EngineObjectPoly, Executer):
 				self._cmd_asserv_goto(*px_to_mm(p[0],p[1],mm_to_px(1000)), id_msg=42)
 				return True
 		return False
+
+	def _event_concerns_me(self, event):
+		return self.current_team == self.team and self.typerobot == self.current_robot
 	
 	def __repr__(self):
 		return "Robot"

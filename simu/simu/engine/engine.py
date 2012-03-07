@@ -1,11 +1,15 @@
 # -*- coding: utf-8 -*-
 
+
+import threading
+
+
+
 from ..define import *
 from .motorphysic import MotorPhysic
 from .motorgraphic import MotorGraphic
 
 
-		
 
 
 
@@ -24,7 +28,7 @@ class Engine:
 		self.motorphysic.add_collision_handler(COLLTYPE_ROBOT, COLLTYPE_WALL, self.motorgraphic.draw_collision)
 		self.motorphysic.add_collision_handler(COLLTYPE_ROULEAU, COLLTYPE_CD, self.on_collision_rouleau_cd)
 		self.motorphysic.add_collision_handler(COLLTYPE_ROULEAU, COLLTYPE_LINGO, self.on_collision_rouleau_lingo)
-		self.running = True
+		self.e_stop = threading.Event()
 		self.objects = []
 		self.objects_to_remove = []
 
@@ -98,13 +102,13 @@ class Engine:
 		self.motorphysic.add(obj)
 
 	def stop(self):
-		self.running = False
+		self.e_stop.set()
 	
 	def start(self):
 		"""
 		Démarrer l'engine
 		"""
-		while self.running:
+		while not self.e_stop.is_set():
 			try:
 				self.step()
 			except KeyboardInterrupt as ex:
@@ -123,7 +127,8 @@ class Engine:
 		self.motorphysic.step(dt)
 		for o in self.objects:
 			o.step(dt)
-		self.running = self.motorgraphic.step()
+		if not self.motorgraphic.step():
+			self.stop()
 
 	def remove(self, obj):
 		self.motorgraphic.remove(obj)
