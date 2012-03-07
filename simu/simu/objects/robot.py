@@ -11,16 +11,8 @@ from ..define import *
 from ..engine.engineobject import EngineObjectPoly
 
 
-from pygame.locals import *
 
 
-KEY_CHANGE_TEAM		= K_LCTRL
-KEY_CHANGE_ROBOT	= K_LSHIFT
-KEY_STOP_RESUME		= K_SPACE
-KEY_CANCEL			= K_ESCAPE
-
-BIG			= 0
-MINI		= 1
 
 class GoalPWM:
 	def __init__(self, pwm):
@@ -73,6 +65,8 @@ class Robot(EngineObjectPoly, Executer):
 		self.transform("asserv", canal_asserv)
 		self.transform("others", canal_others)
 
+	def init(self, engine):
+		self.engine = engine
 
 	def x(self):
 		return px_to_mm(self.body.position[0])

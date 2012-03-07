@@ -104,6 +104,10 @@ if __name__ == "__main__":
 
 	engine.init(ircbot.stop,match)
 	match.init(engine)
+	bigrobot.init(engine)
+	minirobot.init(engine)
+	bigrobot2.init(engine)
+	minirobot2.init(engine)
 	try:
 		t = threading.Thread(None,ircbot.start,"simuircbot")
 		t.setDaemon(True)

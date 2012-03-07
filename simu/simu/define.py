@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from pymunk import inf as MASS_INF
+from pygame.locals import *
 
 
 
@@ -27,6 +28,19 @@ T_BOTTLE			= 3
 
 COEFF_ENGORGEMENT_CD	= 0.05 # eq : on peut mettre 20 Cds avant d'être plein (0.05 * 20 = 1)
 COEFF_ENGORGEMENT_LINGO	= 0.2
+
+
+
+KEY_CHANGE_TEAM		= K_LSHIFT		# changer de robot
+KEY_CHANGE_ROBOT	= K_LCTRL		# changer d'équipe
+KEY_STOP_RESUME		= K_SPACE		# apppui = stop, relache = resume
+KEY_CANCEL			= K_ESCAPE		# cancel
+KEY_DROP			= K_d			# vider le gros robot
+
+BIG			= 0
+MINI		= 1
+
+
 
 def mm_to_px(*args):
 	"""

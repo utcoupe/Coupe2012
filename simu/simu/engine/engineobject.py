@@ -44,6 +44,9 @@ class EngineObject:
 	def pos(self):
 		return self.body.position
 
+	def angle(self):
+		return self.body.angle
+
 
 class EngineObjectCircle(EngineObject):
 	def __init__(self, *, radius, **kwargs

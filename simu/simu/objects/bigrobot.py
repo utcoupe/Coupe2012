@@ -1,9 +1,16 @@
 # -*- coding: utf-8 -*-
 
+import math
+import time
+import random
+
+from geometry import Vec,Segment
 
 from .robot import Robot, BIG
 from ..define import *
 from ..engine.engineobject import EngineObjectPoly
+from .cd import Cd
+from .lingo import Lingo
 
 class BigRobot(Robot):
 	def __init__(self, *, canal_asserv, canal_others, posinit, team):
@@ -31,7 +38,9 @@ class BigRobot(Robot):
 
 	def onEvent(self, event):
 		if not Robot.onEvent(self,event):
-			pass
+			if KEYDOWN == event.type:
+				if KEY_DROP == event.key:
+					self._cmd_others_drop(id_msg=42)
 
 	def eat_cd(self, color):
 		if color == 'white':
@@ -45,9 +54,29 @@ class BigRobot(Robot):
 		self.nb_lingos += 1
 
 	def _cmd_others_drop(self, **kwargs):
+		DIST = 200
+		# calcul de la position d'attérissage (un peu derrière le robot
+		pos = Vec(self.pos())
+		angle = self.angle() + math.pi
+		pos_drop = pos + mm_to_px(random.randint(-50,50),random.randint(-50,50)) + mm_to_px(DIST * math.cos(angle), DIST * math.sin(angle))
+
+		# création des objets
+		for _ in range(self.nb_white_cds):
+			cd = Cd(pos_drop, "white")
+			self.engine.add(cd)
+		for _ in range(self.nb_black_cds):
+			cd = Cd(pos_drop, "black")
+			self.engine.add(cd)
+		for _ in range(self.nb_lingos):
+			lingo = Lingo(pos_drop)
+			self.engine.add(lingo)
+		
 		self.nb_white_cds = 0
 		self.nb_black_cds = 0
+		self.nb_lingos = 0
+
 		self.send_canal_asserv(kwargs['id_msg'], 1)
+		
 	
 	def _cmd_others_vider_totem(self, **kwargs):
 		self.nb_white_cds += 4
