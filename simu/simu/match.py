@@ -78,7 +78,7 @@ class Match:
 		lingos = 0
 		for obj in self.engine.objects:
 			if isinstance(obj, Cd):
-				if obj.pos() in poly:
+				if obj.color == "white" and obj.pos() in poly:
 					cds += 1
 			if isinstance(obj, Lingo):
 				if obj.pos() in poly:
