@@ -4,7 +4,7 @@ from pymunk import inf as MASS_INF
 
 
 
-FPS					= 30
+FPS					= 50
 PX_TO_MM			= 4
 
 
@@ -21,7 +21,9 @@ BLUE				= 0
 RED					= 1
 
 T_CD				= 0
-T_LINGOT			= 1
+T_LINGO				= 1
+T_CARTE				= 2
+T_BOTTLE			= 3
 
 COEFF_ENGORGEMENT_CD	= 0.05 # eq : on peut mettre 20 Cds avant d'être plein (0.05 * 20 = 1)
 COEFF_ENGORGEMENT_LINGO	= 0.2

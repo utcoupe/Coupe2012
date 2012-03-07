@@ -41,6 +41,8 @@ class EngineObject:
 	def step(self, dt):
 		pass
 
+	def pos(self):
+		return self.body.position
 
 
 class EngineObjectCircle(EngineObject):

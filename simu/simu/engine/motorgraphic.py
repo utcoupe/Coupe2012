@@ -10,6 +10,8 @@ from pygame.color import *
 from ..define import *
 from .engineobject import CIRCLE, POLY, WALL
 
+
+
 class MotorGraphic():	
 	def __init__(self, debug):
 		pg.init()
@@ -50,7 +52,6 @@ class MotorGraphic():
 			for o in d.values():
 				self.draw_segment(o.p1, o.p2, o.color)
 		self.debug.lock.release()
-		
 
 		### Draw
 		for obj in self.objects :
@@ -69,8 +70,6 @@ class MotorGraphic():
 		### Events
 		for event in pg.event.get():
 			if event.type == QUIT:
-				return False
-			elif event.type == KEYDOWN and event.key == K_ESCAPE:
 				return False
 			else:
 				for f in self.onEvents: f(event)
@@ -94,8 +93,10 @@ class MotorGraphic():
 	def draw_poly_from_obj(self, shape, color):
 		body = shape.body
 		ps = shape.get_points()
-		ps.append(ps[0])
-		pg.draw.polygon(self.screen, color, ps, 0)
+		self.draw_poly(ps, color)
+
+	def draw_poly(self, points, color):
+		pg.draw.polygon(self.screen, color, points, 0)
 
 	def draw_segment_from_obj(self, shape, color):
 		body = shape.body

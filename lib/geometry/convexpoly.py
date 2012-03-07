@@ -23,11 +23,12 @@ class ConvexPoly(Poly):
 		
 	def __contains__(self, o):
 		"""
-			Le polygon doit être défini dans le sens trigo
+			Le polygon
 		"""
+		is_clockwise = self.is_clockwise()
 		if o in self.AABB:
 			for edge in self.iedges():
-				if edge.pos_point(o) < 0:
+				if is_clockwise and edge.pos_point(o) > 0 or edge.pos_point(o) < 0:
 					return False
 			return True
 		else:

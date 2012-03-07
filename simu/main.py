@@ -67,7 +67,8 @@ if __name__ == "__main__":
 		canal_asserv		= CANAL_MINI_ASSERV,
 		canal_others		= CANAL_MINI_OTHERS,
 		posinit				= mm_to_px(400,250),
-		team				= BLUE
+		team				= BLUE,
+		match				= match
 	)
 	bigrobot2 = BigRobot(
 		canal_asserv		= CANAL_BIG_ASSERV+'2',
@@ -79,7 +80,8 @@ if __name__ == "__main__":
 		canal_asserv		= CANAL_MINI_ASSERV+'2',
 		canal_others		= CANAL_MINI_OTHERS+'2',
 		posinit				= mm_to_px(3000-400,250),
-		team				= RED
+		team				= RED,
+		match				= match
 	)
 	robots = (bigrobot, minirobot, bigrobot2, minirobot2)
 
@@ -98,7 +100,10 @@ if __name__ == "__main__":
 	for i,robot in enumerate(robots):
 		ircbot.add_executer(robot)
 	
-	engine = Engine(ircbot.stop, match, debug)
+	engine = Engine(debug)
+
+	engine.init(ircbot.stop,match)
+	match.init(engine)
 	try:
 		t = threading.Thread(None,ircbot.start,"simuircbot")
 		t.setDaemon(True)
