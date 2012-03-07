@@ -6,8 +6,9 @@ from ..engine.engineobject import EngineObjectCircle
 
 
 class Cd(EngineObjectCircle):
-	def __init__(self,posinit,color):
+	def __init__(self,engine,posinit,color):
 		EngineObjectCircle.__init__(self,
+			engine			= engine,
 			colltype		= COLLTYPE_CD,
 			posinit			= posinit,
 			color			= color,

@@ -52,6 +52,7 @@ if __name__ == "__main__":
 
 
 	
+	engine = Engine()
 	match = Match()
 
 	# debug
@@ -59,12 +60,14 @@ if __name__ == "__main__":
 
 	# robots
 	bigrobot = BigRobot(
+		engine				= engine,
 		canal_asserv		= CANAL_BIG_ASSERV,
 		canal_others		= CANAL_BIG_OTHERS,
 		posinit				= mm_to_px(250,250),
 		team				= BLUE
 	)
 	minirobot = MiniRobot(
+		engine				= engine,
 		canal_asserv		= CANAL_MINI_ASSERV,
 		canal_others		= CANAL_MINI_OTHERS,
 		posinit				= mm_to_px(400,250),
@@ -72,12 +75,14 @@ if __name__ == "__main__":
 		match				= match
 	)
 	bigrobot2 = BigRobot(
+		engine				= engine,
 		canal_asserv		= CANAL_BIG_ASSERV+'2',
 		canal_others		= CANAL_BIG_OTHERS+'2',
 		posinit				= mm_to_px(3000-250,250),
 		team				= RED
 	)
 	minirobot2 = MiniRobot(
+		engine				= engine,
 		canal_asserv		= CANAL_MINI_ASSERV+'2',
 		canal_others		= CANAL_MINI_OTHERS+'2',
 		posinit				= mm_to_px(3000-400,250),
@@ -101,9 +106,8 @@ if __name__ == "__main__":
 	for i,robot in enumerate(robots):
 		ircbot.add_executer(robot)
 	
-	engine = Engine(debug)
 
-	engine.init(ircbot.stop,match)
+	engine.init(ircbot.stop,match,debug)
 	match.init(engine)
 	bigrobot.init(engine)
 	minirobot.init(engine)

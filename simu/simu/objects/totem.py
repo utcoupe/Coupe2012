@@ -7,8 +7,9 @@ from ..engine.engineobject import EngineObjectPoly
 
 
 class Totem(EngineObjectPoly):
-	def __init__(self, posinit):
+	def __init__(self,engine,posinit):
 		EngineObjectPoly.__init__(self,
+			engine			= engine,
 			colltype		= COLLTYPE_WALL,
 			posinit			= posinit,
 			color			= "brown",
