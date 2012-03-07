@@ -1,0 +1,86 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<link href='http://fonts.googleapis.com/css?family=Orbitron' rel='stylesheet' type='text/css'>
+  <link href='http://fonts.googleapis.com/css?family=Droid+Sans+Mono' rel='stylesheet' type='text/css'>
+  <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+  <style type="text/css">
+  body {
+    background: #eee;
+    font-family: 'Orbitron', sans-serif;
+  }
+  div {
+    margin: 0 auto;
+    width: 70%;
+  }
+  .truc {
+    margin-top: 1em;
+    text-align: left;
+    font-size: 6em;
+  }
+  .date {
+    text-align: right;
+    font-family: 'Droid Sans Mono', sans-serif;
+    font-size: 4em;
+  }
+  </style>
+	<title>cheuv.eu</title>
+	<script>
+    var trucs = new Array(2);
+    trucs[0] = "Michelin";
+    trucs[1] = "La Coupe";
+    var dates = new Array(2);
+    // Attention, dans la planète du JavaScript, les mois vont de 0 à 11
+    dates[0] = new Date(2012, 3, 27, 0, 0, 0, 0);
+    dates[1] = new Date(2012, 4, 16, 0, 0, 0, 0);
+  
+    function formater(integer, addZero){
+      text = Math.floor(integer).toString();
+      if(addZero && text.length < 2)
+        return "0"+text;
+      return text;
+    }
+  
+	  function update(){
+	    var now = new Date();
+	    for(i=0;i<trucs.length;i++){
+	      var diff = dates[i].getTime() - now.getTime();
+	      
+	      var days = formater(diff/1000/60/60/24, false);
+	      var hours = formater((diff-days*24*60*60*1000)/1000/60/60, true);
+	      var minutes = formater((diff-days*24*60*60*1000-hours*60*60*1000)/1000/60, true);
+	      var seconds = formater((diff-days*24*60*60*1000-hours*60*60*1000-minutes*60*1000)/1000, true);
+	      var millis = formater((diff-days*24*60*60*1000-hours*60*60*1000-minutes*60*1000-seconds*1000)/10, true);
+	      $("#"+i).html(days+" jours "+hours+":"+minutes+":"+seconds+":"+millis);
+	    }
+	    window.setTimeout("update();", 50);
+	  }
+	
+	  $(document).ready(function(){	    
+	    for(i=0;i<trucs.length;i++){
+	      $("body").append('<div id="'+i+'_truc" class="truc">'+trucs[i]+'</div>');
+	      $("body").append('<div id="'+i+'" class="date"></div>');
+	    }
+	    
+	    update();
+	  });
+	</script>
+	<script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-303831-11']);
+    _gaq.push(['_setDomainName', 'cheuv.eu']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+</head>
+
+<body></body>
+</html>
