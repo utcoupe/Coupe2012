@@ -70,6 +70,8 @@ class MotorPhysic:
 		return body, shape
 
 	def remove(self, obj):
+		for o in obj.custom_objetcs:
+			self.remove(o)
 		self.space.remove(obj.shape, obj.body)
 		self.objects.remove(obj)
 
