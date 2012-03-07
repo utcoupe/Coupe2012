@@ -113,16 +113,16 @@ class GameState:
 		start = time.time()
 		for i in range(n):
 			self.event_on_pong.clear()
-			self.ircbot.send(canal, "ping # id=%s" % ID_MSG_PING)
+			self.ircbot.send(canal, PREFIX_CMD+"ping # id=%s" % ID_MSG_PING)
 			self.event_on_pong.wait()
 		return (time.time() - start) / n
 		
 
 	def ask_hokyo_for_pos(self):
-		self.ircbot.send(CANAL_HOKUYO, "get # id=%s" % ID_MSG_HOKUYO)
+		self.ircbot.send(CANAL_HOKUYO, PREFIX_CMD+"get # id=%s" % ID_MSG_HOKUYO)
 
 	def ask_asserv_for_pos(self, canal):
-		self.ircbot.send(canal, "pos # id=%s" % ID_MSG_POS)
+		self.ircbot.send(canal, PREFIX_CMD+"pos # id=%s" % ID_MSG_POS)
 
 	def on_msg(self, canal, auteur, msg):
 		msg_split = msg.split(SEP)

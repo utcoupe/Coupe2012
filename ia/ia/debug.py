@@ -1,6 +1,6 @@
 
 
-
+from py3irc.mypyirc.ircdefine import *
 
 class Debug:
 	def __init__(self, ircbot, canal_debug):
@@ -47,5 +47,5 @@ class Debug:
 		self.send_debug("reset")
 		
 	def send_debug(self, msg):
-		self.ircbot.send(self.canal_debug, msg)
+		self.ircbot.send(self.canal_debug, PREFIX_CMD+str(msg))
 		
