@@ -32,7 +32,7 @@ void loop()   {
     Serial.println(" ==");
   
     // Donne une consigne aléatoire entre 0 et 1024
-    res = motor[0].writeInfo (GOAL_POSITION, random(1024));
+    res = motor[i].writeInfo (GOAL_POSITION, random(1024));
     
     // Affichage si erreur
     if(res > 0){
@@ -42,13 +42,13 @@ void loop()   {
     
     // Affichage de la rempérature
     Serial.print("temperature ");
-    res = motor[0].readInfo(PRESENT_TEMPERATURE);
-    Serial.println(motor[0].status_data, DEC);
+    res = motor[i].readInfo(PRESENT_TEMPERATURE);
+    Serial.println(motor[i].status_data, DEC);
     
     // Affichage de la position
     Serial.print("position ");
-    res = motor[0].readInfo(PRESENT_POSITION);
-    Serial.println(motor[0].status_data, DEC);
+    res = motor[i].readInfo(PRESENT_POSITION);
+    Serial.println(motor[i].status_data, DEC);
   }
   
   delay(500);
