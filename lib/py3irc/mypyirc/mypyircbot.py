@@ -50,9 +50,17 @@ class Executer:
 			return self.to_send.popleft()
 		else:
 			return (None,None)
+			
+	def sendError(self, canal, *msg):
+		texteRouge=chr(3)+"0,4"+self.compute_msg(*msg)+chr(3)
+		self._send(canal,texteRouge)
 
 	def send(self, canal, *msg):
-		self.to_send.append((canal,self.compute_msg(*msg)))
+		self._send.(canal,self.compute_msg(*msg))
+	
+	def _send(self, canal, msg):
+		self.to_send.append((canal,msg))
+		
 	
 	def compute_msg(self, *args):
 		return SEP.join(map(lambda x: str(x), args))
@@ -256,7 +264,7 @@ class MyPyIrcBot(ircbot.SingleServerIRCBot):
 		try:
 			doc = getattr(self, f_name).__doc__
 		except AttributeError as ex:
-			self.send(canal, str(ex))
+			self.sendError(canal, str(ex))
 		else:
 			if not doc: doc = "No documentation"
 			irc_cmd = self.func_name_to_irc_cmd(f_name)
@@ -277,7 +285,10 @@ class MyPyIrcBot(ircbot.SingleServerIRCBot):
 				self.serv.privmsg(canal, msg)
 			except irclib.ServerNotConnectedError as ex:
 				print("send error", ex)
-
+				
+	def sendError(self, canal, msg):
+=		send(self, canal, chr(3)+"0,4"+str(msg)+chr(3))
+				
 	def channel_to_prefix_cmd(self, canal):
 		return channel_to_prefix_cmd(canal)
 	
