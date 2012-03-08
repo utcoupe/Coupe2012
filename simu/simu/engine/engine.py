@@ -18,54 +18,41 @@ class Engine:
 	Engine, cette classe permet de coupler un moteur physique et un
 	moteur graphique.
 	"""
-	def __init__(self, debug):
+	def __init__(self):
 		"""
 		@param stop_irc fonction permettant d'arreter le client irc (il
 		tourne dans un thread à part).
 		"""
-		self.motorgraphic = MotorGraphic(debug)
-		self.motorphysic = MotorPhysic()
-		self.motorphysic.add_collision_handler(COLLTYPE_ROBOT, COLLTYPE_WALL, self.motorgraphic.draw_collision)
-		self.motorphysic.add_collision_handler(COLLTYPE_ROULEAU, COLLTYPE_CD, self.on_collision_rouleau_cd)
-		self.motorphysic.add_collision_handler(COLLTYPE_ROULEAU, COLLTYPE_LINGO, self.on_collision_rouleau_lingo)
+		self.graphicsengine = MotorGraphic()
+		self.physicsengine = MotorPhysic()
+		self.physicsengine.add_collision_handler(COLLTYPE_ROBOT, COLLTYPE_WALL, self.graphicsengine.draw_collision)
+		self.physicsengine.add_collision_handler(COLLTYPE_ROULEAU, COLLTYPE_CD, self.on_collision_rouleau_cd)
+		self.physicsengine.add_collision_handler(COLLTYPE_ROULEAU, COLLTYPE_LINGO, self.on_collision_rouleau_lingo)
 		self.e_stop = threading.Event()
 		self.objects = []
 		self.objects_to_remove = []
 
-	def init(self, stop_irc, match):
+	def init(self, stop_irc, match, debug):
 		self.match = match
 		self.stop_irc = stop_irc
+		self.debug = debug
+		self.graphicsengine.init(debug)
 
 	def find_obj_by_shape(self, shape):
 		"""
 		À partir d'une shape retrouve l'objet concerné
 		"""
-		objs = list(filter(lambda obj: obj.shape == shape, self.objects))
-		if len(objs) > 1:
-			raise Exception("shape %s is used multiple times : %s" % (shape, objs))
-		elif len(objs) == 1:
-			return objs[0]
-		else:
-			return None
-
-	def find_robot_by_rouleau_shape(self, shape):
-		"""
-		À retrouve le robot dont le rouleau à la shape précisée
-		"""
-		objs = list(filter(lambda obj: "rouleau" in dir(obj) and obj.rouleau.shape == shape, self.objects))
-		if len(objs) > 1:
-			raise Exception("shape %s is used multiple times : %s" % (shape, objs))
-		elif len(objs) == 1:
-			return objs[0]
-		else:
-			return None
+		for obj in self.objects:
+			if obj.is_my_shape(shape):
+				return obj
+		return None
 
 	
 	def on_collision_rouleau_cd(self, space, arb):
 		"""
 		Quand un rouleau touche un cd
 		"""
-		robot = self.find_robot_by_rouleau_shape(arb.shapes[0])
+		robot = self.find_obj_by_shape(arb.shapes[0])
 		if not robot:
 			print("robot not found")
 		else:
@@ -80,7 +67,7 @@ class Engine:
 		"""
 		Quand un rouleau touche un cd
 		"""
-		robot = self.find_robot_by_rouleau_shape(arb.shapes[0])
+		robot = self.find_obj_by_shape(arb.shapes[0])
 		if not robot:
 			print("robot not found")
 		else:
@@ -92,14 +79,6 @@ class Engine:
 				self.objects_to_remove.append(lingo)
 		
 
-	def add(self, obj):
-		"""
-		Ajouter un objet à l'engine, il est ajouté du même coup au moteur
-		physique et au moteur graphique.
-		"""
-		self.objects.append(obj)
-		self.motorgraphic.add(obj)
-		self.motorphysic.add(obj)
 
 	def stop(self):
 		self.e_stop.set()
@@ -124,14 +103,41 @@ class Engine:
 			if o: self.remove(o)
 		self.objects_to_remove = []
 		dt = 1.0/float(FPS)
-		self.motorphysic.step(dt)
+		self.physicsengine.step(dt)
 		for o in self.objects:
 			o.step(dt)
-		if not self.motorgraphic.step():
+		if not self.graphicsengine.step():
 			self.stop()
+			
+	def add(self, obj):
+		"""
+		Ajouter un objet à l'engine, il est ajouté du même coup au moteur
+		physique et au moteur graphique.
+		"""
+		self.objects.append(obj)
+		self.graphicsengine.add(obj)
+		self.physicsengine.add(obj)
+
+	def add_extension(self, obj):
+		if not obj.is_extension:
+			raise Exception("add_extension can be used only on an extension")
+		else:
+			self.graphicsengine._add_extension(obj)
+			self.physicsengine._add_extension(obj)
 
 	def remove(self, obj):
-		self.motorgraphic.remove(obj)
-		self.motorphysic.remove(obj)
-		self.objects.remove(obj)
-		
+		if obj.is_extension:
+			self.remove_extension(self)
+		else:
+			for o in obj.extension_objects:
+				self.remove_extension(o)
+			self.graphicsengine.remove(obj)
+			self.physicsengine.remove(obj)
+			self.objects.remove(obj)
+
+	def remove_extension(self, obj):
+		if not obj.is_extension:
+			raise Exception("remove_extension can only be used on an extension object")
+		else:
+			self.graphicsengine.remove_extension(obj)
+			self.physicsengine.remove_extension(obj)

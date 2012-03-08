@@ -13,7 +13,7 @@ from .engineobject import CIRCLE, POLY, WALL
 
 
 class MotorGraphic():	
-	def __init__(self, debug):
+	def __init__(self):
 		pg.init()
 		self.screen = pg.display.set_mode(mm_to_px(3000, 2000))
 		self.clock = pg.time.Clock()
@@ -22,6 +22,8 @@ class MotorGraphic():
 		self.collisions_to_draw = []
 		self.map_img = pg.image.load("map.jpg")
 		self.map_img=pg.transform.scale(self.map_img,(self.screen.get_width(),self.screen.get_height()))
+
+	def init(self, debug):
 		self.debug = debug
 
 	def draw_obj(self, obj):
@@ -33,7 +35,7 @@ class MotorGraphic():
 			self.draw_segment_from_obj(obj.shape, THECOLORS[obj.color])
 		else:
 			raise Exception("MotorGraphic.draw_obj : type '%s' doesn't exist"%obj.t)
-		for o in obj.custom_objects:
+		for o in obj.extension_objects:
 			self.draw_obj(o)
 
 	def step(self):
@@ -75,13 +77,6 @@ class MotorGraphic():
 				for f in self.onEvents: f(event)
 
 		return True
-	
-	def add(self, obj):
-		self.objects.append(obj)
-		try:
-			self.onEvents.append(obj.onEvent)
-		except:
-			pass
 
 	def draw_circle_from_obj(self, shape, color):
 		p = tuple(map(int, shape.body.position))
@@ -114,7 +109,36 @@ class MotorGraphic():
 			p = tuple(map(int, c.position))
 			self.collisions_to_draw.append((p, r))
 
+	def add(self, obj):
+		if obj.is_extension:
+			raise Exception("you can only add a main object to the graphics engine")
+		self.objects.append(obj)
+		try:
+			self.onEvents.append(obj.onEvent)
+		except:
+			pass
+		for o in obj.extension_objects:
+			self._add_extension(o)
+			
+	def _add_extension(self, obj):
+		if not obj.is_extension:
+			raise Exception("add_extension can be used only on an extension")
+		try:
+			self.onEvents.append(obj.onEvent)
+		except:
+			pass
+		for o in obj.extension_objects:
+			self._add_extension(o)
 
 	def remove(self, obj):
-		self.objects.remove(obj)
+		if obj.is_extension:
+			self.remove_extension(obj)
+		else:
+			self.objects.remove(obj)
+
+	def remove_extension(self, obj):
+		if not obj.is_extension:
+			raise Exception("remove_extension can only be used on an extension object")
+		else:
+			pass
 	

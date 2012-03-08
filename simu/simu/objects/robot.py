@@ -25,15 +25,16 @@ class GoalPOS:
 
 
 class Robot(EngineObjectPoly, Executer):
-	def __init__(self, *, canal_asserv, canal_others, team, posinit, mass, poly_points, typerobot, custom_objects=[]):
+	def __init__(self, *, engine, canal_asserv, canal_others, team, posinit, mass, poly_points, typerobot, extension_objects=[]):
 		color = 'blue' if team == BLUE else 'red'
 		EngineObjectPoly.__init__(self,
+			engine		 	= engine,
 			colltype		= COLLTYPE_ROBOT,
 			mass			= mass,
 			posinit			= posinit,
 			color			= color,
 			poly_points		= poly_points,
-			custom_objects	= custom_objects
+			extension_objects	= extension_objects
 		)
 		Executer.__init__(self)
 

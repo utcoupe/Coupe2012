@@ -37,11 +37,25 @@ KEY_STOP_RESUME		= K_SPACE		# apppui = stop, relache = resume
 KEY_CANCEL			= K_ESCAPE		# cancel
 KEY_DROP			= K_d			# vider le gros robot
 KEY_ARRACHE			= K_a			# arracher la carte
+KEY_BALAIS_LEFT		= K_q			# sortir le balais de gauche
+KEY_BALAIS_RIGHT	= K_w			# sortir le balais de droite
 
 BIG			= 0
 MINI		= 1
 
+LEFT		= 0
+RIGHT		= 1
 
+# dimensions du petit robot
+WIDTH_MINI 		= 184
+HEIGHT_MINI 	= 200
+# dimension des palettes (buldo) du mini robot
+SIZE_PALETTE	= 70
+WIDTH_PALETTE	= 5
+# dimensions balais qui râclent la zone adverse	
+SIZE_BALAIS		= 200
+WIDTH_BALAIS	= 50
+ECART_ROBOT_BALAIS	= 50
 
 def mm_to_px(*args):
 	"""
