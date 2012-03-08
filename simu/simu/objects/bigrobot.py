@@ -1,36 +1,38 @@
 # -*- coding: utf-8 -*-
 
-from pygame.locals import *
+import math
+import time
+import random
 
-from . import robot
+from geometry import Vec,Segment
+
+from .robot import Robot, BIG
 from ..define import *
 from ..engine.engineobject import EngineObjectPoly
+from .cd import Cd
+from .lingo import Lingo
 
-class BigRobot(robot.Robot):
-	def __init__(self, *, canal_asserv, canal_others, posinit, team):
-		if team == BLUE:
-			self.mouse_button = 1 # LMB
-			color = 'blue'
-		else:
-			self.mouse_button = 3 # RMB
-			color = 'red'
-		
+class BigRobot(Robot):
+	def __init__(self, *, engine, canal_asserv, canal_others, posinit, team):
 		self.rouleau = EngineObjectPoly(
+			engine 		= engine,
 			colltype	= COLLTYPE_ROULEAU,
 			offset		= mm_to_px(6,-137),
 			color		= "orange",
-			poly_points = map(lambda p: mm_to_px(*p),[(0,0),(138,0),(138,274),(0,274)])
+			poly_points = map(lambda p: mm_to_px(*p),[(0,0),(138,0),(138,274),(0,274)]),
+			is_extension= True
 		)
 		
-		robot.Robot.__init__(self,
+		Robot.__init__(self,
+			engine		 		= engine,
 			canal_asserv		= canal_asserv,
 			canal_others		= canal_others,
 			team				= team,
 			posinit				= posinit,
 			mass				= 10,
-			color				= color,
+			typerobot			= BIG,
 			poly_points			= mm_to_px((0,0),(288,0),(288,314),(0,314)),
-			custom_objects		= [self.rouleau]
+			extension_objects	= [self.rouleau]
 		)
 
 		self.nb_white_cds = 0
@@ -38,14 +40,12 @@ class BigRobot(robot.Robot):
 		self.nb_lingos = 0
 
 	def onEvent(self, event):
-		if event.type == KEYDOWN and event.key == K_LSHIFT:
-			self.shift_on = True
-		if event.type == KEYUP and event.key == K_LSHIFT:
-			self.shift_on = False
-		if not self.shift_on and event.type == MOUSEBUTTONDOWN and event.button == self.mouse_button:
-			p = event.pos
-			print(px_to_mm(p[0],p[1]))
-			self._cmd_asserv_goto(*px_to_mm(p[0],p[1],mm_to_px(1000)), id_msg=42)
+		if not Robot.onEvent(self,event):
+			if self._event_concerns_me(event):
+				if KEYDOWN == event.type:
+					if KEY_DROP == event.key:
+						self._cmd_others_drop(id_msg=42)
+						return True
 
 	def eat_cd(self, color):
 		if color == 'white':
@@ -59,9 +59,29 @@ class BigRobot(robot.Robot):
 		self.nb_lingos += 1
 
 	def _cmd_others_drop(self, **kwargs):
+		DIST = 200
+		# calcul de la position d'attérissage (un peu derrière le robot
+		pos = Vec(self.pos())
+		angle = self.angle() + math.pi
+		pos_drop = pos + mm_to_px(random.randint(-50,50),random.randint(-50,50)) + mm_to_px(DIST * math.cos(angle), DIST * math.sin(angle))
+		pos_drop = tuple(pos_drop)
+		# création des objets
+		for _ in range(self.nb_white_cds):
+			cd = Cd(self.engine, pos_drop, "white")
+			self.engine.add(cd)
+		for _ in range(self.nb_black_cds):
+			cd = Cd(self.engine, pos_drop, "black")
+			self.engine.add(cd)
+		for _ in range(self.nb_lingos):
+			lingo = Lingo(self.engine, pos_drop)
+			self.engine.add(lingo)
+		
 		self.nb_white_cds = 0
 		self.nb_black_cds = 0
+		self.nb_lingos = 0
+
 		self.send_canal_asserv(kwargs['id_msg'], 1)
+		
 	
 	def _cmd_others_vider_totem(self, **kwargs):
 		self.nb_white_cds += 4

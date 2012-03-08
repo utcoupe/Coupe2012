@@ -7,8 +7,9 @@ from ..engine.engineobject import EngineObjectCircle
 
 
 class Tour(EngineObjectCircle):
-	def __init__(self):
+	def __init__(self,engine):
 		EngineObjectCircle.__init__(self,
+			engine			= engine,
 			colltype		= COLLTYPE_WALL,
 			mass			= MASS_INF,
 			posinit			= mm_to_px(1500,1000),

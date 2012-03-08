@@ -11,6 +11,9 @@ from ..define import *
 from ..engine.engineobject import EngineObjectPoly
 
 
+
+
+
 class GoalPWM:
 	def __init__(self, pwm):
 		self.pwm = pwm
@@ -22,16 +25,20 @@ class GoalPOS:
 
 
 class Robot(EngineObjectPoly, Executer):
-	def __init__(self, *, canal_asserv, canal_others, team, posinit, mass, color, poly_points, custom_objects=[]):
+	def __init__(self, *, engine, canal_asserv, canal_others, team, posinit, mass, poly_points, typerobot, extension_objects=[]):
+		color = 'blue' if team == BLUE else 'red'
 		EngineObjectPoly.__init__(self,
+			engine		 	= engine,
 			colltype		= COLLTYPE_ROBOT,
 			mass			= mass,
 			posinit			= posinit,
 			color			= color,
 			poly_points		= poly_points,
-			custom_objects	= custom_objects
+			extension_objects	= extension_objects
 		)
 		Executer.__init__(self)
+
+		self.typerobot = typerobot
 
 		# vitesse maximale (quand pwm=255)
 		self.max_speed = 1000
@@ -45,7 +52,9 @@ class Robot(EngineObjectPoly, Executer):
 		self.stop = False
 
 		# touche shift enfoncée ?
-		self.shift_on = False
+		self.current_robot	= BIG
+		self.current_team	= BLUE
+		self.stop			= False
 
 		# être sûr que le canal commance par #
 		self.canal_asserv = canal_ircnormalize(canal_asserv)
@@ -57,6 +66,8 @@ class Robot(EngineObjectPoly, Executer):
 		self.transform("asserv", canal_asserv)
 		self.transform("others", canal_others)
 
+	def init(self, engine):
+		self.engine = engine
 
 	def x(self):
 		return px_to_mm(self.body.position[0])
@@ -149,6 +160,50 @@ class Robot(EngineObjectPoly, Executer):
 	def send_canal_others(self, *args):
 		self.send(self.canal_others, *args)
 
+	def onEvent(self, event):
+		# selection des teams et des robots
+		if KEYDOWN == event.type:
+			if KEY_CHANGE_TEAM == event.key:
+				self.current_team = RED
+				print("équipe rouge")
+				return True
+			elif KEY_CHANGE_ROBOT == event.key:
+				self.current_robot = MINI
+				print("control du mini robot")
+				return True
+		elif KEYUP == event.type:
+			if KEY_CHANGE_TEAM == event.key:
+				print("équipe bleu")
+				self.current_team = BLUE
+				return True
+			elif KEY_CHANGE_ROBOT == event.key:
+				self.current_robot = BIG
+				print("control gros robot")
+				return True
+
+		# actions
+		if self._event_concerns_me(event):
+			# keydown
+			if KEYDOWN == event.type:
+				if KEY_STOP_RESUME == event.key:
+					self._cmd_asserv_stop(id_msg=42)
+				elif KEY_CANCEL == event.key:
+					self._cmd_asserv_cancel(id_msg=42)
+			# keyup
+			elif KEYUP == event.type:
+				if KEY_STOP_RESUME == event.key:
+					self._cmd_asserv_resume(id_msg=42)
+			# mouse
+			elif event.type == MOUSEBUTTONDOWN:
+				p = event.pos
+				print(px_to_mm(p[0],p[1]))
+				self._cmd_asserv_goto(*px_to_mm(p[0],p[1],mm_to_px(1000)), id_msg=42)
+				return True
+		return False
+
+	def _event_concerns_me(self, event):
+		return self.current_team == self.team and self.typerobot == self.current_robot
+	
 	def __repr__(self):
 		return "Robot"
 			

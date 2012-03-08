@@ -28,6 +28,7 @@ sys.path.append(os.path.join(DIR_PATH, ".."))
 
 import optparse
 import threading
+import time
 
 from simu import *
 from py3irc.mypyirc.ircdefine import *
@@ -51,6 +52,7 @@ if __name__ == "__main__":
 
 
 	
+	engine = Engine()
 	match = Match()
 
 	# debug
@@ -58,28 +60,34 @@ if __name__ == "__main__":
 
 	# robots
 	bigrobot = BigRobot(
+		engine				= engine,
 		canal_asserv		= CANAL_BIG_ASSERV,
 		canal_others		= CANAL_BIG_OTHERS,
 		posinit				= mm_to_px(250,250),
 		team				= BLUE
 	)
 	minirobot = MiniRobot(
+		engine				= engine,
 		canal_asserv		= CANAL_MINI_ASSERV,
 		canal_others		= CANAL_MINI_OTHERS,
 		posinit				= mm_to_px(400,250),
-		team				= BLUE
+		team				= BLUE,
+		match				= match
 	)
 	bigrobot2 = BigRobot(
+		engine				= engine,
 		canal_asserv		= CANAL_BIG_ASSERV+'2',
 		canal_others		= CANAL_BIG_OTHERS+'2',
 		posinit				= mm_to_px(3000-250,250),
 		team				= RED
 	)
 	minirobot2 = MiniRobot(
+		engine				= engine,
 		canal_asserv		= CANAL_MINI_ASSERV+'2',
 		canal_others		= CANAL_MINI_OTHERS+'2',
 		posinit				= mm_to_px(3000-400,250),
-		team				= RED
+		team				= RED,
+		match				= match
 	)
 	robots = (bigrobot, minirobot, bigrobot2, minirobot2)
 
@@ -98,7 +106,13 @@ if __name__ == "__main__":
 	for i,robot in enumerate(robots):
 		ircbot.add_executer(robot)
 	
-	engine = Engine(ircbot.stop, match, debug)
+
+	engine.init(ircbot.stop,match,debug)
+	match.init(engine)
+	bigrobot.init(engine)
+	minirobot.init(engine)
+	bigrobot2.init(engine)
+	minirobot2.init(engine)
 	try:
 		t = threading.Thread(None,ircbot.start,"simuircbot")
 		t.setDaemon(True)
@@ -113,5 +127,16 @@ if __name__ == "__main__":
 	engine.add(bigrobot2)
 	engine.add(minirobot2)
 
-	engine.start()
+	t=threading.Thread(target=engine.start)
+	t.setDaemon(True)
+	t.start()
+
+	while not engine.e_stop.is_set():
+		try:
+			engine.e_stop.wait(3)
+			print(match.score(BLUE))
+			print(match.score(RED))
+		except KeyboardInterrupt:
+			engine.stop()
+			break
 	

@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 
 from pymunk import inf as MASS_INF
+from pygame.locals import *
 
 
 
-FPS					= 30
+FPS					= 50
 PX_TO_MM			= 4
 
 
@@ -21,10 +22,40 @@ BLUE				= 0
 RED					= 1
 
 T_CD				= 0
-T_LINGOT			= 1
+T_LINGO				= 1
+T_CARTE				= 2
+T_BOTTLE			= 3
 
 COEFF_ENGORGEMENT_CD	= 0.05 # eq : on peut mettre 20 Cds avant d'être plein (0.05 * 20 = 1)
 COEFF_ENGORGEMENT_LINGO	= 0.2
+
+
+
+KEY_CHANGE_TEAM		= K_LSHIFT		# changer de robot
+KEY_CHANGE_ROBOT	= K_LCTRL		# changer d'équipe
+KEY_STOP_RESUME		= K_SPACE		# apppui = stop, relache = resume
+KEY_CANCEL			= K_ESCAPE		# cancel
+KEY_DROP			= K_d			# vider le gros robot
+KEY_ARRACHE			= K_a			# arracher la carte
+KEY_BALAIS_LEFT		= K_q			# sortir le balais de gauche
+KEY_BALAIS_RIGHT	= K_w			# sortir le balais de droite
+
+BIG			= 0
+MINI		= 1
+
+LEFT		= 0
+RIGHT		= 1
+
+# dimensions du petit robot
+WIDTH_MINI 		= 184
+HEIGHT_MINI 	= 200
+# dimension des palettes (buldo) du mini robot
+SIZE_PALETTE	= 70
+WIDTH_PALETTE	= 5
+# dimensions balais qui râclent la zone adverse	
+SIZE_BALAIS		= 200
+WIDTH_BALAIS	= 50
+ECART_ROBOT_BALAIS	= 50
 
 def mm_to_px(*args):
 	"""

@@ -147,8 +147,10 @@ class MyPyIrcBot(ircbot.SingleServerIRCBot):
 		Méthode appelée une fois connecté et identifié.
 		Notez qu'on ne peut rejoindre les canaux auparavant.
 		"""
+		print("Serveur %s joined" % serv.get_server_name())
 		for chan in self.canaux:
 			serv.join(chan)
+			print("joined %s" % chan)
 		self.serv = serv
 		self.e_welcome.set()
 
@@ -179,27 +181,28 @@ class MyPyIrcBot(ircbot.SingleServerIRCBot):
 		self._on_pubmsg(auteur, canal, msg)
 
 	def _on_pubmsg(self, auteur, canal, msg):
-		msg, options = raw_msg_to_msg_n_options(msg)
-		msg_split = msg.strip().split(" ")
-		f_name = self.irc_cmd_to_func_name(canal, msg_split[0])
-		if msg_split[0] == "help":
-			if len(msg_split) > 1:
-				self.print_doc(canal, self.irc_cmd_to_func_name(canal, msg_split[1]))
-			else:
-				for f_name in dir(self):
-					if f_name.startswith(self.channel_to_prefix_cmd(canal)):
-						self.print_doc(canal, f_name)
-		elif hasattr(self, f_name):
-			f = getattr(self, f_name)
-			f_args = inspect.getargspec(f).args
-			nb_args = len(f_args)
-			args = msg_split[1:]
-			if 'self' in f_args:
-				nb_args -= 1
-			if len(args) == nb_args:
-				self.write_rep(f(*args,**options)+"\n")
-			else:
-				self.send(canal, "invalid arg number : need %s and get %s" % (str(inspect.getargspec(f)),msg_split))
+		if msg.startswith(PREFIX_CMD):
+			msg, options = raw_msg_to_msg_n_options(msg[1:])
+			msg_split = msg.strip().split(" ")
+			f_name = self.irc_cmd_to_func_name(canal, msg_split[0])
+			if msg_split[0] == "help":
+				if len(msg_split) > 1:
+					self.print_doc(canal, self.irc_cmd_to_func_name(canal, msg_split[1]))
+				else:
+					for f_name in dir(self):
+						if f_name.startswith(self.channel_to_prefix_cmd(canal)):
+							self.print_doc(canal, f_name)
+			elif hasattr(self, f_name):
+				f = getattr(self, f_name)
+				f_args = inspect.getargspec(f).args
+				nb_args = len(f_args)
+				args = msg_split[1:]
+				if 'self' in f_args:
+					nb_args -= 1
+				if len(args) == nb_args:
+					self.write_rep(f(*args,**options)+"\n")
+				else:
+					self.send(canal, "invalid arg number : need %s and get %s" % (str(inspect.getargspec(f)),msg_split))
 		
 
 
@@ -343,7 +346,14 @@ class MyPyIrcBot(ircbot.SingleServerIRCBot):
 					canal, msg = e.get_msg()
 			time.sleep(0.01)
 
+	def start(self):
+		try:
+			ircbot.SingleServerIRCBot.start(self)
+		except KeyboardInterrupt:
+			self.stop()
+	
 	def stop(self):
+		print("exit")
 		if self.serv:
 			self.serv.disconnect("Tchuss")
 

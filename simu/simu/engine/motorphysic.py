@@ -25,55 +25,69 @@ class MotorPhysic:
 			vx,vy = o.body.velocity
 			o.body._set_velocity((vx*self.coef_frot, vy*self.coef_frot))
 
-	def create_shape(self, obj, body):
-		if obj.t == CIRCLE:
-			shape = pm.Circle(body, obj.radius, obj.offset)
-		elif obj.t == POLY:
-			shape = pm.Poly(body, obj.poly_points, obj.offset)
-		elif obj.t == WALL:
-			shape = pm.Segment(body, obj.inita, obj.initb, 0.0)
-		else:
-			raise Exception("MotorPhysic.create_shape : objet type '%s' doesn't exist"%obj.t)
-		return shape
+
+	def create_shape_circle(self, body, radius, offset):
+		return pm.Circle(body, radius, offset)
+		
+	def create_shape_poly(self, body, points, offset):
+		return pm.Poly(body, points, offset)
+		
+	def create_shape_segment(self, body, p1, p2, width):
+		return pm.Segment(body, p1, p2, width)
 
 
-	def create_body(self, obj):
-		if obj.t == CIRCLE:
-			inertia = pm.moment_for_circle(obj.mass, 0, obj.radius, (0,0))
-			body = pm.Body(obj.mass, inertia)
-			body.position = obj.posinit[0], obj.posinit[1]
-		elif obj.t == POLY:
-			center = pm.util.calc_center(obj.poly_points)
-			obj.poly_points = pm.util.poly_vectors_around_center(obj.poly_points)
-			moment = pm.moment_for_poly(obj.mass,obj.poly_points, Vec2d(0,0))
-			body = pm.Body(obj.mass, moment)
-			body.position = obj.posinit[0], obj.posinit[1]
-		elif obj.t == WALL:
-			body = pm.Body(pm.inf, pm.inf)
-		else:
-			raise Exception("MotorPhysic.create_body : objet type '%s' doesn't exist"%obj.t)
+	def create_body_circle(self, mass, posinit, radius):
+		inertia = pm.moment_for_circle(mass, 0, radius, (0,0))
+		body = pm.Body(mass, inertia)
+		body.position = Vec2d(posinit)
+		return body
+
+	def create_body_poly(self, mass, posinit, points):
+		center = pm.util.calc_center(points)
+		points = pm.util.poly_vectors_around_center(points)
+		moment = pm.moment_for_poly(mass,points, Vec2d(0,0))
+		body = pm.Body(mass, moment)
+		body.position = Vec2d(posinit)
+		return body, points
+
+	def create_body_segment(self, mass, a, b):
+		inertia = pm.moment_for_segment(mass, a,b)
+		body = pm.Body(mass, inertia)
 		return body
 		
-	
-	def add(self, obj, body=None):
-		if not body:
-			body = self.create_body(obj)
-			self.space.add(body)
-		shape = self.create_shape(obj, body)
-		shape.collision_type = obj.collision_type
-		obj.shape = shape
-		obj.body = body
-		self.space.add(shape)
+	def add(self, obj):
+		if obj.is_extension:
+			raise Exception("you can only add a main object to the physics engine")
+		for o in obj.extension_objects:
+			self._add_extension(o)
+		self.space.add(obj.body)
+		self.space.add(obj.shape)
 		self.objects.append(obj)
-		for o in obj.custom_objects:
-			self.add(o, body)
-		return body, shape
+
+	def _add_extension(self, obj):
+		if not obj.is_extension:
+			raise Exception("add_extension can be used only on an extension")
+		try:
+			self.space.add(obj.shape)
+		except Exception as ex:
+			print("motorphysics._add_extension", ex)
+		for o in obj.extension_objects:
+			self._add_extension(o)
 
 	def remove(self, obj):
-		for o in obj.custom_objetcs:
-			self.remove(o)
-		self.space.remove(obj.shape, obj.body)
-		self.objects.remove(obj)
+		if obj.is_extension:
+			self.remove_extension(obj)
+		else:
+			for o in obj.extension_objects:
+				self.remove_extension(o)
+			self.space.remove(obj.shape, obj.body)
+			self.objects.remove(obj)
+
+	def remove_extension(self, obj):
+		if not obj.is_extension:
+			raise Exception("remove_extension can only be used on an extension object")
+		else:
+			self.space.remove(obj.shape)
 
 
 		

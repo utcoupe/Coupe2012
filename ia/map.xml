@@ -2,6 +2,7 @@
 	
 <size width="3000" height="2000" w_tiles="100" />
 
+<!-- mur zone départ -->
 <polygon>
 	<vertex x="0" y="500" />
 	<vertex x="400" y="500" />
@@ -9,6 +10,7 @@
 	<vertex x="0" y="520" />
 </polygon>
 
+<!-- mur diagonal-->
 <polygon>
 	<vertex x="363" y="1251" />
 	<vertex x="381" y="1251" />
@@ -16,6 +18,7 @@
 	<vertex x="343" y="2000" />
 </polygon>
 
+<!-- mur zone départ 2 -->
 <polygon>
 	<vertex x="2600" y="500" />
 	<vertex x="3000" y="500" />
@@ -23,6 +26,7 @@
 	<vertex x="2600" y="520" />
 </polygon>
 
+<!-- mur diagonal 2 -->
 <polygon>
 	<vertex x="2619" y="1251" />
 	<vertex x="2637" y="1251" />
@@ -30,10 +34,14 @@
 	<vertex x="2657" y="2000" />
 </polygon>
 
+
+<!-- totem -->
 <carre x="1100" y="1000" width="250"/>
 
+<!-- totem -->
 <carre x="1900" y="1000" width="250"/>
 
+<!-- baobab -->
 <circle x="1500" y="1000" rayon="75" n="8"/>
 
 </map>

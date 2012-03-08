@@ -6,8 +6,9 @@ from ..engine.engineobject import EngineObjectPoly
 
 
 class Lingo(EngineObjectPoly):
-	def __init__(self,posinit):
+	def __init__(self,engine,posinit):
 		EngineObjectPoly.__init__(self,
+			engine			= engine,
 			colltype		= COLLTYPE_LINGO,
 			posinit			= posinit,
 			color			= "yellow",

@@ -46,7 +46,7 @@ class Asservissement:
 		self.send_asserv("pos # id=%s" % ID_MSG_POS)
 
 	def send_asserv(self, msg):
-		self.ircbot.send(self.chan_asserv, msg)
+		self.ircbot.send(self.chan_asserv, PREFIX_CMD+str(msg))
 
 	def on_msg(self, canal, auteur, msg):
 		if canal == self.chan_asserv:
