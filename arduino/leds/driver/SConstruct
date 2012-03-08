@@ -40,6 +40,7 @@ from glob import glob
 import sys
 import re
 import os
+import subprocess
 pathJoin = os.path.join
 
 env = Environment()
@@ -65,7 +66,7 @@ elif platform == 'win32':
     SKETCHBOOK_HOME_DEFAULT = ''
 else:
     # For Ubuntu Linux (9.10 or higher)
-    ARDUINO_HOME_DEFAULT = '../../arduino-1.0/' #'/home/YOU/apps/arduino-00XX/'
+    ARDUINO_HOME_DEFAULT = '../arduino-1.0/' #'/home/YOU/apps/arduino-00XX/'
     ARDUINO_PORT_DEFAULT = getUsbTty('/dev/ttyACM*')
     AVR_BIN_PREFIX = 'avr-'
     SKETCHBOOK_HOME_DEFAULT = os.path.realpath('~/share/arduino/sketchbook/')
@@ -176,7 +177,7 @@ def run(cmd):
                 sys.exit(code)
 
 def fnCompressCore(target, source, env):
-    core_files = filter(lambda x: str(x).startswith('build/core/'), source)
+    core_files = filter(lambda x: str(x).startswith('build/core_patched/'), source)
     for file in core_files:
         run(AVR_BIN_PREFIX+'ar rcs %s %s'%(target[0], file))
 
@@ -222,9 +223,27 @@ def fnProcessing(target, source, env):
     wp.write('#line 1 "%s"\r\n' % sourcePath)
     wp.write(open('%s'%source[0]).read())
 
+def fnPatchCore(target, source, env):
+	patches = glob(os.path.join(".","*.patch"))
+	patches = map(lambda x: os.path.basename(x)[:-len('.patch')], patches)
+	for i,src in enumerate(source):
+		src = str(src)
+		trgt = str(target[i])
+		f = open(trgt,'w')
+		f.write(open(src).read())
+		f.close()
+		try:
+			i_patch = patches.index(os.path.basename(src))
+		except ValueError:
+			continue
+		patch = patches[i_patch]
+		p = subprocess.Popen(["patch","-N",trgt,patch+".patch"])
+		p.wait()
+
 envArduino.Append(BUILDERS = {'Processing':Builder(action = fnProcessing,
         suffix = '.cpp', src_suffix = FILE_EXTENSION)})
 envArduino.Append(BUILDERS = {'CompressCore':Builder(action = fnCompressCore) })
+envArduino.Append(BUILDERS = {'PatchCore':Builder(action = fnPatchCore) })
 envArduino.Append(BUILDERS={'Elf':Builder(action=AVR_BIN_PREFIX+'gcc '+
         '-mmcu=%s -Os -Wl,--gc-sections -o $TARGET $SOURCES -lm'%MCU)})
 envArduino.Append(BUILDERS={'Hex':Builder(action=AVR_BIN_PREFIX+'objcopy '+
@@ -239,6 +258,8 @@ VariantDir('build/core', ARDUINO_CORE)
 core_sources = gatherSources(ARDUINO_CORE)
 core_sources = filter(lambda x: not (os.path.basename(x) == 'main.cpp'), core_sources)
 core_sources = map(lambda x: x.replace(ARDUINO_CORE, 'build/core/'), core_sources)
+core_sources_patched = map(lambda x: x.replace('build/core/',"build/core_patched"), core_sources)
+envArduino.PatchCore(core_sources_patched,core_sources)
 
 # add libraries
 libCandidates = []
@@ -297,7 +318,7 @@ sources += local_sources
 sources += all_libs_sources
 
 # Finally Build!!
-core_objs = envArduino.Object(core_sources)
+core_objs = envArduino.Object(core_sources_patched)
 objs = envArduino.Object(sources) #, LIBS=libs, LIBPATH='.')
 objs = objs + envArduino.CompressCore('build/core.a', core_objs)
 envArduino.Elf(TARGET+'.elf', objs)
