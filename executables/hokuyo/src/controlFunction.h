@@ -21,16 +21,11 @@ inline
 bool driverStart()
 {
 
-	// Création thread
-	pthread_mutex_init(&mutex, NULL);	
+	
+    comLoop();
+	
+  
 
-	pthread_t thrCom;
-    if(pthread_create(&thrCom, NULL, &comLoop, NULL))
-    {
-        printf("Could not create thread com\n");
-        return -1;
-    }
- 
 	pthread_t thrHok;
     if(pthread_create(&thrHok, NULL, &urgLoop, NULL))
     {
@@ -38,20 +33,12 @@ bool driverStart()
         return -1;
     }
     
-	
-	// Kill propre des threads
-    if(pthread_join(thrCom, NULL))
-    {
-        printf("Could not join thread\n");
-        return -1;
-    }
-   
     if(pthread_join(thrHok, NULL))
     {
         printf("Could not join thread\n");
         return -1;
     }
-    
+ 
 	
 	return true;
 }
@@ -64,12 +51,14 @@ bool startHokuyoDriver()
 	#if DEBUG
 	cout << "Demarrage du driver hokuyo" << endl << endl;
 	#endif
-	
+
+
 	// Initialisation
 	if(!driverInitialisation()){
 		cout << "Erreur :driverInitialisation()" << endl;
 		return false;
 	}
+	
 	
 	// Demarrage des fonctions princpales
 	if(!driverStart()){

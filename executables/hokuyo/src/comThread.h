@@ -42,15 +42,24 @@ void send(void)
 
 
 
-void* comLoop(void* arg)
+void comLoop()
 {
-	// Définition des foncions de la com en commançant par la commande kill
-	comManager cm(QH_KILL);	
-	cm.addFunction(QH_GETDATA,&send);
+	// On récupére le singleton du manager
+	comManager* cm = comManager::getComManager();
 	
-	void* ret = cm.loop(arg);
-	g_stop = true;
-	return ret;
+	// Partage du mutex
+	mutex = cm->getMutex();
+	
+	// Ajout des fonctions 
+	cm->addKill(QH_KILL);
+	cm->addFunction(QH_GETDATA,&send);
+	
+	// Démarrage du thread de com 
+	cm->start();
+
+	g_stop = true;	
 }
+
+
 
 #endif // COMTHREAD_H
