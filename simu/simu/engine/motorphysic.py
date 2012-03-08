@@ -32,8 +32,8 @@ class MotorPhysic:
 	def create_shape_poly(self, body, points, offset):
 		return pm.Poly(body, points, offset)
 		
-	def create_shape_wall(self, body, p1, p2):
-		return pm.Segment(body, p1, p2, 0.0)
+	def create_shape_segment(self, body, p1, p2, width):
+		return pm.Segment(body, p1, p2, width)
 
 
 	def create_body_circle(self, mass, posinit, radius):
@@ -50,8 +50,9 @@ class MotorPhysic:
 		body.position = Vec2d(posinit)
 		return body, points
 
-	def create_body_wall(self):
-		body = pm.Body(pm.inf, pm.inf)
+	def create_body_segment(self, mass, a, b):
+		inertia = pm.moment_for_segment(mass, a,b)
+		body = pm.Body(mass, inertia)
 		return body
 		
 	def add(self, obj):
@@ -66,7 +67,10 @@ class MotorPhysic:
 	def _add_extension(self, obj):
 		if not obj.is_extension:
 			raise Exception("add_extension can be used only on an extension")
-		self.space.add(obj.shape)
+		try:
+			self.space.add(obj.shape)
+		except Exception as ex:
+			print("motorphysics._add_extension", ex)
 		for o in obj.extension_objects:
 			self._add_extension(o)
 

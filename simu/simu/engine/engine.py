@@ -118,6 +118,13 @@ class Engine:
 		self.graphicsengine.add(obj)
 		self.physicsengine.add(obj)
 
+	def add_extension(self, obj):
+		if not obj.is_extension:
+			raise Exception("add_extension can be used only on an extension")
+		else:
+			self.graphicsengine._add_extension(obj)
+			self.physicsengine._add_extension(obj)
+
 	def remove(self, obj):
 		if obj.is_extension:
 			self.remove_extension(self)

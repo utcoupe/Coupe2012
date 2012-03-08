@@ -49,15 +49,20 @@ class EngineObject:
 			self.shape.collision_type = colltype
 
 		for o in extension_objects:
-			o.is_extension = True
 			self.add_body_extension(o)
 		
 	def add_body_extension(self, obj):
+		obj.is_extension = True
 		obj.body = self.body
 		obj.shape = obj.create_shape(obj.body)
 		obj.shape.collision_type = obj.collision_type
+		self.engine.add_extension(obj)
 		self.extension_objects.append(obj)
 		print("add", obj.collision_type)
+
+	def remove_body_extension(self, obj):
+		self.extension_objects.remove(obj)
+		self.engine.remove_extension(obj)
 
 	def step(self, dt):
 		pass
@@ -113,17 +118,18 @@ class EngineObjectPoly(EngineObject):
 		return shape
 		
 
-class EngineObjectWall(EngineObject):
-	def __init__(self, *, posA, posB, **kwargs):
+class EngineObjectSegment(EngineObject):
+	def __init__(self, *, posA, posB, width, **kwargs):
 		self.inita = posA
 		self.initb = posB
+		self.width = width
 		EngineObject.__init__(self, t=WALL, **kwargs)
 		
 	def create_body(self):
-		body = self.engine.physicsengine.create_body_wall()
+		body = self.engine.physicsengine.create_body_segment(self.mass, self.inita, self.initb)
 		return body
 	
 	def create_shape(self, body):
-		shape = self.engine.physicsengine.create_shape_wall(body, self.inita, self.initb)
+		shape = self.engine.physicsengine.create_shape_segment(body, self.inita, self.initb, self.width)
 		return shape
 		
