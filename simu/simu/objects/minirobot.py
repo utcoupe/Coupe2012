@@ -3,8 +3,11 @@
 
 from ..define import *
 from .robot import Robot, MINI
+from ..engine.engineobject import EngineObjectPoly
 
-
+class Palette(EngineObjectPoly):
+	def __init__(self, angle):
+		pass
 
 class MiniRobot(Robot):
 	def __init__(self, *, engine, canal_asserv, canal_others, posinit, team, match):

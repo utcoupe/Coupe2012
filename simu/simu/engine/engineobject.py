@@ -18,7 +18,7 @@ class EngineObject:
 			posinit			= (0,0),
 			color			= "black",
 			offset			= (0,0),
-			custom_objects	= [],
+			extension_objects	= [],
 			is_extension	= False):
 		"""
 		@param t type d'objet CIRCLE|POLY|WALL
@@ -30,7 +30,7 @@ class EngineObject:
 		@param radius (pour type=CIRCLE)
 		@param posa_posb (pour type=WALL) point A, point B
 		@param offset l'offset à appliquer aux points
-		@param custom_objects les objets à "greffer"
+		@param extension_objects les objets à "greffer"
 		"""
 		if not issubclass(self.__class__, EngineObject):
 			raise Exception("EngineObject est une class abstraite")
@@ -41,20 +41,22 @@ class EngineObject:
 		self.posinit 			= posinit
 		self.color 				= color
 		self.offset 			= offset
-		self.custom_objects 	= []
+		self.extension_objects 	= []
+		self.is_extension		= is_extension
 
 		if not is_extension:
 			self.body, self.shape = self.create_body_n_shape()
 			self.shape.collision_type = colltype
 
-		for o in custom_objects:
+		for o in extension_objects:
+			o.is_extension = True
 			self.add_body_extension(o)
 		
 	def add_body_extension(self, obj):
 		obj.body = self.body
 		obj.shape = obj.create_shape(obj.body)
 		obj.shape.collision_type = obj.collision_type
-		self.custom_objects.append(obj)
+		self.extension_objects.append(obj)
 		print("add", obj.collision_type)
 
 	def step(self, dt):
@@ -75,7 +77,7 @@ class EngineObject:
 		if self.shape == shape:
 			return True
 		else:
-			for o in self.custom_objects:
+			for o in self.extension_objects:
 				if o.is_my_shape(shape):
 					return True
 			return False

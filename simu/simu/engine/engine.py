@@ -79,14 +79,6 @@ class Engine:
 				self.objects_to_remove.append(lingo)
 		
 
-	def add(self, obj):
-		"""
-		Ajouter un objet à l'engine, il est ajouté du même coup au moteur
-		physique et au moteur graphique.
-		"""
-		self.objects.append(obj)
-		self.graphicsengine.add(obj)
-		self.physicsengine.add(obj)
 
 	def stop(self):
 		self.e_stop.set()
@@ -116,9 +108,29 @@ class Engine:
 			o.step(dt)
 		if not self.graphicsengine.step():
 			self.stop()
+			
+	def add(self, obj):
+		"""
+		Ajouter un objet à l'engine, il est ajouté du même coup au moteur
+		physique et au moteur graphique.
+		"""
+		self.objects.append(obj)
+		self.graphicsengine.add(obj)
+		self.physicsengine.add(obj)
 
 	def remove(self, obj):
-		self.graphicsengine.remove(obj)
-		self.physicsengine.remove(obj)
-		self.objects.remove(obj)
-		
+		if obj.is_extension:
+			self.remove_extension(self)
+		else:
+			for o in obj.extension_objects:
+				self.remove_extension(o)
+			self.graphicsengine.remove(obj)
+			self.physicsengine.remove(obj)
+			self.objects.remove(obj)
+
+	def remove_extension(self, obj):
+		if not obj.is_extension:
+			raise Exception("remove_extension can only be used on an extension object")
+		else:
+			self.graphicsengine.remove_extension(obj)
+			self.physicsengine.remove_extension(obj)

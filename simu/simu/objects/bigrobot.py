@@ -32,7 +32,7 @@ class BigRobot(Robot):
 			mass				= 10,
 			typerobot			= BIG,
 			poly_points			= mm_to_px((0,0),(288,0),(288,314),(0,314)),
-			custom_objects		= [self.rouleau]
+			extension_objects		= [self.rouleau]
 		)
 
 		self.nb_white_cds = 0

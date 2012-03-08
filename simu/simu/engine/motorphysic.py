@@ -55,17 +55,35 @@ class MotorPhysic:
 		return body
 		
 	def add(self, obj):
-		for o in obj.custom_objects:
-			self.space.add(o.shape)
+		if obj.is_extension:
+			raise Exception("you can only add a main object to the physics engine")
+		for o in obj.extension_objects:
+			self._add_extension(o)
 		self.space.add(obj.body)
 		self.space.add(obj.shape)
 		self.objects.append(obj)
 
+	def _add_extension(self, obj):
+		if not obj.is_extension:
+			raise Exception("add_extension can be used only on an extension")
+		self.space.add(obj.shape)
+		for o in obj.extension_objects:
+			self._add_extension(o)
+
 	def remove(self, obj):
-		for o in obj.custom_objects:
-			self.remove(o)
-		self.space.remove(obj.shape, obj.body)
-		self.objects.remove(obj)
+		if obj.is_extension:
+			self.remove_extension(obj)
+		else:
+			for o in obj.extension_objects:
+				self.remove_extension(o)
+			self.space.remove(obj.shape, obj.body)
+			self.objects.remove(obj)
+
+	def remove_extension(self, obj):
+		if not obj.is_extension:
+			raise Exception("remove_extension can only be used on an extension object")
+		else:
+			self.space.remove(obj.shape)
 
 
 		
