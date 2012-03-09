@@ -6,63 +6,57 @@
 import threading
 import time
 
-from py3irc.py3irc import ircbot, irclib
+from py3irc.mypyirc import MyPyIrcBot
 
 
-class IABot(ircbot.SingleServerIRCBot):
-	def __init__(self, server_ip, server_port, channels):
-		self.nickname = "iabot"
-		ircbot.SingleServerIRCBot.__init__(self,
-			[(server_ip, server_port)],
-			self.nickname,
-			"Bot de l'IA",
-			1
+class IABot(MyPyIrcBot):
+	def __init__(self, server_ip, server_port, *,
+			canal_asserv, canal_asserv_mini, canal_others, canal_others_mini, canal_debug, canal_hokuyo):
+		MyPyIrcBot.__init__(self,
+			(server_ip, server_port),
+			"iabot",
+			[canal_asserv, canal_asserv_mini, canal_others, canal_others_mini, canal_debug, canal_hokuyo]
 		)
-		self.serv = None
-		self.chans = channels
-		self.listeners = []
-		
-		self.event_on_connect = threading.Event()
 
-	def stop(self):
-		if self.serv:
-			self.serv.disconnect("Tchuss")
-	
-	def on_nicknameinuse(self, serv, e):
-		self.nickname += "_"
-		serv.nick(self.nickname + "_")
-	
-	def on_welcome(self, serv, ev):
-		self.serv = serv
-		for chan in self.chans:
-			serv.join(chan)
-		time.sleep(0.5)
-		print("CONNECTION SERVEUR %s OK" % serv.get_server_name())
-		self.event_on_connect.set()
 
-	def on_pubmsg(self, serv, ev):
+		self.__id = 0
+		self.__id_lock = threading.Lock()
+
+		self.handlers = {}
+
+	def get_new_id(self):
 		"""
-		Méthode appelée à la réception d'un message
+		Retourne un identifiant unique
 		"""
-		self.serv = serv
+		self.__id_lock.acquire()
+		if sef.__id > 1E12:
+			self.__id = 0
+		i = self.__id
+		self.__id += 1
+		self.__id_lock.release()
+		return i
+
+	def _on_cmd(self, canal, irc_cmd, *args, **options):
+		if irc_cmd == "reponse":
+			i = args[0]
+			if i in self.handlers:
+				f = self.handlers[i].pop(0)
+				f(args,options)
+	
+	def send_cmd(self, canal, handlers, irc_cmd, *args):
+		"""
+		@param canal
+		@param handlers, list de handlers (=fonctions appellée succéssivement lors de la reception de la réponse)
+		@param irc_cmd la commande (ex: goto)
+		@param les arguments de la commande (ex: [400,300,1000])
+		"""
+		if not irc_cmd.startswith(PREFIX_CMD): irc_cmd = PREFIX_CMD+irc_cmd
+		i = self.get_new_id()
+		self.handlers[i] = handlers
+		str_args = map(str, [irc_cmd]+args)
+		self.send(canal, " ".join(str_args) + "# id=%s" % i)
 		
-		auteur = irclib.nm_to_n(ev.source())
-		canal = ev.target()
-		msg = ev.arguments()[0].strip().lower()
-		for listener in self.listeners:
-			listener(canal, auteur, msg)
-
-	def send(self, chan, msg):
-		if self.serv:
-			for m in str(msg).split("\n"):
-				try:
-					self.serv.privmsg(chan, m)
-				except irclib.ServerNotConnectedError as ex:
-					print("send error", ex)
-
-	def add_listener(self, listener):
-		self.listeners.append(listener)
-
+		
 
 if __name__ == "__main__":
 	from random import randrange

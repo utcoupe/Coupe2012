@@ -25,13 +25,15 @@ class Asservissement:
 		self.last_update_pos = 0
 
 	def goto(self, p, vitesse=500):
-		self.send_asserv("goto %s %s %s" % (p[0], p[1], vitesse))
+		def handler(args,options):
+			print("received from asserv : %s, %s" %(args,options))
+		self.send_asserv("goto", p[0], p[1], vitesse, handlers=[handler])
 
 	def turn(self, a, v):
-		self.send_asserv("turn %s %s" % (round(a),v))
+		self.send_asserv("turn", round(a), v)
 
 	def pwm(self, pwm):
-		self.send_asserv("pwm %s" % pwm)
+		self.send_asserv("pwm", pwm)
 
 	def stop(self):
 		self.send_asserv("stop")
@@ -42,11 +44,11 @@ class Asservissement:
 	def cancel(self):
 		self.send_asserv("cancel")
 
-	def refresh_pos(self):
-		self.send_asserv("pos # id=%s" % ID_MSG_POS)
+	def pos(self):
+		self.send_asserv("pos")
 
-	def send_asserv(self, msg):
-		self.ircbot.send(self.chan_asserv, PREFIX_CMD+str(msg))
+	def send_asserv(self, irc_cmd, *args, handlers=[]):
+		self.ircbot.send_cmd(self.chan_asserv, handlers, irc_cmd, *args)
 
 	def on_msg(self, canal, auteur, msg):
 		if canal == self.chan_asserv:
