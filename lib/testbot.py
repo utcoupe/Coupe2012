@@ -24,6 +24,9 @@ class TestBot(MyPyIrcBot):
 	def cmd_test_error(self, error, **kwargs):
 		self.send_error(self.canal, error)
 
+	def cmd__testglob(self, **kwargs):
+		self.send(self.canal, "j'ai reçu un appel du canal %s" % kwargs["canal"])
+
 
 if __name__ == "__main__":
 	bot = TestBot("localhost", 6667)

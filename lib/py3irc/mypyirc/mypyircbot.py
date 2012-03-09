@@ -188,26 +188,52 @@ class MyPyIrcBot(ircbot.SingleServerIRCBot):
 		if msg.startswith(PREFIX_CMD):
 			msg, options = raw_msg_to_msg_n_options(msg[1:])
 			msg_split = msg.strip().split(" ")
-			f_name = self.irc_cmd_to_func_name(canal, msg_split[0])
-			if msg_split[0] == "help":
-				if len(msg_split) > 1:
-					self.print_doc(canal, self.irc_cmd_to_func_name(canal, msg_split[1]))
+			self._on_cmd(canal, msg_split[0], *msg_split[1:], **options)
+			
+	def _on_cmd(self, canal, irc_cmd, *args, **options):
+		if irc_cmd == "help":
+			# affichage de l'help d'une fonction seulement
+			if len(args) > 0:
+				# une fonction spécifique à ce channel
+				f_name = irc_cmd_to_func_name(canal, args[0])
+				# une fonction commune à tous les channels
+				f_name_glob = irc_cmd_to_func_name_global(args[0])
+				if hasattr(self, f_name):
+					f = f_name
+				elif hasattr(self, f_name_glob):
+					f = f_name_glob
+				if f:
+					self.print_doc(canal, f)
 				else:
-					for f_name in dir(self):
-						if f_name.startswith(self.channel_to_prefix_cmd(canal)):
-							self.print_doc(canal, f_name)
-			elif hasattr(self, f_name):
+					self.send_error(canal, "Invalid function name : %s" % args[0])
+			# affichage de l'help de toutes les fonctions
+			else:
+				for f_name in dir(self):
+					if f_name.startswith(channel_to_prefix_cmd(canal)) or f_name.startswith(prefix_cmd_global()):
+						self.print_doc(canal, f_name)
+		else:
+			f = None
+			# une fonction spécifique à ce channel
+			f_name = irc_cmd_to_func_name(canal, irc_cmd)
+			# une fonction commune à tous les channels
+			f_name_glob = irc_cmd_to_func_name_global(irc_cmd)
+			if hasattr(self, f_name):
 				f = getattr(self, f_name)
+			elif hasattr(self, f_name_glob):
+				f = getattr(self, f_name_glob)
+			if f:
+				options["canal"] = canal
 				f_args = inspect.getargspec(f).args
 				nb_args = len(f_args)
-				args = msg_split[1:]
 				if 'self' in f_args:
 					nb_args -= 1
 				if len(args) == nb_args:
 					self.write_rep(f(*args,**options))
 				else:
-					self.send(canal, "invalid arg number : need %s and get %s" % (str(inspect.getargspec(f)),msg_split))
-		
+					self.send_error(canal, "invalid arg number : need %s and get %s" % (str(inspect.getargspec(f)),msg_split))
+			else:
+				self.send_error(canal, "Invalid function name : %s" % irc_cmd)
+
 
 
 	def get_protocole(self, str_protocole, prefix):
@@ -274,7 +300,7 @@ class MyPyIrcBot(ircbot.SingleServerIRCBot):
 			self.send_error(canal, str(ex))
 		else:
 			if not doc: doc = "No documentation"
-			irc_cmd = self.func_name_to_irc_cmd(f_name)
+			irc_cmd = func_name_to_irc_cmd(f_name)
 			self.send(canal, " ")
 			self.send(canal, "## "+irc_cmd.upper()+" ##")
 			for line in doc.split("\n"):
@@ -299,15 +325,6 @@ class MyPyIrcBot(ircbot.SingleServerIRCBot):
 	def send_error(self, canal, msg):
 		self.send_color(canal, msg, color='white', background="red", bold=True)
 		self.send_color(CANAL_ERRORS, msg, background="red", bold=True)
-				
-	def channel_to_prefix_cmd(self, canal):
-		return channel_to_prefix_cmd(canal)
-	
-	def irc_cmd_to_func_name(self, canal, irc_cmd):
-		return irc_cmd_to_func_name(canal, irc_cmd)
-
-	def func_name_to_irc_cmd(self, f_name):
-		return func_name_to_irc_cmd(f_name)
 
 	def add_cmd_function(self, canal, irc_cmd, cmd_function):
 		"""
@@ -318,7 +335,7 @@ class MyPyIrcBot(ircbot.SingleServerIRCBot):
 		irc_cmd = irc_cmd.lower()
 		if canal.startswith("#"):
 			canal = canal[1:]
-		setattr(self, self.irc_cmd_to_func_name(canal, irc_cmd), types.MethodType(cmd_function, self))
+		setattr(self, irc_cmd_to_func_name(canal, irc_cmd), types.MethodType(cmd_function, self))
 
 	def add_executer(self, executer):
 		i = id(executer)
