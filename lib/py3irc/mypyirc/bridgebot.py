@@ -67,7 +67,7 @@ class BridgeBot(MyPyIrcBot):
 			try:
 				msg = self.read()
 			except Exception as ex:
-				sendError(self.channel, ex)
+				send_error(self.channel, ex)
 				time.sleep(2)
 			else:
 				if msg:

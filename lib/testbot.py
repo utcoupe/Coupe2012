@@ -15,8 +15,14 @@ class TestBot(MyPyIrcBot):
 		"""
 			@param msg un message de votre choix
 		"""
-		self.send(self.canal, "you said : "+msg)
+		for i in range(16):
+			for j in range(16):
+				m = chr(3)+str(i)+","+str(j)+ "you said : "+msg+chr(3)+" "+str(i)+","+str(j)
+				self.send(self.canal, m)
 		return msg
+
+	def cmd_test_error(self, error, **kwargs):
+		self.send_error(self.canal, error)
 
 
 if __name__ == "__main__":

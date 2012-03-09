@@ -52,3 +52,17 @@ def raw_msg_to_msg_n_options(raw_msg):
 				options[i] = t.group(i)
 
 	return msg, options
+
+	
+def add_color(msg, *, color=None, background=None, bold=False):
+		if color not in IRCCOLORS: color = None
+		if background not in IRCCOLORS: background = None
+		m = "{marker}{color},{background}{text}{marker}".format(
+			marker=COLOR_MARKER,
+			color=IRCCOLORS[color],
+			background=IRCCOLORS[background],
+			text=msg
+		)
+		if bold:
+			m = BOLD_MARKER+m+BOLD_MARKER
+		return m

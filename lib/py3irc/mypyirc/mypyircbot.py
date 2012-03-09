@@ -51,12 +51,16 @@ class Executer:
 		else:
 			return (None,None)
 			
-	def sendError(self, canal, *msg):
-		texteRouge=chr(3)+"0,4"+self.compute_msg(*msg)+chr(3)
-		self._send(canal,texteRouge)
+	def send_color(self, canal, msg, *, color=None, background=None, bold=False):
+		self.send(canal, add_color(msg, color=color, background=background, bold=bold))
+		
+	def send_error(self, canal, *msg):
+		msg=self.compute_msg(*msg)
+		self._send_color(canal, msg, color='white', background="red", bold=True)
+		self._send_color(CANAL_ERRORS, msg, background="red", bold=True)
 
 	def send(self, canal, *msg):
-		self._send.(canal,self.compute_msg(*msg))
+		self._send(canal,self.compute_msg(*msg))
 	
 	def _send(self, canal, msg):
 		self.to_send.append((canal,msg))
@@ -115,7 +119,7 @@ class MyPyIrcBot(ircbot.SingleServerIRCBot):
 	def __init__(self, server_ip, server_port, nickname, channels):
 		self.serv = None
 		self.nickname = nickname
-		self.canaux = list( map(canal_ircnormalize, channels) )
+		self.canaux = list( map(canal_ircnormalize, [CANAL_ERRORS]+list(channels)) )
 
 		# objets contenants des commandes à executer
 		self.executers = {}
@@ -177,7 +181,7 @@ class MyPyIrcBot(ircbot.SingleServerIRCBot):
 		auteur = irclib.nm_to_n(ev.source())
 		canal = ev.target().strip().lower()
 		msg = ev.arguments()[0]
-
+		
 		self._on_pubmsg(auteur, canal, msg)
 
 	def _on_pubmsg(self, auteur, canal, msg):
@@ -200,7 +204,7 @@ class MyPyIrcBot(ircbot.SingleServerIRCBot):
 				if 'self' in f_args:
 					nb_args -= 1
 				if len(args) == nb_args:
-					self.write_rep(f(*args,**options)+"\n")
+					self.write_rep(f(*args,**options))
 				else:
 					self.send(canal, "invalid arg number : need %s and get %s" % (str(inspect.getargspec(f)),msg_split))
 		
@@ -267,7 +271,7 @@ class MyPyIrcBot(ircbot.SingleServerIRCBot):
 		try:
 			doc = getattr(self, f_name).__doc__
 		except AttributeError as ex:
-			self.sendError(canal, str(ex))
+			self.send_error(canal, str(ex))
 		else:
 			if not doc: doc = "No documentation"
 			irc_cmd = self.func_name_to_irc_cmd(f_name)
@@ -288,9 +292,13 @@ class MyPyIrcBot(ircbot.SingleServerIRCBot):
 				self.serv.privmsg(canal, msg)
 			except irclib.ServerNotConnectedError as ex:
 				print("send error", ex)
+
+	def send_color(self, canal, msg, *, color=None, background=None, bold=False):
+		self.send(canal, add_color(msg, color=color, background=background, bold=bold))
 				
-	def sendError(self, canal, msg):
-=		send(self, canal, chr(3)+"0,4"+str(msg)+chr(3))
+	def send_error(self, canal, msg):
+		self.send_color(canal, msg, color='white', background="red", bold=True)
+		self.send_color(CANAL_ERRORS, msg, background="red", bold=True)
 				
 	def channel_to_prefix_cmd(self, canal):
 		return channel_to_prefix_cmd(canal)
