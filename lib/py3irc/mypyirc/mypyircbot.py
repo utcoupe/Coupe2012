@@ -203,12 +203,12 @@ class MyPyIrcBot(ircbot.SingleServerIRCBot):
 		if f:
 			options["canal"] = canal
 			argspec = inspect.getfullargspec(f)
-			f_args = inspect.getfullargspec(f).args
+			f_args = argspec.args
 			nb_args = len(f_args)
 			try:
 				self.write_rep(f(*args,**options))
 			except TypeError as ex:
-				self.send_error(canal, "%s, invalid arg number : need %s and get %s" % (ex,spec,args))
+				self.send_error(canal, "%s, need : %s, get = %s" % (ex,argspec,(args,options)))
 		else:
 			self.send_error(canal, "Invalid function name : %s" % irc_cmd)
 
