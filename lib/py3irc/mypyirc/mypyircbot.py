@@ -11,6 +11,7 @@ import threading
 import collections
 import time
 import types
+import traceback
 
 from ..py3irc import ircbot,irclib
 
@@ -58,6 +59,9 @@ class Executer:
 		msg=self.compute_msg(*msg)
 		self._send_color(canal, msg, color='white', background="red", bold=True)
 		self._send_color(CANAL_ERRORS, msg, background="red", bold=True)
+
+	def send_response(self, canal, id_msg, msg):
+		self.send(canal, SEP.join((PREFIX_CMD+"response",str(msg)))+SEP+"id_msg="+str(id_msg))
 
 	def send(self, canal, *msg):
 		self._send(canal,self.compute_msg(*msg))
@@ -179,9 +183,8 @@ class MyPyIrcBot(ircbot.SingleServerIRCBot):
 
 	def _on_pubmsg(self, auteur, canal, msg):
 		if msg.startswith(PREFIX_CMD):
-			msg, options = raw_msg_to_msg_n_options(msg[1:])
-			msg_split = msg.strip().split(" ")
-			self._on_cmd(canal, msg_split[0], *msg_split[1:], **options)
+			args, kwargs = raw_msg_to_args_n_kwargs(msg[1:])
+			self._on_cmd(canal, args[0], *args[1:], **kwargs)
 			
 	def _on_cmd(self, canal, irc_cmd, *args, **options):
 		f = None
@@ -258,7 +261,7 @@ class MyPyIrcBot(ircbot.SingleServerIRCBot):
 		Envoie un message au serveur.
 		@param msg le message à envoyer
 		"""
-		print("SEND", canal, msg)
+		#print("SEND", canal, msg)
 		if self.serv:
 			try:
 				self.serv.privmsg(canal, msg)
@@ -273,7 +276,7 @@ class MyPyIrcBot(ircbot.SingleServerIRCBot):
 		self.send_color(CANAL_ERRORS, msg, background="red", bold=True)
 
 	def send_response(self, canal, id_msg, msg):
-		self.send(canal, " ".join((PREFIX_CMD+"response",msg))+" "+SEP_OPTIONS+" id_msg="+id_msg)
+		self.send(canal, SEP.join((PREFIX_CMD+"response",str(msg)))+SEP+"id_msg="+str(id_msg))
 
 	def add_cmd_function(self, canal, irc_cmd, cmd_function):
 		"""

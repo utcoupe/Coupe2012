@@ -37,11 +37,11 @@ class IABot(MyPyIrcBot):
 		self.__id_lock.release()
 		return i
 
-	def cmd__reponse(self, *args, canal, id_msg, **options):
-		i = args[0]
-		if i in self.handlers:
-			f = self.handlers[i].pop(0)
-			f(args,options)
+	def cmd__response(self, *args, canal, id_msg, **options):
+		if id_msg in self.handlers:
+			if self.handlers[str(id_msg)]:
+				f = self.handlers[str(id_msg)].pop(0)
+				f(canal,args,options)
 	
 	def send_cmd(self, canal, handlers, irc_cmd, *args):
 		"""
@@ -52,9 +52,9 @@ class IABot(MyPyIrcBot):
 		"""
 		if not irc_cmd.startswith(PREFIX_CMD): irc_cmd = PREFIX_CMD+irc_cmd
 		i = self.get_new_id()
-		self.handlers[i] = handlers
+		self.handlers[str(i)] = handlers
 		str_args = map(str, (irc_cmd,)+args)
-		self.send(canal, " ".join(str_args) + " # id=%s" % i)
+		self.send(canal, SEP.join(str_args) + SEP + "id_msg=%s" % i)
 		
 		
 

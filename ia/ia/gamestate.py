@@ -15,6 +15,7 @@ import itertools
 
 
 from py3irc.mypyirc.ircdefine import *
+from .clientIRC.hokuyo import Hokuyo
 
 
 
@@ -38,12 +39,14 @@ class GameState:
 		self.enemy1		 		= enemy1
 		self.enemy2			 	= enemy2
 
+		self.hokuyo				= Hokuyo(ircbot, CANAL_HOKUYO)
+
 		self.event_bigrobot_pos_update = threading.Event()
 		self.event_minirobot_pos_update = threading.Event()
 		self.event_hokuyo_update = threading.Event()
 		self.event_on_pong = threading.Event()
 
-
+		
 
 		self.sums = {}
 		self.sums['update_big_ng'] = {'t':0, 'n':0}
@@ -97,8 +100,8 @@ class GameState:
 		self.event_minirobot_pos_update.clear()
 		self.event_hokuyo_update.clear()
 		
-		self.ask_asserv_for_pos(self.canal_big_asserv)
-		self.ask_asserv_for_pos(self.canal_mini_asserv)
+		self.ask_asserv_for_pos(self.bigrobot)
+		self.ask_asserv_for_pos(self.minirobot)
 		self.ask_hokyo_for_pos()
 		
 	def wait_update(self):
@@ -117,10 +120,10 @@ class GameState:
 		
 
 	def ask_hokyo_for_pos(self):
-		self.ircbot.send(CANAL_HOKUYO, PREFIX_CMD+"get # id=%s" % ID_MSG_HOKUYO)
+		self.hokuyo.get(self.on_msg_hokyo)
 
-	def ask_asserv_for_pos(self, canal):
-		self.ircbot.send(canal, PREFIX_CMD+"pos # id=%s" % ID_MSG_POS)
+	def ask_asserv_for_pos(self, robot):
+		robot.asserv.get_pos(self.on_msg_pos)
 
 	def on_msg(self, canal, auteur, msg):
 		msg_split = msg.split(SEP)
@@ -134,10 +137,10 @@ class GameState:
 			elif ID_MSG_POS == id_msg:
 				self.on_msg_pos(canal,params)
 
-	def on_msg_pos(self, canal, params):
-		if len(params) >= 3:
+	def on_msg_pos(self, canal, args, options):
+		if len(args) >= 3:
 			# transformation des strings en int
-			params = tuple(map(int, params))
+			args = tuple(map(int, args))
 			# choix du robot à update
 			if canal == self.canal_big_asserv:
 				robot_to_update = self.bigrobot
@@ -148,15 +151,15 @@ class GameState:
 			else:
 				print("Error %s.on_msg_pos (%s:%d) : canal non connu : %s " % (self.__class__.__name__, currentframe().f_code.co_filename, currentframe().f_lineno, canal))
 			# update
-			robot_to_update.update_pos(params[0:2])
-			robot_to_update.a = params[2]
+			robot_to_update.update_pos(args[0:2])
+			robot_to_update.a = args[2]
 		else:
 			print("Error %s.on_msg_pos (%s:%d) : pas assez de paramètres " % (self.__class__.__name__, currentframe().f_code.co_filename, currentframe().f_lineno, canal))
 	
 
-	def on_msg_hokyo(self, params):
-		if len(params) >= 1:
-			lpos = tuple(( eval(s) for s in params ))
+	def on_msg_hokyo(self, canal, args, options):
+		if len(args) == 1:
+			lpos = eval(args[0])
 			robots = self.robots()
 			def test_permut(permut):
 				l = ( (robots[j].pos - lpos[i]).norm2() for i,j in enumerate(permut) )
@@ -167,7 +170,7 @@ class GameState:
 					robots[j].update_pos(lpos[i])
 			self.event_hokuyo_update.set()
 		else:
-			print("Error %s.on_msg_hokyo (%s:%d) : pas assez de paramètres " % (self.__class__.__name__, currentframe().f_code.co_filename, currentframe().f_lineno, canal))
+			self.send_error(canal, "Error %s.on_msg_hokyo (%s:%d) : pas assez de paramètres " % (self.__class__.__name__, currentframe().f_code.co_filename, currentframe().f_lineno, canal))
 
 	def robots(self):
 		return (self.bigrobot, self.minirobot, self.enemy1, self.enemy2)

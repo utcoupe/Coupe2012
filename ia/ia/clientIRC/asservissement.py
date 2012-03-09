@@ -31,13 +31,13 @@ class Asservissement:
 		return (time.time() - start) / n
 	
 	def ping(self):
-		def handler(args, options):
+		def handler(canal,args, options):
 			self.e_ping.set()
 		self.e_ping.clear()
 		self.send_asserv("ping", handlers=[handler])
 	
 	def goto(self, p, vitesse=500):
-		def handler(args,options):
+		def handler(canal,args,options):
 			print("received from asserv : %s, %s" %(args,options))
 		self.send_asserv("goto", p[0], p[1], vitesse, handlers=[handler])
 
@@ -56,8 +56,8 @@ class Asservissement:
 	def cancel(self):
 		self.send_asserv("cancel")
 
-	def pos(self):
-		self.send_asserv("pos")
+	def get_pos(self, handler):
+		self.send_asserv("pos", handlers=[handler])
 
 	def send_asserv(self, irc_cmd, *args, handlers=[]):
 		self.ircbot.send_cmd(self.chan_asserv, handlers, irc_cmd, *args)

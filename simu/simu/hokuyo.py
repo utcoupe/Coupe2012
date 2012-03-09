@@ -10,11 +10,12 @@ class Hokuyo(Executer):
 		self.robots = robots
 
 	def cmd_hokuyo_get(self, **kwargs):
-		reponse = map(lambda r: '(%s,%s)' % (r.x(),r.y()), self.robots)
-		self.send(self.compute_msg(kwargs['id_msg'], *reponse))
+		reponse = str(tuple(map(lambda r: (r.x(),r.y()), self.robots)))
+		reponse = reponse.replace(" ","")
+		self.send_canal_hokuyo(kwargs['id_msg'], reponse)
 
 	def cmd_hokuyo_ping(self, **kwargs):
-		self.send(self.compute_msg(kwargs['id_msg'], "pong"))
+		self.send_canal_hokuyo(kwargs['id_msg'], "pong")
 
-	def send(self, msg):
-		Executer.send(self, self.canal, msg)
+	def send_canal_hokuyo(self, id_msg, msg):
+		self.send_response(self.canal, id_msg, msg)

@@ -154,11 +154,11 @@ class Robot(EngineObjectPoly, Executer):
 		self.send_canal_asserv(kwargs['id_msg'], 1)
 
 
-	def send_canal_asserv(self, *args):
-		self.send(self.canal_asserv, *args)
+	def send_canal_asserv(self, id_msg, *args):
+		self.send_response(self.canal_asserv, id_msg, self.compute_msg(*args))
 	
-	def send_canal_others(self, *args):
-		self.send(self.canal_others, *args)
+	def send_canal_others(self, id_msg, *args):
+		self.send_response(self.canal_others, id_msg, self.compute_msg(*args))
 
 	def onEvent(self, event):
 		# selection des teams et des robots

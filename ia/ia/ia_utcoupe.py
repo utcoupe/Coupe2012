@@ -142,10 +142,10 @@ class IaUtcoupe:
 		self.ircbot.e_welcome.wait()
 		print("Get latency big asserv")
 		print(self.gamestate.bigrobot.asserv.get_latency())
-		print("Ping mini asserv")
-		print(self.gamestate.ping(CANAL_MINI_ASSERV))
+		print("Get latency mini asserv")
+		print(self.gamestate.bigrobot.asserv.get_latency())
 		print("Ping hokuyo")
-		print(self.gamestate.ping(CANAL_HOKUYO))
+		print(self.gamestate.hokuyo.get_latency())
 		#input("appuyez sur une touche pour démarrer")
 		self.mainloop()
 
