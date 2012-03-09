@@ -1,7 +1,12 @@
 
 
-SEP					= "+"
+#####
+## <PREFIX_CMD><IRC_CMD><SEP><ARG1><SEP><ARG2>...<SEP_OPTIONS>options
+#####
+SEP					= " "
+SEP_OPTIONS			= "#"
 PREFIX_CMD			= "."
+
 
 CANAL_ERRORS		= "#errors"
 CANAL_BIG_ASSERV	= "#asserv"

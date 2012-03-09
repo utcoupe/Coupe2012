@@ -75,8 +75,8 @@ class Executer:
 		Note : les aciennes fonctions ne sont pas supprimées.
 		"""
 		# être sûr qu'on ne se trimbal pas le '#'
-		if old_canal[0] == '#': old_canal = old_canal[1:]
-		if new_canal[0] == '#': new_canal = new_canal[1:]
+		old_canal = canal_clientnormalize(old_canal)
+		new_canal = canal_clientnormalize(new_canal)
 		# effectuer le changement
 		for f_name in dir(self):
 			if f_name.startswith('_'+channel_to_prefix_cmd(old_canal)):
@@ -160,13 +160,6 @@ class MyPyIrcBot(ircbot.SingleServerIRCBot):
 
 	def wait_connection(self, timeout=None):
 		self.e_welcome.wait(timeout)
-	
-	def write_rep(self, msg, id_msg=42):
-		"""
-		Fonction qui redistribue le message retourné par les fonctions "cmd_*".
-		@param msg le message à envoyer
-		"""
-		print("%s (id=%s)" %(msg,id_msg))
 		
 	def on_pubmsg(self, serv, ev):
 		"""
@@ -204,9 +197,8 @@ class MyPyIrcBot(ircbot.SingleServerIRCBot):
 			options["canal"] = canal
 			argspec = inspect.getfullargspec(f)
 			f_args = argspec.args
-			nb_args = len(f_args)
 			try:
-				self.write_rep(f(*args,**options))
+				f(*args,**options)
 			except TypeError as ex:
 				self.send_error(canal, "%s, need : %s, get = %s" % (ex,argspec,(args,options)))
 		else:
@@ -214,55 +206,6 @@ class MyPyIrcBot(ircbot.SingleServerIRCBot):
 
 
 
-	def get_protocole(self, str_protocole, prefix):
-		"""
-		Récupérer le protocole dans le fichier .h précisé.
-		Les commandes doivent être formater de la sorte :
-		{@code
-		/**
-		Documentation
-		\@param abc
-		\@param t
-		*/
-		#define {prefixe}NOM_DE_LA_COMMANDE		4
-		}
-
-		@param str_protocole
-		@param prefix le prefixes des defines
-		@return une liste de dictionnaires {id: ?, name: ?, params: ?, doc: ?}
-		"""
-		
-		commands = []
-
-		# spec des regexp
-		spec_doc = '\/\*\*(?P<doc>(.(?!\*\/))*.)\*\/'
-		spec_define = '#define\s+{prefix}(?P<name>\w+)\s+(?P<id>\d+)'.format(prefix=prefix)
-		spec_cmd = spec_doc+"\s*"+spec_define
-		spec_params = '@param\s+(?P<param>[a-zA-Z_]\w*)'
-
-		# compilation de la regexp pour les paramètres
-		re_params = re.compile(spec_params)
-
-		# recherche des commandes
-		for t in re.finditer(spec_cmd,str_protocole,re.DOTALL):
-			params = list([p.group("param") for p in re_params.finditer(t.group('doc'))])
-			commands.append({'id': int(t.group('id')), 'name': t.group('name'), 'params': params, 'doc': t.group('doc')})
-			#print(commands[-1])
-
-		return commands
-		
-
-	def get_protocole_multi_prefixes(self, str_protocole, prefixes):
-
-		# initialisation du dictionnaire
-		commands = {}
-		for prefix in prefixes:
-			commands[prefix] = []
-
-		for prefix in prefixes:
-			commands[prefix] = self.get_protocole(str_protocole, prefix)
-
-		return commands
 
 	def cmd__help(self, irc_cmd=None, *, canal, id_msg=42):
 		"""
@@ -328,6 +271,9 @@ class MyPyIrcBot(ircbot.SingleServerIRCBot):
 	def send_error(self, canal, msg):
 		self.send_color(canal, msg, color='white', background="red", bold=True)
 		self.send_color(CANAL_ERRORS, msg, background="red", bold=True)
+
+	def send_response(self, canal, id_msg, msg):
+		self.send(canal, " ".join((PREFIX_CMD+"response",msg))+" "+SEP_OPTIONS+" id_msg="+id_msg)
 
 	def add_cmd_function(self, canal, irc_cmd, cmd_function):
 		"""

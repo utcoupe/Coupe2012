@@ -3,7 +3,8 @@
 
 
 // cf. protocole
-#define C_SEP_SEND	'+' // tout est séparé par ça.
+#define SEP			'+' // tout est séparé par ça
+#define C_SEP_SEND	SEP 
 
 
 // all

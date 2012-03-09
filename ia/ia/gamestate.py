@@ -43,8 +43,6 @@ class GameState:
 		self.event_hokuyo_update = threading.Event()
 		self.event_on_pong = threading.Event()
 
-		if ircbot: # pour les doctest ircbot sera à None
-			self.ircbot.add_listener(self.on_msg)
 
 
 		self.sums = {}

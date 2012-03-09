@@ -29,9 +29,15 @@ parser.add_option("-P", "--server-port",
 (options, args) = parser.parse_args()
 
 myia = IaUtcoupe(options.server_ip, options.server_port,
-	CANAL_BIG_ASSERV, CANAL_MINI_ASSERV, CANAL_HOKUYO, CANAL_DEBUG,
-	(0,0), (0,0), (3000,0), (3000,0)
+	(0,0), (0,0), (3000,0), (3000,0),
+	canal_big_asserv	= CANAL_BIG_ASSERV,
+	canal_mini_asserv	= CANAL_MINI_ASSERV,
+	canal_big_others	= CANAL_BIG_OTHERS,
+	canal_mini_others	= CANAL_MINI_OTHERS,
+	canal_debug			= CANAL_DEBUG,
+	canal_hokuyo		= CANAL_HOKUYO
 )
+
 
 try:
 	myia.start()

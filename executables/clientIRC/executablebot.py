@@ -15,7 +15,7 @@ from py3irc.mypyirc import bridgebot
 
 
 class ExecutableBot(bridgebot.BridgeBot):
-	def __init__(self, server_ip, server_port, nickname, channel, exec_name, exec_params, protocole_file, protocole_prefixe):
+	def __init__(self, server_ip, server_port, nickname, channel, exec_name, exec_params, protocol_file, protocol_prefixe):
 		self.process = None
 		try:
 			self.process = subprocess.Popen([exec_name]+exec_params, stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
@@ -24,10 +24,10 @@ class ExecutableBot(bridgebot.BridgeBot):
 			sys.exit(1)
 		print("OK")
 		
-		bridgebot.BridgeBot.__init__(self, server_ip, server_port, nickname, channel, protocole_file, protocole_prefixe)
+		bridgebot.BridgeBot.__init__(self, server_ip, server_port, nickname, channel, protocol_file, protocol_prefixe)
 
 	
-	def write_rep(self, msg):
+	def write(self, msg):
 		""" écrit sur l'input standart """
 		print("%s" % msg.strip())
 		msg = bytes(msg.strip()+"\n","utf-8")
@@ -48,8 +48,8 @@ def run(**args):
 	default["channel"]				= "#test"
 	default["exec_name"]			= "./a.out"
 	default["exec_params"]			= ""
-	default["protocole_file"]		= "testprotocole.h"
-	default["protocole_prefixe"]	= "Q_"
+	default["protocol_file"]		= "testprotocol.h"
+	default["protocol_prefixe"]	= "Q_"
 	default.update(args)
 	
 	usage = "usage: %prog [options]"
@@ -72,12 +72,12 @@ def run(**args):
 	parser.add_option("-p", "--exec-params",
 						action="store", dest="exec_params", default=default["exec_params"],
 						help="paramètres de l'executable séparés par ','")
-	parser.add_option("-f", "--protocole-file",
-						action="store", dest="protocole_file", default=default["protocole_file"],
-						help="protocole file")
-	parser.add_option("-x", "--protocole-prefixe",
-						action="store", dest="protocole_prefixe", default=default["protocole_prefixe"],
-						help="protocole prefixe")
+	parser.add_option("-f", "--protocol-file",
+						action="store", dest="protocol_file", default=default["protocol_file"],
+						help="protocol file")
+	parser.add_option("-x", "--protocol-prefixe",
+						action="store", dest="protocol_prefixe", default=default["protocol_prefixe"],
+						help="protocol prefixe")
     
 	(options, _args) = parser.parse_args()
 
@@ -87,8 +87,8 @@ def run(**args):
 		options.channel,
 		options.exec_name,
 		options.exec_params,
-		options.protocole_file,
-		options.protocole_prefixe)
+		options.protocol_file,
+		options.protocol_prefixe)
 	bot = ExecutableBot(
 		options.server_ip,
 		options.server_port,
@@ -96,8 +96,8 @@ def run(**args):
 		options.channel,
 		options.exec_name,
 		options.exec_params.split(','),
-		options.protocole_file,
-		options.protocole_prefixe)
+		options.protocol_file,
+		options.protocol_prefixe)
 	#print(list(filter(lambda x: x[0:4] == 'cmd_', dir(bot))))
 	
 	if not args.get('blocking', True):

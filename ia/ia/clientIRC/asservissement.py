@@ -2,14 +2,12 @@
 
 
 
-import types
+import threading
+import time
+
 
 from py3irc.mypyirc.ircdefine import *
 
-
-
-import time
-import re
 
 from geometry import Vec
 
@@ -18,12 +16,26 @@ from geometry import Vec
 class Asservissement:
 	def __init__(self, ircbot, chan_asserv):
 		self.ircbot = ircbot
-		ircbot.add_listener(self.on_msg)
 		self.pos = Vec((0,0))
 		self.angle = 0
 		self.chan_asserv = chan_asserv
 		self.last_update_pos = 0
+		self.e_ping = threading.Event()
 
+	def get_latency(self):
+		n = 10
+		start = time.time()
+		for i in range(n):
+			self.ping()
+			self.e_ping.wait()
+		return (time.time() - start) / n
+	
+	def ping(self):
+		def handler(args, options):
+			self.e_ping.set()
+		self.e_ping.clear()
+		self.send_asserv("ping", handlers=[handler])
+	
 	def goto(self, p, vitesse=500):
 		def handler(args,options):
 			print("received from asserv : %s, %s" %(args,options))

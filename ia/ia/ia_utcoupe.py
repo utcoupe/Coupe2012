@@ -31,12 +31,18 @@ ID_DEBUG_ENEMY2		= 57
 
 
 class IaUtcoupe:
-	def __init__(self, server_ip, server_port,
-		canal_big_asserv, canal_mini_asserv, canal_hokuyo, canal_debug,
-		pos_bigrobot, pos_mini_robot, pos_enemy1, pos_enemy2):
+	def __init__(self, server_ip, server_port, pos_bigrobot, pos_mini_robot, pos_enemy1, pos_enemy2, *,
+		canal_big_asserv, canal_mini_asserv, canal_big_others, canal_mini_others, canal_hokuyo, canal_debug
+		):
 
 		# création bot irc
-		self.ircbot = IABot(server_ip, server_port, (canal_big_asserv, canal_mini_asserv, canal_hokuyo, canal_debug))
+		self.ircbot = IABot(server_ip, server_port,
+			canal_big_asserv	= canal_big_asserv,
+			canal_mini_asserv	= canal_mini_asserv,
+			canal_big_others	= canal_big_others,
+			canal_mini_others	= canal_mini_others,
+			canal_debug			= canal_debug,
+			canal_hokuyo		= canal_hokuyo)
 		
 		# démarage du bot irc
 		self.t_ircbot = threading.Thread(None, self.ircbot.start, "loop iabot")
@@ -133,9 +139,9 @@ class IaUtcoupe:
 
 	def start(self):
 		print("Attente de la connection au serveur IRC...")
-		self.ircbot.event_on_connect.wait()
-		print("Ping big asserv")
-		print(self.gamestate.ping(CANAL_BIG_ASSERV))
+		self.ircbot.e_welcome.wait()
+		print("Get latency big asserv")
+		print(self.gamestate.bigrobot.asserv.get_latency())
 		print("Ping mini asserv")
 		print(self.gamestate.ping(CANAL_MINI_ASSERV))
 		print("Ping hokuyo")

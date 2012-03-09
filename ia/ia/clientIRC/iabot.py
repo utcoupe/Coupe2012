@@ -7,15 +7,16 @@ import threading
 import time
 
 from py3irc.mypyirc import MyPyIrcBot
+from py3irc.mypyirc.ircdefine import *
 
 
 class IABot(MyPyIrcBot):
 	def __init__(self, server_ip, server_port, *,
-			canal_asserv, canal_asserv_mini, canal_others, canal_others_mini, canal_debug, canal_hokuyo):
+			canal_big_asserv, canal_mini_asserv, canal_big_others, canal_mini_others, canal_debug, canal_hokuyo):
 		MyPyIrcBot.__init__(self,
-			(server_ip, server_port),
+			server_ip, server_port,
 			"iabot",
-			[canal_asserv, canal_asserv_mini, canal_others, canal_others_mini, canal_debug, canal_hokuyo]
+			[canal_big_asserv, canal_mini_asserv, canal_big_others, canal_mini_others, canal_debug, canal_hokuyo]
 		)
 
 
@@ -29,19 +30,18 @@ class IABot(MyPyIrcBot):
 		Retourne un identifiant unique
 		"""
 		self.__id_lock.acquire()
-		if sef.__id > 1E12:
+		if self.__id > 1E12:
 			self.__id = 0
 		i = self.__id
 		self.__id += 1
 		self.__id_lock.release()
 		return i
 
-	def _on_cmd(self, canal, irc_cmd, *args, **options):
-		if irc_cmd == "reponse":
-			i = args[0]
-			if i in self.handlers:
-				f = self.handlers[i].pop(0)
-				f(args,options)
+	def cmd__reponse(self, *args, canal, id_msg, **options):
+		i = args[0]
+		if i in self.handlers:
+			f = self.handlers[i].pop(0)
+			f(args,options)
 	
 	def send_cmd(self, canal, handlers, irc_cmd, *args):
 		"""
@@ -53,8 +53,8 @@ class IABot(MyPyIrcBot):
 		if not irc_cmd.startswith(PREFIX_CMD): irc_cmd = PREFIX_CMD+irc_cmd
 		i = self.get_new_id()
 		self.handlers[i] = handlers
-		str_args = map(str, [irc_cmd]+args)
-		self.send(canal, " ".join(str_args) + "# id=%s" % i)
+		str_args = map(str, (irc_cmd,)+args)
+		self.send(canal, " ".join(str_args) + " # id=%s" % i)
 		
 		
 

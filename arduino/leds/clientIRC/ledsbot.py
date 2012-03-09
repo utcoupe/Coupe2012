@@ -25,8 +25,8 @@ if __name__ == "__main__":
 		nickname="ledsbot",
 		channel="#leds",
 		serial_port="/dev/ttyACM0",
-		protocole_file=os.path.join(FILE_DIR,"..","driver","protocole.h"),
-		protocole_prefixe="Q_",
+		protocol_file=os.path.join(FILE_DIR,"..","driver","protocol.h"),
+		protocol_prefixe="Q_",
 		blocking=False
 	)
 
@@ -43,30 +43,30 @@ if __name__ == "__main__":
 				if event.key == K_ESCAPE:
 					break
 				elif event.key == K_a:
-					bot.write_rep(allume('2', id_msg=42))
+					bot.write(allume('2', id_msg=42))
 				elif event.key == K_z:
-					bot.write_rep(allume('3', id_msg=42))
+					bot.write(allume('3', id_msg=42))
 				elif event.key == K_e:
-					bot.write_rep(allume('4', id_msg=42))
+					bot.write(allume('4', id_msg=42))
 				elif event.key == K_r:
-					bot.write_rep(allume('5', id_msg=42))
+					bot.write(allume('5', id_msg=42))
 				elif event.key == K_t:
-					bot.write_rep(allume('6', id_msg=42))
+					bot.write(allume('6', id_msg=42))
 				elif event.key == K_y:
-					bot.write_rep(allume('7', id_msg=42))
+					bot.write(allume('7', id_msg=42))
 			elif event.type == KEYUP:
 				if event.key == K_a:
-					bot.write_rep(eteindre('2', id_msg=42))
+					bot.write(eteindre('2', id_msg=42))
 				elif event.key == K_z:
-					bot.write_rep(eteindre('3', id_msg=42))
+					bot.write(eteindre('3', id_msg=42))
 				elif event.key == K_e:
-					bot.write_rep(eteindre('4', id_msg=42))
+					bot.write(eteindre('4', id_msg=42))
 				elif event.key == K_r:
-					bot.write_rep(eteindre('5', id_msg=42))
+					bot.write(eteindre('5', id_msg=42))
 				elif event.key == K_t:
-					bot.write_rep(eteindre('6', id_msg=42))
+					bot.write(eteindre('6', id_msg=42))
 				elif event.key == K_y:
-					bot.write_rep(eteindre('7', id_msg=42))
+					bot.write(eteindre('7', id_msg=42))
 		
 		pg.display.flip()
 		clock.tick(60)

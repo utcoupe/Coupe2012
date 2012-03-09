@@ -14,5 +14,5 @@ if __name__ == "__main__":
 		nickname="asservbot",
 		channel="asserv",
 		serial_port="/dev/ttyACM1",
-		protocole_file=os.path.join(FILE_DIR,"..","..","protocole.h"),
-		protocole_prefixe="QA_")
+		protocol_file=os.path.join(FILE_DIR,"..","..","protocole.h"),
+		protocol_prefixe="QA_")

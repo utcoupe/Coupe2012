@@ -15,7 +15,7 @@ from py3irc.mypyirc import BridgeBot
 
 
 class ArduinoBot(BridgeBot):
-	def __init__(self, server_ip, server_port, nickname, channel, serial_port, serial_baudrate, protocole_file, protocole_prefixe):
+	def __init__(self, server_ip, server_port, nickname, channel, serial_port, serial_baudrate, protocol_file, protocol_prefixe):
 		self.serial = None
 		try:
 			self.serial = serial.Serial(serial_port, serial_baudrate, timeout=1, writeTimeout=1)
@@ -24,10 +24,10 @@ class ArduinoBot(BridgeBot):
 			sys.exit(1)
 		print("OK")
 		
-		BridgeBot.__init__(self, server_ip, server_port, nickname, channel, protocole_file, protocole_prefixe)
+		BridgeBot.__init__(self, server_ip, server_port, nickname, channel, protocol_file, protocol_prefixe)
 
 	
-	def write_rep(self, msg):
+	def write(self, msg):
 		""" écrit sur le port série """
 		print("%s" % msg.strip())
 		msg = bytes(msg.strip()+"\n","utf-8")
@@ -46,8 +46,8 @@ def run(**args):
 	default["channel"]			= "#test"
 	default["serial_port"]		= "/dev/ttyACM0"
 	default["serial_baudrate"]	= 115200
-	default["protocole_file"]	= os.path.join(FILE_DIR,"..","protocole.h")
-	default["protocole_prefixe"]= "Q_"
+	default["protocol_file"]	= os.path.join(FILE_DIR,"..","protocol.h")
+	default["protocol_prefixe"]= "Q_"
 	default.update(args)
 	
 	usage = "usage: %prog [options]"
@@ -70,12 +70,12 @@ def run(**args):
 	parser.add_option("-p", "--serial-baudrate",
 						action="store", dest="serial_baudrate", default=default["serial_baudrate"],
 						help="serial baudrate")
-	parser.add_option("-f", "--protocole-file",
-						action="store", dest="protocole_file", default=default["protocole_file"],
-						help="protocole file")
-	parser.add_option("-x", "--protocole-prefixe",
-						action="store", dest="protocole_prefixe", default=default["protocole_prefixe"],
-						help="protocole prefixe")
+	parser.add_option("-f", "--protocol-file",
+						action="store", dest="protocol_file", default=default["protocol_file"],
+						help="protocol file")
+	parser.add_option("-x", "--protocol-prefixe",
+						action="store", dest="protocol_prefixe", default=default["protocol_prefixe"],
+						help="protocol prefixe")
     
 	(options, _args) = parser.parse_args()
 
@@ -85,8 +85,8 @@ def run(**args):
 		options.channel,
 		options.serial_port,
 		options.serial_baudrate,
-		options.protocole_file,
-		options.protocole_prefixe)
+		options.protocol_file,
+		options.protocol_prefixe)
 	bot = ArduinoBot(
 		options.server_ip,
 		options.server_port,
@@ -94,8 +94,8 @@ def run(**args):
 		options.channel,
 		options.serial_port,
 		options.serial_baudrate,
-		options.protocole_file,
-		options.protocole_prefixe)
+		options.protocol_file,
+		options.protocol_prefixe)
 	#print(list(filter(lambda x: x[0:4] == 'cmd_', dir(bot))))
 
 	if not args.get('blocking', True):

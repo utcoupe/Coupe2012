@@ -14,5 +14,5 @@ if __name__ == "__main__":
 		nickname="samplebot",
 		channel="#test",
 		serial_port="/dev/ttyACM0",
-		protocole_file=os.path.join(FILE_DIR,"..","driver","protocole.h"),
-		protocole_prefixe="Q_")
+		protocol_file=os.path.join(FILE_DIR,"..","driver","protocole.h"),
+		protocol_prefixe="Q_")

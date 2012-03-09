@@ -53,13 +53,14 @@ class MonitoringBot(mypyircbot.MyPyIrcBot):
 		@param cmd_name le nom de la commande
 		@param params liste des paramètres
 		"""
-		global _RESULT_EXEC_
 		print("Generate function cmd_%s(%s)" % (cmd_name,params))
-		code = "def _RESULT_EXEC_(%s):\n" % ','.join(['self']+params+['**kwargs'])
-		code += "	return MonitoringBot._MonitoringBot__cmd('{path}',{params})".format(path=path, params=','.join(params))
-		exec(code, globals())
-		_RESULT_EXEC_.__doc__ = "doc not available for the moment"
-		self.add_cmd_function(self.canal, cmd_name, _RESULT_EXEC_)
+		code = "def f(%s):\n" % ','.join(['self']+params+['*','id_msg=42','**kwargs'])
+		code += "	self.send_response(self.canal, id_msg, MonitoringBot._MonitoringBot__cmd('{path}',{params}))".format(
+			path=path, params=','.join(params))
+		d = {'MonitoringBot': MonitoringBot}
+		exec(code, d)
+		d['f'].__doc__ = "doc not available for the moment"
+		self.add_cmd_function(self.canal, cmd_name, d['f'])
 
 	@staticmethod
 	def __cmd(exec_file, *params):
@@ -68,14 +69,10 @@ class MonitoringBot(mypyircbot.MyPyIrcBot):
 		@param exec_file chemin vers l'exec bash
 		@param params les paramètres à envoyer à l'executable
 		"""
-		print(params)
 		p = subprocess.Popen([exec_file]+list(params), stdout=subprocess.PIPE)
 		msg = str(p.communicate()[0], "utf-8").strip()
 		return msg if msg else "-1"
 
-	def write_rep(self, msg, id_msg=42):
-		""" Surcharge de la classe parente """
-		self.send(self.canal, SEP.join([str(id_msg), str(msg)]))
 
 
 if __name__ == "__main__":
