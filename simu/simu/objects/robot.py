@@ -66,6 +66,8 @@ class Robot(EngineObjectPoly, Executer):
 		self.transform("asserv", canal_asserv)
 		self.transform("others", canal_others)
 
+		self.body._set_velocity_func(self._my_velocity_func())
+
 	def init(self, engine):
 		self.engine = engine
 
@@ -77,39 +79,43 @@ class Robot(EngineObjectPoly, Executer):
 
 	def a(self):
 		return int(math.degrees(self.body.angle))
+	
 
-	def step(self, dt):
-		self.body._set_torque(0)
-		self.body._set_angular_velocity(0)
-		if not self.stop and self.goals:
-			current_goal = self.goals[0]
-			if isinstance(current_goal, GoalPOS):
-				gx,gy = current_goal.pos
-				v = current_goal.v
-				x,y = self.body.position
-				dx = gx - x
-				dy = gy - y
-				d = math.sqrt(dx**2+dy**2)
-				if d < v * dt:
-					self.body._set_position((gx,gy))
-					self.goals.pop(0)
-					self.body._set_velocity((0,0))
-				else:
-					a = math.atan2(dy,dx)
+	def _my_velocity_func(self):
+		def f(body, gravity, damping, dt):
+		
+			self.body._set_torque(0)
+			self.body._set_angular_velocity(0)
+			if not self.stop and self.goals:
+				current_goal = self.goals[0]
+				if isinstance(current_goal, GoalPOS):
+					gx,gy = current_goal.pos
+					v = current_goal.v
+					x,y = self.body.position
+					dx = gx - x
+					dy = gy - y
+					d = math.sqrt(dx**2+dy**2)
+					if d < v * dt:
+						self.body._set_position((gx,gy))
+						self.goals.pop(0)
+						self.body._set_velocity((0,0))
+					else:
+						a = math.atan2(dy,dx)
+						vx = v * math.cos(a)
+						vy = v * math.sin(a)
+						self.body._set_velocity((vx,vy))
+						self.body._set_angle(a)
+				elif isinstance(current_goal, GoalPWM):
+					a = self.body.angle
+					v = self.max_speed * current_goal.pwm / 255
 					vx = v * math.cos(a)
 					vy = v * math.sin(a)
 					self.body._set_velocity((vx,vy))
-					self.body._set_angle(a)
-			elif isinstance(current_goal, GoalPWM):
-				a = self.body.angle
-				v = self.max_speed * current_goal.pwm / 255
-				vx = v * math.cos(a)
-				vy = v * math.sin(a)
-				self.body._set_velocity((vx,vy))
+				else:
+					raise Exception("type_goal inconnu")
 			else:
-				raise Exception("type_goal inconnu")
-		else:
-			self.body._set_velocity((0,0))
+				self.body._set_velocity((0,0))
+		return f
 				
 				
 

@@ -9,7 +9,6 @@ POLY				= 1
 WALL				= 2
 
 
-
 class EngineObject:
 	def __init__(self, *,
 			t,
@@ -47,11 +46,18 @@ class EngineObject:
 
 		if not is_extension:
 			self.body, self.shape = self.create_body_n_shape()
+			self.body._set_velocity_func(self._my_velocity_func())
 			self.shape.collision_type = colltype
 
 		for o in extension_objects:
 			self.add_body_extension(o)
-		
+
+	def _my_velocity_func(self):
+		def f(body, gravity, damping, dt):
+			vx,vy = body.velocity
+			body._set_velocity((vx*0.90, vy*0.90))
+		return f
+	
 	def add_body_extension(self, obj):
 		obj.is_extension = True
 		obj.body = self.body
@@ -64,9 +70,6 @@ class EngineObject:
 	def remove_body_extension(self, obj):
 		self.extension_objects.remove(obj)
 		self.engine.remove_extension(obj)
-
-	def step(self, dt):
-		pass
 
 	def pos(self):
 		return self.body.position

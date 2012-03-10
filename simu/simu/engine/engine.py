@@ -104,8 +104,6 @@ class Engine:
 		self.objects_to_remove = []
 		dt = 1.0/float(FPS)
 		self.physicsengine.step(dt)
-		for o in self.objects:
-			o.step(dt)
 		if not self.graphicsengine.step():
 			self.stop()
 			

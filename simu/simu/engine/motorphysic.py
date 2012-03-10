@@ -21,9 +21,6 @@ class MotorPhysic:
 	
 	def step(self, dt):
 		self.space.step(dt)
-		for o in self.objects:
-			vx,vy = o.body.velocity
-			o.body._set_velocity((vx*self.coef_frot, vy*self.coef_frot))
 
 
 	def create_shape_circle(self, body, radius, offset):
