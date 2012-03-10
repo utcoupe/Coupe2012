@@ -14,7 +14,7 @@ class MotorPhysic:
 		self.space = pm.Space()
 		self.space.gravity = (0.0, 0.0)
 		self.objects = []
-		self.coef_frot = 0.85
+		self.coef_frot = 0.90
 
 	def add_collision_handler(self, colltype1, colltype2, f):
 		self.space.add_collision_handler(colltype1, colltype2, None, None, f, None)

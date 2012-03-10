@@ -39,6 +39,7 @@ KEY_DROP			= K_d			# vider le gros robot
 KEY_ARRACHE			= K_a			# arracher la carte
 KEY_BALAIS_LEFT		= K_q			# sortir le balais de gauche
 KEY_BALAIS_RIGHT	= K_w			# sortir le balais de droite
+KEY_BULDO			= K_x			# mode buldozer
 
 BIG			= 0
 MINI		= 1
@@ -53,7 +54,7 @@ HEIGHT_MINI 	= 200
 SIZE_PALETTE	= 70
 WIDTH_PALETTE	= 5
 # dimensions balais qui râclent la zone adverse	
-SIZE_BALAIS		= 200
+SIZE_BALAIS		= 250
 WIDTH_BALAIS	= 50
 ECART_ROBOT_BALAIS	= 50
 

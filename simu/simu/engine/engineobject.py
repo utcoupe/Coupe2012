@@ -1,4 +1,5 @@
 
+from geometry import Vec
 
 from ..define import *
 
@@ -130,6 +131,9 @@ class EngineObjectSegment(EngineObject):
 		return body
 	
 	def create_shape(self, body):
-		shape = self.engine.physicsengine.create_shape_segment(body, self.inita, self.initb, self.width)
+		inita = Vec(self.inita) + self.offset
+		initb = Vec(self.initb) + self.offset
+		print(inita)
+		shape = self.engine.physicsengine.create_shape_segment(body, list(inita), list(initb), self.width)
 		return shape
 		
