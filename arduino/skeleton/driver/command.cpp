@@ -1,4 +1,5 @@
 #include "command.h"
+#include "led.h"
 
 /* Analyse le message et effectue les actions associees
  * 	<> id : l'identifiant associe au message
@@ -6,15 +7,6 @@
  * 	<> args : le tableau d'entier contenant les arguments
  * */
 
-void eteindreLed(int i)
-{
-	digitalWrite(i, LOW);
-}
-
-void allumeLed(int i)
-{
-	digitalWrite(i, HIGH);
-}
 
 // from, id_cmd, *args, sizeArgs
 void cmd(int id, int header, int *args, int size){

@@ -1,8 +1,13 @@
 #include "command.h"
 
+
+// initialisations
 void setup()
 {
+	// initialisationdu port série
 	initSerialLink();
+
+	// initialisation des pins
 	for (int i=2; i<14; ++i)
 	{
 		pinMode(i, OUTPUT);
@@ -10,12 +15,12 @@ void setup()
 }
 
 long long int timeStart;
+// fonction appellée à chaque tour de boucle
 void loop()
 {
 	timeStart = micros();
-	// La del est allumee pendant le traitement
 
-	
+	// lecture des données arrivant
 	readIncomingData();
 
 	
