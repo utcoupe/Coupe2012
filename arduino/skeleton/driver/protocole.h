@@ -3,8 +3,7 @@
 
 
 // cf. protocole
-#define SEP			'.'
-#define C_SEP_SEND	SEP // tout est séparé par ça.
+#define SEP			'+'
 
 /**
  * Allumer une LED

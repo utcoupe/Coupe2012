@@ -4,13 +4,13 @@
  * \date	05/03/2012
  * 
  * */
- 
-#define SEP "."
+
  
 #ifndef COMMANAGER_H
 #define COMMANAGER_H
 
 #include <pthread.h>
+#include "protocole.h"
 
 /**
  * \class comManager

@@ -2,6 +2,8 @@
 #define PROTOCOLE_H
 
 
+// cf. protocole
+#define SEP			'+'
 
 /**
  * Allumer une LED
@@ -21,8 +23,6 @@
 
 
 
-// cf. protocole
-#define C_SEP_SEND	'.' // tout est séparé par ça.
 
 
 

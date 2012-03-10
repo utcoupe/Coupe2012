@@ -4,7 +4,6 @@
 
 // cf. protocole
 #define SEP			'+' // tout est séparé par ça
-#define C_SEP_SEND	SEP 
 
 
 // all

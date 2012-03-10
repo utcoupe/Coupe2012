@@ -16,7 +16,7 @@ void initSerialLink()
 void sendMessage(int id, int i)
 {
 	Serial.print(id);
-	Serial.print(C_SEP_SEND);
+	Serial.print(SEP);
 	Serial.println(i);
 }
 
@@ -27,7 +27,7 @@ void sendMessage(int id, int i)
 void sendMessage(int id, char* str)
 {
 	Serial.print(id);
-	Serial.print(C_SEP_SEND);
+	Serial.print(SEP);
 	Serial.println(str);
 }
 
@@ -37,9 +37,9 @@ void sendMessage(int id, char* str)
 void sendMessage(int id, int i, char* str)
 {
 	Serial.print(id);
-	Serial.print(C_SEP_SEND);
+	Serial.print(SEP);
 	Serial.print(i);
-	Serial.print(C_SEP_SEND);
+	Serial.print(SEP);
 	Serial.println(str);
 }
 
@@ -49,9 +49,9 @@ void sendMessage(int id, int i, char* str)
 void sendMessage(int id, char* str, int i)
 {
 	Serial.print(id);
-	Serial.print(C_SEP_SEND);
+	Serial.print(SEP);
 	Serial.print(str);
-	Serial.print(C_SEP_SEND);
+	Serial.print(SEP);
 	Serial.println(i);
 }
 
@@ -62,11 +62,11 @@ void sendMessage(int id, char* str, int i)
 void sendMessage(int id, int *tabi, int size)
 {
 	Serial.print(id);
-	Serial.print(C_SEP_SEND);
+	Serial.print(SEP);
 	for (int i=0; i<size-1; ++i)
 	{
 		Serial.print(tabi[i]);
-		Serial.print(C_SEP_SEND);
+		Serial.print(SEP);
 	}
 	Serial.println(tabi[size-1]);
 }
@@ -78,18 +78,18 @@ void sendMessage(int id, int *tabi, int size)
 void sendMessage(int id, char** tabs, int nbStr, int *tabi, int nbInt)
 {
 	Serial.print(id);
-	Serial.print(C_SEP_SEND);
+	Serial.print(SEP);
 	
 	for (int i=0; i<nbStr; ++i)
 	{
 		Serial.print(tabs[i]);
-		Serial.print(C_SEP_SEND);
+		Serial.print(SEP);
 	}
 	
 	for (int i=0; i<nbInt-1; ++i)
 	{
 		Serial.print(tabi[i]);
-		Serial.print(C_SEP_SEND);
+		Serial.print(SEP);
 	}
 	Serial.println(tabi[nbInt-1]);
 }
@@ -101,18 +101,18 @@ void sendMessage(int id, char** tabs, int nbStr, int *tabi, int nbInt)
 void sendMessage(int id, char cmd, int* tabi, int nbInt, char** tabs, int nbStr)
 {
 	Serial.print(id);
-	Serial.print(C_SEP_SEND);
+	Serial.print(SEP);
 	
 	for (int i=0; i<nbInt; ++i)
 	{
 		Serial.print(tabi[i]);
-		Serial.print(C_SEP_SEND);
+		Serial.print(SEP);
 	}
 	
 	for (int i=0; i<nbStr-1; ++i)
 	{
 		Serial.print(tabs[i]);
-		Serial.print(C_SEP_SEND);
+		Serial.print(SEP);
 	}
 	Serial.println(tabs[nbStr-1]);
 }
@@ -140,7 +140,7 @@ void readIncomingData()
 		int data = Serial.read();
 		switch(data){
 			// separateur
-			case C_SEP_SEND:
+			case SEP:
 			{
 			   	currentArg[currentArgIndex] = '\0';
 	   			args[argsIndex] = atoi(currentArg);

@@ -2,7 +2,7 @@
 #define PROTOCOLE_H
   
 // cf. protocole
-#define C_SEP_SEND	'.' // tout est séparé par ça.
+#define SEP		'+' // tout est séparé par ça.
 
 /**
  * Fonction retournant la postion des robots en coordonnées cartésiennes  
