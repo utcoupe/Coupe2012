@@ -88,7 +88,7 @@ public:
 	void setMutex(pthread_mutex_t m){this->mutex=m;};
 	//
 	void setComPort(string cp){comPort=cp;};
-	inline void sendInfos();
+	void sendInfos();
 	
 	///! Fonction helpful
 	//
