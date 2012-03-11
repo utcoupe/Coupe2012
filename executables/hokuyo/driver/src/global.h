@@ -8,29 +8,14 @@
 #define GLOBAL_H
  
 // Paramétres
-#define DEBUG 0
 #define NB_MAX_ROBOT 4
- 
-// Libs
-#include <list>
-#include <math.h>
-#include <sstream>
-#include <stdio.h>
-#include <cstdlib>
-#include <string.h>
-#include <assert.h>
-#include <stdlib.h>
-#include <iostream>
-#include <pthread.h>
 
-#include "delay.h" 
-#include "UrgCtrl.h"
-
-using namespace qrk;
-using namespace std; 
+// Tag des paramétres à passer 
+#define TAG_PORTCOM	"-com"
+#define TAG_COLOR	"-col"
 
 // --- Définitions ---
-	struct coord{
+	struct coord {
 		int x;
 		int y;
 	};
@@ -43,37 +28,6 @@ using namespace std;
 							// Représente le diametre de la balise posée sur le robot
 
 	#define ABS(a)	   (((a) < 0) ? -(a) : (a))
-
-	// 
-	#define VIOLET 1
-	#define ROUGE  2
-	
-	//
-	const long 	min_length=20;
-	const long 	max_length=3000;
-
-	// 
-	short 		g_color;
-	string 		g_comPort;
-	
-	//
-	UrgCtrl 	g_urg;
-	int 		g_scanMsec;
-
-	//
-	double 		g_radMin;
-	double 		g_radMax;
-		
-	long 		g_indexMax;
-	long 		g_indexMin;
-
-	long* 		g_distanceMax;
-	
-	
-	//
-	bool g_stop=false;
-	pthread_mutex_t  mutex;
-	std::list<coord> robot;
 
 
 #endif  //GLOBAL_H

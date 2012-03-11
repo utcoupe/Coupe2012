@@ -1,59 +1,19 @@
 /**
- * \file 	urgThread.h
+ * \file 	urgDriverCompute.cpp
  * \author 	Xavier RODRIGUEZ
- * \date	05/03/2012
- * 
+ * \date	10/03/2012
+ *
+ * Fontions de gestion des calculs de postions et interprétation des données
  * */
-#ifndef URGTHREAD_H
-#define URGTHREAD_H
-
-//! ---
-coord computeBotLocation(std::list<coord> bot);
-bool checkPointBot(coord p1, coord p2);
-void interpretData(std::vector<long> data, int n);
-//! ---
-
-void* urgLoop(void* arg)
-{
+ 
+#include "global.h"
+#include "urgDriver.h"
 	
-#if DEBUG
-	int h=10;
-	while(h>0)
-#else
-	while(!g_stop)
-#endif
-	{
-		#if DEBUG
-		h--;
-		std::cout << std::endl;
-		#endif
-			
-		long timestamp = 0;
-		std::vector<long> data;
-
-		// Get data
-		int n = g_urg.capture(data, &timestamp);
-		if(n <= 0){
-			delay(g_scanMsec);
-			continue;
-		}
-			
-		if(n>0){
-			// C'est ici que l'on traite les données
-			interpretData(data,n);	
-		}	
-	}
-
-	return NULL;
-}
-
-
-
-
+using namespace std;
 
 
 //! calcul la position d'un robot en fonction d'un groupe de points
-coord computeBotLocation(std::list<coord> bot)
+coord UrgDriver::computeBotLocation(list<coord> bot)
 {
 	coord rob;
 	rob.x=0;
@@ -86,13 +46,13 @@ coord computeBotLocation(std::list<coord> bot)
 }
 
 //! vérifie si deux points sont suffisement prés pour appartenir au même robot
-bool checkPointBot(coord p1, coord p2)
+bool UrgDriver::checkPointBot(coord p1, coord p2)
 {
 	int cox=p1.x-p2.x;
 	int coy=p1.y-p2.y;
 
-	int g_distance = sqrt( cox*cox + coy*coy );
-	if(g_distance>TOLERANCE){
+	int distance = sqrt( cox*cox + coy*coy );
+	if(distance>TOLERANCE){
 		return false;
 	}
 	
@@ -100,27 +60,21 @@ bool checkPointBot(coord p1, coord p2)
 } 
 
 //! Traitement des données venant de l'hokuyo
-void interpretData(std::vector<long> data, int n)
+void UrgDriver::interpretData(std::vector<long> data, int n)
 {	
 	robot.clear();
-	std::list<coord> bot;
+	list<coord> bot;
 	
-	for(int j = g_indexMin; j < g_indexMax; ++j) {
+	for(int j = indexMin; j < indexMax; ++j) {
 		long l = data[j];
 		
-		if(l>min_length && l<g_distanceMax[j])
+		if(l>minLength && l<distanceMax[j])
 		{
 			coord c;
-			double radian = g_urg.index2rad(j);
+			double radian = urg.index2rad(j);
 			radian = ABS(radian);
 			c.x = l*cos(radian); 
 			c.y = l*sin(radian);
-			
-			#if DEBUG
-			double degr = g_urg.index2deg(j);
-			std::cout << "(" << c.x << "," << c.y << ")" << degr << ":" << l << "|||";
-			#endif
-			
 		
 			if(bot.empty())
 			{
@@ -151,7 +105,3 @@ void interpretData(std::vector<long> data, int n)
 	}
 	
 }
-
-
-
-#endif // URGTHREAD_H

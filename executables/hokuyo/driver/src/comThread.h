@@ -3,63 +3,56 @@
  * \author 	Xavier RODRIGUEZ
  * \date	05/03/2012
  * 
+ * <p>Fonctions à lier aux define dans le comManager</p>
+ * 
  * */
 #ifndef COMTHREAD_H
 #define COMTHREAD_H
 
 #include "../protocole.h"
-#include "comManager.h"
 
-/**
- * Fonction retournant la postion des robots en coordonnées cartésiennes  
- * */ 
+/***********************************************************************
+ * <h1>QH_GETDATA</h1>
+ * <p>Fonction retournant la postion des robots en coordonnées 
+ * cartésiennes</p>  
+ **********************************************************************/ 
 // #define QH_GETDATA 1 
 void send(void)
 {
-	pthread_mutex_lock(&mutex);
-	bool pass=false;
-	std::list<coord>::iterator it;
-	for ( it=robot.begin() ; it!=robot.end() ; it++ )
-	{
-		if(pass){
-			cout << ","; 
-		}
-		cout << "(" << (*it).x << "," << (*it).y << ")";
-		pass=true;
-	}
-	pthread_mutex_unlock(&mutex);
+	ud->sendInfos();
+}
+
+/***********************************************************************
+ * <h1>QH_SET_REDCOLOR</h1>
+ * <p>Dit à l'hokuyo que notre robot est sur la couleur rouge</p>  
+ **********************************************************************/ 
+// #define QH_SET_REDCOLOR 2 
+void setRed(void)
+{
+	ud->stop();
+	ud->updateParamWithColor(UrgDriver::ROUGE);
+	ud->start();
+}
+
+/***********************************************************************
+ * <h1>QH_SET_PURPLECOLOR</h1>
+ * <p>Dit à l'hokuyo que notre robot est sur la couleur violet</p>  
+ **********************************************************************/
+// #define QH_SET_PURPLECOLOR 3
+void setPurple(void)
+{
+	ud->stop();
+	ud->updateParamWithColor(UrgDriver::VIOLET);
+	ud->start();
 }
 
 
-/**
- * Signal pour stoper l'application hokuyo
- * */ 
+/***********************************************************************
+ * <h1>QH_KILL</h1>
+ * <p>Kill com</p>  
+ **********************************************************************/
 // #define QH_KILL 9
 // No Function for kill
-
-
-
-
-
-
-void comLoop()
-{
-	// On récupére le singleton du manager
-	comManager* cm = comManager::getComManager();
-	
-	// Partage du mutex
-	mutex = cm->getMutex();
-	
-	// Ajout des fonctions 
-	cm->addKill(QH_KILL);
-	cm->addFunction(QH_GETDATA,&send);
-	
-	// Démarrage du thread de com 
-	cm->start();
-
-	g_stop = true;	
-}
-
 
 
 #endif // COMTHREAD_H

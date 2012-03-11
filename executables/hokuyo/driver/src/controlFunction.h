@@ -12,7 +12,10 @@ inline bool startHokuyoDriver();
 inline bool driverInitialisation();
 inline bool driverStart();
 inline bool driverClean();
+void hokLoop();
+void stopHokLoop();
 //! ---
+
 
 
 
@@ -20,26 +23,12 @@ inline bool driverClean();
 inline
 bool driverStart()
 {
-
-	
+	// Start Com
     comLoop();
 	
-  
-
-	pthread_t thrHok;
-    if(pthread_create(&thrHok, NULL, &urgLoop, NULL))
-    {
-        printf("Could not create thread hok\n");
-        return -1;
-    }
-    
-    if(pthread_join(thrHok, NULL))
-    {
-        printf("Could not join thread\n");
-        return -1;
-    }
+	// Loop hok
+	hokLoop();
  
-	
 	return true;
 }
 
@@ -78,8 +67,6 @@ bool startHokuyoDriver()
 	
 	return true;
 }
-
-
 
 
 
@@ -136,6 +123,29 @@ bool driverClean()
 }
 
 
+
+//!
+void hokLoop()
+{
+	pthread_t thrHok;
+    if(pthread_create(&thrHok, NULL, &urgLoop, NULL))
+    {
+        printf("Could not create thread hok\n");
+        return -1;
+    }
+    
+    if(pthread_join(thrHok, NULL))
+    {
+        printf("Could not join thread\n");
+        return -1;
+    }
+}
+
+//!
+void stopHokLoop()
+{
+	g_stop = true;
+}
 
 
 #endif // CONTROLFUNCTION_H

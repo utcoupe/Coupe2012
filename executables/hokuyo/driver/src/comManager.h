@@ -4,24 +4,27 @@
  * \date	05/03/2012
  * 
  * */
-
+ 
+#define SEP "."
  
 #ifndef COMMANAGER_H
 #define COMMANAGER_H
 
 #include <pthread.h>
-#include "protocole.h"
+#include <iostream>
+
+using std::pair;
 
 /**
- * \class comManager
+ * \class ComManager
  * 
  * classe de gestion de la communication en C++
  * */
-class comManager
+class ComManager
 {
 
 private:
-	static comManager* objCom;
+	static ComManager* objCom;
 
 	int idCmd;
 	int killCmd;
@@ -29,19 +32,19 @@ private:
 	string request;
 	
 	pthread_t thr;
-	pthread_mutex_t  mutex;
+	pthread_mutex_t mutex;
 	
 	list<pair<int,void(*)()> > fonctions;
 	list<pair<int,void(*)()> >::iterator ite;
 	
-	comManager();
-	~comManager();
+	ComManager();
+	~ComManager();
 	
 	void* loop(void* arg);
 
 public:
 
-	static comManager* getComManager();
+	static ComManager* getComManager();
 	
 	void addKill(int id);				
 	void addFunction(int id,void(*)());
@@ -50,6 +53,7 @@ public:
 	static void* helpfct(void* arg); 
 	// Ou lancer le automatiquement le thread du manager
 	void start();
+	void waitHere();
 	
 	pthread_mutex_t getMutex(){return this->mutex;};
 	void setMutex(pthread_mutex_t m){this->mutex=m;};

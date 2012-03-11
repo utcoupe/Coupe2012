@@ -15,13 +15,13 @@ using namespace std;
 #include "comManager.h"
 
 //! Initialisation du singleton
-comManager* comManager::objCom = 0;
+ComManager* ComManager::objCom = 0;
 
 //! ---
-comManager* comManager::getComManager()
+ComManager* ComManager::getComManager()
 {
 	if(objCom == 0) {
-		objCom = new comManager();
+		objCom = new ComManager();
 		return objCom;
 	}
 	else{
@@ -30,44 +30,53 @@ comManager* comManager::getComManager()
 }
 
 //! --- 
-comManager::comManager()
+ComManager::ComManager()
 {
 	command=0;
 	pthread_mutex_init(&(this->mutex), NULL);
 }
 
 //! ---
-void comManager::addKill(int id)
+ComManager::~ComManager()
+{
+	
+}
+
+//! ---
+void ComManager::addKill(int id)
 {
 	this->killCmd = id;
 }	
 
 //! --- 
-void comManager::addFunction(int id,void(*fct)())
+void ComManager::addFunction(int id,void(*fct)())
 {
 	this->fonctions.push_front(pair<int,void(*)()>(id,fct));
 }
 
 //! --- 
-void* comManager::helpfct(void* arg)
+void* ComManager::helpfct(void* arg)
 {
 	return getComManager()->loop(arg);
 }
 
 //! --- 
-void comManager::start()
+void ComManager::start()
 {
-	if(pthread_create(&thr, NULL, &comManager::helpfct, NULL)) {
-		cerr << "Error : Unable to create thread Com" << endl;
+	if(pthread_create(&thr, NULL, &ComManager::helpfct, NULL)) {
+		cerr << "Erreur : Impossible de créer le Thread Com" << endl;
     }
-    
-    if(pthread_join(thr, NULL)) {
-		cerr << "Error : Could not join thread Com" << endl;;
+}
+
+void ComManager::waitHere()
+{
+	if(pthread_join(thr, NULL)) {
+		cerr << "Erreur : Impossible de joindre le Thread Com" << endl;;
     }
 }
 
 //! ---
-void* comManager::loop(void* arg)
+void* ComManager::loop(void* arg)
 {	
 	size_t pos;	
 	for( ; ; )
