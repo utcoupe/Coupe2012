@@ -35,6 +35,8 @@ public:
 	ArgManager* am;
 	ComManager* cm;
 	UrgDriver * ud;
+	
+	MainAppDriver(int argc, char *argv[]);
 
 	void initArgManager(int argc, char *argv[]);	
 	void initComManager();
@@ -44,7 +46,7 @@ public:
 	void waitHere();
 };
 
-MainAppDriver application;
+MainAppDriver* application;
 
 
 // Fonctions d'interface 
@@ -59,17 +61,17 @@ MainAppDriver application;
  **********************************************************************/
 int main(int argc, char *argv[])
 {	
-	application.initArgManager(argc,argv);
-	
-	application.initUrgDriver();
-	
-	application.initComManager();
-
-	application.waitHere();
-	
+	application = new MainAppDriver(argc,argv);
+	application->waitHere();
 	return 0;
 }
 
+MainAppDriver::MainAppDriver(int argc, char *argv[])
+{
+	initArgManager(argc,argv);
+	initUrgDriver();
+	initComManager();
+}
 
 /***********************************************************************
  * 
@@ -134,7 +136,6 @@ void MainAppDriver::initUrgDriver()
  **********************************************************************/
 void MainAppDriver::waitHere()
 {	
-	//! Ne pas oublier les wait, fruits de mon actuelle ignorance ^^
 	ud->waitHere();    
 	cm->waitHere();
 }

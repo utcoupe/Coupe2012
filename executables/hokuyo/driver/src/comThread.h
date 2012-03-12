@@ -19,7 +19,7 @@
 // #define QH_GETDATA 1 
 void send(void)
 {
-	application.ud->sendInfos();
+	application->ud->sendInfos();
 }
 
 /***********************************************************************
@@ -29,9 +29,9 @@ void send(void)
 // #define QH_SET_REDCOLOR 2 
 void setRed(void)
 {
-	application.ud->stop();
-	application.ud->updateParamWithColor(UrgDriver::ROUGE);
-	application.ud->start();
+	application->ud->stop();
+	application->ud->updateParamWithColor(UrgDriver::ROUGE);
+	application->ud->start();
 }
 
 /***********************************************************************
@@ -41,9 +41,9 @@ void setRed(void)
 // #define QH_SET_PURPLECOLOR 3
 void setPurple(void)
 {
-	application.ud->stop();
-	application.ud->updateParamWithColor(UrgDriver::VIOLET);
-	application.ud->start();
+	application->ud->stop();
+	application->ud->updateParamWithColor(UrgDriver::VIOLET);
+	application->ud->start();
 }
 
 /***********************************************************************
