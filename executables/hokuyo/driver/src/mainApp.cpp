@@ -25,13 +25,31 @@
 #include "argManager.h"
 #include "comManager.h"
 
-// Déclaration des Managers
-ArgManager* am;
-ComManager* cm;
-UrgDriver * ud;
+
+class MainAppDriver
+{
+
+public:
+
+	// Déclaration des Managers
+	ArgManager* am;
+	ComManager* cm;
+	UrgDriver * ud;
+
+	void initArgManager(int argc, char *argv[]);	
+	void initComManager();
+	void initUrgDriver();
+	
+	
+	void waitHere();
+};
+
+MainAppDriver application;
+
 
 // Fonctions d'interface 
 #include "comThread.h"
+
 
 /***********************************************************************
  * \fn int main(int argc, char *argv[])
@@ -41,12 +59,50 @@ UrgDriver * ud;
  **********************************************************************/
 int main(int argc, char *argv[])
 {	
+	application.initArgManager(argc,argv);
+	
+	application.initUrgDriver();
+	
+	application.initComManager();
+
+	application.waitHere();
+	
+	return 0;
+}
+
+
+/***********************************************************************
+ * 
+ **********************************************************************/
+void MainAppDriver::initArgManager(int argc, char *argv[])
+{
 	//! --- Récupération des paramétres ---
 	am = new ArgManager();
 	am->addArg(new Argument<string>(TAG_PORTCOM));	// Le port com
 	am->addArg(new Argument<int>(TAG_COLOR)); 		// La couleur 
 	am->analyse(argc,argv);
-	
+}
+
+/***********************************************************************
+ * 
+ **********************************************************************/
+void MainAppDriver::initComManager()
+{
+	//! --- Start Com ---
+	cm = ComManager::getComManager();
+	cm->addKill(QH_KILL);
+	cm->addFunction(QH_GETDATA,&send);
+	cm->addFunction(QH_SET_REDCOLOR,&setRed);
+	cm->addFunction(QH_SET_PURPLECOLOR,&setPurple);
+	cm->setMutex(ud->getMutex());					// Partage des mutex
+	cm->start();
+}
+
+/***********************************************************************
+ * 
+ **********************************************************************/
+void MainAppDriver::initUrgDriver()
+{
 	//! --- Start Hukuyo ---
 	ud = UrgDriver::getUrgDriver();
 	
@@ -71,22 +127,14 @@ int main(int argc, char *argv[])
 	
 	ud->refInit();
 	ud->start();
-	
-	//! --- Start Com ---
-	cm = ComManager::getComManager();
-	cm->addKill(QH_KILL);
-	cm->addFunction(QH_GETDATA,&send);
-	cm->addFunction(QH_SET_REDCOLOR,&setRed);
-	cm->addFunction(QH_SET_PURPLECOLOR,&setPurple);
-	cm->setMutex(ud->getMutex());					// Partage des mutex
-	cm->start();
-    
+}
 
+/***********************************************************************
+ * 
+ **********************************************************************/
+void MainAppDriver::waitHere()
+{	
 	//! Ne pas oublier les wait, fruits de mon actuelle ignorance ^^
 	ud->waitHere();    
 	cm->waitHere();
-	return 0;
 }
-
-
-

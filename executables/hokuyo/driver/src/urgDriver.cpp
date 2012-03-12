@@ -14,8 +14,6 @@ using namespace std;
 //! Initialisation du singleton
 UrgDriver* UrgDriver::driverObj = 0;
 
-
-
 /***********************************************************************
  * <h1>Constructeur</h1>
  **********************************************************************/
@@ -51,7 +49,6 @@ void UrgDriver::sendInfos()
 		cout << "(" << (*it).x << "," << (*it).y << ")";
 	}
 }
-
 
 /***********************************************************************
  * \return UrgDriver* - pointeur sur le singleton du driver
