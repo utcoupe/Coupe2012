@@ -12,6 +12,11 @@ from .ircdefine import *
 class ProtocolException(Exception): pass
 
 class BridgeBot(MyPyIrcBot):
+	"""
+	Un BridgetBot est un "pont" qui fait le lien entre le protocole IRC
+	et un autre protocole plus bas niveau. Il se charge de transformer
+	les commandes de l'un vers l'autre.
+	"""
 	def __init__(self, server_ip, server_port, nickname, channel, protocol_file, protocol_prefixe):
 		MyPyIrcBot.__init__(self, server_ip, server_port, nickname, [channel])
 
@@ -22,7 +27,8 @@ class BridgeBot(MyPyIrcBot):
 			str_protocol = f.read()
 			f.close()
 			print("Récupération du protocol dans %s..." %protocol_file)
-			for cmd in self.get_protocol(str_protocol, protocol_prefixe):
+			self.sep, commands = self.get_protocol(str_protocol, protocol_prefixe)
+			for cmd in commands:
 				f_cmd = self.make_cmd_function(cmd['name'], cmd['id'], cmd['params'], cmd['doc'])
 				self.add_cmd_function(channel, cmd['name'], f_cmd)
 			print("OK")
@@ -80,7 +86,7 @@ class BridgeBot(MyPyIrcBot):
 			try:
 				msg = self.read()
 			except Exception as ex:
-				send_error(self.channel, ex)
+				self.send_error(self.channel, ex)
 				time.sleep(2)
 			else:
 				if msg:
