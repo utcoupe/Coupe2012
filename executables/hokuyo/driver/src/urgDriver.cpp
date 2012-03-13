@@ -8,6 +8,7 @@
  
 
 #include "urgDriver.h"
+#include "urgException.h" 
 	
 using namespace std;
 	
@@ -65,13 +66,17 @@ UrgDriver* UrgDriver::getUrgDriver()
 	}		
 }
 
-//! --- 
+/***********************************************************************
+ * <p>Démarre le processus de controle de la com</p>
+ **********************************************************************/
 void UrgDriver::start()
 {
 	askValue=true;;
 	if(pthread_create(&thr, NULL, &UrgDriver::helpfct, NULL)) {
 		cerr << "Erreur : Impossible de créer le Thread Urg" << endl;
+		throw new urgException(this, urgException::Err_start_threadPb);
     }
+    
 }
 
 void UrgDriver::waitHere()
@@ -86,19 +91,34 @@ void UrgDriver::stop()
 	askValue=false;
 }
 
-//! --- 
+/***********************************************************************
+ * <p>Fonction qui sera la tâche du thread urg. Son comportement peut 
+ * étre définit dans la fonction UrgDriver::loop</p>
+ **********************************************************************/ 
 void* UrgDriver::helpfct(void* arg)
 {
-	return getUrgDriver()->loop(arg);
+	void* ret = NULL;
+	try {
+		ret = getUrgDriver()->loop(arg);
+	}
+	catch(urgException* e){
+		e->react();
+	}
+	return ret;
 }
 
-//! --- 
+/***********************************************************************
+ * 
+ **********************************************************************/
 void* UrgDriver::loop(void* arg)
 {	
+	
 	if(!urg.isConnected()) {
-		cerr << "Erreur Urg non connecté" << endl;
+		throw new urgException(this, urgException::Err_loop_urgNoConnect);
 		return NULL;
 	}
+	
+	
 		
 	long n;
 	while(askValue)

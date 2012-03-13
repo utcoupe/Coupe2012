@@ -8,6 +8,7 @@
 
 #include <sstream>
 #include "urgDriver.h"
+#include "urgException.h"
 
 using namespace std;
 	
@@ -17,15 +18,21 @@ using namespace std;
  **********************************************************************/
 void UrgDriver::connectHokuyo()
 {
-	if(!urg.isConnected()){
-		if(!urg.connect(comPort.c_str())) {
-			cerr << "Erreur : Probléme de connection avec l'hokuyo" << endl;
-		}
-		else {
-			scanMsec = urg.scanMsec();
-			urg.setCaptureMode(AutoCapture);
-		}
-	} 
+	try
+	{
+		if(!urg.isConnected()) {
+			if(!urg.connect(comPort.c_str())) {
+				throw new urgException(this,urgException::Err_connectHokuyo_urgNoConnect);
+			}
+			else {
+				scanMsec = urg.scanMsec();
+				urg.setCaptureMode(AutoCapture);
+			}
+		} 
+	}
+	catch(urgException* e) {
+		e->react();
+	}
 }
 	
 /***********************************************************************

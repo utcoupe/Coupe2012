@@ -57,6 +57,10 @@ public:
 	
 	pthread_mutex_t getMutex(){return this->mutex;};
 	void setMutex(pthread_mutex_t m){this->mutex=m;};
+	
+	void autoKill(){
+		throw 666;
+	};
 };
 
 
