@@ -1,5 +1,8 @@
-hokuyoApp : src/mainApp.cpp comManager.o argManager.o urgDriver.o urgDriverHelp.o urgDriverCompute.o 
-	g++ -o hokuyoApp src/mainApp.cpp comManager.o urgDriverCompute.o  argManager.o urgDriver.o urgDriverHelp.o -Wall -Werror `urg-config --cflags` `sdl-config --cflags`  `urg-config --libs` `sdl-config --libs` -lc -lpthread 
+hokuyoApp : src/mainApp.cpp comManager.o argManager.o urgDriver.o urgDriverHelp.o urgException.o urgDriverCompute.o 
+	g++ -o hokuyoApp src/mainApp.cpp urgException.o comManager.o urgDriverCompute.o  argManager.o urgDriver.o urgDriverHelp.o -Wall -Werror `urg-config --cflags` `sdl-config --cflags`  `urg-config --libs` `sdl-config --libs` -lc -lpthread 
+
+urgException.o : src/urgException.cpp
+	g++ -o urgException.o -c src/urgException.cpp  -Wall -Werror `urg-config --cflags` `sdl-config --cflags`  `urg-config --libs` `sdl-config --libs` -lc -lpthread 
 
 urgDriverCompute.o : src/urgDriverCompute.cpp
 	g++ -o urgDriverCompute.o -c src/urgDriverCompute.cpp  -Wall -Werror `urg-config --cflags` `sdl-config --cflags`  `urg-config --libs` `sdl-config --libs` -lc -lpthread 

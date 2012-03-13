@@ -25,7 +25,6 @@
 #include "argManager.h"
 #include "comManager.h"
 
-
 class MainAppDriver
 {
 
@@ -42,16 +41,13 @@ public:
 	void initComManager();
 	void initUrgDriver();
 	
-	
 	void waitHere();
 };
 
 MainAppDriver* application;
 
-
 // Fonctions d'interface 
 #include "comThread.h"
-
 
 /***********************************************************************
  * \fn int main(int argc, char *argv[])
