@@ -81,7 +81,7 @@ class AX12
     int status_error;                                // error del paquete de retorno
     int status_data;                                 // data del paquete de retornostatic void setTX();
 
-    static byte ax_rx_buffer[AX12_BUFFER_SIZE];      // buffer de recepción
+    static byte ax_rx_buffer[AX12_BUFFER_SIZE];      // buffer de recepciÃ³n
     static volatile byte ax_rx_Pointer;              // making these volatile keeps the compiler from optimizing loops of available()
 
     static void init (long baud);
