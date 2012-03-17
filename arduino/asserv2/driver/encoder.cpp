@@ -8,6 +8,8 @@
 #include "WProgram.h"
 #include "wiring.h"
 
+
+
 int state_left_pinA;
 int state_left_pinB;
 int state_right_pinA;

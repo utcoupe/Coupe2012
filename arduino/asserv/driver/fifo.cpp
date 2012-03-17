@@ -10,6 +10,8 @@
 #include "WProgram.h"
 #include "wiring.h"
 
+
+
 Fifo goals;
 
 void initGoals(){

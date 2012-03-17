@@ -6,7 +6,9 @@
 */
 
 #include "WProgram.h"
-#include "wiring.h"         // we need this for the serial port defines
+#include "wiring.h"
+
+         // we need this for the serial port defines
 #include "ax12.h"
 #include <avr/interrupt.h>
 
