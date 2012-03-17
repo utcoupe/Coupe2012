@@ -4,35 +4,32 @@ import threading
 from subprocess import *
 import time
 from Tkinter import *
+import math
 
-robotSize= 150
+MAX_VAL  = 4000
 sizeFact = 5.0
+Center = (MAX_VAL,MAX_VAL) # x,y
 
 gbool = True
-robot=[]
-radbot=robotSize/sizeFact
-
-p = Popen(["./hokuyoApp"], stdout=PIPE, stdin=PIPE)
+listC=[]
+p = Popen(["./radDriver"], stdout=PIPE, stdin=PIPE)
 
 class thRead(threading.Thread):
 	def run(self):
-		global robot
+		global listC
 		while gbool:
+			
 			try:
 				p.stdout.flush()
 				r = p.stdout.readline()
+				print "Data in"
+				#r="[(-0.79,1500),(0.79,1500),(-0.3,2000),(0.3,2000),(1.57,1000)]"
+				
+				listC = eval(r)
+				#print listC
+				
 			except Exception as ex:
 				print ex
-				exit()
-	
-			if(r.find('.')!=-1):
-				del(robot[:])
-				r = r.split('.')
-				listCoor = eval(r[1])
-				listCoor = listCoor[1:]
-				for li in listCoor:				
-					robot.append(li)
-			
 			
 class thWrite(threading.Thread):
 	def run(self):
@@ -49,13 +46,38 @@ class thWrite(threading.Thread):
 def drawcircle(canv,x,y,rad):
     return canv.create_oval(x-rad,y-rad,x+rad,y+rad,width=0,fill='green')
 
+
 def drawZone(canv):
 	canv.delete(ALL)
 	
-	for coor in robot:
-		x=c[0]/sizeFact
-		y=(2000/sizeFact)-(c[1]/sizeFact)
-		drawcircle(canv,x,y,radbot)
+	drawcircle(canv,MAX_VAL/sizeFact,MAX_VAL/sizeFact,20)
+	
+	for c in listC : 
+		teta=float(c[0])
+		lon =float(c[1])
+	
+		# conversion
+		y = lon * math.cos(teta)
+		x = lon * math.sin(teta)
+		
+		# decalage du centre
+		x = MAX_VAL - x
+		y = MAX_VAL - y 
+		
+		
+		print  teta, " - ", lon, " - ", x, " - ", y
+		
+		x = x / sizeFact
+		y = y / sizeFact
+		
+		x = int(x)
+		y = int(y)
+	
+		
+	
+		drawcircle(canv,x,y,10)
+	
+	
 
 
 
@@ -74,7 +96,7 @@ t2.start()
 # ---
 root = Tk()
 
-canvas = Canvas(width=3000/sizeFact, height=2000/sizeFact, bg='blue')  
+canvas = Canvas(width=(2*MAX_VAL)/sizeFact, height=(MAX_VAL)/sizeFact, bg='blue')  
 canvas.pack(expand=YES, fill=BOTH) 
 
 root.mainloop()
@@ -83,5 +105,3 @@ root.mainloop()
 cmd='1.9\n'			
 p.stdin.write(cmd.encode("utf-8"))
 p.stdin.flush()
-
-
