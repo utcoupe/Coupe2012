@@ -22,5 +22,5 @@ doc
 *.a
 *~
 *.pyc
+*.exe
 
-hokuyoApp
