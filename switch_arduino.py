@@ -72,12 +72,12 @@ def process_file(full_file_path, old, new):
 		f.write(s)
 		f.close()
 
-		# éventuellement renommage
-		froot, fext = os.path.splitext(full_file_path)
-		if fext == old.extension:
-			new_path = froot+new.extension
-			print("full_file_path -> "+new_path)
-			os.rename(full_file_path, new_path)
+	# éventuellement renommage
+	froot, fext = os.path.splitext(full_file_path)
+	if fext == old.extension:
+		new_path = froot+new.extension
+		print("full_file_path -> "+new_path)
+		os.rename(full_file_path, new_path)
 
 class VersionData:
 	def __init__(self, *, extension, include, re_include, libname):
