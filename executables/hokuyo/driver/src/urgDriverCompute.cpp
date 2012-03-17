@@ -62,6 +62,11 @@ bool UrgDriver::checkPointBot(coord p1, coord p2)
 //! Traitement des données venant de l'hokuyo
 void UrgDriver::interpretData(std::vector<long> data, int n)
 {	
+	
+	// TODO
+	// Erreur si plus de quatres robots
+	// A gérer
+	
 	robot.clear();
 	list<coord> bot;
 	
