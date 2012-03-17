@@ -6,7 +6,8 @@
 
 
 #include <avr/io.h>
-#include "Arduino.h"
+#include "WProgram.h"
+#include "wiring.h"
 #include "AFMotor.h"
 
 

@@ -5,7 +5,8 @@
   versión 2.0 - 10/02/10
 */
 
-#include "Arduino.h"         // we need this for the serial port defines
+#include "WProgram.h"
+#include "wiring.h"         // we need this for the serial port defines
 #include "ax12.h"
 #include <avr/interrupt.h>
 

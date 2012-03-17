@@ -7,7 +7,8 @@
 
 #include "fifo.h"
 #include <math.h>
-#include "Arduino.h"
+#include "WProgram.h"
+#include "wiring.h"
 
 Fifo goals;
 
