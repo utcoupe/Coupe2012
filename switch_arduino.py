@@ -36,7 +36,10 @@ def remove_duplicate_includes(s):
 				ss += line+"\n"
 		else:
 			ss += line+"\n"
-		
+
+	if ss.endswith("\n\n"):
+		ss = ss[:-1]
+	
 	return ss
 
 def process_file(full_file_path, old, new):
@@ -58,7 +61,7 @@ def process_file(full_file_path, old, new):
 				print(t,"->", new.libname)
 		s = re_arduino_ver.sub(new.libname, s)
 		must_rewrite = True
-	else if old.re_include.search(s):
+	elif old.re_include.search(s):
 		s = old.re_include.sub(new.include, s)
 		s = remove_duplicate_includes(s)
 		must_rewrite = True
