@@ -76,7 +76,9 @@ class BridgeBot(MyPyIrcBot):
 		""" converti un message venant de l'objet en un message irc et son id """
 		msg_split = msg.split(self.sep,1)
 		id_msg = msg_split[0]
-		return id_msg, msg_split.replace(self.sep, SEP)
+		if len(msg_split) < 2:
+			return 42, msg
+		return id_msg, msg_split[1].replace(self.sep, SEP)
 		
 	
 	def loop(self):
@@ -90,7 +92,7 @@ class BridgeBot(MyPyIrcBot):
 				time.sleep(2)
 			else:
 				if msg:
-					i,msg = convert_obj_to_irc(msg)
+					i,msg = self.convert_obj_to_irc(msg)
 					self.send_response(self.channel, i, msg)
 	
 	def get_protocol(self, str_protocol, prefix):
