@@ -5,7 +5,10 @@
 #include "message.h"
 #include "encoder.h"
 #include "pwm.h"
-#include "Arduino.h"
+#include "WProgram.h"
+#include "wiring.h"
+
+
 
 /**
  * Analyse le message et effectue les actions associees

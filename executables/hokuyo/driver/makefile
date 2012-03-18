@@ -4,7 +4,7 @@ C++_FLAG = -Wall -Werror `urg-config --cflags` `sdl-config --cflags`  `urg-confi
 O_FILE = comManager.o argManager.o urgDriver.o urgDriverHelp.o urgException.o urgDriverCompute.o mainAppException.o mainAppDriver.o
 
 hokuyoApp : src/mainApp.cpp $(O_FILE)
-	g++ -o hokuyoApp src/mainApp.cpp $(O_FILE)  $(C++_FLAG)
+	g++ -o hokuyoApp.exe src/mainApp.cpp $(O_FILE)  $(C++_FLAG)
 
 urgException.o : src/urgException.cpp
 	g++ -o urgException.o -c src/urgException.cpp $(C++_FLAG)

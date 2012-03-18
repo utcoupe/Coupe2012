@@ -54,9 +54,11 @@ HEIGHT_MINI 	= 200
 SIZE_PALETTE	= 70
 WIDTH_PALETTE	= 5
 # dimensions balais qui râclent la zone adverse	
-SIZE_BALAIS		= 250
+SIZE_BALAIS		= 180
 WIDTH_BALAIS	= 50
-ECART_ROBOT_BALAIS	= 50
+ECART_ROBOT_BALAIS	= 0
+
+#ECART_CENTRE = -65 # ecart par rapport au centre du robot
 
 def mm_to_px(*args):
 	"""
