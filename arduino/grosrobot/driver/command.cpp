@@ -1,5 +1,7 @@
 #include "command.h"
-#include "led.h"
+
+#include "balais.h"
+#include "tapis.h"
 
 /* Analyse le message et effectue les actions associees
  * 	<> id : l'identifiant associe au message
@@ -13,33 +15,33 @@ void cmd(int id, int header, int *args, int size){
     /* On analyse le message en fonction de son type */
     switch(header)
     {
-		case Q_ID:
+		case QO_IDENT:
 		{
-			sendMessage(id, "samplebot");
+			sendMessage(id, "others");
 			break;
 		}
-		case Q_PING:
+		case QO_PING:
 		{
 			sendMessage(id, "pong");
 			break;
 		}
-		case Q_ALLUME:
+		case QO_BALAIS:
 		{
 			if (size < 1)
 				sendMessage(id, E_INVALID_PARAMETERS_NUMBERS);
 			else
 			{
-				allumeLed(args[0]);
+				sendMessage(id,g_balais.set_pwm(args[0]));
 			}
 			break;
 		}
-		case Q_ETEINDRE:
+		case QO_TAPIS:
 		{
 			if (size < 1)
 				sendMessage(id, E_INVALID_PARAMETERS_NUMBERS);
 			else
 			{
-				eteindreLed(args[0]);
+				sendMessage(id,g_tapis.actionner(args[0]));
 			}
 			break;
 		}
