@@ -13,13 +13,13 @@
 #define Q_STOP 				13	// [] stop et vide la fifo
 
 ////////////////////////////////////////////////////////////////////////
-////						OTHERS
+////						GROSROBOT
 ////////////////////////////////////////////////////////////////////////
 
 /**
  * identification
  */
-#define QO_IDENT			0
+#define QO_ID			0
 
 /**
  * pong
@@ -27,9 +27,16 @@
 #define QO_PING				1
 
 /**
- * Fait des resets
+ * Allumer/éteindre les balais
+ * @param pwm		[0:255]
  */
-#define QO_RESET		 	45
+#define QO_BALAIS			2
+
+/**
+ * Allumer/éteindre le tapis
+ * @param on_off		[1:0]
+ */
+#define QO_TAPIS			3
 
 
 ////////////////////////////////////////////////////////////////////////
@@ -44,11 +51,6 @@
  * ping-pong
  */
 #define QA_PING 			1
-
-/**
- * stop et vide la fifo
- */
-#define QA_CANCEL 			13
 
 /**
  * @param x
@@ -97,6 +99,22 @@
 #define QA_PWM				8
 
 /**
+ * Stop
+ */
+#define QA_STOP				9
+
+/**
+ * stop et vide la fifo
+ */
+#define QA_CANCEL 			10
+
+
+/**
+ * Reprendre
+ */
+#define QA_RESUME			11
+
+/**
  * Debug : sens du robot.
  */
 #define QA_GETSENS			16
@@ -137,17 +155,6 @@
  * @param D (1/1000)
  */
 #define QA_SET_PID_ANGLE_A	21
-
-/**
- * Stop
- */
-#define QA_STOP				22
-
-
-/**
- * Reprendre
- */
-#define QA_RESUME			23
 
 
 // erreurs
