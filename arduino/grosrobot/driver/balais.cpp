@@ -18,7 +18,7 @@ Balais::Balais() {
 
 
 int Balais::set_pwm(int _pwm) {
-	this->pwm = abs(min(255,_pwm));
+	this->pwm = min(255,abs(_pwm));
 	if (_pwm < 0) {
 		this->sens = BACKWARD;
 	}

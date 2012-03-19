@@ -15,7 +15,7 @@ void cmd(int id, int header, int *args, int size){
     /* On analyse le message en fonction de son type */
     switch(header)
     {
-		case QO_IDENT:
+		case QO_ID:
 		{
 			sendMessage(id, "others");
 			break;
