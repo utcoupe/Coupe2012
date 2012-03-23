@@ -41,8 +41,9 @@ void urgException::react(void)
 		{
 			//
 			case urgException::Err_start_threadPb :{
-				
-				
+				cerr << "Erreur : Impossible de créer le Thread Urg" << endl;
+				// TODO
+				// Fonction de gestion de cette erreur
 			break;}
 			//
 			case urgException::Err_loop_urgNoConnect :{
@@ -69,6 +70,8 @@ void urgException::connectUrgDevice()
 	cerr << "Tentative de correction" << endl;
 	cerr << "Nouvelle tentative de connection avec les même paramétres" << endl;
 	this->ud->connectHokuyo();
+	cerr << "Connection OK, lancement de l'analyse" << endl;
+	this->ud->start();
 }
 
 /***********************************************************************

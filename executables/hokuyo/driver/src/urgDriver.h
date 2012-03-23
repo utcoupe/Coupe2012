@@ -8,6 +8,7 @@
 #define URGDRIVER_H
   
 #include "global.h"
+
 #include <list>
 #include <string>
 #include <vector>
@@ -16,18 +17,17 @@
 #include "delay.h" 
 #include "UrgCtrl.h"
 
-using namespace qrk;
-
-using std::string;
 using std::list;  
-using std::vector;  
+using std::vector;
+using std::string;
+using namespace qrk;  
   
-/***********************************************************************
+/**
  * \class UrgDriver
  * 
  * <h1>class UrgDriver</h1>
  * <p>classe de gestion du driver</p>
- **********************************************************************/ 
+ * */ 
 class UrgDriver
 {
 	
