@@ -2,12 +2,18 @@
 
 void setup()
 {
+
   initSerialLink();
 
   cherche_moteurs();
 
-  attachInterrupt(4, fdcHaut, CHANGE); //pin 18
-  attachInterrupt(5, fdcBas, CHANGE); //pin 19
+  pinMode(PIN_SWITCH_HAUT, INPUT);
+  pinMode(PIN_SWITCH_BAS, INPUT);
+  digitalWrite(PIN_SWITCH_HAUT, HIGH);
+  digitalWrite(PIN_SWITCH_BAS, HIGH);
+
+  attachInterrupt(2, fdcHaut, CHANGE); //pin 21
+  attachInterrupt(3, fdcBas, CHANGE); //pin 20
   //ça occupe les pins i²c
   //si on en a besoin faudra mettre les interrupts ailleurs
 }

@@ -6,15 +6,16 @@
 
 #include "AFMotor.h"
 
-#define NB_MOTORS_MACHIN		1
+#define NB_MOTORS_PERCEPTEUR		1
 
-
+#define PIN_SWITCH_HAUT			21
+#define PIN_SWITCH_BAS			20
 
 class Percepteur {
 
  public:
   Percepteur();
-  int set_pwm(int pwm);
+  int set_pwm(int ordre, int pwm);
 
  private:
   int pwm;
