@@ -19,7 +19,7 @@ Va à une certaine position angulaire (en °)
 #define Q_TOURNER		50
 
 /**
-Sort le bidule bizarre du petit robot
+Allume le moteur du percepteur
 @param pwm [-255, 255]
 */
 #define Q_PERCEPTEUR		60

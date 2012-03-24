@@ -22,8 +22,8 @@ int etat_moteur = 0;
 Percepteur::Percepteur() {
   this->pwm = 0;
   this->sens = FORWARD;
-  this->motors = (AF_DCMotor*)malloc(sizeof(AF_DCMotor) * NB_MOTORS_BALAIS);
-  for (int i=0; i<NB_MOTORS_BALAIS; ++i) {
+  this->motors = (AF_DCMotor*)malloc(sizeof(AF_DCMotor) * NB_MOTORS_PERCEPTEUR);
+  for (int i=0; i<NB_MOTORS_PERCEPTEUR; ++i) {
     this->motors[i] = AF_DCMotor(i+1, MOTOR12_64KHZ);
     this->motors[i].setSpeed(0);
     this->motors[i].run(FORWARD);
@@ -34,28 +34,29 @@ Percepteur::Percepteur() {
 int Percepteur::set_pwm(int _ordre, int _pwm) {
   id_ordre = _ordre;
 
-  (if _pwm == 0) state = 0;
+  if (_pwm == 0) etat_moteur = 0;
 
   this->pwm = abs(min(255,_pwm));
   if (_pwm < 0) {
     this->sens = BACKWARD;
-    if (etat_switchs != 0)
-      etat_moteur = 1;
-    else
-      return 0;
-  }
-  else {
-    this->sens = FORWARD;
-    if (etat_switchs != 2)
+    if (etat_switchs != 0) {
       etat_moteur = 2;
+      sendMessage(_ordre, "go backward");
+    }
+    else
+      return 0;
+  }
+  else if (_pwm > 0) {
+    this->sens = FORWARD;
+    if (etat_switchs != 2) {
+      etat_moteur = 1;
+      sendMessage(_ordre, "go forward");
+    }
     else
       return 0;
   }
 
-  //s'occuper des switchs fin de course avant de (éventuellement) lancer la pwm
-  //stocker l'id de l'ordre quelquepart pour envoyer un message quand on arrive en fdc
-
-  for (int i=0; i<NB_MOTORS_BALAIS; ++i) {
+  for (int i=0; i<NB_MOTORS_PERCEPTEUR; ++i) {
     this->motors[i].setSpeed(this->pwm);
     this->motors[i].run(this->sens);
   }
@@ -64,23 +65,30 @@ int Percepteur::set_pwm(int _ordre, int _pwm) {
 }
 
 void fdcHaut() {
-  if (digitalRead(18)) { //switch à 1
-    etat_switchs = 2;
-    sendMessage(id_ordre, "haut atteint");
-    if (etat_moteur == 1)
-      g_percepteur.set_pwm(0);
+  if (!digitalRead(PIN_SWITCH_HAUT)) { //switch on
+    if (etat_switchs != 2) {
+      etat_switchs = 2;
+      sendMessage(id_ordre, "haut atteint", etat_moteur);
+
+      if (etat_moteur == 1)
+	g_percepteur.set_pwm(id_ordre, 0);
+    }
   } else {
     sendMessage(id_ordre, "Pu en haut");
+    etat_switchs = 4;
   }
 }
 
 void fdcBas() {
-  if (digitalRead(19)) { // switch a 1
-    etat_switchs = 0;
-    sendMessage(id_ordre, "bas atteint");
-    if (etat_moteur == 2)
-      g_percepteur.set_pwm(0);
+  if (!digitalRead(PIN_SWITCH_BAS)) { // switch on
+    if (etat_switchs != 0) {
+      etat_switchs = 0;
+      sendMessage(id_ordre, "bas atteint", etat_moteur);
+      if (etat_moteur == 2)
+	g_percepteur.set_pwm(id_ordre, 0);
+    }
   } else {
     sendMessage(id_ordre, "Pu en bas");
+    etat_switchs = 4;
   }
 }
