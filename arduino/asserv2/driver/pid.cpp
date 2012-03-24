@@ -1,6 +1,9 @@
 #include "pid.h"
 
-#include "Arduino.h"
+#include "WProgram.h"
+#include "wiring.h"
+
+
 
 PID::PID(double kp, double ki, double kd)
 {

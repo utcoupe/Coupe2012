@@ -29,9 +29,10 @@ class ArduinoBot(BridgeBot):
 	
 	def write(self, msg):
 		""" écrit sur le port série """
-		print("%s" % msg.strip())
-		msg = bytes(msg.strip()+"\n","utf-8")
-		self.serial.write(msg)
+		if msg:
+			print("%s" % msg.strip())
+			msg = bytes(msg.strip()+"\n","utf-8")
+			self.serial.write(msg)
 
 	def read(self):
 		return str(self.serial.readline(),"utf-8")

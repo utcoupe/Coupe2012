@@ -6,6 +6,16 @@
 #define SEP			'+'
 
 /**
+ * qui suis-je ?
+ */
+#define Q_ID			0
+
+/**
+ * ping -> pong
+ */
+#define Q_PING			1
+
+/**
  * Allumer une LED
  * @param i id de la led
  */
