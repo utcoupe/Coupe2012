@@ -38,12 +38,13 @@ class IABot(MyPyIrcBot):
 		return i
 
 	def cmd__response(self, *args, canal, id_msg, **options):
+		id_msg = int(id_msg)
 		if id_msg in self.handlers:
-			if self.handlers[str(id_msg)]:
-				f = self.handlers[str(id_msg)].pop(0)
-				f(canal,args,options)
+			n, handler = self.handlers[id_msg]
+			self.handlers[id_msg][0] += 1
+			handler(n, canal, args, options)
 	
-	def send_cmd(self, canal, handlers, irc_cmd, *args):
+	def send_cmd(self, canal, irc_cmd, *args, handler=None):
 		"""
 		@param canal
 		@param handlers, list de handlers (=fonctions appellée succéssivement lors de la reception de la réponse)
@@ -52,10 +53,13 @@ class IABot(MyPyIrcBot):
 		"""
 		if not irc_cmd.startswith(PREFIX_CMD): irc_cmd = PREFIX_CMD+irc_cmd
 		i = self.get_new_id()
-		self.handlers[str(i)] = handlers
+		if handler:
+			self.set_handler(i, handler)
 		str_args = map(str, (irc_cmd,)+args)
 		self.send(canal, SEP.join(str_args) + SEP + "id_msg=%s" % i)
-		
+
+	def set_handler(self, id_msg, handler, n=0):
+		self.handlers[int(id_msg)] = [n, handler]
 		
 
 if __name__ == "__main__":

@@ -103,6 +103,8 @@ class GameState:
 		self.ask_asserv_for_pos(self.bigrobot)
 		self.ask_asserv_for_pos(self.minirobot)
 		self.ask_hokyo_for_pos()
+
+		self.update_robots()
 		
 	def wait_update(self):
 		self.event_bigrobot_pos_update.wait()
@@ -120,10 +122,10 @@ class GameState:
 		
 
 	def ask_hokyo_for_pos(self):
-		self.hokuyo.get(self.on_msg_hokyo)
+		self.hokuyo.get(handler=self.on_msg_hokyo)
 
 	def ask_asserv_for_pos(self, robot):
-		robot.asserv.get_pos(self.on_msg_pos)
+		robot.asserv.get_pos(handler=self.on_msg_pos)
 
 	def on_msg(self, canal, auteur, msg):
 		msg_split = msg.split(SEP)
@@ -137,7 +139,7 @@ class GameState:
 			elif ID_MSG_POS == id_msg:
 				self.on_msg_pos(canal,params)
 
-	def on_msg_pos(self, canal, args, options):
+	def on_msg_pos(self, n, canal, args, options):
 		if len(args) >= 3:
 			# transformation des strings en int
 			args = tuple(map(int, args))
@@ -157,7 +159,7 @@ class GameState:
 			print("Error %s.on_msg_pos (%s:%d) : pas assez de paramètres " % (self.__class__.__name__, currentframe().f_code.co_filename, currentframe().f_lineno, canal))
 	
 
-	def on_msg_hokyo(self, canal, args, options):
+	def on_msg_hokyo(self, n, canal, args, options):
 		if len(args) == 1:
 			lpos = eval(args[0])
 			robots = self.robots()
