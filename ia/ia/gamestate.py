@@ -156,7 +156,8 @@ class GameState:
 			robot_to_update.update_pos(args[0:2])
 			robot_to_update.a = args[2]
 		else:
-			print("Error %s.on_msg_pos (%s:%d) : pas assez de paramètres " % (self.__class__.__name__, currentframe().f_code.co_filename, currentframe().f_lineno, canal))
+			print("Error %s.on_msg_pos (%s:%d) : pas assez de paramètres " %
+				(self.__class__.__name__, currentframe().f_code.co_filename, currentframe().f_lineno))
 	
 
 	def on_msg_hokyo(self, n, canal, args, options):
@@ -172,8 +173,15 @@ class GameState:
 					robots[j].update_pos(lpos[i])
 			self.event_hokuyo_update.set()
 		else:
-			self.send_error(canal, "Error %s.on_msg_hokyo (%s:%d) : pas assez de paramètres " % (self.__class__.__name__, currentframe().f_code.co_filename, currentframe().f_lineno, canal))
+			self.send_error(canal, "Error %s.on_msg_hokyo (%s:%d) : pas assez de paramètres " %
+				(self.__class__.__name__, currentframe().f_code.co_filename, currentframe().f_lineno))
 
+	def send_error(self, canal, msg):
+		if self.ircbot:
+			self.ircbot.send_error(canal, msg)
+		else:
+			print("ERROR", msg)
+	
 	def robots(self):
 		return (self.bigrobot, self.minirobot, self.enemy1, self.enemy2)
 
