@@ -34,7 +34,20 @@ class IaBase:
 	def __init__(self, server_ip, server_port, pos_bigrobot, pos_mini_robot, pos_enemy1, pos_enemy2, *,
 		canal_big_asserv, canal_mini_asserv, canal_big_others, canal_mini_others, canal_hokuyo, canal_debug
 		):
-
+		"""
+		@param {str} server_ip
+		@param {int} server_port
+		@param {pair} pos_bigrobot				position de départ du gros robot
+		@param {pair} pos_mini_robot			position de départ du petit robot
+		@param {pair} pos_enemy1				position de l'ennemi 1
+		@param {pair} pos_enemy2				position de l'ennemi 2
+		@param {str} canal_big_asserv
+		@param {str} canal_mini_asserv
+		@param {str} canal_big_others
+		@param {str} canal_mini_others
+		@param {str} canal_hokuyo
+		@param {str} canal_debug
+		"""
 		# création bot irc
 		self.ircbot = IABot(server_ip, server_port,
 			canal_big_asserv	= canal_big_asserv,

@@ -18,7 +18,9 @@ default = {}
 default["server_ip"] 		= "localhost"
 default["server_port"] 		= 6667
 default["ia"]				= 'u'
-default["player_team"]		='blue'
+default["player_team"]		= 'blue'
+default["autostart"]		= 0
+default["timeout"]			= -1
 
 usage = "usage: %prog [options]"
 parser = optparse.OptionParser(usage,version="%prog 0.0")
@@ -34,6 +36,12 @@ parser.add_option("-i", "--ia",
 parser.add_option("-p", "--player-team",
 					action="store", dest="player_team", default=default["player_team"],
 					help="équipe du bot, red ou blue")
+parser.add_option("-a", "--autostart",
+					action="store", dest="autostart", type="int", default=default["autostart"],
+					help="le robot doit-il attendre ou non le signal du jack pour se lancer")
+parser.add_option("-t", "--timeout",
+					action="store", dest="timeout", type="int", default=default["timeout"],
+					help="durée d'un latch en secondes, -1 pour infini")
 (options, args) = parser.parse_args()
 
 if 		'b' == options.ia:
@@ -58,6 +66,8 @@ myia = IaChoosen(
 	canal_mini_others	= CANAL_MINI_OTHERS + ("2" if t else ""),
 	canal_debug			= CANAL_DEBUG + ("2" if t else ""),
 	canal_hokuyo		= CANAL_HOKUYO,
+	autostart			= (options.autostart==1),
+	match_timeout		= options.timeout if options.timeout > 0 else None
 )
 
 

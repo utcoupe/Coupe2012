@@ -6,13 +6,23 @@ import time
 
 from .ia_base import *
 
+# wait_jack -> recalage -> jouer -> wait_jack
+STATE_WAIT_JACK1	= 0
+STATE_RECAL			= 1
+STATE_WAIT_JACK2	= 2
+STATE_PLAY			= 3
 
 
 
 class IaUtcoupe(IaBase):
 	def __init__(self, server_ip, server_port, pos_bigrobot, pos_mini_robot, pos_enemy1, pos_enemy2, *,
-		canal_big_asserv, canal_mini_asserv, canal_big_others, canal_mini_others, canal_hokuyo, canal_debug
+		canal_big_asserv, canal_mini_asserv, canal_big_others, canal_mini_others, canal_hokuyo, canal_debug,
+		autostart = False, match_timeout = None
 		):
+		"""
+		@param {bool} autostart			démarrer sans attendre le signal du jack
+		@param {int} match_timeout		durée d'un match en second, None pour infini
+		"""
 		IaBase.__init__(self,
 			server_ip, server_port, pos_bigrobot, pos_mini_robot, pos_enemy1, pos_enemy2,
 			canal_big_asserv	=canal_big_asserv,
@@ -35,10 +45,38 @@ class IaUtcoupe(IaBase):
 		actions = get_actions_minirobot(minirobot, minirobot.asserv, enemies)
 		minirobot.set_actions(actions)
 
+		#
+		self.state_match	= STATE_WAIT_JACK1
+		self.autostart		= autostart
+		self.t_begin_match	= time.time()
+		self.match_timeout	= match_timeout
 
-
+		self.e_jack			= threading.Event()
 
 	def loop(self):
+
+		# compute next match state
+		self.next_state()
+
+
+		# appellé la fonction correspondant à l'état acutel
+		if 		STATE_PLAY	== self.state_match:
+			self.loopPlay()
+		elif 	STATE_RECAL	== self.state_match:
+			self.loopRecal()
+		else:
+			self.loopJack()
+
+	def loopJack(self):
+		print("attente du jack...")
+		if self.autostart:
+			self.on_jack_event()
+		else:
+			self.e_jack.wait(2)
+		
+			
+	def loopPlay(self):
+		
 		# demande de rafraichissement
 		self.gamestate.ask_update()
 
@@ -64,6 +102,7 @@ class IaUtcoupe(IaBase):
 
 		# attente du rafraichissement
 		self.gamestate.wait_update()
+
 	
 	def loopRobot(self, robot):
 
@@ -112,6 +151,14 @@ class IaUtcoupe(IaBase):
 			else:
 				print("No reachable actions")
 
+	def loopRecal(self):
+		"""
+		Phase de racalage du robot au début
+		@todo
+		"""
+		self.state_match = STATE_PLAY
+		
+	
 	def stats(self):
 		time_since_last_show_stats = time.time() - self.time_last_show_stats
 		if time_since_last_show_stats >= 2:
@@ -120,5 +167,24 @@ class IaUtcoupe(IaBase):
 			print(self.gamestate.bigrobot.actions)
 			print(self.gamestate.minirobot.actions)
 
+	def next_state(self):
+		if 		STATE_WAIT_JACK1		== self.state_match:
+			pass
+		elif 	STATE_RECAL				== self.state_match:
+			pass
+		elif 	STATE_WAIT_JACK2		== self.state_match:
+			pass
+		elif 	STATE_PLAY				== self.state_match:
+			# si le match a durée depuis trop longtemps, on s'arrête
+			if self.match_timeout and (time.time() - self.t_begin_match) > self.match_timeout:
+				self.state_match = STATE_WAIT_JACK2
 
-		
+	def on_jack_event(self):
+		"""
+		Fonction appellé lorsque le jack est tiré
+		"""
+		if 		STATE_WAIT_JACK1		== self.state_match:
+			self.state_match = STATE_RECAL
+		elif 	STATE_WAIT_JACK2		== self.state_match:
+			self.state_match = STATE_PLAY
+		self.e_jack.set()
