@@ -6,29 +6,23 @@
 #define SEP                     '+'
 
 /**
- * Passe en mode buldozer
- */
-#define Q_BULDOZER_START        10
-// paramètre @duree pour arrêter automatiquement
-//  le mode buldozer ?
+Renvoie l'entier passé en paramètre
+@param entier
+*/
+#define Q_PING			10
 
 /**
- * Arrête le mode buldozer
- */
-#define Q_BULDOZER_STOP         20
+Va à une certaine position angulaire (en °)
+@param moteur
+@param position
+*/
+#define Q_TOURNER		50
 
 /**
- * Sors les balais
- */
-#define Q_SORTIR_BALAIS         30
-// pareil que buldozer_start
-
-/**
- * Rentre les balais
- */
-#define Q_RENTRE_BALAIS         40
-
-
+Sort le bidule bizarre du petit robot
+@param pwm [-255, 255]
+*/
+#define Q_PERCEPTEUR		60
 
 // erreurs
 #define E_INVALID_CMD                   -1

@@ -32,12 +32,12 @@ coord UrgDriver::computeBotLocation(list<coord> bot)
 		}
 		
 		nb++;
-		
-		#if DEBUG
-		std::cout << (*it).x << ":" << (*it).y << std::endl;
-		std::cout << "__" << rob.x << ":" << rob.y << std::endl;
-		#endif
 	}
+	
+	// TODO
+	// Erreur si le robot est trop prét du bord
+	
+
 	
 	// Changement de repére
 	rob.y = LY - rob.y;
@@ -63,9 +63,7 @@ bool UrgDriver::checkPointBot(coord p1, coord p2)
 void UrgDriver::interpretData(std::vector<long> data, int n)
 {	
 	
-	// TODO
-	// Erreur si plus de quatres robots
-	// A gérer
+	
 	
 	robot.clear();
 	list<coord> bot;
@@ -108,5 +106,10 @@ void UrgDriver::interpretData(std::vector<long> data, int n)
 			}
 		}
 	}
+
+	// TODO
+	// Erreur si plus de quatres robots
+
+
 	
 }

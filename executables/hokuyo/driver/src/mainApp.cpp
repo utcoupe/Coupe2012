@@ -35,8 +35,8 @@ MainAppDriver* application;
 int main(int argc, char *argv[])
 {	
 	
-		application = new MainAppDriver(argc,argv);
-		application->waitHere();
+	application = new MainAppDriver(argc,argv);
+	application->waitHere();
 	
 	
 	return 0;

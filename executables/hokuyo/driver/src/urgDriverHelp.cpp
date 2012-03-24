@@ -177,6 +177,12 @@ void UrgDriver::updateParamWithColor(short color)
  **********************************************************************/
 void UrgDriver::refInit()
 {
+	// TODO 
+	// Prendre en compte les deltas
+	// Pour cela on calcul les longueurs pour un rectangle de taille 
+	// LX+deltax , LY+deltay
+	// Puis on réduit l'angle 
+	
 	long timestamp = 0;
 	std::vector<long> data;
 	getData(data,&timestamp);
