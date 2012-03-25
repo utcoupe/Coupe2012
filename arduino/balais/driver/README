@@ -1,0 +1,22 @@
+Dossier importé de skeleton
+
+Editer command.cpp pour rajouter les commandes en provenance du serveur IRC. La commande doit tester la validité de la commande puis appeler un fonction
+Editer protocole.h pour rajouter les nouvelles commandes
+
+Creer des fichier .ccp et .h contenant les fonctions appelées
+
+Les autres fichiers restent tels quels
+
+
+------------------------
+
+De nombreuses valeurs (constantes) restent a modifier :
+id des moteurs
+id des commandes
+
+Code concu a partir du controle des AX12, a debugger avec des AX18, header ax18.h et ax18.cpp  similaires a ax12.h et ax12.cpp a trouver
+
+------------------------
+
+Note perso (Quentin) : je ne fais pas remonter les erreurs eventuelles des AX18 au serveur IRC car ouvrir et fermer les balais sont a priori des fonctions simple qui ne demandent pas a etre controlees
+
