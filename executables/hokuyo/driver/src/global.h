@@ -20,12 +20,14 @@
 		int y;
 	};
 	
-	#define LX 3000			// Largeur et longueur de la table en mm
-	#define LY 2000
+	#define LX 3000.0			// Largeur et longueur de la table en mm
+	#define LY 2000.0
 	#define TETA_DIAG 0.59 	// en radian, sinon 33.69 degree
 	#define RAD90 1.57
 	#define TOLERANCE 80  	// Tolérence de distance entre deux points du même robot
 							// Représente le diametre de la balise posée sur le robot
+							
+	#define TOL_BORDS 150	//
 
 	#define ABS(a)	   (((a) < 0) ? -(a) : (a))
 

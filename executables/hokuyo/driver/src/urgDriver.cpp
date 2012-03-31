@@ -20,8 +20,7 @@ UrgDriver* UrgDriver::driverObj = 0;
  * */
 UrgDriver::UrgDriver()
 {
-	deltaX = -40;
-	deltaY = -40;
+	this->setDelta(false);
 	pthread_mutex_init(&(this->mutex), NULL);
 }
 
@@ -74,7 +73,7 @@ UrgDriver* UrgDriver::getUrgDriver()
 void UrgDriver::start()
 {
 	// 
-	askValue=true;;
+	askValue=true;
 	
 	// Création du thread
 	if(pthread_create(&thr, NULL, &UrgDriver::helpfct, NULL)) {

@@ -149,7 +149,10 @@ void UrgDriver::setDelta(bool autoSearch, int dX, int dY)
 	if(!autoSearch) {
 		this->deltaX = dX;
 		this->deltaY = dY;
+	} else {
+		
 	}
+	this->calculLangleScanne();
 }
 
 /***********************************************************************
@@ -157,15 +160,15 @@ void UrgDriver::setDelta(bool autoSearch, int dX, int dY)
  * 			 		utiliser de préférence : UrgDriver::ROUGE / VIOLET
  **********************************************************************/
 void UrgDriver::updateParamWithColor(short color)
-{
+{	
 	this->color = color;
 	if(this->color == UrgDriver::VIOLET) {
-		defineRange(-90.0,0.0);
-		defineRangeIndex(-90.0,0.0);
+		defineRange((-1)*deg2,(-1)*deg1);
+		defineRangeIndex((-1)*deg2,(-1)*deg1);
 	}
 	else {
-		defineRange(0.0,90.0);
-		defineRangeIndex(0.0,90.0);
+		defineRange(deg1,deg2);
+		defineRangeIndex(deg1,deg2);
 	}
 
 	urg.setCaptureRange(urg.rad2index(radMin), urg.rad2index(radMax));	
@@ -173,16 +176,13 @@ void UrgDriver::updateParamWithColor(short color)
 
 
 /***********************************************************************
- * 
+ * On gére le fait que l'hokuyo est décalé par rapport à l'origine
+ * théorique de la balise sur la table.
+ * Pour cela on calcul les longueurs pour un rectangle de taille 
+ * LX+deltaX , LY+deltaY
  **********************************************************************/
 void UrgDriver::refInit()
-{
-	// TODO 
-	// Prendre en compte les deltas
-	// Pour cela on calcul les longueurs pour un rectangle de taille 
-	// LX+deltax , LY+deltay
-	// Puis on réduit l'angle 
-	
+{	 
 	long timestamp = 0;
 	std::vector<long> data;
 	getData(data,&timestamp);
@@ -193,12 +193,31 @@ void UrgDriver::refInit()
 		double radian = urg.index2rad(ind);
 		radian = ABS(radian);
 		if(radian<TETA_DIAG){
-			distanceMax[ind]=LX*cos(radian);
+			distanceMax[ind]=( LX - this->deltaX )*cos(radian);
 		}
 		else{
-			distanceMax[ind]=LY*cos(RAD90-radian);	
+			distanceMax[ind]=( LY - this->deltaX )*cos(RAD90-radian);	
 		}
 	}
+}
+
+/***********************************************************************
+ * Dans cette méthode on calcul l'angle à scanner
+ **********************************************************************/
+void UrgDriver::calculLangleScanne() 
+{
+	double radScan = (90 * M_PI / 180.0);
+	
+	double radDelX = atan( (double)ABS(deltaX) / (double)(LY-deltaY) ); 
+	double radDelY = atan( (double)ABS(deltaY) / (double)(LX-deltaX) );
+	
+	cout << radDelX << endl;
+	cout << radDelY << endl;
+	
+	radScan = (radScan - radDelX) - radDelY;
+
+	this->deg1 =  (radDelX * 180.0 / M_PI);
+	this->deg2 = ((this->radMin + radScan) * 180.0 / M_PI);
 }
 
 /***********************************************************************

@@ -33,14 +33,15 @@ coord UrgDriver::computeBotLocation(list<coord> bot)
 		
 		nb++;
 	}
-	
-	// TODO
-	// Erreur si le robot est trop prét du bord
-	
-
-	
+		
 	// Changement de repére
 	rob.y = LY - rob.y;
+	
+	// Erreur si le robot est trop prét du bord c'est surement une main
+	// qui traine ^^ on est plus à une apporximation de se genre 
+	if( (rob.y < TOL_BORDS) || (rob.y >(LY-TOL_BORDS)) || (rob.x <TOL_BORDS) || (rob.x >(LX-TOL_BORDS)) ) {
+		coord a; a.x = -100 ; return a;
+	}
 	
 	return rob;
 }
@@ -62,11 +63,8 @@ bool UrgDriver::checkPointBot(coord p1, coord p2)
 //! Traitement des données venant de l'hokuyo
 void UrgDriver::interpretData(std::vector<long> data, int n)
 {	
-	
-	
-	
 	robot.clear();
-	list<coord> bot;
+	list<coord> bot;			// Un robot peut étre composé de plusieurs points
 	
 	for(int j = indexMin; j < indexMax; ++j) {
 		long l = data[j];
@@ -76,8 +74,8 @@ void UrgDriver::interpretData(std::vector<long> data, int n)
 			coord c;
 			double radian = urg.index2rad(j);
 			radian = ABS(radian);
-			c.x = l*cos(radian); 
-			c.y = l*sin(radian);
+			c.x = l*cos(radian)  + deltaX; 
+			c.y = l*sin(radian)  + delatY;
 		
 			if(bot.empty())
 			{
@@ -91,7 +89,10 @@ void UrgDriver::interpretData(std::vector<long> data, int n)
 				}
 				else
 				{
-					robot.push_front(computeBotLocation(bot));
+					coord res = computeBotLocation(bot);
+					if(res.x != -100) {
+						robot.push_front(res);
+					}
 					bot.clear();
 					bot.push_front(c);
 				}
@@ -101,7 +102,10 @@ void UrgDriver::interpretData(std::vector<long> data, int n)
 		{
 			if(!bot.empty())
 			{
-				robot.push_front(computeBotLocation(bot));
+				coord res = computeBotLocation(bot);
+				if(res.x != -100) {
+					robot.push_front(res);
+				}
 				bot.clear();
 			}
 		}
@@ -109,7 +113,11 @@ void UrgDriver::interpretData(std::vector<long> data, int n)
 
 	// TODO
 	// Erreur si plus de quatres robots
-
+	if(robot.size()>NB_MAX_ROBOT)
+	{
+		
+		
+	}
 
 	
 }

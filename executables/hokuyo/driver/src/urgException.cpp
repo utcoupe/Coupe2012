@@ -47,12 +47,12 @@ void urgException::react(void)
 			break;}
 			//
 			case urgException::Err_loop_urgNoConnect :{
-				cerr << "Erreur : UrgDriver::loop : urg non connécté" << endl;
+				cerr << "Erreur : UrgDriver::loop : urg non connecté" << endl;
 				this->connectUrgDevice();
 			break;}
 			//
 			case urgException::Err_connectHokuyo_urgNoConnect :{
-				cerr << "Erreur : UrgDriver::connectHokuyo : urg non connécté" << endl;
+				cerr << "Erreur : UrgDriver::connectHokuyo : urg non connecté" << endl;
 				this->findAndConnectOneUrgDevice();
 			break;}
 		}	

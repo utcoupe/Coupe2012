@@ -48,6 +48,7 @@ private:
 	//
 	double 		radMin;
 	double 		radMax;
+	//
 		
 	long 		indexMax;
 	long 		indexMin;
@@ -57,8 +58,12 @@ private:
 	static const long maxLength=3000;
 	
 	// Décalage de la balise par rapport aux (0,0)
+	// Attention delta est négatif !
 	int 		deltaX;
 	int 		deltaY;
+	
+	double 		deg1;
+	double 		deg2;
 	
 	//
 	pthread_t thr;
@@ -107,6 +112,7 @@ public:
 	void defineRangeIndex(double minDeg,double maxDeg);
 	//
 	void setDelta(bool autoSearch, int dX=-40, int dY=-40);
+	void calculLangleScanne();
 	
 	//! Fonctions compute
 	bool checkPointBot(coord p1, coord p2);

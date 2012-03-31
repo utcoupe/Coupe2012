@@ -16,7 +16,9 @@ MainAppDriver::MainAppDriver(int argc, char *argv[])
 	initArgManager(argc,argv);
 	initUrgDriver();
 	initComManager();
-
+	
+	
+	
 }
 
 /***********************************************************************
@@ -42,8 +44,7 @@ void MainAppDriver::initUrgDriver()
 		//! --- Start Hukuyo ---
 		ud = UrgDriver::getUrgDriver();
 		
-		ud->setDelta(false,-40,-40);
-		
+
 			// On récupére le port com
 		Argument<string>* portcom = am->getArg(TAG_PORTCOM,ArgManager::GET_STRING);
 		if(portcom->isValid()){
@@ -63,7 +64,7 @@ void MainAppDriver::initUrgDriver()
 		
 		ud->refInit();
 		ud->start();
-	
+
 }
 
 /***********************************************************************
