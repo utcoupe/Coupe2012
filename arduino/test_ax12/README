@@ -1,6 +1,38 @@
 Ce code permet de contrôler les AX12.
 
-Il faut relier les bornes TX1 et RX1 de l'Arduino au bus de données.
+== HARDWARE ==
+
+   ARDUINO                                    AX-12
+
++------------+        TX1 et RX1      +----------------+
+|            |        sont reliés     |       xx       |
+|            |           |            |     xx  xx     |
+|            |           |            |    xx    xx    |
+|     TX1 +---------+    |            |     xx  xx     |
+|     RX1 +---------+ <--+            |       xx       |
+|            |      |                 | +-----++-----+ |
+|            |      |                 | | +++ ||     | |
+|            |      |                 | \-|||-/\-----/ |
+|            |      |            Data |   |||          |
+|            |      +---------------------+||          |
+|            |                    VDD |    ||          |
+|     Vin +--------------------------------+|          |
+|            |                    GND |     |          |
+|     GND +---------------------------------+          |
+|            |                        +----------------+
+|  Arduino   |
+|            |
++------------+
+          ^
+          |
+          +
+ /!\ Alimentation 9V
+     externe !
+
+== SOFTWARE ==
+
+
+
 
 Il faut empêcher Serial1 de prendre l'interruption arrivant pour l'USART1.
 Il faut pour cela patcher le fichier arduino-1.0/hardware/arduino/cores/arduino/HardwareSerial.cpp

@@ -25,7 +25,7 @@ class Vec(list):
 	
 	def __add__(self, v2):
 		if len(self) != len(v2):
-			raise Exception()
+			self.__raise_len_exception(v2)
 		else:
 			return Vec(( x+y for x,y in zip(self,v2)))
 
@@ -34,7 +34,7 @@ class Vec(list):
 	
 	def __iadd__(self, v2):
 		if len(self) != len(v2):
-			raise Exception()
+			self.__raise_len_exception(v2)
 		else:
 			for i,y in enumerate(v2):
 				self[i] += y
@@ -42,7 +42,7 @@ class Vec(list):
 	
 	def __sub__(self, v2):
 		if len(self) != len(v2):
-			raise Exception()
+			self.__raise_len_exception(v2)
 		else:
 			return Vec(( x-y for x,y in zip(self,v2)))
 
@@ -51,7 +51,7 @@ class Vec(list):
 	
 	def __isub__(self, v2):
 		if len(self) != len(v2):
-			raise Exception()
+			self.__raise_len_exception(v2)
 		else:
 			for i,y in enumerate(v2):
 				self[i] -= y
@@ -107,3 +107,6 @@ class Vec(list):
 	def __hash__(self):
 		return tuple.__hash__(tuple(self))
 
+	def __raise_len_exception(self, other):
+		raise Exception("%s has not the same lengh as %s : %s != %s" %(self, other.__repr__(), len(self), len(other)))
+		

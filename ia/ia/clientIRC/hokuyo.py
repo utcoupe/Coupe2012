@@ -23,15 +23,15 @@ class Hokuyo:
 		return (time.time() - start) / n
 	
 	def ping(self):
-		def handler(canal, args, options):
+		def handler(n, canal, args, options):
 			self.e_ping.set()
 		self.e_ping.clear()
-		self.send_hokuyo("ping", handlers=[handler])
+		self.send_hokuyo("ping", handler=handler)
 		
-	def get(self, handler):
-		self.send_hokuyo("get", handlers=[handler])
+	def get(self, *, handler):
+		self.send_hokuyo("get", handler=handler)
 
 
-	def send_hokuyo(self, irc_cmd, *args, handlers=[]):
-		self.ircbot.send_cmd(self.chan_hokuyo, handlers, irc_cmd, *args)
+	def send_hokuyo(self, irc_cmd, *args, handler=None):
+		self.ircbot.send_cmd(self.chan_hokuyo, irc_cmd, *args, handler=handler)
 	

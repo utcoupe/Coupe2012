@@ -1,3 +1,9 @@
+/**
+ * Test de la fonction barycentre
+ *
+ */
+
+
 #include <opencv/cv.h>
 #include <opencv/highgui.h>
 #include <vector>

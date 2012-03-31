@@ -20,15 +20,15 @@ class GameStateTestCase(unittest.TestCase):
 		self.gamestate = GameState(None, CANAL_BIG_ASSERV, CANAL_MINI_ASSERV, big, mini, enemy1, enemy2)
 
 	def test_on_msg_pos(self):
-		self.gamestate.on_msg_pos(CANAL_BIG_ASSERV, ("400","300","40"))
-		self.gamestate.on_msg_pos(CANAL_MINI_ASSERV, ("200","100","-50"))
+		self.gamestate.on_msg_pos(0, CANAL_BIG_ASSERV, ("400","300","40"), {})
+		self.gamestate.on_msg_pos(0, CANAL_MINI_ASSERV, ("200","100","-50"), {})
 		self.assertEqual(self.gamestate.bigrobot.pos, (400,300))
 		self.assertEqual(self.gamestate.bigrobot.a, 40)
 		self.assertEqual(self.gamestate.minirobot.pos, (200,100))
 		self.assertEqual(self.gamestate.minirobot.a, -50)
 
 	def test_on_msg_hokuyo(self):
-		self.gamestate.on_msg_hokyo(("(450,350)", "(150,150)", "(2000,1000)", "(2500,500)"))
+		self.gamestate.on_msg_hokyo(0, "canaltest", ['((450,350), (150,150), (2000,1000), (2500,500))'], {})
 		# les positions de nos robots de doivent pas êtres changées
 		self.assertEqual(self.gamestate.bigrobot.pos, (0,0))
 		self.assertEqual(self.gamestate.minirobot.pos, (0,0))
