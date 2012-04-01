@@ -9,8 +9,10 @@ LIST=sample
 all : $(LIST)
 
 #
-sample : sample.cpp
-	$(CC) -o sample sample.cpp $(LIBS)
+sample.exe : sample.cpp
+	$(CC) -o sample.exe sample.cpp $(LIBS)
+
+
 
 # To delete tmp files
 clean : 

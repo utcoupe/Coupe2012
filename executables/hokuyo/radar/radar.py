@@ -12,7 +12,7 @@ Center = (MAX_VAL,MAX_VAL) # x,y
 
 gbool = True
 listC=[]
-p = Popen(["./radDriver"], stdout=PIPE, stdin=PIPE)
+p = Popen(["./radDriver.exe"], stdout=PIPE, stdin=PIPE)
 
 class thRead(threading.Thread):
 	def run(self):
