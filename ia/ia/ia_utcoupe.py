@@ -179,12 +179,20 @@ class IaUtcoupe(IaBase):
 			if self.match_timeout and (time.time() - self.t_begin_match) > self.match_timeout:
 				self.state_match = STATE_WAIT_JACK2
 
-	def on_jack_event(self):
+	def on_jack_event(self, state):
 		"""
 		Fonction appellé lorsque le jack est tiré
+		@param state état du jack
 		"""
-		if 		STATE_WAIT_JACK1		== self.state_match:
+		if 		STATE_WAIT_JACK1		== self.state_match
+			and JACK_OUT				== state:
 			self.state_match = STATE_RECAL
-		elif 	STATE_WAIT_JACK2		== self.state_match:
+		
+		elif 	STATE_RECAL				== self.state_match
+			and JACK_IN					== state:
+			self.state_match = STATE_WAIT_JACK1
+		
+		elif 	STATE_WAIT_JACK2		== self.state_match
+			and JACK_OUT				== state:
 			self.state_match = STATE_PLAY
 		self.e_jack.set()

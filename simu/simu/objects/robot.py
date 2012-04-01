@@ -40,6 +40,9 @@ class Robot(EngineObjectPoly, Executer):
 
 		self.typerobot = typerobot
 
+		# quand on clique ça téléporte au lieu d'envoyer un ordre à l'asservissement
+		self.mod_teleport = False
+
 		# vitesse maximale (quand pwm=255)
 		self.max_speed = 1000
 		
@@ -131,8 +134,8 @@ class Robot(EngineObjectPoly, Executer):
 		@param y mm
 		@param v mm/s
 		"""
+		self.goals.append( GoalPOS( *mm_to_px(x,y,v) ) )
 		self.send_canal_asserv(options['id_msg'], 1)
-		self.goals.append( GoalPOS(*mm_to_px(x,y,v)) )
 	
 	def _cmd_asserv_gotor(self, x, y, v, **options): pass
 
@@ -159,6 +162,9 @@ class Robot(EngineObjectPoly, Executer):
 		self.goals.append(GoalPWM(pwm))
 		self.send_canal_asserv(kwargs['id_msg'], 1)
 
+	def _cmd_extra_teleport(self, x, y, v, **options):
+		self.body._set_position(mm_to_px(x,y))
+		self.body._set_angle(math.radians(v))
 
 	def send_canal_asserv(self, id_msg, *args):
 		self.send_response(self.canal_asserv, id_msg, self.compute_msg(*args))
@@ -177,6 +183,9 @@ class Robot(EngineObjectPoly, Executer):
 				self.current_robot = MINI
 				print("control du mini robot")
 				return True
+			elif KEY_TELEPORTATION == event.key:
+				self.mod_teleport = not self.mod_teleport
+				return True
 		elif KEYUP == event.type:
 			if KEY_CHANGE_TEAM == event.key:
 				print("équipe bleu")
@@ -193,17 +202,23 @@ class Robot(EngineObjectPoly, Executer):
 			if KEYDOWN == event.type:
 				if KEY_STOP_RESUME == event.key:
 					self._cmd_asserv_stop(id_msg=42)
+					return True
 				elif KEY_CANCEL == event.key:
 					self._cmd_asserv_cancel(id_msg=42)
+					return True
 			# keyup
 			elif KEYUP == event.type:
 				if KEY_STOP_RESUME == event.key:
 					self._cmd_asserv_resume(id_msg=42)
 			# mouse
-			elif event.type == MOUSEBUTTONDOWN:
+			elif MOUSEBUTTONDOWN == event.type:
 				p = event.pos
-				print(px_to_mm(p[0],p[1]))
-				self._cmd_asserv_goto(*px_to_mm(p[0],p[1],mm_to_px(1000)), id_msg=42)
+				p_mm = px_to_mm(p)
+				print(p_mm)
+				if self.mod_teleport:
+					self._cmd_extra_teleport(p_mm[0], p_mm[1], 0)
+				else:
+					self._cmd_asserv_goto(*px_to_mm(p[0],p[1],mm_to_px(1000)), id_msg=42)
 				return True
 		return False
 
