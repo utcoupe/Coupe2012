@@ -54,11 +54,12 @@ class Balais(EngineObjectSegment):
 
 
 class MiniRobot(Robot):
-	def __init__(self, *, engine, canal_asserv, canal_others, posinit, team, match):
+	def __init__(self, *, engine, canal_asserv, canal_others, canal_extras, posinit, team, match):
 		Robot.__init__(self,
 			engine 				= engine,
 			canal_asserv		= canal_asserv,
 			canal_others		= canal_others,
+			canal_extras		= canal_extras,
 			team				= team,
 			posinit				= posinit,
 			mass				= 10,

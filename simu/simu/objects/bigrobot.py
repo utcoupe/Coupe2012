@@ -13,7 +13,7 @@ from .cd import Cd
 from .lingo import Lingo
 
 class BigRobot(Robot):
-	def __init__(self, *, engine, canal_asserv, canal_others, posinit, team):
+	def __init__(self, *, engine, canal_asserv, canal_others, canal_extras, posinit, team):
 		self.rouleau = EngineObjectPoly(
 			engine 		= engine,
 			colltype	= COLLTYPE_ROULEAU,
@@ -27,6 +27,7 @@ class BigRobot(Robot):
 			engine		 		= engine,
 			canal_asserv		= canal_asserv,
 			canal_others		= canal_others,
+			canal_extras		= canal_extras,
 			team				= team,
 			posinit				= posinit,
 			mass				= 10,
