@@ -12,6 +12,30 @@
 	
 using namespace std;
 	
+void UrgDriver::toString() 
+{
+	cout << "--- URG DRIVER CONFIG ---" << endl << endl;
+	if(color==ROUGE) {
+		cout << "Color ROUGE"<< endl;
+	}
+	else {
+		cout << "Color VIOLET"<< endl;
+	}
+	
+	cout << "Com Port" << comPort << endl;	
+
+	cout << "radMin" << radMin << endl;
+	cout << "radMax" << radMax << endl;	
+
+/*
+	for(int i=indexMin ; i<indexMax ; i++) 
+	{
+		cout << "[" << urg.index2deg(i) << ";" << distanceMax[i] << "]" << "__";
+	}
+*/
+
+}
+	
 //! Initialisation du singleton
 UrgDriver* UrgDriver::driverObj = 0;
 
@@ -38,7 +62,7 @@ UrgDriver::~UrgDriver()
  * */
 void UrgDriver::sendInfos()
 {
-	cout << "(";
+	cout << "[";
 	bool pass=false;
 	list<coord>::iterator it;
 	for ( it=robot.begin() ; it!=robot.end() ; it++ )
@@ -51,7 +75,7 @@ void UrgDriver::sendInfos()
 		}
 		cout << "(" << (*it).x << "," << (*it).y << ")";
 	}
-	cout << ")";
+	cout << "]";
 }
 
 /***********************************************************************

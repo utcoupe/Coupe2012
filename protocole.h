@@ -6,6 +6,12 @@
 #define SEP			'+' // tout est séparé par ça
 
 
+// 
+#define BLEU  	1
+#define ROUGE 	2
+
+
+
 // all
 #define Q_IDENT 			0	// [] identification
 #define Q_PING 				1   // [] pong

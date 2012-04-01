@@ -30,7 +30,7 @@ void send(void)
 void setRed(void)
 {
 	application->ud->stop();
-	application->ud->updateParamWithColor(UrgDriver::ROUGE);
+	application->ud->updateParamWithColor(ROUGE);
 	application->ud->start();
 }
 
@@ -42,7 +42,7 @@ void setRed(void)
 void setPurple(void)
 {
 	application->ud->stop();
-	application->ud->updateParamWithColor(UrgDriver::VIOLET);
+	application->ud->updateParamWithColor(BLEU);
 	application->ud->start();
 }
 

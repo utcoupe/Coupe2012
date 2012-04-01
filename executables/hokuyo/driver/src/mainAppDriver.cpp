@@ -2,7 +2,7 @@
 
 
 #include "mainAppDriver.h"
-
+#include "global.h"
 
 
 /***********************************************************************
@@ -63,7 +63,14 @@ void MainAppDriver::initUrgDriver()
 		}
 		
 		ud->refInit();
+
+			
+		#if DEBUG
+			ud->toString();
+		#endif
+
 		ud->start();
+
 
 }
 
