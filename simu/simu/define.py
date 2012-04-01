@@ -40,6 +40,8 @@ KEY_ARRACHE			= K_a			# arracher la carte
 KEY_BALAIS_LEFT		= K_q			# sortir le balais de gauche
 KEY_BALAIS_RIGHT	= K_w			# sortir le balais de droite
 KEY_BULDO			= K_x			# mode buldozer
+KEY_TELEPORTATION	= K_t			# mode téléportation
+
 
 BIG			= 0
 MINI		= 1
