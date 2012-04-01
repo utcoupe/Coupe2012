@@ -1,0 +1,12 @@
+Pour chaque lib il y a deux fichiers à récupérer 
+
+	le .o 
+	le .h
+
+Vous pouvez faire des liens symboliques vers mon dossiers pour avoir les mises à jours.
+
+
+Bon elle est pas encore bien au point mais vous pouvez tester 
+la lib ArgManager si vous le souhaiter, elle permet de parser 
+les arguments données en paramétres du main.
+

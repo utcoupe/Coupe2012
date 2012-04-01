@@ -2,8 +2,7 @@
 CC=g++
 
 # Libs
-# !!! il faut absolument mettre -lpthread !!!
-LIBS='comManager.o' -lpthread 
+LIBS='argManager.o'
 
 # To compile all ^^
 LIST=sample
