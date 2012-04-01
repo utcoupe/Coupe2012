@@ -66,6 +66,8 @@ myia = IaChoosen(
 	canal_mini_others	= CANAL_MINI_OTHERS + ("2" if t else ""),
 	canal_debug			= CANAL_DEBUG + ("2" if t else ""),
 	canal_hokuyo		= CANAL_HOKUYO,
+	canal_big_extras	= CANAL_BIG_EXTRAS + ("2" if t else ""),
+	canal_mini_extras	= CANAL_MINI_EXTRAS + ("2" if t else ""),
 	autostart			= (options.autostart==1),
 	match_timeout		= options.timeout if options.timeout > 0 else None
 )

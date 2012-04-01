@@ -12,7 +12,11 @@ from .ia_base import *
 
 class IaDummy(IaBase):
 	def __init__(self, server_ip, server_port, pos_bigrobot, pos_mini_robot, pos_enemy1, pos_enemy2, *,
-		canal_big_asserv, canal_mini_asserv, canal_big_others, canal_mini_others, canal_hokuyo, canal_debug
+		canal_big_asserv, canal_mini_asserv,
+		canal_big_others, canal_mini_others,
+		canal_big_extras, canal_mini_extras,
+		canal_hokuyo, canal_debug,
+		autostart = False, match_timeout = None
 		):
 		IaBase.__init__(self,
 			server_ip, server_port, pos_bigrobot, pos_mini_robot, pos_enemy1, pos_enemy2,
@@ -21,7 +25,9 @@ class IaDummy(IaBase):
 			canal_big_others	=canal_big_others,
 			canal_mini_others	=canal_mini_others,
 			canal_hokuyo		=canal_hokuyo,
-			canal_debug			=canal_debug
+			canal_debug			=canal_debug,
+			canal_big_extras	=canal_big_extras,
+			canal_mini_extras	=canal_mini_extras,
 		)
 		
 		
@@ -43,6 +49,7 @@ class IaDummy(IaBase):
 		asserv = robot.asserv
 
 		p = (random.randint(100,2900), random.randint(100, 1900))
-		asserv.cancel()
-		asserv.goto(p)
+		#asserv.cancel()
+		#asserv.goto(p)
+		robot.extras.teleport(p, 0)
 		

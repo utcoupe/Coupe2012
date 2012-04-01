@@ -7,7 +7,7 @@ import time
 from py3irc.mypyirc.ircdefine import *
 from geometry import ConvexPoly
 
-from .clientIRC import IABot, Asservissement
+from .clientIRC import IABot, Asservissement, Extras
 from .gamestate import GameState
 from .robot import Robot
 from .graph import NavGraph
@@ -32,7 +32,10 @@ ID_DEBUG_ENEMY2		= 57
 
 class IaBase:
 	def __init__(self, server_ip, server_port, pos_bigrobot, pos_mini_robot, pos_enemy1, pos_enemy2, *,
-		canal_big_asserv, canal_mini_asserv, canal_big_others, canal_mini_others, canal_hokuyo, canal_debug
+		canal_big_asserv, canal_mini_asserv,
+		canal_big_others, canal_mini_others,
+		canal_big_extras, canal_mini_extras,
+		canal_hokuyo, canal_debug
 		):
 		"""
 		@param {str} server_ip
@@ -47,6 +50,8 @@ class IaBase:
 		@param {str} canal_mini_others
 		@param {str} canal_hokuyo
 		@param {str} canal_debug
+		@param {str} canal_big_extras
+		@param {str} canal_mini_extras
 		"""
 		# création bot irc
 		self.ircbot = IABot(server_ip, server_port,
@@ -55,12 +60,16 @@ class IaBase:
 			canal_big_others	= canal_big_others,
 			canal_mini_others	= canal_mini_others,
 			canal_debug			= canal_debug,
-			canal_hokuyo		= canal_hokuyo)
+			canal_hokuyo		= canal_hokuyo,
+			canal_big_extras	=canal_big_extras,
+			canal_mini_extras	=canal_mini_extras,
+		)
 		
 		# démarage du bot irc
 		self.t_ircbot = threading.Thread(None, self.ircbot.start, "loop iabot")
 		self.t_ircbot.setDaemon(True)
 		self.t_ircbot.start()
+
 
 		
 		#####
@@ -100,6 +109,10 @@ class IaBase:
 		asserv = Asservissement(self.ircbot, canal_big_asserv)
 		bigrobot.set_asserv(asserv)
 
+		# extras
+		extras = Extras(self.ircbot, canal_big_extras)
+		bigrobot.set_extras(extras)
+		
 		# actions
 		actions = get_actions_bigrobot(bigrobot, asserv, enemies)
 		bigrobot.set_actions(actions)
@@ -123,6 +136,10 @@ class IaBase:
 		asserv = Asservissement(self.ircbot, canal_mini_asserv)
 		minirobot.set_asserv(asserv)
 
+
+		# extras
+		extras = Extras(self.ircbot, canal_mini_extras)
+		minirobot.set_extras(extras)
 
 		#####
 		## Gamestate

@@ -170,7 +170,7 @@ class Robot(EngineObjectPoly, Executer):
 		self.send_canal_asserv(id_msg, 'asserv')
 
 	def _cmd_asserv_ping(self, *, id_msg=42, **options):
-		self.send_canal_asserv(options['id_msg'], 'pong')
+		self.send_canal_asserv(id_msg, 'pong')
 	
 	def _cmd_asserv_goto(self, x, y, v, *, id_msg=42, **options):
 		"""

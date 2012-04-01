@@ -12,11 +12,17 @@ STATE_RECAL			= 1
 STATE_WAIT_JACK2	= 2
 STATE_PLAY			= 3
 
+JACK_OUT		= 0		# jack arraché
+JACK_IN			= 1		# jack pluggé
 
 
 class IaUtcoupe(IaBase):
 	def __init__(self, server_ip, server_port, pos_bigrobot, pos_mini_robot, pos_enemy1, pos_enemy2, *,
-		canal_big_asserv, canal_mini_asserv, canal_big_others, canal_mini_others, canal_hokuyo, canal_debug,
+		canal_big_asserv, canal_mini_asserv,
+		canal_big_others, canal_mini_others,
+		canal_big_extras, canal_mini_extras,
+		canal_hokuyo,
+		canal_debug,
 		autostart = False, match_timeout = None
 		):
 		"""
@@ -30,7 +36,9 @@ class IaUtcoupe(IaBase):
 			canal_big_others	=canal_big_others,
 			canal_mini_others	=canal_mini_others,
 			canal_hokuyo		=canal_hokuyo,
-			canal_debug			=canal_debug
+			canal_debug			=canal_debug,
+			canal_big_extras	=canal_big_extras,
+			canal_mini_extras	=canal_mini_extras,
 		)
 
 		enemies = self.gamestate.enemyrobots()
@@ -70,7 +78,7 @@ class IaUtcoupe(IaBase):
 	def loopJack(self):
 		print("attente du jack...")
 		if self.autostart:
-			self.on_jack_event()
+			self.on_jack_event(JACK_OUT)
 		else:
 			self.e_jack.wait(2)
 		
@@ -156,6 +164,37 @@ class IaUtcoupe(IaBase):
 		Phase de racalage du robot au début
 		@todo
 		"""
+		minirobot = self.gamestate.minirobot
+		bigrobot = self.gamestate.bigrobot
+		
+		bigrobot.extras.teleport((750,600), 90)
+		minirobot.extras.teleport((250,230), 0)
+		
+		minirobot.asserv.cancel()
+		
+		minirobot.asserv.pwm(-100)
+		time.sleep(1)
+		minirobot.asserv.cancel(block=True)
+		print("GOTOR")
+		minirobot.asserv.gotor((200,0), block=True, block_level=2)
+		print("GOTOR FINI")
+		print("TURNR")
+		minirobot.asserv.turnr(90, block=True, block_level=2)
+		print("TURNR FINI")
+		minirobot.asserv.pwm(-100)
+		time.sleep(1)
+		minirobot.asserv.cancel(block=True)
+		minirobot.asserv.pwm(-100)
+		time.sleep(0.2)
+		minirobot.asserv.cancel(block=True)
+		print("GOTO")
+		minirobot.asserv.goto((250,230), block=True, block_level=2)
+		print("GOTO FINI")
+		print("TURN")
+		minirobot.asserv.turn(0, block=True, block_level=2)
+		print("TURN FINI")
+		
+		
 		self.state_match = STATE_PLAY
 		
 	
@@ -184,15 +223,15 @@ class IaUtcoupe(IaBase):
 		Fonction appellé lorsque le jack est tiré
 		@param state état du jack
 		"""
-		if 		STATE_WAIT_JACK1		== self.state_match
+		if 		STATE_WAIT_JACK1		== self.state_match \
 			and JACK_OUT				== state:
 			self.state_match = STATE_RECAL
 		
-		elif 	STATE_RECAL				== self.state_match
+		elif 	STATE_RECAL				== self.state_match \
 			and JACK_IN					== state:
 			self.state_match = STATE_WAIT_JACK1
 		
-		elif 	STATE_WAIT_JACK2		== self.state_match
+		elif 	STATE_WAIT_JACK2		== self.state_match \
 			and JACK_OUT				== state:
 			self.state_match = STATE_PLAY
 		self.e_jack.set()
