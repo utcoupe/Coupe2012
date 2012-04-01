@@ -75,7 +75,7 @@ void UrgDriver::interpretData(std::vector<long> data, int n)
 			double radian = urg.index2rad(j);
 			radian = ABS(radian);
 			c.x = l*cos(radian)  + deltaX; 
-			c.y = l*sin(radian)  + delatY;
+			c.y = l*sin(radian)  + deltaY;
 		
 			if(bot.empty())
 			{

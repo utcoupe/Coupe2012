@@ -4,15 +4,13 @@
  * \date	08/03/2012
  * 
  * */
+ 
+#include "comManager.h"
 
-#include <list>
 #include <string>
 #include <stdlib.h>
-#include <iostream>
 
 using namespace std;
-
-#include "comManager.h"
 
 //! Initialisation du singleton
 ComManager* ComManager::objCom = 0;
