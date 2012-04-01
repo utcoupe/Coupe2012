@@ -9,7 +9,7 @@
 #ifndef COMTHREAD_H
 #define COMTHREAD_H
 
-#include "../protocole.h"
+#include "protocole.h"
 
 /***********************************************************************
  * <h1>QH_GETDATA</h1>

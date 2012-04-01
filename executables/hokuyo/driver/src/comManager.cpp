@@ -6,6 +6,7 @@
  * */
  
 #include "comManager.h"
+#include "protocole.h"
 
 #include <string>
 #include <stdlib.h>
@@ -85,7 +86,7 @@ void* ComManager::loop(void* arg)
 		this->idCmd   = atoi(request.substr(0,pos).c_str());
 		this->command = atoi(request.substr(pos+1).c_str()); 
 			
-		cout << idCmd << SEP << ("(");	
+		cout << idCmd << SEP;	
 		for ( ite=fonctions.begin() ; ite!=fonctions.end() ; ite++ )
 		{
 			if( command == (*ite).first )
@@ -95,7 +96,7 @@ void* ComManager::loop(void* arg)
 				pthread_mutex_unlock(&(this->mutex));
 			}
 		}
-		cout << ")" << endl; 
+		cout << endl; 
 		cout.flush();
 		
 		// KILL

@@ -211,8 +211,8 @@ void UrgDriver::calculLangleScanne()
 	double radDelX = atan( (double)ABS(deltaX) / (double)(LY-deltaY) ); 
 	double radDelY = atan( (double)ABS(deltaY) / (double)(LX-deltaX) );
 	
-	cout << radDelX << endl;
-	cout << radDelY << endl;
+	//cout << radDelX << endl;
+	//cout << radDelY << endl;
 	
 	radScan = (radScan - radDelX) - radDelY;
 
@@ -264,7 +264,6 @@ short UrgDriver::hokuyoFindColor()
 			}
 		}
 	}	
-	
 	
 	// TODO 
 	// Erreur pas de couleur trouvé

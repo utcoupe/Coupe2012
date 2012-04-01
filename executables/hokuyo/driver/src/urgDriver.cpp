@@ -38,6 +38,7 @@ UrgDriver::~UrgDriver()
  * */
 void UrgDriver::sendInfos()
 {
+	cout << "(";
 	bool pass=false;
 	list<coord>::iterator it;
 	for ( it=robot.begin() ; it!=robot.end() ; it++ )
@@ -50,6 +51,7 @@ void UrgDriver::sendInfos()
 		}
 		cout << "(" << (*it).x << "," << (*it).y << ")";
 	}
+	cout << ")";
 }
 
 /***********************************************************************

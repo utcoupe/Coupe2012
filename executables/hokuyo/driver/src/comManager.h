@@ -5,8 +5,6 @@
  * 
  * */
  
-#define SEP "."
- 
 #ifndef COMMANAGER_H
 #define COMMANAGER_H
 

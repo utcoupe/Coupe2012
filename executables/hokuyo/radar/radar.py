@@ -7,7 +7,7 @@ from Tkinter import *
 import math
 
 MAX_VAL  = 4000
-sizeFact = 5.0
+sizeFact = 10.0
 Center = (MAX_VAL,MAX_VAL) # x,y
 
 gbool = True
@@ -50,7 +50,7 @@ def drawcircle(canv,x,y,rad):
 def drawZone(canv):
 	canv.delete(ALL)
 	
-	drawcircle(canv,MAX_VAL/sizeFact,MAX_VAL/sizeFact,20)
+	#drawcircle(canv,MAX_VAL/sizeFact,MAX_VAL/sizeFact,20)
 	
 	for c in listC : 
 		teta=float(c[0])
@@ -75,7 +75,7 @@ def drawZone(canv):
 	
 		
 	
-		drawcircle(canv,x,y,10)
+		drawcircle(canv,x,y,5)
 	
 	
 
