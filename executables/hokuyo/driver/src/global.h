@@ -7,6 +7,8 @@
 #ifndef GLOBAL_H
 #define GLOBAL_H
  
+#define DEBUG 1
+ 
 // Paramétres
 #define NB_MAX_ROBOT 4
 

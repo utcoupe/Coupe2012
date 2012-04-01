@@ -162,7 +162,7 @@ void UrgDriver::setDelta(bool autoSearch, int dX, int dY)
 void UrgDriver::updateParamWithColor(short color)
 {	
 	this->color = color;
-	if(this->color == UrgDriver::VIOLET) {
+	if(this->color == ROUGE) {
 		defineRange((-1)*deg2,(-1)*deg1);
 		defineRangeIndex((-1)*deg2,(-1)*deg1);
 	}
@@ -243,10 +243,10 @@ short UrgDriver::hokuyoFindColor()
 		{
 			long l = data[j];
 			if( l>(LY-100) && l>(LY+100) ){
-				if(colorDeduction == UrgDriver::ROUGE){
-					return UrgDriver::ROUGE;
+				if(colorDeduction == ROUGE){
+					return ROUGE;
 				}else{
-					colorDeduction = UrgDriver::ROUGE;
+					colorDeduction = ROUGE;
 				}					
 			}
 		}
@@ -256,10 +256,10 @@ short UrgDriver::hokuyoFindColor()
 		for(int j = indexMin; j < indexMax; ++j) {
 			long l = data[j];
 			if( l>(LY-100) && l>(LY+100) ){
-				if(colorDeduction == UrgDriver::VIOLET){
-					return UrgDriver::VIOLET;
+				if(colorDeduction == BLEU){
+					return BLEU;
 				}else{
-					colorDeduction = UrgDriver::VIOLET;
+					colorDeduction = BLEU;
 				}
 			}
 		}
@@ -270,7 +270,7 @@ short UrgDriver::hokuyoFindColor()
 	// Choisir un comportement
 	
 	cerr << "Couleur non trouvé automatiquement" << endl;
-	return UrgDriver::ROUGE;
+	return ROUGE;
 }
 
 

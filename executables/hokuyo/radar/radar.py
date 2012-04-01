@@ -22,12 +22,12 @@ class thRead(threading.Thread):
 			try:
 				p.stdout.flush()
 				r = p.stdout.readline()
-				print "Data in"
+				
 				#r="[(-0.79,1500),(0.79,1500),(-0.3,2000),(0.3,2000),(1.57,1000)]"
-				
 				listC = eval(r)
-				#print listC
-				
+				print listC
+				print "Data in"				
+
 			except Exception as ex:
 				print ex
 			
@@ -51,6 +51,13 @@ def drawZone(canv):
 	canv.delete(ALL)
 	
 	#drawcircle(canv,MAX_VAL/sizeFact,MAX_VAL/sizeFact,20)
+	
+	canv.create_line((Center[0]/sizeFact,Center[1]/sizeFact,Center[0]/sizeFact,(Center[1]-3000)/sizeFact),fill="red",width=2)
+	canv.create_line((Center[0]/sizeFact,(Center[1]-3000)/sizeFact,(Center[0]-2000)/sizeFact,(Center[1]-3000)/sizeFact),fill="red",width=2)
+	canv.create_line((Center[0]/sizeFact,(Center[1]-3000)/sizeFact,(Center[0]+2000)/sizeFact,(Center[1]-3000)/sizeFact),fill="red",width=2)
+	canv.create_line(((Center[0]-2000)/sizeFact,Center[1]/sizeFact,(Center[0]-2000)/sizeFact,(Center[1]-3000)/sizeFact),fill="red",width=2)
+	canv.create_line(((Center[0]+2000)/sizeFact,Center[1]/sizeFact,(Center[0]+2000)/sizeFact,(Center[1]-3000)/sizeFact),fill="red",width=2)
+	
 	
 	for c in listC : 
 		teta=float(c[0])

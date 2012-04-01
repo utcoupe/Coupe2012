@@ -5,8 +5,8 @@
  * 
  * */
  
-
-
+ 
+ 
 #include <iostream>
 #include <string>
 #include "UrgCtrl.h"
@@ -17,7 +17,7 @@
 using namespace std; 
 using namespace qrk;
 
-#define device "/dev/ttyACM0"
+#define device "/dev/ttyACM1"
 
 
 int main()

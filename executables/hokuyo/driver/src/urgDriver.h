@@ -8,6 +8,7 @@
 #define URGDRIVER_H
   
 #include "global.h"
+#include "protocole.h"
 
 #include <list>
 #include <string>
@@ -78,10 +79,6 @@ public:
 	//
 	static UrgDriver* getUrgDriver();
 	
-	//
-	static const short ROUGE  = 1;
-	static const short VIOLET = 2;
-	
 	// On peut utiliser directement la fonction dans un thread perso
 	static void* helpfct(void* arg);
 	// Ou lancer le automatiquement le thread du manager
@@ -94,6 +91,9 @@ public:
 	//
 	void setComPort(string cp){comPort=cp;};
 	void sendInfos();
+	//
+	void toString();
+	
 	
 	///! Fonction helpful
 	//

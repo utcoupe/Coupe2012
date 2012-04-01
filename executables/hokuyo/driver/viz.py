@@ -5,14 +5,16 @@ from subprocess import *
 import time
 from Tkinter import *
 
-robotSize= 150
-sizeFact = 5.0
+robotSize= 100
+sizeFact = 4.0
 
 gbool = True
 robot=[]
 radbot=robotSize/sizeFact
 
-p = Popen(["./hokuyoApp"], stdout=PIPE, stdin=PIPE)
+separator='+'
+
+p = Popen(["./hokuyoApp.exe","-col","2"], stdout=PIPE, stdin=PIPE)
 
 class thRead(threading.Thread):
 	def run(self):
@@ -21,13 +23,16 @@ class thRead(threading.Thread):
 			try:
 				p.stdout.flush()
 				r = p.stdout.readline()
+				print r
 			except Exception as ex:
 				print ex
 				exit()
 	
-			if(r.find('.')!=-1):
+			if(r.find(separator)!=-1):
 				del(robot[:])
-				r = r.split('.')
+			
+				r = r.split(separator)
+
 				listCoor = eval(r[1])
 				listCoor = listCoor[1:]
 				for li in listCoor:				
@@ -52,12 +57,14 @@ def drawcircle(canv,x,y,rad):
 def drawZone(canv):
 	canv.delete(ALL)
 	
-	for coor in robot:
-		x=c[0]/sizeFact
-		y=(2000/sizeFact)-(c[1]/sizeFact)
-		drawcircle(canv,x,y,radbot)
-
-
+	try: 
+		for c in robot:
+			x=c[0]/sizeFact
+			y=(2000/sizeFact)-(c[1]/sizeFact)
+			drawcircle(canv,x,y,radbot)
+	except Exception as ex:
+		print ex
+		
 
 
 
