@@ -1,0 +1,11 @@
+Le "visio aggregator" reçoit les coordonnées des objets détectés
+par les différentes caméras et extrapole en fonction de leur
+position sur le robot et la position du robot lui-même une carte
+de la table de jeux en fonction du temps.
+
+Input:
+- x,y,a du robot
+- []x,y des objets trouvés relatif pour chaque caméra
+
+Output:
+- []x,y des objets sur la table en absolu
