@@ -9,8 +9,13 @@ import time
 from py3irc.mypyirc import MyPyIrcBot
 from py3irc.mypyirc.ircdefine import *
 
+# plage d'ids authorisés [MIN_ID, MAX_ID]
+MIN_ID		= 200
+MAX_ID		= 32000
 
 class IABot(MyPyIrcBot):
+
+	
 	def __init__(self, server_ip, server_port, *,
 			canal_big_asserv, canal_mini_asserv, canal_big_others, canal_mini_others, canal_debug, canal_hokuyo,
 			canal_big_extras, canal_mini_extras):
@@ -21,18 +26,22 @@ class IABot(MyPyIrcBot):
 		)
 
 
-		self.__id = 0
+		self.__id = MIN_ID
 		self.__id_lock = threading.Lock()
 
 		self.handlers = {}
 
+	def reset(self):
+		self.handlers = {}
+		self.__id = MIN_ID
+	
 	def get_new_id(self):
 		"""
 		Retourne un identifiant unique
 		"""
 		self.__id_lock.acquire()
-		if self.__id > 1E12:
-			self.__id = 0
+		if self.__id >= MAX_ID:
+			self.__id = MIN_ID - 1
 		i = self.__id
 		self.__id += 1
 		self.__id_lock.release()
@@ -59,8 +68,8 @@ class IABot(MyPyIrcBot):
 		str_args = map(str, (irc_cmd,)+args)
 		self.send(canal, SEP.join(str_args) + SEP + "id_msg=%s" % i)
 
-	def set_handler(self, id_msg, handler, n=0):
-		self.handlers[int(id_msg)] = [n, handler]
+	def set_handler(self, id_msg, handler):
+		self.handlers[int(id_msg)] = [0, handler]
 		
 
 if __name__ == "__main__":

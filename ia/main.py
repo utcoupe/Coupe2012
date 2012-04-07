@@ -60,6 +60,7 @@ t = (options.player_team != 'blue')
 myia = IaChoosen(
 	options.server_ip, options.server_port,
 	(0,0), (0,0), (3000,0), (3000,0),
+	team				= RED if t else BLUE,
 	canal_big_asserv	= CANAL_BIG_ASSERV + ("2" if t else ""),
 	canal_mini_asserv	= CANAL_MINI_ASSERV + ("2" if t else ""),
 	canal_big_others	= CANAL_BIG_OTHERS + ("2" if t else ""),

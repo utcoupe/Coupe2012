@@ -67,13 +67,17 @@ class Asservissement:
 		return self.send_asserv("pos", **kwargs)
 
 	def send_asserv(self, irc_cmd, *args, handler=None, block=False, block_level=1, timeout=None):
-		self.ircbot.send_cmd(self.chan_asserv, irc_cmd, *args, handler=handler)
-		return True
+		if block:
+			return self.send_asserv_block(irc_cmd, *args, handler=handler, block_level=block_level, timeout=timeout)
+		else:
+			self.ircbot.send_cmd(self.chan_asserv, irc_cmd, *args, handler=handler)
+			return True
 
-	def send_asserv_block(self, block_level, irc_cmd, *args, handler=None, timeout=None):
+	def send_asserv_block(self, irc_cmd, *args, handler=None, block_level=1, timeout=None):
 		event = threading.Event()
 		def f(n, canal, args, kwargs):
 			if handler: handler(n, canal, *args, **kwargs)
+			print(n,block_level)
 			if (n+1) >= block_level:
 				event.set()
 		self.send_asserv(irc_cmd, *args, handler=f)

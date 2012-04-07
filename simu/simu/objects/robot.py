@@ -65,6 +65,9 @@ class Robot(EngineObjectPoly, Executer):
 		# quand on clique ça téléporte au lieu d'envoyer un ordre à l'asservissement
 		self.mod_teleport = False
 
+		# marche arrière ou marche avant ?
+		self.mod_recul = False
+
 		# vitesse maximale (quand pwm=255)
 		self.max_speed = 1000
 		
@@ -133,16 +136,18 @@ class Robot(EngineObjectPoly, Executer):
 					dx = gx - x
 					dy = gy - y
 					d = math.sqrt(dx**2+dy**2)
-					if d < v * dt:
+					if d < abs(v * dt):
 						self.body._set_position((gx,gy))
 						self.goals.pop(0)
 						self.body._set_velocity((0,0))
 						self.send_canal_asserv(current_goal.id_msg, 2)
 					else:
-						a = math.atan2(dy,dx)
-						vx = v * math.cos(a)
-						vy = v * math.sin(a)
+						a = math.atan2(dy, dx)
+						vx = abs(v) * math.cos(a)
+						vy = abs(v) * math.sin(a)
 						self.body._set_velocity((vx,vy))
+						if v < 0:
+							a += math.pi
 						self.body._set_angle(a)
 				elif isinstance(current_goal, GoalPWM):
 					a = self.body.angle
@@ -193,10 +198,13 @@ class Robot(EngineObjectPoly, Executer):
 		self.send_canal_asserv(id_msg, 1)
 
 	def _cmd_asserv_turn(self, a, v, *, id_msg=42, **options):
+		#print("HELLO", a, self.inv_a(a))
+		#self.goals.append( GoalANGLE( id_msg, math.radians(self.inv_a(a)), mm_to_px(v) ) )
 		self.goals.append( GoalANGLE( id_msg, math.radians(a), mm_to_px(v) ) )
 		self.send_canal_asserv(id_msg, 1)
 
 	def _cmd_asserv_turnr(self, a, v, *, id_msg=42, **options):
+		#self.goals.append( GoalANGLER( id_msg, math.radians(self.inv_a(a)), mm_to_px(v) ) )
 		self.goals.append( GoalANGLER( id_msg, math.radians(a), mm_to_px(v) ) )
 		self.send_canal_asserv(id_msg, 1)
 
@@ -218,7 +226,7 @@ class Robot(EngineObjectPoly, Executer):
 	def _cmd_asserv_pwm(self, pwm, *, id_msg=42, **kwargs):
 		self.goals.append(GoalPWM(pwm))
 		self.send_canal_asserv(id_msg, 1)
-
+	
 	##
 	##		EXTRAS
 	##
@@ -263,6 +271,8 @@ class Robot(EngineObjectPoly, Executer):
 			elif KEY_TELEPORTATION == event.key:
 				self.mod_teleport = not self.mod_teleport
 				return True
+			elif KEY_RECUL == event.key:
+				self.mod_recul = not self.mod_recul
 		elif KEYUP == event.type:
 			if KEY_CHANGE_TEAM == event.key:
 				print("équipe bleu")
@@ -295,7 +305,8 @@ class Robot(EngineObjectPoly, Executer):
 				if self.mod_teleport:
 					self._cmd_extras_teleport(p_mm[0], p_mm[1], 0)
 				else:
-					self._cmd_asserv_goto(*px_to_mm(p[0],p[1],mm_to_px(1000)), id_msg=42)
+					v = mm_to_px(1000) * (-1 if self.mod_recul else 1)
+					self._cmd_asserv_goto(*px_to_mm(p[0],p[1],v), id_msg=42)
 				return True
 		return False
 
@@ -304,4 +315,6 @@ class Robot(EngineObjectPoly, Executer):
 	
 	def __repr__(self):
 		return "Robot"
-			
+
+	def inv_a(self, a):
+		return -a	

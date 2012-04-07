@@ -12,6 +12,7 @@ from .ia_base import *
 
 class IaDummy(IaBase):
 	def __init__(self, server_ip, server_port, pos_bigrobot, pos_mini_robot, pos_enemy1, pos_enemy2, *,
+		team,
 		canal_big_asserv, canal_mini_asserv,
 		canal_big_others, canal_mini_others,
 		canal_big_extras, canal_mini_extras,
@@ -20,6 +21,7 @@ class IaDummy(IaBase):
 		):
 		IaBase.__init__(self,
 			server_ip, server_port, pos_bigrobot, pos_mini_robot, pos_enemy1, pos_enemy2,
+			team				=team,
 			canal_big_asserv	=canal_big_asserv,
 			canal_mini_asserv	=canal_mini_asserv,
 			canal_big_others	=canal_big_others,

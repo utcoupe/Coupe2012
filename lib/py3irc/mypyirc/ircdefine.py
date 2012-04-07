@@ -28,10 +28,13 @@ CANAUX				= (
 )
 
 
-ID_MSG_PING		= 100
 ID_MSG_POS		= 101
 ID_MSG_HOKUYO	= 102
+ID_MSG_JACK		= 102
 
+
+BLUE	= 0
+RED		= 1
 
 """
 1 - Black

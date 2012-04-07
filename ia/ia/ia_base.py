@@ -18,9 +18,6 @@ from .actions import *
 
 
 FILENAME_MAP	= "map.xml"
-RED				= (255,0,0)
-GREEN			= (0,255,0)
-BLUE			= (0,0,255)
 R_BIGROBOT		= 200
 R_MINIROBOT		= 200
 R_ENEMY			= 200
@@ -32,6 +29,7 @@ ID_DEBUG_ENEMY2		= 57
 
 class IaBase:
 	def __init__(self, server_ip, server_port, pos_bigrobot, pos_mini_robot, pos_enemy1, pos_enemy2, *,
+	team,
 		canal_big_asserv, canal_mini_asserv,
 		canal_big_others, canal_mini_others,
 		canal_big_extras, canal_mini_extras,
@@ -40,6 +38,7 @@ class IaBase:
 		"""
 		@param {str} server_ip
 		@param {int} server_port
+		@param {int} team RED|BLUE
 		@param {pair} pos_bigrobot				position de départ du gros robot
 		@param {pair} pos_mini_robot			position de départ du petit robot
 		@param {pair} pos_enemy1				position de l'ennemi 1
@@ -70,6 +69,8 @@ class IaBase:
 		self.t_ircbot.setDaemon(True)
 		self.t_ircbot.start()
 
+		# équipe
+		self.team = team
 
 		
 		#####
