@@ -10,11 +10,11 @@ LIST=sample.exe
 all : $(LIST)
 
 #
-sample.exe : sample.cpp comManager.o
-	$(CC) -o sample.exe sample.cpp comManager.o $(LIBS)
+sample.exe : sample.cpp ComManager.o
+	$(CC) -o sample.exe sample.cpp ComManager.o $(LIBS)
 
-comManager.o : comManager.cpp
-	$(CC) -o comManager.o -c comManager.cpp $(LIBS)
+ComManager.o : ComManager.cpp
+	$(CC) -o ComManager.o -c ComManager.cpp $(LIBS)
 
 # To delete tmp files
 clean : 
