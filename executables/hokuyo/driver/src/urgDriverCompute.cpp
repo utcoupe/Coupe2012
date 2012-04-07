@@ -60,14 +60,53 @@ bool UrgDriver::checkPointBot(coord p1, coord p2)
 	return true;
 } 
 
+
+
+
+long distanceAuBord(coord c) {
+	
+	int dx;
+	if( c.x > LX/2 ) {
+		dx=LX-c.x;
+	}else {
+		dx=c.x;
+	}
+
+	int dy;
+	if( c.y > LY/2 ) {
+		dy=LX-c.y;
+	}else {
+		dy=c.y;
+	}
+	
+	if(dx<dy) {
+		return dx;
+	} else {
+		return dy;
+	}
+	
+}
+
+
+
+
+
 //! Traitement des données venant de l'hokuyo
 void UrgDriver::interpretData(std::vector<long> data, int n)
 {	
+	#if DEBUG
+		cout << endl << endl << endl;
+	#endif
+	
 	robot.clear();
 	list<coord> bot;			// Un robot peut étre composé de plusieurs points
 	
 	for(int j = indexMin; j < indexMax; ++j) {
 		long l = data[j];
+		
+		#if DEBUG 
+			cout << " : Angle = " << urg.index2deg(j) << " | " << l << "/" << distanceMax[j] << endl;
+		#endif
 		
 		if(l>minLength && l<distanceMax[j])
 		{
@@ -77,6 +116,10 @@ void UrgDriver::interpretData(std::vector<long> data, int n)
 			c.x = l*cos(radian)  + deltaX; 
 			c.y = l*sin(radian)  + deltaY;
 		
+			#if DEBUG
+				cerr << "X = " << c.x << " Y = " << c.y << endl;
+			#endif 
+				
 			if(bot.empty())
 			{
 				bot.push_front(c);
@@ -111,13 +154,34 @@ void UrgDriver::interpretData(std::vector<long> data, int n)
 		}
 	}
 
-	// TODO
-	// Erreur si plus de quatres robots
-	if(robot.size()>NB_MAX_ROBOT)
-	{
-		
-		
-	}
 
 	
+	// Erreur si plus de quatres robots 
+	while(robot.size()>NB_MAX_ROBOT) 
+	{
+		
+		list<coord>::iterator it;
+		list<coord>::iterator it2 = robot.begin();
+		int tmp = distanceAuBord(*(robot.begin()));
+		for ( it=robot.begin() ; it != robot.end() ; it++ ) {
+			
+			coord value = (*it);
+			int lololol = distanceAuBord(value);
+			if(lololol<tmp) {
+				tmp = lololol;
+				it2 = it;
+			}
+			
+		}
+		
+		robot.erase(it2);
+	
+	}
+ 	
+
+
+	#if DEBUG 
+		sleep(2);
+	#endif
+		
 }

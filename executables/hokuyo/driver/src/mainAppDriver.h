@@ -3,7 +3,7 @@
 
 #include "urgDriver.h"
 #include "argManager.h"
-#include "comManager.h"
+#include "ComManager.h"
 
 /***********************************************************************
  * \class MainAppDriver
