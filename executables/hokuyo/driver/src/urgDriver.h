@@ -111,7 +111,7 @@ public:
 	void defineRange(double minDeg,double maxDeg);
 	void defineRangeIndex(double minDeg,double maxDeg);
 	//
-	void setDelta(bool autoSearch, int dX=-40, int dY=-40);
+	void setDelta(bool autoSearch, int dX=0, int dY=0);
 	void calculLangleScanne();
 	
 	//! Fonctions compute

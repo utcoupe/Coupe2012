@@ -63,11 +63,19 @@ bool UrgDriver::checkPointBot(coord p1, coord p2)
 //! Traitement des données venant de l'hokuyo
 void UrgDriver::interpretData(std::vector<long> data, int n)
 {	
+	#if DEBUG
+		cout << endl << endl << endl;
+	#endif
+	
 	robot.clear();
 	list<coord> bot;			// Un robot peut étre composé de plusieurs points
 	
 	for(int j = indexMin; j < indexMax; ++j) {
 		long l = data[j];
+		
+		#if DEBUG 
+			cout << " : Angle = " << urg.index2deg(j) << " | " << l << "/" << distanceMax[j] << endl;
+		#endif
 		
 		if(l>minLength && l<distanceMax[j])
 		{
@@ -77,6 +85,10 @@ void UrgDriver::interpretData(std::vector<long> data, int n)
 			c.x = l*cos(radian)  + deltaX; 
 			c.y = l*sin(radian)  + deltaY;
 		
+			#if DEBUG
+				cerr << "X = " << c.x << " Y = " << c.y << endl;
+			#endif 
+				
 			if(bot.empty())
 			{
 				bot.push_front(c);
@@ -117,7 +129,11 @@ void UrgDriver::interpretData(std::vector<long> data, int n)
 	{
 		
 		
+	
 	}
 
-	
+	#if DEBUG 
+		sleep(2);
+	#endif
+		
 }
