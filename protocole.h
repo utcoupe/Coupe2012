@@ -193,15 +193,6 @@
  */
 #define QV_CALIB_PERSPECTIVE_OFF	44
 
-/**
- * activer la détection
- */
-#define DETECTION_ON			45
-
-/**
- * désactiver la détection
- */
-#define DETECTION_OFF			46
  
 /**
  * récupérer la position des cds et lingots
