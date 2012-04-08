@@ -168,7 +168,41 @@
 ////						VISIO
 ////////////////////////////////////////////////////////////////////////
 
-#define QV_PING 40
+/**
+ * identifiant du client
+ * @return 'visio'
+ */
+#define QV_ID					40
+
+
+/**
+ * ping pong
+ * @return 'pong'
+ */
+#define QV_PING					41
+
+
+/**
+ * passer en mode calibration de la perspective (= détection de l'échéquier)
+ */
+#define QV_CALIB_PERSPECTIVE	43
+
+/**
+ * activer la détection
+ */
+#define DETECTION_ON			44
+
+/**
+ * désactiver la détection
+ */
+#define DETECTION_OFF			45
+ 
+/**
+ * récupérer la position des cds et lingots
+ * @return ((x1,y1),(x2,y2),(x3,y3),..){SEP}((x1,y1),(x2,y2),(x3,y3),..) cds{SEP}lingots
+ */
+#define QV_GET				45
+
 
 
 
