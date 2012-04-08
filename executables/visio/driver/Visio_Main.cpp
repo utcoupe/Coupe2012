@@ -56,6 +56,9 @@ void fonction2() {
 
 
 int main(int argc, char** argv)
+
+{
+
 	// Pas de new, il faut récupérer le singleton
 	// c'est l'unique instance du manager
 	ComManager* cm = ComManager::getComManager();

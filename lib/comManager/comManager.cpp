@@ -5,7 +5,6 @@
  *
  * */
 
-#error "hello"
 #include "comManager.h"
 #include "protocole.h"
 
