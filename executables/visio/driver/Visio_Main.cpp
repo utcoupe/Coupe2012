@@ -10,6 +10,7 @@
 #include <opencv/highgui.h>
 #include <vector>
 #include <iostream>
+#include <sstream>
 #include "include/tools.h"
 #include "include/detection.h"
 #include "include/perspective.h"
@@ -17,64 +18,81 @@
 #include "comManager.h"
 #include "protocole.h"
 
+
 using namespace std;
 
 cv::Vec3b hsv_selected;
 cv::Scalar hsv_pixel;
 bool hsv_selected_ready = false;
-
-#define CMD_KILL  666
-
-
-/*
- * Les fonctions de commandes sont de type
- * 			void nomFonction(void)
- *
- * Pour communiquer il suffit de faire les cout dans le corps de la
- * fonction!
- *
- * !!! ne jamais faire de cout << endl !!!
- * Pour comprendre voir fonction 2
- *
- * */
+bool bDisplayPosition = false;
+vector<cv::Point> Positions_Display;
+cv::Mat binary;
+pthread_mutex_t lock;
 
 
-#define CMD1 1
-void fonction1() {
 
+void findObjects(cv::Mat src, vector<cv::Point>& result) {
 
-	cout << "Infos de la fonction 1";
+    vector<vector<cv::Point> > contours;
 
+    vector<cv::Vec4i> hierarchy;
+
+    cv::findContours( binary, contours, hierarchy, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE );
+
+    result.resize(contours.size());
+
+    for (unsigned int i=0; i < contours.size(); i++)
+    {
+        cv::Point bary;
+        vector<cv::Point> contour = contours[i];
+        bary = barycentre(contour);
+        result[i] = bary;
+    }
 }
 
-#define CMD2 2
-void fonction2() {
 
+/**
+ * récupérer la position des cds et lingots
+ * @return ((x1,y1),(x2,y2),(x3,y3),..){SEP}((x1,y1),(x2,y2),(x3,y3),..) cds{SEP}lingots
+ */
 
-	cout << "Infos de la fonction 2" << endl;
-
-}
-
-void ping()
+void DisplayPosition()
 {
-    cout<<"salut"<<endl;
+
+    pthread_mutex_lock( &lock );
+    findObjects(binary, Positions_Display);
+    pthread_mutex_unlock( &lock );
+
+
+
+    stringstream ss;
+    ss << "(";
+        for (unsigned int i=0; i < Positions_Display.size(); i++)
+		{
+            ss << "(" << Positions_Display[i].x << "," << Positions_Display[i].y << ")";
+		}
+    ss << ")+()";
+    cout<<ss.str();
+
+    bDisplayPosition = true;
 }
 
 
 int main(int argc, char** argv)
 
 {
-
 	// Pas de new, il faut récupérer le singleton
 	// c'est l'unique instance du manager
-	ComManager* cm = ComManager::getComManager();
+    ComManager* cm = ComManager::getComManager();
+
+    lock = cm->getMutex();
 
 	// Premiére commande à mettre le kill
 	// c'est la commande qui stop le manager
 //	cm->addKill(CMD_KILL);
 
 
-	cm->addFunction(QV_PING,&ping);
+	cm->addFunction(QV_GET, &DisplayPosition);
 //	cm->addFunction(CMD2,&fonction2);
 
 
@@ -120,12 +138,9 @@ int main(int argc, char** argv)
 	cv::Mat image;
 	cv::Mat warped;
 	cv::Mat warped_hsv;
-	cv::Mat binary;
 
 	cv::namedWindow( "Raw" , CV_WINDOW_AUTOSIZE);
 	cv::namedWindow( "Warped" , CV_WINDOW_AUTOSIZE);
-	cv::namedWindow( "Warped_cams", CV_WINDOW_AUTOSIZE);
-	cv::namedWindow( "Binary" , CV_WINDOW_AUTOSIZE);
 
 
 
@@ -213,33 +228,25 @@ int main(int argc, char** argv)
 
 		cv::cvtColor(warped, warped_hsv, CV_BGR2HSV);
 		cv::GaussianBlur(warped_hsv, warped_hsv, cv::Size (9, 9), 2, 2);
+
+
+        pthread_mutex_lock( &lock );
 		cv::inRange(warped_hsv, paramonmouse.hsv1, paramonmouse.hsv2, binary);
-		cv::imshow( "Binary", binary);
-
-		vector<vector<cv::Point> > contours;
-		vector<cv::Vec4i> hierarchy;
-
 		cv::GaussianBlur(binary, binary, cv::Size (9, 9), 2, 2);
+        pthread_mutex_unlock( &lock );
 
-		cv::findContours( binary, contours, hierarchy, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE );
+        if (bDisplayPosition) {
+            for (unsigned int i=0; i < Positions_Display.size(); i++) {
+                cv::circle(warped, Positions_Display[i], 3, cv::Scalar(0,255,8), -1, 200, 0);
+                cout<<"Position Display x: "<<Positions_Display[i].x<<" y:"<<Positions_Display[i].y;
+            }
+            bDisplayPosition = false;
+        }
 
-		if (contours.size() > 0)
-		{
-			cv::drawContours( warped, contours, -1, cv::Scalar(0,0,255), 2 );
-		}
-		vector<cv::Point> contour;
-		for (unsigned int i=0; i < contours.size(); i++)
-		{
-			cv::Point bary;
-			contour = contours[i];
-			bary = barycentre(contour);
-			// affiche le barycentre
-			cv::circle(warped, bary, 3, cv::Scalar(0,255,8), -1, 200, 0);
-		}
 
 		// calcul des barycentres
 
-		cv::imshow( "Warped_cams", warped );
+		cv::imshow( "Warped", warped );
 
 		}
 		// Handle pause/unpause and ESC
@@ -257,6 +264,10 @@ int main(int argc, char** argv)
 					c = cvWaitKey( 250 );
 				}
 			break;
+
+			case 'c':
+                DisplayPosition();
+                break;
 
 			case 27:
 				return 0;

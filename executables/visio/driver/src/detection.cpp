@@ -35,13 +35,13 @@ void DeterminateHSV (ParamonMouse *parametre)
 		h2 = parametre->hsv_selected[0] + HSV_TOLERANCE1;
 		s2 = parametre->hsv_selected[1] + HSV_TOLERANCE2;
 		v2 = parametre->hsv_selected[2] +  HSV_TOLERANCE3;
-		cout << "h: " <<  (int)h<< endl;
+/*      cout << "h: " <<  (int)h<< endl;
         cout << "s: " <<  (int)s<< endl;
         cout << "v: " <<  (int)v<< endl;
         cout << "h2: " <<  (int)h2<< endl;
         cout << "s2: " <<  (int)s2<< endl;
         cout << "v2: " <<  (int)v2<< endl;
-
+*/
         parametre->hsv1[0] = h;
         parametre->hsv1[1] = s;
         parametre->hsv1[2] = v;
