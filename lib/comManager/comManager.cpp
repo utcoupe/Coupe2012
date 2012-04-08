@@ -5,7 +5,7 @@
  * 
  * */
  
-#include "ComManager.h"
+#include "comManager.h"
 #include "protocole.h"
 
 #include <string>
