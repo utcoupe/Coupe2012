@@ -2,9 +2,10 @@
  * \file 	comManager.cpp
  * \author 	Xavier RODRIGUEZ
  * \date	08/03/2012
- * 
+ *
  * */
- 
+
+#error "hello"
 #include "comManager.h"
 #include "protocole.h"
 
@@ -25,10 +26,10 @@ ComManager* ComManager::getComManager()
 	}
 	else{
 		return objCom;
-	}		
+	}
 }
 
-//! --- 
+//! ---
 ComManager::ComManager()
 {
 	command=0;
@@ -38,28 +39,28 @@ ComManager::ComManager()
 //! ---
 ComManager::~ComManager()
 {
-	
+
 }
 
 //! ---
 void ComManager::addKill(int id)
 {
 	this->killCmd = id;
-}	
+}
 
-//! --- 
+//! ---
 void ComManager::addFunction(int id,void(*fct)())
 {
 	this->fonctions.push_front(pair<int,void(*)()>(id,fct));
 }
 
-//! --- 
+//! ---
 void* ComManager::helpfct(void* arg)
 {
 	return getComManager()->loop(arg);
 }
 
-//! --- 
+//! ---
 void ComManager::start()
 {
 	if(pthread_create(&thr, NULL, &ComManager::helpfct, NULL)) {
@@ -76,17 +77,17 @@ void ComManager::waitHere()
 
 //! ---
 void* ComManager::loop(void* arg)
-{	
-	size_t pos;	
+{
+	size_t pos;
 	for( ; ; )
 	{
 		// Command Recovery
 		cin >> request;
-		pos = request.find(SEP); 
+		pos = request.find(SEP);
 		this->idCmd   = atoi(request.substr(0,pos).c_str());
-		this->command = atoi(request.substr(pos+1).c_str()); 
-			
-		cout << idCmd << SEP;	
+		this->command = atoi(request.substr(pos+1).c_str());
+
+		cout << idCmd << SEP;
 		for ( ite=fonctions.begin() ; ite!=fonctions.end() ; ite++ )
 		{
 			if( command == (*ite).first )
@@ -96,9 +97,9 @@ void* ComManager::loop(void* arg)
 				pthread_mutex_unlock(&(this->mutex));
 			}
 		}
-		cout << endl; 
+		cout << endl;
 		cout.flush();
-		
+
 		// KILL
 		if(command==killCmd)
 		{
