@@ -15,6 +15,7 @@
 #include "include/perspective.h"
 #include "include/parametres.h"
 #include "comManager.h"
+#include "protocole.h"
 
 using namespace std;
 
@@ -54,6 +55,11 @@ void fonction2() {
 
 }
 
+void ping()
+{
+    cout<<"salut"<<endl;
+}
+
 
 int main(int argc, char** argv)
 
@@ -68,7 +74,7 @@ int main(int argc, char** argv)
 //	cm->addKill(CMD_KILL);
 
 
-//	cm->addFunction(CMD1,&fonction1);
+	cm->addFunction(QV_PING,&ping);
 //	cm->addFunction(CMD2,&fonction2);
 
 

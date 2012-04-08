@@ -6,7 +6,7 @@
 #define SEP			'+' // tout est séparé par ça
 
 
-// 
+//
 #define BLEU  	1
 #define ROUGE 	2
 
@@ -163,6 +163,15 @@
 #define QA_SET_PID_ANGLE_A	21
 
 
+
+////////////////////////////////////////////////////////////////////////
+////						VISIO
+////////////////////////////////////////////////////////////////////////
+
+#define QV_PING 40
+
+
+
 // erreurs
 #define	E_INVALID_CMD						-1
 #define	E_INVALID_PARAMETERS_NUMBERS		-2
@@ -209,23 +218,23 @@
 // HOKUYO
 
 /**
- * Fonction retournant la postion des robots en coordonnées cartésiennes  
- * */ 
-#define QH_GETDATA 1 
+ * Fonction retournant la postion des robots en coordonnées cartésiennes
+ * */
+#define QH_GETDATA 1
 
 /**
  * Dit à l'hokuyo que notre robot est sur la couleur rouge
- * */ 
-#define QH_SET_REDCOLOR 2 
+ * */
+#define QH_SET_REDCOLOR 2
 
 /**
  * Dit à l'hokuyo que notre robot est sur la couleur violet
- * */ 
+ * */
 #define QH_SET_PURPLECOLOR 3
 
 /**
  * Signal pour stoper l'application hokuyo
- * */ 
+ * */
 #define QH_KILL 9
 
 
