@@ -1,21 +1,13 @@
 *__pycache__*
 CMake*
-/simulateur/Simu 3D/irrlicht-1.7.2/include
-/simulateur/Simu 3D/irrlicht-1.7.2/lib
 
 arduino-*
 *.dblite
 *build
-*bin
+bin
 *.o
 *.elf
 *.hex
-/simulateur/Simu 3D/SFML-1.6/lib
-/simulateur/Simu 3D/SFML-1.6/include
-/simulateur/Simu 3D/bin
-/simulateur/Simu 3D/bullet-2.79/src
-/simulateur/Simu 3D/bullet-2.79/lib
-/simulateur/Simu 3D
 *.depend
 *.layout
 doc

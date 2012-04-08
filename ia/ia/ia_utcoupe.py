@@ -10,7 +10,8 @@ from .ia_base import *
 STATE_WAIT_JACK1	= 0
 STATE_RECAL			= 1
 STATE_WAIT_JACK2	= 2
-STATE_PLAY			= 3
+STATE_POST_RECAL	= 3
+STATE_PLAY			= 4
 
 JACK_OUT		= 0		# jack arraché
 JACK_IN			= 1		# jack pluggé
@@ -72,14 +73,15 @@ class IaUtcoupe(IaBase):
 		self.gamestate.reset()
 		self.ircbot.reset()
 		self.state_match	= STATE_WAIT_JACK1
-		self.state_recal_mini	= 0
-		self.state_recal_big	= 0
+		self.state_mini	= 0
+		self.state_big	= 0
 		time.sleep(0.5)
 	
 	def loop(self):
 
-		# compute next match state
-		self.next_state()
+		# si le match a durée depuis trop longtemps, on s'arrête
+		if self.match_timeout and (time.time() - self.t_begin_match) > self.match_timeout:
+			self.next_state_match()
 
 
 		# appellé la fonction correspondant à l'état acutel
@@ -87,6 +89,8 @@ class IaUtcoupe(IaBase):
 			self.loopPlay()
 		elif 	STATE_RECAL	== self.state_match:
 			self.loopRecal()
+		elif 	STATE_POST_RECAL == self.state_match:
+			self.loopPostRecal()
 		else:
 			self.loopJack()
 
@@ -179,33 +183,35 @@ class IaUtcoupe(IaBase):
 			else:
 				print("No reachable actions")
 
+	def mini_next_on_response_2(self, next_state):
+		def __f(n, canal, args, kwargs):
+			print("HELLO", n, canal, args, kwargs)
+			if n == 1:
+				self.state_mini = next_state
+		return __f
+		
+	def big_next_on_response_2(self, next_state):
+		def __f(n, canal, args, kwargs):
+			if n == 1:
+				self.state_big = next_state
+		return __f
+		
 	def loopRecal(self):
 		"""
 		Phase de racalage du robot au début
 		"""
-		print("RECALAGE", self.state_recal_big, self.state_recal_mini)
+		print("RECALAGE", self.state_big, self.state_mini)
 		
 		minirobot = self.gamestate.minirobot
 		bigrobot = self.gamestate.bigrobot
 
-		def mini_next_on_response_2(next_state):
-			def __f(n, canal, args, kwargs):
-				if n == 1:
-					self.state_recal_mini = next_state
-			return __f
-			
-		def big_next_on_response_2(next_state):
-			def __f(n, canal, args, kwargs):
-				if n == 1:
-					self.state_recal_big = next_state
-			return __f
 		
-		if 0 == self.state_recal_mini and \
-		   0 == self.state_recal_big:
+		if 0 == self.state_mini and \
+		   0 == self.state_big:
 			self.reset()
 			bigrobot.asserv.cancel(block=True)
 			minirobot.asserv.cancel(block=True)
-			bigrobot.extras.teleport(self.p((1000,250)), self.a(90))
+			bigrobot.extras.teleport(self.p((1100,250)), self.a(90))
 			minirobot.extras.teleport(self.p((250,250)), self.a(90))
 			# petit et gros reculent et se calent contre le mur
 			minirobot.asserv.pwm(-100)
@@ -213,78 +219,121 @@ class IaUtcoupe(IaBase):
 			time.sleep(1)
 			minirobot.asserv.cancel(block=True)
 			bigrobot.asserv.cancel(block=True)
-			self.state_recal_mini = 1
-			self.state_recal_big = 1
+			self.state_mini = 1
+			self.state_big = 1
 
-		if 1 == self.state_recal_mini:
+		if 1 == self.state_mini:
 			# petit avance de 10cm
-			self.state_recal_mini = 42
-			minirobot.asserv.gotor((100,0), handler=mini_next_on_response_2(2))
+			self.state_mini = 42
+			minirobot.asserv.gotor((100,0), handler=self.mini_next_on_response_2(2))
 
-		if 1 == self.state_recal_big:
+		if 1 == self.state_big:
 			# gros avance de 10cm
-			self.state_recal_big = 42
-			bigrobot.asserv.gotor((100,0), handler=big_next_on_response_2(2))
+			self.state_big = 42
+			bigrobot.asserv.gotor((100,0), handler=self.big_next_on_response_2(2))
 			
-		if 2 == self.state_recal_mini:
+		if 2 == self.state_mini:
 			# petit tourne de 90°
-			self.state_recal_mini = 42
-			minirobot.asserv.turnr(self.a(-90), handler=mini_next_on_response_2(3))
+			self.state_mini = 42
+			minirobot.asserv.turnr(self.a(-90), handler=self.mini_next_on_response_2(3))
 			
-		if 2 == self.state_recal_big:
+		if 2 == self.state_big:
 			# gros tourne de 90°
-			self.state_recal_big = 42
-			bigrobot.asserv.turnr(self.a(-90), handler=big_next_on_response_2(3))
+			self.state_big = 42
+			bigrobot.asserv.turnr(self.a(-90), handler=self.big_next_on_response_2(3))
 		
-		if 3 == self.state_recal_mini:
+		if 3 == self.state_mini:
 			# petit recul et se cale contre le mur
 			minirobot.asserv.pwm(-100)
 			time.sleep(1)
 			minirobot.asserv.cancel(block=True)
 			# petit avance de 10cm
-			self.state_recal_mini = 42
-			minirobot.asserv.gotor((100,0), handler=mini_next_on_response_2(4))
-		elif 4 == self.state_recal_mini:
+			self.state_mini = 42
+			minirobot.asserv.gotor((100,0), handler=self.mini_next_on_response_2(4))
+		elif 4 == self.state_mini:
 			# petit sort
-			self.state_recal_mini = 42
-			minirobot.asserv.goto(self.p((700,250)), handler=mini_next_on_response_2(5))
-		elif 5 == self.state_recal_mini:
+			self.state_mini = 42
+			minirobot.asserv.goto(self.p((700,250)), handler=self.mini_next_on_response_2(5))
+		elif 5 == self.state_mini:
 			# petit tourne
-			self.state_recal_mini = 42
-			minirobot.asserv.turn(self.a(90), handler=mini_next_on_response_2(6))
-		elif 6 == self.state_recal_mini:
-			# petit avance de 30cm
-			self.state_recal_mini = 42
-			minirobot.asserv.gotor((300,0), handler=mini_next_on_response_2(7))
+			self.state_mini = 42
+			minirobot.asserv.turn(self.a(90), handler=self.mini_next_on_response_2(6))
+		elif 6 == self.state_mini:
+			# petit avance de 40cm
+			self.state_mini = 42
+			minirobot.asserv.gotor((400,0), handler=self.mini_next_on_response_2(7))
 
-		if 3 == self.state_recal_big and 7 == self.state_recal_mini:
+		if 3 == self.state_big and 7 == self.state_mini:
 			# gros recul de 60cm
-			self.state_recal_big = 42
-			bigrobot.asserv.gotor((-700,0), -500, handler=big_next_on_response_2(4))
+			self.state_big = 42
+			bigrobot.asserv.gotor((-700,0), -500, handler=self.big_next_on_response_2(4))
 
-		if 7 == self.state_recal_mini and 4 == self.state_recal_big:
+		if 7 == self.state_mini and 4 == self.state_big:
 			# petit recul
-			self.state_recal_mini = 42
-			minirobot.asserv.goto(self.p((700,250)), -500, handler=mini_next_on_response_2(8))
-		elif 8 == self.state_recal_mini:
+			self.state_mini = 42
+			minirobot.asserv.goto(self.p((700,250)), -500, handler=self.mini_next_on_response_2(8))
+		elif 8 == self.state_mini:
 			# petit tourne
-			self.state_recal_mini = 42
-			minirobot.asserv.turn(self.a(0), handler=mini_next_on_response_2(9))
-		elif 9 == self.state_recal_mini:
+			self.state_mini = 42
+			minirobot.asserv.turn(self.a(0), handler=self.mini_next_on_response_2(9))
+		elif 9 == self.state_mini:
 			# petit se pause contre le gros
-			minirobot.asserv.goto(self.p((400,250)), -500, handler=mini_next_on_response_2(10))
+			self.state_mini = 42
+			minirobot.asserv.goto(self.p((400,250)), -500, handler=self.mini_next_on_response_2(10))
 			
-		if 4 == self.state_recal_big:
+		if 4 == self.state_big:
 			# gros recul et se cale contre le mur
-			self.state_recal_big = 42
+			self.state_big = 42
 			bigrobot.asserv.pwm(-100)
 			time.sleep(1)
 			bigrobot.asserv.cancel(block=True)
-			self.state_recal_big = 5
+			self.state_big = 5
 
-		if 10 == self.state_recal_mini:
-			self.state_match = STATE_PLAY
+		if 10 == self.state_mini:
+			# et hop on lance les robots
+			#bigrobot.asserv.cancel(block=True)
+			#minirobot.asserv.cancel(block=True)
+			self.state_mini = 0
+			self.state_big = 0
+			print("POST RECALAGE", self.state_big, self.state_mini)
+			self.next_state_match()
+			print("POST RECALAGE", self.state_big, self.state_mini)
+			time.sleep(1)
+			print("POST RECALAGE", self.state_big, self.state_mini)
+
+	def loopPostRecal(self):
+		"""
+		Sortir de la zone de départ
+		"""
+		print("POST RECALAGE", self.state_big, self.state_mini)
+		
+		minirobot = self.gamestate.minirobot
+		bigrobot = self.gamestate.bigrobot
+		
+		if 0 == self.state_mini and \
+		   0 == self.state_big:
+			bigrobot.asserv.cancel(block=True)
+			minirobot.asserv.cancel(block=True)
+			self.state_mini = 1
+			self.state_big = 42
+
+		if self.state_mini == 1:
+			# avancer le petit robot
+			self.state_mini = 42
+			minirobot.asserv.goto((500,250), handler=self.mini_next_on_response_2(2))
+		elif self.state_mini == 2:
+			self.state_mini = 42
+			self.state_big = 42
+			minirobot.asserv.goto((1200,250), handler=self.mini_next_on_response_2(3))
+			bigrobot.asserv.goto((700,250), handler=self.big_next_on_response_2(3))
+		elif 3 == self.state_mini and \
+			 3 == self.state_big:
+			self.state_mini = 0
+			self.state_big = 0
+			self.next_state_match()
 			
+			
+		
 	
 	def stats(self):
 		time_since_last_show_stats = time.time() - self.time_last_show_stats
@@ -294,17 +343,11 @@ class IaUtcoupe(IaBase):
 			print(self.gamestate.bigrobot.actions)
 			print(self.gamestate.minirobot.actions)
 
-	def next_state(self):
-		if 		STATE_WAIT_JACK1		== self.state_match:
-			pass
-		elif 	STATE_RECAL				== self.state_match:
-			pass
-		elif 	STATE_WAIT_JACK2		== self.state_match:
-			pass
-		elif 	STATE_PLAY				== self.state_match:
-			# si le match a durée depuis trop longtemps, on s'arrête
-			if self.match_timeout and (time.time() - self.t_begin_match) > self.match_timeout:
-				self.state_match = STATE_WAIT_JACK1
+	def next_state_match(self):
+		if STATE_PLAY == self.state_match:
+			self.state_match = 0
+		else:
+			self.state_match += 1
 
 	def _on_jack_event(self, n, canal, args, kwargs):
 		try:
@@ -331,7 +374,7 @@ class IaUtcoupe(IaBase):
 		# jack tiré après le recalage -> départ
 		elif 	STATE_WAIT_JACK2		== self.state_match \
 			and JACK_OUT				== state:
-			self.state_match = STATE_PLAY
+			self.state_match = STATE_POST_RECAL
 		self.e_jack.set()
 
 	def p(self, p):

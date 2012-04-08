@@ -185,23 +185,29 @@
 /**
  * passer en mode calibration de la perspective (= détection de l'échéquier)
  */
-#define QV_CALIB_PERSPECTIVE	43
+#define QV_CALIB_PERSPECTIVE_ON		43
+
+
+/**
+ * arreter le mode calibration de la perspective (= détection de l'échéquier)
+ */
+#define QV_CALIB_PERSPECTIVE_OFF	44
 
 /**
  * activer la détection
  */
-#define DETECTION_ON			44
+#define DETECTION_ON			45
 
 /**
  * désactiver la détection
  */
-#define DETECTION_OFF			45
+#define DETECTION_OFF			46
  
 /**
  * récupérer la position des cds et lingots
  * @return ((x1,y1),(x2,y2),(x3,y3),..){SEP}((x1,y1),(x2,y2),(x3,y3),..) cds{SEP}lingots
  */
-#define QV_GET				45
+#define QV_GET				47
 
 
 
