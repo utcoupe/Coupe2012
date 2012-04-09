@@ -26,7 +26,8 @@ class IaUtcoupe(IaBase):
 		canal_big_extras, canal_mini_extras,
 		canal_hokuyo,
 		canal_debug,
-		autostart = False, match_timeout = None
+		autostart = False, match_timeout = None,
+		skip_recalage
 		):
 		"""
 		@param {bool} autostart			démarrer sans attendre le signal du jack
@@ -45,6 +46,9 @@ class IaUtcoupe(IaBase):
 			canal_mini_extras	=canal_mini_extras,
 		)
 
+		# ne pas se recaler
+		self.skip_recalage = skip_recalage
+		
 		self.ircbot.set_handler(ID_MSG_JACK, self._on_jack_event)
 		
 		enemies = self.gamestate.enemyrobots()
@@ -120,17 +124,17 @@ class IaUtcoupe(IaBase):
 		self.loopRobot(self.gamestate.minirobot)
 		
 		# debug
-		"""self.debug.remove_circle(ID_DEBUG_ENEMY1)
-		self.debug.draw_circle(self.gamestate.enemy1.pos, R_ENEMY, BLUE, ID_DEBUG_ENEMY1)
+		self.debug.remove_circle(1, ID_DEBUG_ENEMY1)
+		self.debug.draw_circle(self.gamestate.enemy1.pos, R_ENEMY, (0,0,255), 1, ID_DEBUG_ENEMY1)
 		
-		self.debug.remove_circle(ID_DEBUG_ENEMY2)
-		self.debug.draw_circle(self.gamestate.enemy2.pos, R_ENEMY, BLUE, ID_DEBUG_ENEMY2)"""
+		self.debug.remove_circle(1, ID_DEBUG_ENEMY2)
+		self.debug.draw_circle(self.gamestate.enemy2.pos, R_ENEMY, (0,0,255), 1, ID_DEBUG_ENEMY2)
 		
-		"""self.debug.remove_circle(ID_DEBUG_BIGROBOT)
-		self.debug.draw_circle(self.gamestate.bigrobot.pos, R_ENEMY, RED, ID_DEBUG_BIGROBOT)
+		self.debug.remove_circle(1, ID_DEBUG_BIGROBOT)
+		self.debug.draw_circle(self.gamestate.bigrobot.pos, R_ENEMY, (0,255,0), 1, ID_DEBUG_BIGROBOT)
 		
-		self.debug.remove_circle(ID_DEBUG_MINIROBOT)
-		self.debug.draw_circle(self.gamestate.minirobot.pos, R_ENEMY, RED, ID_DEBUG_MINIROBOT)"""
+		self.debug.remove_circle(1, ID_DEBUG_MINIROBOT)
+		self.debug.draw_circle(self.gamestate.minirobot.pos, R_ENEMY, (0,255,0), 1, ID_DEBUG_MINIROBOT)
 
 		# attente du rafraichissement
 		self.gamestate.wait_update()
@@ -205,6 +209,14 @@ class IaUtcoupe(IaBase):
 		minirobot = self.gamestate.minirobot
 		bigrobot = self.gamestate.bigrobot
 
+		# si on doit sauter le recalage (pour les tests)
+		if self.skip_recalage:
+			bigrobot.asserv.cancel(block=True)
+			minirobot.asserv.cancel(block=True)
+			bigrobot.extras.teleport(self.p((160,250)), self.a(0))
+			minirobot.extras.teleport(self.p((400,250)), self.a(0))
+			self.next_state_match()
+			return
 		
 		if 0 == self.state_mini and \
 		   0 == self.state_big:
@@ -295,11 +307,7 @@ class IaUtcoupe(IaBase):
 			#minirobot.asserv.cancel(block=True)
 			self.state_mini = 0
 			self.state_big = 0
-			print("POST RECALAGE", self.state_big, self.state_mini)
 			self.next_state_match()
-			print("POST RECALAGE", self.state_big, self.state_mini)
-			time.sleep(1)
-			print("POST RECALAGE", self.state_big, self.state_mini)
 
 	def loopPostRecal(self):
 		"""
