@@ -115,9 +115,9 @@ class IaUtcoupe(IaBase):
 		
 		# demande de rafraichissement
 		self.gamestate.ask_update()
+		
 
 		self.gamestate.update_robots()
-
 		
 		# gogogo robots !
 		self.loopRobot(self.gamestate.bigrobot)
