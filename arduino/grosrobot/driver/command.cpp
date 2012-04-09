@@ -1,7 +1,5 @@
 #include "command.h"
 
-#include "balais.h"
-#include "tapis.h"
 
 /* Analyse le message et effectue les actions associees
  * 	<> id : l'identifiant associe au message
@@ -15,6 +13,28 @@ void cmd(int id, int header, int *args, int size){
     /* On analyse le message en fonction de son type */
     switch(header)
     {
+		case QO_BOUGER_PEIGNE:
+		{
+			int res = 0;
+			long int goal = 0;
+			if (size < 2)
+				sendMessage(id, E_INVALID_PARAMETERS_NUMBERS);
+			else
+			{
+				goal = (long int)args[0]*(long int)1023/(long int)300;
+				res = bougerPeigne(goal, args[1], AX18_PEIGNE_G);
+				if(res > 0)
+				{
+					sendMessage(id, E_MERDE_AX18);
+				} 
+				res = bougerPeigne(goal, args[1], AX18_PEIGNE_D); 
+				if(res > 0)
+				{
+					sendMessage(id, E_MERDE_AX18);
+				}
+			}
+			break;
+		}
 		case QO_ID:
 		{
 			sendMessage(id, "others");

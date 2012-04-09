@@ -1,25 +1,34 @@
 /* Commande balais par AX-18
  * Par Quentin C
- * Le 19/03/2012 */
+ * Le 09/04/2012 */
  
  //Les moteurs ne sont pas initialisés ici
  //Controle basé sur la controle des AX12 : a tester avec AX18
 
 #include "Arduino.h"
-#include "balais.h"
+#include "OFbalais.h"
+#include "ax12.h"
 
-void ouvrirBalais(int vitesse, int moteur);  
+void ouvrirBalais(int degre, int vitesse, int moteur);  
 {
 	int res = 0;
-	
-		res = motor[moteur].writeInfo (MOVING_SPEED, vitesse); // vitesse d'ouverture 0-1023
-		res = motor[moteur].writeInfo (GOAL_POSITION, 1023); // remplacer 1023 par la position ouverte
+	int pos_actuelle = 0;
+		
+		res = motor[moteur].readInfo(PRESENT_POSITION);
+		pos_actuelle = motor[moteur].status_data;
+
+		res = motor[moteur].writeInfo (MOVING_SPEED, vitesse);
+		res = motor[moteur].writeInfo (GOAL_POSITION, pos_actuelle + degre); 
 }
 
-void fermerBalais(int vitesse, int moteur); 
+void fermerBalais(int, degre, int vitesse, int moteur); 
 {
 	int res = 0;
+	int pos_actuelle = 0;
 	
-	res = motor[moteur].writeInfo (MOVING_SPEED, vitesse); // vitesse d'ouverture 0-1023
-	res = motor[moteur].writeInfo (GOAL_POSITION, 0); // remplacer 0 par la position ouverte
+		res = motor[moteur].readInfo(PRESENT_POSITION);
+		pos_actuelle = motor[moteur].status_data;
+	
+		res = motor[moteur].writeInfo (MOVING_SPEED, vitesse); 
+		res = motor[moteur].writeInfo (GOAL_POSITION, pos_actuelle - degre);
 }

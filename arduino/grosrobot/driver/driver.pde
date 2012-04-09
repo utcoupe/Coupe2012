@@ -7,6 +7,7 @@ void setup()
 {
 	// initialisationdu port série
 	initSerialLink();
+	cherche_moteurs();
 }
 
 long long int timeStart;

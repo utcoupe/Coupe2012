@@ -44,6 +44,14 @@
  */
 #define QO_TAPIS			3
 
+/**
+ * Ouverture peigne
+ * @param a angle en degré
+ * @param v [0:1023]
+ */
+#define QO_BOUGER_PEIGNE 	4
+
+
 
 ////////////////////////////////////////////////////////////////////////
 ////						ASSERV
@@ -164,6 +172,8 @@
 
 
 
+
+
 ////////////////////////////////////////////////////////////////////////
 ////						VISIO
 ////////////////////////////////////////////////////////////////////////
@@ -220,6 +230,7 @@
 #define E_LOW_VOLTAGE						-56
 #define E_MERDE_AX12						-57
 #define E_CM5_NOT_CONN						-58
+#define E_MERDE_AX18						-59
 #define W_MS								-60
 #define Q_KILL								-69
 

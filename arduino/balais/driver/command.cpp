@@ -15,23 +15,32 @@ void cmd(int id, int header, int *args, int size){
     {
 		case Q_OUVRIRBALAIS:
 		{
-			if (size < 1)
+			int res = 0;
+			if (size < 2)
 				sendMessage(id, E_INVALID_PARAMETERS_NUMBERS);
 			else
 			{
-				ouvrirBalais(args[0], 0); // 0 et 1 = numero du moteurs A MODIF ! argument recu = vitesse
-				ouvrirBalais(args[0], 1); // on ouvre chacun des deux balais
+				res = res + ouvrirBalais(args[0], args[1], 0); // 0 et 1 = numero du moteurs A MODIF ! argument recu = vitesse
+				res = res + ouvrirBalais(args[0], args[1], 1); // on ouvre chacun des deux balais
+				if(res >0)
+				{
+					sendMessage(id, E_MERDE_AX18);
+				}
 			}
 			break;
 		}
 		case Q_FERMERBALAIS:
 		{
-			if (size < 1)
+			if (size < 2)
 				sendMessage(id, E_INVALID_PARAMETERS_NUMBERS);
 			else
 			{
-				fermerBalais(args[0], 0); // 0 et 1 = numero moteurs : A MODIF ! argument recu = vitesse
-				fermerBalais(args[0], 1); // on ferme chacun des deux balais
+				res = res + fermerBalais(args[0], args[1], 0); // 0 et 1 = numero du moteurs A MODIF ! argument recu = vitesse
+				res = res + fermerBalais(args[0], args[1], 1); // on ouvre chacun des deux balais
+				if(res >0)
+				{
+					sendMessage(id, E_MERDE_AX18);
+				}
 			}
 			break;
 		}
