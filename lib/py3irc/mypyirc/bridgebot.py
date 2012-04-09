@@ -8,6 +8,7 @@ import re
 
 from .mypyircbot import MyPyIrcBot
 from .ircdefine import *
+from .ircutils import *
 
 class ProtocolException(Exception): pass
 
@@ -20,7 +21,7 @@ class BridgeBot(MyPyIrcBot):
 	def __init__(self, server_ip, server_port, nickname, channel, protocol_file, protocol_prefixe):
 		MyPyIrcBot.__init__(self, server_ip, server_port, nickname, [channel])
 
-		self.channel = channel
+		self.channel = canal_ircnormalize(channel)
 
 		if protocol_file:
 			f = open(protocol_file)
