@@ -201,7 +201,7 @@ class MyPyIrcBot(ircbot.SingleServerIRCBot):
 			argspec = inspect.getfullargspec(f)
 			f_args = argspec.args
 			try:
-				f(*args,**options)
+				self.write(f(*args,**options))
 			except TypeError as ex:
 				self.send_error(canal, "%s, need : %s, get = %s" % (ex,argspec,(args,options)))
 		else:
@@ -256,6 +256,9 @@ class MyPyIrcBot(ircbot.SingleServerIRCBot):
 				self.send(canal, line)
 			self.send(canal, " ")
 
+	def write(self, msg):
+		if msg: print(msg)
+	
 	def send(self, canal, msg):
 		"""
 		Envoie un message au serveur.
@@ -294,7 +297,7 @@ class MyPyIrcBot(ircbot.SingleServerIRCBot):
 		self.executers[i] = executer
 		for f_name in filter(lambda s: s.startswith("cmd_"), dir(executer)):
 			f = getattr(executer, f_name)
-			f_args = inspect.getargspec(f).args
+			f_args = inspect.getfullargspec(f).args
 			if len(f_args) > 0 and 'self' == f_args[0]:
 				f_params = f_args+['**kwargs']
 			else:

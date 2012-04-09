@@ -8,6 +8,8 @@
 #define URGDRIVER_H
   
 #include "global.h"
+#include "protocole.h"
+
 #include <list>
 #include <string>
 #include <vector>
@@ -16,18 +18,17 @@
 #include "delay.h" 
 #include "UrgCtrl.h"
 
-using namespace qrk;
-
-using std::string;
 using std::list;  
-using std::vector;  
+using std::vector;
+using std::string;
+using namespace qrk;  
   
-/***********************************************************************
+/**
  * \class UrgDriver
  * 
  * <h1>class UrgDriver</h1>
  * <p>classe de gestion du driver</p>
- **********************************************************************/ 
+ * */ 
 class UrgDriver
 {
 	
@@ -48,6 +49,7 @@ private:
 	//
 	double 		radMin;
 	double 		radMax;
+	//
 		
 	long 		indexMax;
 	long 		indexMin;
@@ -57,8 +59,12 @@ private:
 	static const long maxLength=3000;
 	
 	// Décalage de la balise par rapport aux (0,0)
+	// Attention delta est négatif !
 	int 		deltaX;
 	int 		deltaY;
+	
+	double 		deg1;
+	double 		deg2;
 	
 	//
 	pthread_t thr;
@@ -67,15 +73,14 @@ private:
 	//
 	UrgDriver();
 	~UrgDriver();
+
+
+
 	
 public:
 
 	//
 	static UrgDriver* getUrgDriver();
-	
-	//
-	static const short ROUGE  = 1;
-	static const short VIOLET = 2;
 	
 	// On peut utiliser directement la fonction dans un thread perso
 	static void* helpfct(void* arg);
@@ -89,6 +94,9 @@ public:
 	//
 	void setComPort(string cp){comPort=cp;};
 	void sendInfos();
+	//
+	void toString();
+	
 	
 	///! Fonction helpful
 	//
@@ -106,7 +114,8 @@ public:
 	void defineRange(double minDeg,double maxDeg);
 	void defineRangeIndex(double minDeg,double maxDeg);
 	//
-	void setDelta(bool autoSearch, int dX=-40, int dY=-40);
+	void setDelta(bool autoSearch, int dX=-40, int dY=0);
+	void calculLangleScanne();
 	
 	//! Fonctions compute
 	bool checkPointBot(coord p1, coord p2);

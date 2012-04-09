@@ -40,6 +40,9 @@ KEY_ARRACHE			= K_a			# arracher la carte
 KEY_BALAIS_LEFT		= K_q			# sortir le balais de gauche
 KEY_BALAIS_RIGHT	= K_w			# sortir le balais de droite
 KEY_BULDO			= K_x			# mode buldozer
+KEY_TELEPORTATION	= K_t			# mode téléportation
+KEY_RECUL			= K_r			# mode marche arrière
+
 
 BIG			= 0
 MINI		= 1
@@ -54,9 +57,11 @@ HEIGHT_MINI 	= 200
 SIZE_PALETTE	= 70
 WIDTH_PALETTE	= 5
 # dimensions balais qui râclent la zone adverse	
-SIZE_BALAIS		= 250
+SIZE_BALAIS		= 180
 WIDTH_BALAIS	= 50
-ECART_ROBOT_BALAIS	= 50
+ECART_ROBOT_BALAIS	= 0
+
+#ECART_CENTRE = -65 # ecart par rapport au centre du robot
 
 def mm_to_px(*args):
 	"""

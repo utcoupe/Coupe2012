@@ -25,7 +25,16 @@ class Robot:
 		self.actions = copy.copy(actions)
 
 	def set_asserv(self, asserv):
+		"""
+		Link le client asservissement
+		"""
 		self.asserv = asserv
+
+	def set_extras(self, extras):
+		"""
+		Link le client extras (téléportation)
+		"""
+		self.extras = extras
 
 	def reset(self):
 		self.pos = Vec(self.init_pos)

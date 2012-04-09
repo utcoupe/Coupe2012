@@ -9,41 +9,52 @@ import time
 from py3irc.mypyirc import MyPyIrcBot
 from py3irc.mypyirc.ircdefine import *
 
+# plage d'ids authorisés [MIN_ID, MAX_ID]
+MIN_ID		= 200
+MAX_ID		= 32000
 
 class IABot(MyPyIrcBot):
+
+	
 	def __init__(self, server_ip, server_port, *,
-			canal_big_asserv, canal_mini_asserv, canal_big_others, canal_mini_others, canal_debug, canal_hokuyo):
+			canal_big_asserv, canal_mini_asserv, canal_big_others, canal_mini_others, canal_debug, canal_hokuyo,
+			canal_big_extras, canal_mini_extras):
 		MyPyIrcBot.__init__(self,
 			server_ip, server_port,
 			"iabot",
-			[canal_big_asserv, canal_mini_asserv, canal_big_others, canal_mini_others, canal_debug, canal_hokuyo]
+			[canal_big_asserv, canal_mini_asserv, canal_big_others, canal_mini_others, canal_debug, canal_hokuyo, canal_big_extras, canal_mini_extras]
 		)
 
 
-		self.__id = 0
+		self.__id = MIN_ID
 		self.__id_lock = threading.Lock()
 
 		self.handlers = {}
 
+	def reset(self):
+		self.handlers = {}
+		self.__id = MIN_ID
+	
 	def get_new_id(self):
 		"""
 		Retourne un identifiant unique
 		"""
 		self.__id_lock.acquire()
-		if self.__id > 1E12:
-			self.__id = 0
+		if self.__id >= MAX_ID:
+			self.__id = MIN_ID - 1
 		i = self.__id
 		self.__id += 1
 		self.__id_lock.release()
 		return i
 
 	def cmd__response(self, *args, canal, id_msg, **options):
+		id_msg = int(id_msg)
 		if id_msg in self.handlers:
-			if self.handlers[str(id_msg)]:
-				f = self.handlers[str(id_msg)].pop(0)
-				f(canal,args,options)
+			n, handler = self.handlers[id_msg]
+			self.handlers[id_msg][0] += 1
+			handler(n, canal, args, options)
 	
-	def send_cmd(self, canal, handlers, irc_cmd, *args):
+	def send_cmd(self, canal, irc_cmd, *args, handler=None):
 		"""
 		@param canal
 		@param handlers, list de handlers (=fonctions appellée succéssivement lors de la reception de la réponse)
@@ -52,10 +63,13 @@ class IABot(MyPyIrcBot):
 		"""
 		if not irc_cmd.startswith(PREFIX_CMD): irc_cmd = PREFIX_CMD+irc_cmd
 		i = self.get_new_id()
-		self.handlers[str(i)] = handlers
+		if handler:
+			self.set_handler(i, handler)
 		str_args = map(str, (irc_cmd,)+args)
 		self.send(canal, SEP.join(str_args) + SEP + "id_msg=%s" % i)
-		
+
+	def set_handler(self, id_msg, handler):
+		self.handlers[int(id_msg)] = [0, handler]
 		
 
 if __name__ == "__main__":

@@ -19,7 +19,10 @@
  * _________________|___________________|_______________________|_______________|___________________|
  */
 
-#include "Arduino.h"
+#include "WProgram.h"
+#include "wiring.h"
+
+
 #include "control.h"
 #include "encoder.h"
 #include "robotstate.h"

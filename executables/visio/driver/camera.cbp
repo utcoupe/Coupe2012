@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="camera" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output="bin/Debug/camera" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Debug/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-g" />
+				</Compiler>
+				<Linker>
+					<Add option="-I/usr/include/opencv" />
+					<Add library="ml" />
+					<Add library="cvaux" />
+					<Add library="highgui" />
+					<Add library="cv" />
+					<Add library="cxcore" />
+				</Linker>
+			</Target>
+			<Target title="Release">
+				<Option output="bin/Release/camera" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall" />
+			<Add option="-fexceptions" />
+		</Compiler>
+		<Unit filename="Visio_Main.cpp" />
+		<Unit filename="comManager.cpp" />
+		<Unit filename="comManager.h" />
+		<Unit filename="include/detection.h" />
+		<Unit filename="include/parametres.h" />
+		<Unit filename="include/perspective.h" />
+		<Unit filename="include/tools.h" />
+		<Unit filename="protocole.h" />
+		<Unit filename="src/detection.cpp" />
+		<Unit filename="src/perspective.cpp" />
+		<Unit filename="src/tools.cpp" />
+		<Extensions>
+			<code_completion />
+			<debugger />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

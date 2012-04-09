@@ -5,14 +5,18 @@ from subprocess import *
 import time
 from Tkinter import *
 
-robotSize= 150
-sizeFact = 5.0
+# En fonction de l'ecran 
+sizeFact = 4.0
 
-gbool = True
+gbool=True
 robot=[]
+robotSize= 60.0
 radbot=robotSize/sizeFact
 
-p = Popen(["./hokuyoApp"], stdout=PIPE, stdin=PIPE)
+separator='+'
+
+p = Popen(["./hokuyoApp.exe","-col","2"], stdout=PIPE, stdin=PIPE)
+
 
 class thRead(threading.Thread):
 	def run(self):
@@ -21,18 +25,23 @@ class thRead(threading.Thread):
 			try:
 				p.stdout.flush()
 				r = p.stdout.readline()
+				print "C++ message : ",r
 			except Exception as ex:
 				print ex
 				exit()
 	
-			if(r.find('.')!=-1):
-				del(robot[:])
-				r = r.split('.')
+			if(r.find(separator)!=-1):
+				del(robot[:])			
+				r = r.split(separator)
 				listCoor = eval(r[1])
-				listCoor = listCoor[1:]
+				print "Apres l'eval : ",listCoor
 				for li in listCoor:				
 					robot.append(li)
-			
+					
+			print "List affiche : ",robot
+			print ""
+			print ""
+
 			
 class thWrite(threading.Thread):
 	def run(self):
@@ -45,24 +54,25 @@ class thWrite(threading.Thread):
 			time.sleep(0.1 - (time.time()-start) )
 			drawZone(canvas)
 
-
 def drawcircle(canv,x,y,rad):
     return canv.create_oval(x-rad,y-rad,x+rad,y+rad,width=0,fill='green')
 
 def drawZone(canv):
 	canv.delete(ALL)
 	
-	for coor in robot:
-		x=-1
-		y=-1
-		for c in coor:
-			if x==-1:
-				x=c/sizeFact
-			else:
-				y=(2000/sizeFact)-(c/sizeFact)
-		drawcircle(canv,x,y,radbot)
-
-
+	canv.create_line(0, 2000/(2*sizeFact), 3000, 2000/(2*sizeFact), fill='red')
+	canv.create_line(3000/(2*sizeFact), 2000, 3000/(2*sizeFact), 0, fill='red')
+	canv.create_line(3000/(4*sizeFact), 2000, 3000/(4*sizeFact), 0, fill='red')
+	canv.create_line(3000*3/(4*sizeFact), 2000, 3000*3/(4*sizeFact), 0, fill='red')
+	
+	try: 
+		for c in robot:
+			x=c[0]/sizeFact
+			y=(2000/sizeFact)-(c[1]/sizeFact)
+			drawcircle(canv,x,y,radbot)
+	except Exception as ex:
+		print ex
+		
 
 
 
@@ -83,7 +93,6 @@ canvas = Canvas(width=3000/sizeFact, height=2000/sizeFact, bg='blue')
 canvas.pack(expand=YES, fill=BOTH) 
 
 root.mainloop()
-
 
 cmd='1.9\n'			
 p.stdin.write(cmd.encode("utf-8"))

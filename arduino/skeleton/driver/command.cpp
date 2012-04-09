@@ -13,6 +13,16 @@ void cmd(int id, int header, int *args, int size){
     /* On analyse le message en fonction de son type */
     switch(header)
     {
+		case Q_ID:
+		{
+			sendMessage(id, "samplebot");
+			break;
+		}
+		case Q_PING:
+		{
+			sendMessage(id, "pong");
+			break;
+		}
 		case Q_ALLUME:
 		{
 			if (size < 1)

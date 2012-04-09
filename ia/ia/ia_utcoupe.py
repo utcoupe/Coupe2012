@@ -4,199 +4,137 @@
 import threading
 import time
 
-from py3irc.mypyirc.ircdefine import *
-from geometry import ConvexPoly
+from .ia_base import *
 
-from .clientIRC import IABot, Asservissement
-from .gamestate import GameState
-from .robot import Robot
-from .graph import NavGraph
-from .debug import Debug
-from .action import Action
-from .actions import *
+# wait_jack -> recalage -> jouer -> wait_jack
+STATE_WAIT_JACK1	= 0
+STATE_RECAL			= 1
+STATE_WAIT_JACK2	= 2
+STATE_POST_RECAL	= 3
+STATE_PLAY			= 4
 
-
-
-FILENAME_MAP	= "map.xml"
-RED				= (255,0,0)
-GREEN			= (0,255,0)
-BLUE			= (0,0,255)
-R_BIGROBOT		= 200
-R_MINIROBOT		= 200
-R_ENEMY			= 200
-ID_DEBUG_BIGROBOT	= 42
-ID_DEBUG_MINIROBOT	= 43
-ID_DEBUG_ENEMY1		= 56
-ID_DEBUG_ENEMY2		= 57
+JACK_OUT		= 0		# jack arraché
+JACK_IN			= 1		# jack pluggé
 
 
-class IaUtcoupe:
+
+class IaUtcoupe(IaBase):
 	def __init__(self, server_ip, server_port, pos_bigrobot, pos_mini_robot, pos_enemy1, pos_enemy2, *,
-		canal_big_asserv, canal_mini_asserv, canal_big_others, canal_mini_others, canal_hokuyo, canal_debug
+	team,
+		canal_big_asserv, canal_mini_asserv,
+		canal_big_others, canal_mini_others,
+		canal_big_extras, canal_mini_extras,
+		canal_hokuyo,
+		canal_debug,
+		autostart = False, match_timeout = None
 		):
+		"""
+		@param {bool} autostart			démarrer sans attendre le signal du jack
+		@param {int} match_timeout		durée d'un match en second, None pour infini
+		"""
+		IaBase.__init__(self,
+			server_ip, server_port, pos_bigrobot, pos_mini_robot, pos_enemy1, pos_enemy2,
+			team				=team,
+			canal_big_asserv	=canal_big_asserv,
+			canal_mini_asserv	=canal_mini_asserv,
+			canal_big_others	=canal_big_others,
+			canal_mini_others	=canal_mini_others,
+			canal_hokuyo		=canal_hokuyo,
+			canal_debug			=canal_debug,
+			canal_big_extras	=canal_big_extras,
+			canal_mini_extras	=canal_mini_extras,
+		)
 
-		# création bot irc
-		self.ircbot = IABot(server_ip, server_port,
-			canal_big_asserv	= canal_big_asserv,
-			canal_mini_asserv	= canal_mini_asserv,
-			canal_big_others	= canal_big_others,
-			canal_mini_others	= canal_mini_others,
-			canal_debug			= canal_debug,
-			canal_hokuyo		= canal_hokuyo)
+		self.ircbot.set_handler(ID_MSG_JACK, self._on_jack_event)
 		
-		# démarage du bot irc
-		self.t_ircbot = threading.Thread(None, self.ircbot.start, "loop iabot")
-		self.t_ircbot.setDaemon(True)
-		self.t_ircbot.start()
-
+		enemies = self.gamestate.enemyrobots()
 		
-		#####
-		## Module de debug
-		#####
-		self.debug = Debug(self.ircbot, canal_debug)
-
-
-
-
-		self.init_pos = {}
-		self.init_pos['big'] = pos_bigrobot
-		self.init_pos['mini'] = pos_mini_robot
-		self.init_pos['enemy1'] = pos_enemy1
-		self.init_pos['enemy2'] = pos_enemy2
-		enemy1 = Robot(self.init_pos['enemy1'], None)
-		enemy2 = Robot(self.init_pos['enemy1'], None)
-		enemies = (enemy1, enemy2)
-
-
-
-		#####
-		## Création gros robot
-		#####
-
-		# création du graph de déplacement
-		ng = NavGraph(R_BIGROBOT,FILENAME_MAP)
-		ng.add_dynamic_obstacle(ConvexPoly().initFromCircle(self.init_pos['enemy1'],200,8))
-		ng.add_dynamic_obstacle(ConvexPoly().initFromCircle(self.init_pos['enemy2'],200,8))
-		ng.add_dynamic_obstacle(ConvexPoly().initFromCircle(self.init_pos['mini'],R_MINIROBOT,8))
-		ng.update()
-		
-		# robot
-		bigrobot = Robot(self.init_pos['big'], ng)
-
-		# création de l'asserv
-		asserv = Asservissement(self.ircbot, canal_big_asserv)
-		bigrobot.set_asserv(asserv)
-
-		# actions
-		actions = get_actions_bigrobot(bigrobot, asserv, enemies)
+		# actions gros robot
+		bigrobot = self.gamestate.bigrobot
+		actions = get_actions_bigrobot(bigrobot, bigrobot.asserv, enemies)
 		bigrobot.set_actions(actions)
 		
-
-		#####
-		## Création mini robot
-		#####
-		
-		# création du graph de déplacement
-		ng = NavGraph(R_BIGROBOT,FILENAME_MAP)
-		ng.add_dynamic_obstacle(ConvexPoly().initFromCircle(self.init_pos['enemy1'],200,8))
-		ng.add_dynamic_obstacle(ConvexPoly().initFromCircle(self.init_pos['enemy2'],200,8))
-		ng.add_dynamic_obstacle(ConvexPoly().initFromCircle(self.init_pos['big'],R_BIGROBOT,8))
-		ng.update()
-
-		#robot
-		minirobot = Robot(self.init_pos['mini'], ng)
-		
-		# création de l'asserv
-		asserv = Asservissement(self.ircbot, canal_mini_asserv)
-		minirobot.set_asserv(asserv)
-
-		# actions
-		actions = get_actions_minirobot(minirobot, asserv, enemies)
+		# actions mini robot
+		minirobot = self.gamestate.minirobot
+		actions = get_actions_minirobot(minirobot, minirobot.asserv, enemies)
 		minirobot.set_actions(actions)
 
+		#
+		self.autostart		= autostart
+		self.t_begin_match	= time.time()
+		self.match_timeout	= match_timeout
 
+		self.e_jack			= threading.Event()
 
-		#####
-		## Gamestate
-		#####
-		self.gamestate = GameState(self.ircbot, canal_big_asserv, canal_mini_asserv, bigrobot, minirobot, enemy1, enemy2)
-
-
-		
-
-		#####
-		## Statistiques
-		#####
-		self.time_last_show_stats	= 0
-		self.sums = {}
-		self.sums['mainloop'] = {'t':0, 'n':0}
+		self.reset()
 
 
 	def reset(self):
 		self.gamestate.reset()
-		self.debug.reset()
+		self.ircbot.reset()
+		self.state_match	= STATE_WAIT_JACK1
+		self.state_mini	= 0
+		self.state_big	= 0
+		time.sleep(0.5)
+	
+	def loop(self):
+
+		# si le match a durée depuis trop longtemps, on s'arrête
+		if self.match_timeout and (time.time() - self.t_begin_match) > self.match_timeout:
+			self.next_state_match()
 
 
-	def start(self):
-		print("Attente de la connection au serveur IRC...")
-		self.ircbot.e_welcome.wait()
-		print("Get latency big asserv")
-		print(self.gamestate.bigrobot.asserv.get_latency())
-		print("Get latency mini asserv")
-		print(self.gamestate.bigrobot.asserv.get_latency())
-		print("Ping hokuyo")
-		print(self.gamestate.hokuyo.get_latency())
-		#input("appuyez sur une touche pour démarrer")
-		self.mainloop()
+		# appellé la fonction correspondant à l'état acutel
+		if 		STATE_PLAY	== self.state_match:
+			self.loopPlay()
+		elif 	STATE_RECAL	== self.state_match:
+			self.loopRecal()
+		elif 	STATE_POST_RECAL == self.state_match:
+			self.loopPostRecal()
+		else:
+			self.loopJack()
 
-	def stop(self):
-		self.ircbot.stop()
-		print("Exit")
-
-	def mainloop(self):
-		self.debug.reset()
-		# premier rafraichissement
+	def loopJack(self):
+		print("attente du jack...")
+		if self.autostart:
+			if 		STATE_WAIT_JACK1 == self.state_match:
+				self.on_jack_event(JACK_IN)
+			elif 	STATE_WAIT_JACK2 == self.state_match:
+				self.on_jack_event(JACK_OUT)
+			else:
+				self.on_jack_event(JACK_OUT)
+		else:
+			self.e_jack.wait(2)
+		
+			
+	def loopPlay(self):
+		
+		# demande de rafraichissement
 		self.gamestate.ask_update()
+
+		self.gamestate.update_robots()
+
+		
+		# gogogo robots !
+		self.loopRobot(self.gamestate.bigrobot)
+		self.loopRobot(self.gamestate.minirobot)
+		
+		# debug
+		"""self.debug.remove_circle(ID_DEBUG_ENEMY1)
+		self.debug.draw_circle(self.gamestate.enemy1.pos, R_ENEMY, BLUE, ID_DEBUG_ENEMY1)
+		
+		self.debug.remove_circle(ID_DEBUG_ENEMY2)
+		self.debug.draw_circle(self.gamestate.enemy2.pos, R_ENEMY, BLUE, ID_DEBUG_ENEMY2)"""
+		
+		"""self.debug.remove_circle(ID_DEBUG_BIGROBOT)
+		self.debug.draw_circle(self.gamestate.bigrobot.pos, R_ENEMY, RED, ID_DEBUG_BIGROBOT)
+		
+		self.debug.remove_circle(ID_DEBUG_MINIROBOT)
+		self.debug.draw_circle(self.gamestate.minirobot.pos, R_ENEMY, RED, ID_DEBUG_MINIROBOT)"""
+
+		# attente du rafraichissement
 		self.gamestate.wait_update()
-		# mainloop
-		while 1:
-			start_main_loop = time.time()
 
-			# demande de rafraichissement
-			self.gamestate.ask_update()
-
-			self.gamestate.update_robots()
-
-			
-			# gogogo robots !
-			self.loopRobot(self.gamestate.bigrobot)
-			self.loopRobot(self.gamestate.minirobot)
-			
-			# debug
-			"""self.debug.remove_circle(ID_DEBUG_ENEMY1)
-			self.debug.draw_circle(self.gamestate.enemy1.pos, R_ENEMY, BLUE, ID_DEBUG_ENEMY1)
-			
-			self.debug.remove_circle(ID_DEBUG_ENEMY2)
-			self.debug.draw_circle(self.gamestate.enemy2.pos, R_ENEMY, BLUE, ID_DEBUG_ENEMY2)"""
-			
-			"""self.debug.remove_circle(ID_DEBUG_BIGROBOT)
-			self.debug.draw_circle(self.gamestate.bigrobot.pos, R_ENEMY, RED, ID_DEBUG_BIGROBOT)
-			
-			self.debug.remove_circle(ID_DEBUG_MINIROBOT)
-			self.debug.draw_circle(self.gamestate.minirobot.pos, R_ENEMY, RED, ID_DEBUG_MINIROBOT)"""
-
-			# attente du rafraichissement
-			self.gamestate.wait_update()
-
-
-			# calcul du temps écoulé
-			self.sums['mainloop']['t'] += time.time() - start_main_loop
-			self.sums['mainloop']['n'] += 1
-
-			self.stats()
-				
-			delay = max(0.05, 0.2 - time.time() - start_main_loop)
-			time.sleep(delay)
 	
 	def loopRobot(self, robot):
 
@@ -225,7 +163,7 @@ class IaUtcoupe:
 				if robot.is_new_action(best_action):
 					print("CHANGEMENT D'ACTION")
 					asserv.cancel()
-					self.debug.draw_path(best_action.path, RED, id(robot))
+					self.debug.draw_path(best_action.path, (255,0,0), id(robot))
 					print(robot.pos, best_action.point_acces, best_action.path)
 					robot.set_target_action(best_action, best_action.path)
 
@@ -245,6 +183,158 @@ class IaUtcoupe:
 			else:
 				print("No reachable actions")
 
+	def mini_next_on_response_2(self, next_state):
+		def __f(n, canal, args, kwargs):
+			print("HELLO", n, canal, args, kwargs)
+			if n == 1:
+				self.state_mini = next_state
+		return __f
+		
+	def big_next_on_response_2(self, next_state):
+		def __f(n, canal, args, kwargs):
+			if n == 1:
+				self.state_big = next_state
+		return __f
+		
+	def loopRecal(self):
+		"""
+		Phase de racalage du robot au début
+		"""
+		print("RECALAGE", self.state_big, self.state_mini)
+		
+		minirobot = self.gamestate.minirobot
+		bigrobot = self.gamestate.bigrobot
+
+		
+		if 0 == self.state_mini and \
+		   0 == self.state_big:
+			self.reset()
+			bigrobot.asserv.cancel(block=True)
+			minirobot.asserv.cancel(block=True)
+			bigrobot.extras.teleport(self.p((1100,250)), self.a(90))
+			minirobot.extras.teleport(self.p((250,250)), self.a(90))
+			# petit et gros reculent et se calent contre le mur
+			minirobot.asserv.pwm(-100)
+			bigrobot.asserv.pwm(-100)
+			time.sleep(1)
+			minirobot.asserv.cancel(block=True)
+			bigrobot.asserv.cancel(block=True)
+			self.state_mini = 1
+			self.state_big = 1
+
+		if 1 == self.state_mini:
+			# petit avance de 10cm
+			self.state_mini = 42
+			minirobot.asserv.gotor((100,0), handler=self.mini_next_on_response_2(2))
+
+		if 1 == self.state_big:
+			# gros avance de 10cm
+			self.state_big = 42
+			bigrobot.asserv.gotor((100,0), handler=self.big_next_on_response_2(2))
+			
+		if 2 == self.state_mini:
+			# petit tourne de 90°
+			self.state_mini = 42
+			minirobot.asserv.turnr(self.a(-90), handler=self.mini_next_on_response_2(3))
+			
+		if 2 == self.state_big:
+			# gros tourne de 90°
+			self.state_big = 42
+			bigrobot.asserv.turnr(self.a(-90), handler=self.big_next_on_response_2(3))
+		
+		if 3 == self.state_mini:
+			# petit recul et se cale contre le mur
+			minirobot.asserv.pwm(-100)
+			time.sleep(1)
+			minirobot.asserv.cancel(block=True)
+			# petit avance de 10cm
+			self.state_mini = 42
+			minirobot.asserv.gotor((100,0), handler=self.mini_next_on_response_2(4))
+		elif 4 == self.state_mini:
+			# petit sort
+			self.state_mini = 42
+			minirobot.asserv.goto(self.p((700,250)), handler=self.mini_next_on_response_2(5))
+		elif 5 == self.state_mini:
+			# petit tourne
+			self.state_mini = 42
+			minirobot.asserv.turn(self.a(90), handler=self.mini_next_on_response_2(6))
+		elif 6 == self.state_mini:
+			# petit avance de 40cm
+			self.state_mini = 42
+			minirobot.asserv.gotor((400,0), handler=self.mini_next_on_response_2(7))
+
+		if 3 == self.state_big and 7 == self.state_mini:
+			# gros recul de 60cm
+			self.state_big = 42
+			bigrobot.asserv.gotor((-700,0), -500, handler=self.big_next_on_response_2(4))
+
+		if 7 == self.state_mini and 4 == self.state_big:
+			# petit recul
+			self.state_mini = 42
+			minirobot.asserv.goto(self.p((700,250)), -500, handler=self.mini_next_on_response_2(8))
+		elif 8 == self.state_mini:
+			# petit tourne
+			self.state_mini = 42
+			minirobot.asserv.turn(self.a(0), handler=self.mini_next_on_response_2(9))
+		elif 9 == self.state_mini:
+			# petit se pause contre le gros
+			self.state_mini = 42
+			minirobot.asserv.goto(self.p((400,250)), -500, handler=self.mini_next_on_response_2(10))
+			
+		if 4 == self.state_big:
+			# gros recul et se cale contre le mur
+			self.state_big = 42
+			bigrobot.asserv.pwm(-100)
+			time.sleep(1)
+			bigrobot.asserv.cancel(block=True)
+			self.state_big = 5
+
+		if 10 == self.state_mini:
+			# et hop on lance les robots
+			#bigrobot.asserv.cancel(block=True)
+			#minirobot.asserv.cancel(block=True)
+			self.state_mini = 0
+			self.state_big = 0
+			print("POST RECALAGE", self.state_big, self.state_mini)
+			self.next_state_match()
+			print("POST RECALAGE", self.state_big, self.state_mini)
+			time.sleep(1)
+			print("POST RECALAGE", self.state_big, self.state_mini)
+
+	def loopPostRecal(self):
+		"""
+		Sortir de la zone de départ
+		"""
+		print("POST RECALAGE", self.state_big, self.state_mini)
+		
+		minirobot = self.gamestate.minirobot
+		bigrobot = self.gamestate.bigrobot
+		
+		if 0 == self.state_mini and \
+		   0 == self.state_big:
+			bigrobot.asserv.cancel(block=True)
+			minirobot.asserv.cancel(block=True)
+			self.state_mini = 1
+			self.state_big = 42
+
+		if self.state_mini == 1:
+			# avancer le petit robot
+			self.state_mini = 42
+			minirobot.asserv.goto((500,250), handler=self.mini_next_on_response_2(2))
+		elif self.state_mini == 2:
+			self.state_mini = 42
+			self.state_big = 42
+			minirobot.asserv.goto((1200,250), handler=self.mini_next_on_response_2(3))
+			bigrobot.asserv.goto((700,250), handler=self.big_next_on_response_2(3))
+		elif 3 == self.state_mini and \
+			 3 == self.state_big:
+			self.state_mini = 0
+			self.state_big = 0
+			self.next_state_match()
+			
+			
+		
+	
 	def stats(self):
 		time_since_last_show_stats = time.time() - self.time_last_show_stats
 		if time_since_last_show_stats >= 2:
@@ -253,11 +343,77 @@ class IaUtcoupe:
 			print(self.gamestate.bigrobot.actions)
 			print(self.gamestate.minirobot.actions)
 
-	def print_stats(self):
-		for k, s in self.sums.items():
-			if s['n'] != 0:
-				print(k, s['t']/s['n'])
-		self.gamestate.print_stats()
+	def next_state_match(self):
+		if STATE_PLAY == self.state_match:
+			self.state_match = 0
+		else:
+			self.state_match += 1
 
+	def _on_jack_event(self, n, canal, args, kwargs):
+		try:
+			state = int(args[0])
+		except:
+			print("ERROR _on_jack_event, n=%s, canal=%s, args=(%s), kargs=(%s)" % (n, canal, args, kwargs))
+		else:
+			self.on_jack_event(state)
+		
+	
+	def on_jack_event(self, state):
+		"""
+		Fonction appellé lorsque le jack est tiré
+		@param state état du jack
+		"""
+		# jack enfoncé au début -> recalage
+		if 		STATE_WAIT_JACK1	== self.state_match \
+			and JACK_IN				== state:
+			self.state_match = STATE_RECAL
+		# jack tiré pendant le recalage -> arret, repart au début
+		elif 	STATE_RECAL				== self.state_match \
+			and JACK_OUT				== state:
+			self.state_match = STATE_WAIT_JACK1
+		# jack tiré après le recalage -> départ
+		elif 	STATE_WAIT_JACK2		== self.state_match \
+			and JACK_OUT				== state:
+			self.state_match = STATE_POST_RECAL
+		self.e_jack.set()
 
+	def p(self, p):
+		"""
+		inverse la position si le robot est rouge, à utiliser dans les
+		scripts fixes
+		@param {position} p
+		@return inverse p
+		"""
+		print("HELLO", self.team, RED)
+		if self.team == RED:
+			return [self.x(p[0]), p[1]]
+		else:
+			return p
+	
+	def x(self, x):
+		"""
+		inverse X si la couleur du robot est rouge, à utiliser dans les
+		scripts fixes
+		@param x
+		@return (3000 - x) si rouge sinon x
+		"""
+		if self.team == RED:
+			return 3000 - x
+		else:
+			return x
+
+	def a(self, a):
+		"""
+		inverse l'angle si la couleur du robot est rouge, à utiliser dans
+		les scripts fixes
+		@param {degrès} a
+		@return (a + 180) si rouge sinon a
+		"""
+		if self.team == RED:
+			if a > 0:
+				return 180 - a
+			else:
+				return 180 + a
+		else:
+			return a
 		

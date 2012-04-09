@@ -1,4 +1,7 @@
-#include "Arduino.h"
+#include "WProgram.h"
+#include "wiring.h"
+
+
 #include "led.h"
 
 

@@ -63,6 +63,7 @@ if __name__ == "__main__":
 		engine				= engine,
 		canal_asserv		= CANAL_BIG_ASSERV,
 		canal_others		= CANAL_BIG_OTHERS,
+		canal_extras		= CANAL_BIG_EXTRAS,
 		posinit				= mm_to_px(250,250),
 		team				= BLUE
 	)
@@ -70,6 +71,7 @@ if __name__ == "__main__":
 		engine				= engine,
 		canal_asserv		= CANAL_MINI_ASSERV,
 		canal_others		= CANAL_MINI_OTHERS,
+		canal_extras		= CANAL_MINI_EXTRAS,
 		posinit				= mm_to_px(400,250),
 		team				= BLUE,
 		match				= match
@@ -78,6 +80,7 @@ if __name__ == "__main__":
 		engine				= engine,
 		canal_asserv		= CANAL_BIG_ASSERV+'2',
 		canal_others		= CANAL_BIG_OTHERS+'2',
+		canal_extras		= CANAL_BIG_EXTRAS+'2',
 		posinit				= mm_to_px(3000-250,250),
 		team				= RED
 	)
@@ -85,6 +88,7 @@ if __name__ == "__main__":
 		engine				= engine,
 		canal_asserv		= CANAL_MINI_ASSERV+'2',
 		canal_others		= CANAL_MINI_OTHERS+'2',
+		canal_extras		= CANAL_MINI_EXTRAS+'2',
 		posinit				= mm_to_px(3000-400,250),
 		team				= RED,
 		match				= match
@@ -98,7 +102,8 @@ if __name__ == "__main__":
 	canaux = (
 		CANAL_BIG_ASSERV,CANAL_MINI_ASSERV,CANAL_BIG_ASSERV+'2',CANAL_MINI_ASSERV+'2',
 		CANAL_BIG_OTHERS,CANAL_MINI_OTHERS,CANAL_BIG_OTHERS+'2',CANAL_MINI_OTHERS+'2',
-		CANAL_HOKUYO, CANAL_DEBUG
+		CANAL_HOKUYO, CANAL_DEBUG,
+		CANAL_BIG_EXTRAS, CANAL_MINI_EXTRAS, CANAL_BIG_EXTRAS+'2', CANAL_MINI_EXTRAS+'2',
 	)
 	ircbot = SimuIrcBot(options.server_ip, options.server_port, canaux)
 	ircbot.add_executer(debug)
