@@ -6,6 +6,9 @@
 #include <vector>
 #include "parametres.h"
 
-cv::Point2f px2mm(cv::Point2f & p);
+using namespace std;
 
+cv::Point2f px2mm(cv::Point2f & p);
+cv::Point2f px2mm(cv::Point & p);
+void px2mm(vector<cv::Point> & p);
 #endif
