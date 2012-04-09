@@ -2,7 +2,7 @@
 
 from .action import *
 
-
+from .define import *
 
 class ActionTotem(Action):
 
@@ -36,10 +36,10 @@ class ActionCarte(Action):
 def get_actions_bigrobot(robot, asservissement, enemies):
 	actions = []
 	# totems
-	actions.append(ActionTotem(robot, asservissement, enemies, (1100,1350), ActionTotem.DIRECTION_BAS))
-	actions.append(ActionTotem(robot, asservissement, enemies, (1900,1350), ActionTotem.DIRECTION_BAS))
-	actions.append(ActionTotem(robot, asservissement, enemies, (1100,650), ActionTotem.DIRECTION_HAUT))
-	actions.append(ActionTotem(robot, asservissement, enemies, (1900,650), ActionTotem.DIRECTION_HAUT))
+	actions.append(ActionTotem(robot, asservissement, enemies, (1100,1125+R_BIGROBOT+1), ActionTotem.DIRECTION_BAS))
+	actions.append(ActionTotem(robot, asservissement, enemies, (1900,1125+R_BIGROBOT+1), ActionTotem.DIRECTION_BAS))
+	actions.append(ActionTotem(robot, asservissement, enemies, (1100,875-R_BIGROBOT-1), ActionTotem.DIRECTION_HAUT))
+	actions.append(ActionTotem(robot, asservissement, enemies, (1900,875-R_BIGROBOT-1), ActionTotem.DIRECTION_HAUT))
 
 
 	return actions
@@ -50,8 +50,8 @@ def get_actions_bigrobot(robot, asservissement, enemies):
 def get_actions_minirobot(robot, asservissement, enemies):
 	actions = []
 	# bouteilles
-	actions.append(ActionBouteille(robot, asservissement, enemies, (640, 1750)))
-	actions.append(ActionBouteille(robot, asservissement, enemies, (1883, 1750)))
-	actions.append(ActionCarte(robot, enemies, (1500, 250)))
+	actions.append(ActionBouteille(robot, asservissement, enemies, (640, 2000 - R_MINIROBOT - 10)))
+	actions.append(ActionBouteille(robot, asservissement, enemies, (1883, 2000 - R_MINIROBOT - 10)))
+	actions.append(ActionCarte(robot, enemies, (1500, R_MINIROBOT + 10)))
 
 	return actions

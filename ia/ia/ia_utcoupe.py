@@ -123,6 +123,9 @@ class IaUtcoupe(IaBase):
 		self.loopRobot(self.gamestate.bigrobot)
 		self.loopRobot(self.gamestate.minirobot)
 		
+		# attente du rafraichissement
+		self.gamestate.wait_update()
+		
 		# debug
 		self.debug.remove_circle(1, ID_DEBUG_ENEMY1)
 		self.debug.draw_circle(self.gamestate.enemy1.pos, R_ENEMY, (0,0,255), 1, ID_DEBUG_ENEMY1)
@@ -131,13 +134,11 @@ class IaUtcoupe(IaBase):
 		self.debug.draw_circle(self.gamestate.enemy2.pos, R_ENEMY, (0,0,255), 1, ID_DEBUG_ENEMY2)
 		
 		self.debug.remove_circle(1, ID_DEBUG_BIGROBOT)
-		self.debug.draw_circle(self.gamestate.bigrobot.pos, R_ENEMY, (0,255,0), 1, ID_DEBUG_BIGROBOT)
+		self.debug.draw_circle(self.gamestate.bigrobot.pos, R_BIGROBOT, (0,255,0), 1, ID_DEBUG_BIGROBOT)
 		
 		self.debug.remove_circle(1, ID_DEBUG_MINIROBOT)
-		self.debug.draw_circle(self.gamestate.minirobot.pos, R_ENEMY, (0,255,0), 1, ID_DEBUG_MINIROBOT)
+		self.debug.draw_circle(self.gamestate.minirobot.pos, R_MINIROBOT, (0,255,0), 1, ID_DEBUG_MINIROBOT)
 
-		# attente du rafraichissement
-		self.gamestate.wait_update()
 
 	
 	def loopRobot(self, robot):
