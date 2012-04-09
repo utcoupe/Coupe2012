@@ -21,6 +21,7 @@ default["ia"]				= 'u'
 default["player_team"]		= 'blue'
 default["autostart"]		= 0
 default["timeout"]			= -1
+default["skip"]				= 0
 
 usage = "usage: %prog [options]"
 parser = optparse.OptionParser(usage,version="%prog 0.0")
@@ -42,6 +43,9 @@ parser.add_option("-a", "--autostart",
 parser.add_option("-t", "--timeout",
 					action="store", dest="timeout", type="int", default=default["timeout"],
 					help="durée d'un latch en secondes, -1 pour infini")
+parser.add_option("-s", "--skip",
+					action="store", dest="skip", type="int", default=default['skip'],
+					help="sauter une étape ?")
 (options, args) = parser.parse_args()
 
 if 		'b' == options.ia:
@@ -70,7 +74,8 @@ myia = IaChoosen(
 	canal_big_extras	= CANAL_BIG_EXTRAS + ("2" if t else ""),
 	canal_mini_extras	= CANAL_MINI_EXTRAS + ("2" if t else ""),
 	autostart			= (options.autostart==1),
-	match_timeout		= options.timeout if options.timeout > 0 else None
+	match_timeout		= options.timeout if options.timeout > 0 else None,
+	skip_recalage		= (options.skip == 1),
 )
 
 

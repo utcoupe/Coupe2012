@@ -14,17 +14,8 @@ from .graph import NavGraph
 from .debug import Debug
 from .action import Action
 from .actions import *
+from .define import *
 
-
-
-FILENAME_MAP	= "map.xml"
-R_BIGROBOT		= 200
-R_MINIROBOT		= 200
-R_ENEMY			= 200
-ID_DEBUG_BIGROBOT	= 42
-ID_DEBUG_MINIROBOT	= 43
-ID_DEBUG_ENEMY1		= 56
-ID_DEBUG_ENEMY2		= 57
 
 
 class IaBase:
@@ -98,8 +89,8 @@ class IaBase:
 
 		# création du graph de déplacement
 		ng = NavGraph(R_BIGROBOT,FILENAME_MAP)
-		ng.add_dynamic_obstacle(ConvexPoly().initFromCircle(self.init_pos['enemy1'],200,8))
-		ng.add_dynamic_obstacle(ConvexPoly().initFromCircle(self.init_pos['enemy2'],200,8))
+		ng.add_dynamic_obstacle(ConvexPoly().initFromCircle(self.init_pos['enemy1'],R_ENEMY,8))
+		ng.add_dynamic_obstacle(ConvexPoly().initFromCircle(self.init_pos['enemy2'],R_ENEMY,8))
 		ng.add_dynamic_obstacle(ConvexPoly().initFromCircle(self.init_pos['mini'],R_MINIROBOT,8))
 		ng.update()
 		
@@ -124,9 +115,9 @@ class IaBase:
 		#####
 		
 		# création du graph de déplacement
-		ng = NavGraph(R_BIGROBOT,FILENAME_MAP)
-		ng.add_dynamic_obstacle(ConvexPoly().initFromCircle(self.init_pos['enemy1'],200,8))
-		ng.add_dynamic_obstacle(ConvexPoly().initFromCircle(self.init_pos['enemy2'],200,8))
+		ng = NavGraph(R_MINIROBOT,FILENAME_MAP)
+		ng.add_dynamic_obstacle(ConvexPoly().initFromCircle(self.init_pos['enemy1'],R_ENEMY,8))
+		ng.add_dynamic_obstacle(ConvexPoly().initFromCircle(self.init_pos['enemy2'],R_ENEMY,8))
 		ng.add_dynamic_obstacle(ConvexPoly().initFromCircle(self.init_pos['big'],R_BIGROBOT,8))
 		ng.update()
 

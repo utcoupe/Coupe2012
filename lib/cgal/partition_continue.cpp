@@ -17,6 +17,8 @@
 	#define log(s)
 #endif
 
+#define log_err(s) std::cerr << __FILE__ << '(' << __LINE__ << ") : " << s << std::endl;
+
 
 struct FaceInfo2
 {
@@ -169,7 +171,10 @@ bool trouer_polygon(const Polygon_with_holes & poly, Pwh_list_2 & result)
     log("nb_trous ?");
     std::cin >> nb_trous;
 
-    if (nb_trous < 0) return false;
+    if (nb_trous < 0) {
+		log_err("nombre de trous < 0");
+		return false;
+	}
     if (nb_trous == 0) return true;
     
     ask_polygon(trou);
@@ -214,7 +219,7 @@ void ask_map(Polygon_with_holes& map)
 
     if (difference.size() != 1)
     {
-		log("la définition de la map n'est pas cohérente (Err:1)");
+		log_err("la définition de la map n'est pas cohérente (Err:1)");
 		exit(0);
 	}
 	
@@ -222,7 +227,7 @@ void ask_map(Polygon_with_holes& map)
 
 	if (offset_poly_with_holes.size() != 1)
 	{
-		log("la définition de la map n'est pas cohérente (Err:2)");
+		log_err("la définition de la map n'est pas cohérente (Err:2)");
 		exit(0);
 	}
 
@@ -285,7 +290,10 @@ bool read_incoming_datas(const Polygon_with_holes& map)
 		log(*vit);
 	}*/
 	
-    if (!trouer_polygon(map, difference)) return false;
+    if (!trouer_polygon(map, difference)) {
+		log_err("impossible de trouer le polygon");
+		return false;
+	}
 
     if (difference.size() > 0)
     {
@@ -297,7 +305,7 @@ bool read_incoming_datas(const Polygon_with_holes& map)
 				insert_polygon_with_holes(cdt, *pwhit);
 			}
 			else
-				std::cout << "erreur" << std::endl;
+				log_err("poly is bounded");
 		}
 	}
 	else

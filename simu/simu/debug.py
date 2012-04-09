@@ -73,8 +73,8 @@ class Debug(Executer):
 	
 	def cmd_debug_clear_all(self, **kwargs):
 		self.lock.acquire()
-		self.circles = {}
-		self.segments = {}
+		self.circles.clear()
+		self.segments.clear()
 		self.lock.release()
 
 	def cmd_debug_reset(self, **kwargs):
