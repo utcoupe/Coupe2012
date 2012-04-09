@@ -1,6 +1,7 @@
 #include <opencv/cv.h>
 #include <opencv/highgui.h>
 #include <vector>
+#include <cmath>
 #include "../include/detection.h"
 #include <iostream>
 #include "../include/tools.h"
@@ -74,4 +75,64 @@ void onMouse(int event, int x, int y, int flags, void * param)
     }
 }
 
+void findObjects(cv::Mat src, vector<cv::Point>& VecOfPosition) {
 
+    vector<cv::Point> result;
+    vector<vector<cv::Point> > contours;
+    vector<cv::Vec4i> hierarchy;
+
+    cv::findContours( src, contours, hierarchy, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE );
+
+//    result.resize(contours.size());
+
+    for (unsigned int i=0; i < contours.size(); i++)
+    {
+        cv::Point bary;
+        vector<cv::Point> contour = contours[i];
+        bary = barycentre(contour);
+        if (not EliminatedContour(contour, bary))
+        {
+        result.push_back(bary);
+        }
+    }
+    VecOfPosition = result;
+}
+
+void MousePick(cv::Mat& warped, cv::Mat& binary, const vector<cv::Point>& Positions_Display, ParamonMouse& paramonmouse)
+{
+        cv::Mat warped_hsv;
+        paramonmouse.image = &warped;
+
+		cvSetMouseCallback( "Warped", onMouse, &paramonmouse);
+
+		cv::cvtColor(warped, warped_hsv, CV_BGR2HSV);
+		cv::GaussianBlur(warped_hsv, warped_hsv, cv::Size (9, 9), 2, 2);
+
+
+
+		cv::inRange(warped_hsv, paramonmouse.hsv1, paramonmouse.hsv2, binary);
+		cv::GaussianBlur(binary, binary, cv::Size (9, 9), 2, 2);
+
+        for (unsigned int i=0; i < Positions_Display.size(); i++) {
+        cv::circle(warped, Positions_Display[i], 3, cv::Scalar(0,255,8), -1, 200, 0);
+        }
+		cv::imshow( "Warped", warped );
+}
+
+bool EliminatedContour(vector<cv::Point> contour, cv::Point bary)
+{
+    bary = px2mm(bary);
+    px2mm(contour);
+    unsigned int Norm = 0;
+    for (unsigned int i=0; i<contour.size(); i++)
+    {
+            Norm += sqrt ( pow( (contour[i].x - bary.x), 2) + pow( (contour[i].y - bary.y), 2) );
+    }
+    Norm = Norm/contour.size();
+
+    if (Norm >= TOLERANCE_MIN and Norm <= TOLERANCE_MAX)
+    {
+        return false;
+    }
+    else return true;
+}
