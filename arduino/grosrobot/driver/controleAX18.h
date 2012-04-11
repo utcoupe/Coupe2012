@@ -11,7 +11,5 @@ extern AX12 motor[NB_MOTEURS];
 
 void cherche_moteurs(void);
 
-int bougerPeigne(int degre, int vitesse, int moteur);
-
-
+int bougerMoteur(int angle, int vitesse, int moteur);
 #endif

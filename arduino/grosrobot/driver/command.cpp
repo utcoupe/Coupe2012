@@ -22,16 +22,34 @@ void cmd(int id, int header, int *args, int size){
 			else
 			{
 				goal = (long int)args[0]*(long int)1023/(long int)300;
-				res = bougerPeigne(goal, args[1], AX18_PEIGNE_G);
+				res = bougerMoteur(goal, args[1], AX18_PEIGNE_G);
 				if(res > 0)
 				{
 					sendMessage(id, E_MERDE_AX18);
 				} 
-				res = bougerPeigne(goal, args[1], AX18_PEIGNE_D); 
+				res = bougerMoteur(1023 - goal, args[1], AX18_PEIGNE_D); 
 				if(res > 0)
 				{
 					sendMessage(id, E_MERDE_AX18);
 				}
+			}
+			break;
+		}
+		
+		case QO_BOUGER_TRAPPE:
+		{
+			int res = 0;
+			long int goal = 0;
+			if (size < 2)
+				sendMessage(id, E_INVALID_PARAMETERS_NUMBERS);
+			else
+			{
+				goal = (long int)args[0]*(long int)1023/(long int)300;
+				res = bougerMoteur(goal, args[1], AX18_TRAPPE);
+				if(res > 0)
+				{
+					sendMessage(id, E_MERDE_AX18);
+				} 
 			}
 			break;
 		}

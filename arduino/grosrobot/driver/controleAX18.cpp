@@ -33,7 +33,7 @@ void cherche_moteurs(void) {
 }
 
 
-int bougerPeigne(int angle, int vitesse, int moteur)  
+int bougerMoteur(int angle, int vitesse, int moteur)  
 {
 	int res = 0;
 		
@@ -41,3 +41,4 @@ int bougerPeigne(int angle, int vitesse, int moteur)
 		res = motor[moteur].writeInfo (GOAL_POSITION, angle); 
 		return res;
 }
+

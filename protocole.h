@@ -50,6 +50,12 @@
  * @param v [0:1023]
  */
 #define QO_BOUGER_PEIGNE 	4
+/**
+ * Ouverture Trappe
+ * @param a angle en degré
+ * @param v [0:1023]
+ */
+#define QO_BOUGER_TRAPPE 	5
 
 
 
