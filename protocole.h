@@ -286,5 +286,64 @@
 #define QH_KILL 9
 
 
+
+
+
+/////////////////////////////////////////////////////////////////////////
+//							TESTS
+/////////////////////////////////////////////////////////////////////////
+
+/**
+ * identifiant du client
+ * @return 'visio'
+ */
+#define QTEST_ID					150
+
+
+/**
+ * ping pong
+ * @return 'pong'
+ */
+#define QTEST_PING					151
+
+/**
+ * @param consign
+ */
+#define QTEST_SPEED					152
+
+
+/**
+ * @param consign
+ */
+#define QTEST_POSITION				149
+
+/**
+ * @param p
+ * @param i
+ * @param d
+ */
+#define QTEST_SETVPID				153
+
+/**
+ * @param p
+ * @param i
+ * @param d
+ */
+#define QTEST_SETPPID				154
+
+/**
+ * @param on_off
+ */
+#define QTEST_DEBUG					155
+
+
+/**
+ */
+#define QTEST_STOP					156
+
+/**
+ */
+#define QTEST_RESUME				157
+
 #endif
 
