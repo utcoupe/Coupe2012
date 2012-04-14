@@ -37,7 +37,7 @@ class ArduinoBot(BridgeBot):
 	def read(self):
 		return str(self.serial.readline(),"utf-8")
 
-def run(**args):
+def run(*, bot_class=ArduinoBot, **args):
 	import optparse
 
 	default = {}
@@ -88,7 +88,7 @@ def run(**args):
 		options.serial_baudrate,
 		options.protocol_file,
 		options.protocol_prefixe)
-	bot = ArduinoBot(
+	bot = bot_class(
 		options.server_ip,
 		options.server_port,
 		options.nickname,

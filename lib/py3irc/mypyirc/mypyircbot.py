@@ -61,7 +61,7 @@ class Executer:
 		self._send_color(CANAL_ERRORS, msg, background="red", bold=True)
 
 	def send_response(self, canal, id_msg, msg):
-		self.send(canal, SEP.join((PREFIX_CMD+"response",str(msg)))+SEP+"id_msg="+str(id_msg))
+		self.send(canal, SEP.join((PREFIX_CMD+"response",str(msg).strip()))+SEP+"id_msg="+str(id_msg))
 
 	def send(self, canal, *msg):
 		self._send(canal,self.compute_msg(*msg))
@@ -279,7 +279,7 @@ class MyPyIrcBot(ircbot.SingleServerIRCBot):
 		self.send_color(CANAL_ERRORS, msg, background="red", bold=True)
 
 	def send_response(self, canal, id_msg, msg):
-		self.send(canal, SEP.join((PREFIX_CMD+"response",str(msg)))+SEP+"id_msg="+str(id_msg))
+		self.send(canal, SEP.join((PREFIX_CMD+"response",str(msg).strip()))+SEP+"id_msg="+str(id_msg))
 
 	def add_cmd_function(self, canal, irc_cmd, cmd_function):
 		"""
