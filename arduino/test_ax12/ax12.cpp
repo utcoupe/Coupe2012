@@ -5,8 +5,9 @@
   versión 2.0 - 10/02/10
 */
 
-#include "WProgram.h"
-#include "wiring.h"
+#include "Arduino.h"
+
+
 
          // we need this for the serial port defines
 #include "ax12.h"

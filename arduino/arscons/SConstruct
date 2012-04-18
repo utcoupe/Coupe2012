@@ -152,7 +152,7 @@ cFlags = ['-ffunction-sections', '-fdata-sections', '-fno-exceptions',
     '-Os', '-mmcu=%s'%MCU]
 envArduino = Environment(CC = AVR_BIN_PREFIX+'gcc', CXX = AVR_BIN_PREFIX+'g++', AS=AVR_BIN_PREFIX+'gcc',
     CPPPATH = ['build/core'], CPPDEFINES = {'F_CPU':F_CPU, 'ARDUINO':ARDUINO_VER},
-    CFLAGS = cFlags+['-std=gnu99'], CCFLAGS = cFlags, ASFLAGS=['-assembler-with-cpp','-mmcu=%s'%MCU],
+    CFLAGS = cFlags+['-std=gnu99'], CCFLAGS = cFlags+['-std=gnu++0x'], ASFLAGS=['-assembler-with-cpp','-mmcu=%s'%MCU],
     TOOLS = ['gcc','g++', 'as'])
 
 

@@ -1,29 +1,23 @@
-*** build/core/HardwareSerial.cpp	2011-02-16 16:56:11.000000000 +0100
---- build/core_patched/HardwareSerial.cpp	2012-03-17 16:40:47.763109790 +0100
+*** build/core/HardwareSerial.cpp	2012-03-08 01:35:47.238186503 +0100
+--- build/core_patched/HardwareSerial.cpp	2012-03-08 01:48:59.190113574 +0100
 ***************
-*** 134,150 ****
-    #error No interrupt handler for usart 0
+*** 120,137 ****
+  #endif
   #endif
   
-! //#if defined(SIG_USART1_RECV)
-! #if defined(USART1_RX_vect)
-!   //SIGNAL(SIG_USART1_RECV)
-!   SIGNAL(USART1_RX_vect)
-!   {
-!     unsigned char c = UDR1;
-!     store_char(c, &rx_buffer1);
-!   }
-! #elif defined(SIG_USART1_RECV)
-!   #error SIG_USART1_RECV
-! #endif
+- #if defined(USART1_RX_vect)
+-   void serialEvent1() __attribute__((weak));
+-   void serialEvent1() {}
+-   #define serialEvent1_implemented
+-   SIGNAL(USART1_RX_vect)
+-   {
+-     unsigned char c = UDR1;
+-     store_char(c, &rx_buffer1);
+-   }
+- #elif defined(SIG_USART1_RECV)
+-   #error SIG_USART1_RECV
+- #endif
   
   #if defined(USART2_RX_vect) && defined(UDR2)
-    SIGNAL(USART2_RX_vect)
---- 134,140 ----
-    #error No interrupt handler for usart 0
-  #endif
-  
-! 
-  
-  #if defined(USART2_RX_vect) && defined(UDR2)
-    SIGNAL(USART2_RX_vect)
+    void serialEvent2() __attribute__((weak));
+--- 120,125 ----

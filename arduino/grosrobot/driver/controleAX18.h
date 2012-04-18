@@ -2,8 +2,9 @@
 #define _CONTROLE_AX18_H_
 
 #include "ax12.h"
-#include "wiring.h"
-#include "WProgram.h"
+#include "Arduino.h"
+
+
 
 #define NB_MOTEURS 3
 

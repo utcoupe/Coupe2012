@@ -1,6 +1,7 @@
 
-#include "WProgram.h"
-#include "wiring.h"
+#include "Arduino.h"
+
+
 
 
 #include "message.h"

@@ -1,7 +1,8 @@
 #ifndef __PERCPETEUR_H__
 #define __PERCEPTEUR_H__
 
-#include "WProgram.h"
+#include "Arduino.h"
+
 #include "message.h"
 
 #include "AFMotor.h"

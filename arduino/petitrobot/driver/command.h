@@ -1,8 +1,9 @@
 #ifndef COMMAND_H_
 #define COMMAND_H_
 
-#include "WProgram.h"
-#include "wiring.h"
+#include "Arduino.h"
+
+
 
 #include "message.h"
 #include "controle_ax12.h"

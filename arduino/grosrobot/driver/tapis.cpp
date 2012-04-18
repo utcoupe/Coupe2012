@@ -1,6 +1,7 @@
 #include "tapis.h"
 
-#include "WProgram.h"
+#include "Arduino.h"
+
 
 Tapis g_tapis;
 

@@ -1,6 +1,7 @@
 #include "balais.h"
 
-#include "WProgram.h"
+#include "Arduino.h"
+
 #include "message.h"
 
 Balais g_balais;
