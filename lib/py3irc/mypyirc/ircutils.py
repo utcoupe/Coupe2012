@@ -4,7 +4,7 @@ from .ircdefine import *
 
 def canal_ircnormalize(canal):
 	if not canal.startswith("#"):
-		canal += "#"
+		canal = "#"+canal
 	return canal.lower()
 
 def canal_clientnormalize(canal):
