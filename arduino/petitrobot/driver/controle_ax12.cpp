@@ -21,6 +21,7 @@ void cherche_moteurs(void) {
   AX12::autoDetect (detect, NB_MOTEURS);
   for (byte i=0; i<NB_MOTEURS; i++) {
     sendMessage(0, i);
+    sendMessage(0, detect[i]);
     motor[i].id = detect[i];
     motor[i].writeInfo (TORQUE_ENABLE, 1);               // habilita el torque
     motor[i].setEndlessTurnMode(false);                   // lo pone en modo de rotación continua
