@@ -176,7 +176,11 @@
  */
 #define QA_SET_PID_ANGLE_A	21
 
-
+/**
+ * Debug on
+ * @param b 0/1
+ */
+#define QA_DEBUG			22
 
 
 
