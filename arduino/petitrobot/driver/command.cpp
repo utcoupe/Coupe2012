@@ -28,7 +28,7 @@ void cmd(int id, int header, int *args, int size){
           sendMessage(id, E_INVALID_PARAMETERS_NUMBERS);
         else
           {
-            tourner(id, args[0], args[1]);
+            sendMessage(id, tourner(id, args[0], args[1]));
           }
         break;
       }
