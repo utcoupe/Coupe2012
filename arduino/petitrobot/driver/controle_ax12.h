@@ -7,11 +7,11 @@
 
 
 
-#define NB_MOTEURS 2
+#define NB_MOTEURS 4
 
 extern AX12 motor[NB_MOTEURS];
 
 void cherche_moteurs(void);
-void tourner(int id, int id_moteur, int position);
+byte tourner(int id, int id_moteur, int position);
 
 #endif /* C_AX12_H */
