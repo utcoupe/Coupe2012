@@ -28,6 +28,8 @@ class Regulator
 		
 		Regulator& reset();
 
+		double getOutLimit() const;
+
 	private:
 		double _out_limit;			// limite de sortie
 		PID _pid;
@@ -36,7 +38,7 @@ class Regulator
 class PosAndSpeedRegulator
 {
 	public:
-		typedef enum {BOTH, POSITION, SPEED} T_MOD;
+		typedef enum {BOTH, POSITION, SPEED, NONE} T_MOD;
 		PosAndSpeedRegulator();
 		double compute(double consign, double current_pos, double current_speed);
 

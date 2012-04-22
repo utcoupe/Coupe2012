@@ -1,6 +1,12 @@
 #ifndef PARAMETERS_H_
 #define PARAMETERS_H_
 
+#include <inttypes.h>
+
+typedef int32_t			TICKS;
+typedef int				MM;
+typedef double			RAD;
+typedef int				DEG;
 
 #define DUREE_CYCLE		2
 
