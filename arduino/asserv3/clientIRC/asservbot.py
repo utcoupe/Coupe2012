@@ -59,7 +59,7 @@ class DebugBot(arduinobot.ArduinoBot):
 		grid(True)
 		show()
 
-	def cmd_reset_plot(self, **kwargs):
+	def cmd_testasserv_clean(self, **kwargs):
 		self.t = []
 		self.x = []
 		self.v = []
@@ -72,4 +72,4 @@ if __name__ == "__main__":
 		channel="#testasserv",
 		serial_port="/dev/ttyACM0",
 		protocol_file=os.path.join(FILE_DIR,"..","..","protocole.h"),
-		protocol_prefixe="QTEST_")
+		protocol_prefixe="QA_")
