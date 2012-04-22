@@ -1,6 +1,6 @@
 #include "controle_ax12.h"
 
-AX12 motor[NB_MOTEURS] = {AX12 (), AX12 (), AX12(), AX12()};
+AX12 motor[NB_MOTEURS];
 int reverse[10] = {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1};
 
 byte tourner(int id, int id_moteur, int position) {
@@ -35,7 +35,7 @@ void cherche_moteurs(void) {
 
       // detect[i] est l'id interne du moteur (modifiable si besoin mais à ne pas faire pendant que le robot)
       // i est le numéro du moteur dans la chaine
-      motor[i].id = detect[i];
+      motor[i] = AX12(detect[i]);
       reverse[detect[i]] = i;
 
       motor[i].writeInfo (TORQUE_ENABLE, 1); // on doit activer ça sinon le moteur ne développe pas de couple
