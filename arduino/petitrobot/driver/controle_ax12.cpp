@@ -12,6 +12,14 @@ byte tourner(int id, int id_moteur, int position) {
   }
 }
 
+byte get_position(int id, int id_moteur) {
+  if (id_moteur > NB_MOTEURS) {
+    return E_INVALID_PARAMETERS_VALUE;
+  }
+  else {
+    return motor[id_moteur].readInfo (PRESENT_POSITION);
+  }
+}
 
 void cherche_moteurs(void) {
   AX12::init(1000000);

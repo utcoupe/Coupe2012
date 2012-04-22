@@ -13,5 +13,6 @@ extern AX12 motor[NB_MOTEURS];
 
 void cherche_moteurs(void);
 byte tourner(int id, int id_moteur, int position);
+byte get_position(int id, int id_moteur);
 
 #endif /* C_AX12_H */

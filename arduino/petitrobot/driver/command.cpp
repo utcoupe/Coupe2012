@@ -42,6 +42,14 @@ void cmd(int id, int header, int *args, int size){
           }
         break;
       }
+    case Q_GET_POS:
+      {
+        if (size < 1)
+          sendMessage(id, E_INVALID_PARAMETERS_NUMBERS);
+        else
+          sendMessage(id, get_position(id, args[0]));
+        break;
+      }
     default:
       {
         sendMessage(id,-1);
