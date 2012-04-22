@@ -21,7 +21,10 @@ typedef struct
 cv::Point barycentre (vector<cv::Point> & contour);
 void DeterminateHSV (ParamonMouse *parametre);
 void onMouse(int event, int x, int y, int flags, void * param);
-void findObjects(cv::Mat src, vector<cv::Point>& VecOfPosition);
-void MousePick(cv::Mat& warped, cv::Mat& binary, const vector<cv::Point>& Positions_Display, ParamonMouse& paramonmouse);
-bool EliminatedContour(vector<cv::Point> contour, cv::Point bary);
+void findObjects(cv::Mat src, vector<cv::Point>& VecOfPosition, int indice_objet);
+void MousePick(cv::Mat& warped, cv::Mat& binary, const vector<cv::Point>& Positions_Display,
+               ParamonMouse& paramonmouse, int index);
+void MousePick(cv::Mat& warped, cv::Mat& binary, const vector<cv::Point>& Positions_Display_CD,
+               ParamonMouse& paramonmouse, int index, const vector<cv::Point>& Positions_Display_LINGOT);
+bool EliminatedContour(vector<cv::Point> contour, cv::Point bary, int index);
 #endif // DETECTION_H

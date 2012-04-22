@@ -75,7 +75,7 @@ void onMouse(int event, int x, int y, int flags, void * param)
     }
 }
 
-void findObjects(cv::Mat src, vector<cv::Point>& VecOfPosition) {
+void findObjects(cv::Mat src, vector<cv::Point>& VecOfPosition, int indice_objet) {
 
     vector<cv::Point> result;
     vector<vector<cv::Point> > contours;
@@ -90,7 +90,7 @@ void findObjects(cv::Mat src, vector<cv::Point>& VecOfPosition) {
         cv::Point bary;
         vector<cv::Point> contour = contours[i];
         bary = barycentre(contour);
-        if (not EliminatedContour(contour, bary))
+        if (not EliminatedContour(contour, bary, indice_objet))
         {
         result.push_back(bary);
         }
@@ -98,28 +98,93 @@ void findObjects(cv::Mat src, vector<cv::Point>& VecOfPosition) {
     VecOfPosition = result;
 }
 
-void MousePick(cv::Mat& warped, cv::Mat& binary, const vector<cv::Point>& Positions_Display, ParamonMouse& paramonmouse)
+void MousePick(cv::Mat& warped, cv::Mat& binary, const vector<cv::Point>& Positions_Display_CD,
+               ParamonMouse& paramonmouse, int index, const vector<cv::Point>& Positions_Display_LINGOT)
 {
         cv::Mat warped_hsv;
         paramonmouse.image = &warped;
+
 
 		cvSetMouseCallback( "Warped", onMouse, &paramonmouse);
 
 		cv::cvtColor(warped, warped_hsv, CV_BGR2HSV);
 		cv::GaussianBlur(warped_hsv, warped_hsv, cv::Size (9, 9), 2, 2);
 
+        int CD_MIN_H = CD_H - HSV_TOLERANCE1;
+		int CD_MIN_S = CD_S - HSV_TOLERANCE2;
+		int CD_MIN_V = CD_V - HSV_TOLERANCE3;
 
+		int CD_MAX_H = CD_H + HSV_TOLERANCE1;
+		int CD_MAX_S = CD_S + HSV_TOLERANCE2;
+		int CD_MAX_V = CD_V + HSV_TOLERANCE3;
 
-		cv::inRange(warped_hsv, paramonmouse.hsv1, paramonmouse.hsv2, binary);
+        int LINGOT_MIN_H = LINGOT_H - HSV_TOLERANCE1;
+		int LINGOT_MIN_S = LINGOT_S - HSV_TOLERANCE2;
+		int LINGOT_MIN_V = LINGOT_V - HSV_TOLERANCE3;
+
+		int LINGOT_MAX_H = LINGOT_H + HSV_TOLERANCE1;
+		int LINGOT_MAX_S = LINGOT_S + HSV_TOLERANCE2;
+		int LINGOT_MAX_V = LINGOT_V + HSV_TOLERANCE3;
+
+        if (index == 0)
+            cv::inRange(warped_hsv, cvScalar(CD_MIN_H, CD_MIN_S, CD_MIN_V), cvScalar(CD_MAX_H, CD_MAX_S, CD_MAX_V), binary);
+        else if (index == 1)
+            cv::inRange(warped_hsv, cvScalar(LINGOT_MIN_H, LINGOT_MIN_S, LINGOT_MIN_V), cvScalar(LINGOT_MAX_H, LINGOT_MAX_S, LINGOT_MAX_V), binary);
+        else
+		    cv::inRange(warped_hsv, paramonmouse.hsv1, paramonmouse.hsv2, binary);
+
 		cv::GaussianBlur(binary, binary, cv::Size (9, 9), 2, 2);
 
-        for (unsigned int i=0; i < Positions_Display.size(); i++) {
-        cv::circle(warped, Positions_Display[i], 3, cv::Scalar(0,255,8), -1, 200, 0);
+        for (unsigned int i=0; i < Positions_Display_CD.size(); i++) {
+        cv::circle(warped, Positions_Display_CD[i], 3, cv::Scalar(150,8,16), -1, 200, 0);
+        }
+        for (unsigned int i=0; i < Positions_Display_LINGOT.size(); i++) {
+        cv::circle(warped, Positions_Display_LINGOT[i], 3, cv::Scalar(0,255,8), -1, 200, 0);
         }
 		cv::imshow( "Warped", warped );
 }
 
-bool EliminatedContour(vector<cv::Point> contour, cv::Point bary)
+void MousePick(cv::Mat& warped, cv::Mat& binary, const vector<cv::Point>& Positions_Display,
+               ParamonMouse& paramonmouse, int index)
+{
+        cv::Mat warped_hsv;
+        paramonmouse.image = &warped;
+
+
+		cvSetMouseCallback( "Warped", onMouse, &paramonmouse);
+
+		cv::cvtColor(warped, warped_hsv, CV_BGR2HSV);
+		cv::GaussianBlur(warped_hsv, warped_hsv, cv::Size (9, 9), 2, 2);
+
+        int CD_MIN_H = CD_H - HSV_TOLERANCE1;
+		int CD_MIN_S = CD_S - HSV_TOLERANCE2;
+		int CD_MIN_V = CD_V - HSV_TOLERANCE3;
+
+		int CD_MAX_H = CD_H + HSV_TOLERANCE1;
+		int CD_MAX_S = CD_S + HSV_TOLERANCE2;
+		int CD_MAX_V = CD_V + HSV_TOLERANCE3;
+
+        int LINGOT_MIN_H = LINGOT_H - HSV_TOLERANCE1;
+		int LINGOT_MIN_S = LINGOT_S - HSV_TOLERANCE2;
+		int LINGOT_MIN_V = LINGOT_V - HSV_TOLERANCE3;
+
+		int LINGOT_MAX_H = LINGOT_H + HSV_TOLERANCE1;
+		int LINGOT_MAX_S = LINGOT_S + HSV_TOLERANCE2;
+		int LINGOT_MAX_V = LINGOT_V + HSV_TOLERANCE3;
+
+        if (index == 0)
+            cv::inRange(warped_hsv, cvScalar(CD_MIN_H, CD_MIN_S, CD_MIN_V), cvScalar(CD_MAX_H, CD_MAX_S, CD_MAX_V), binary);
+        else if (index == 1)
+            cv::inRange(warped_hsv, cvScalar(LINGOT_MIN_H, LINGOT_MIN_S, LINGOT_MIN_V), cvScalar(LINGOT_MAX_H, LINGOT_MAX_S, LINGOT_MAX_V), binary);
+        else
+		    cv::inRange(warped_hsv, paramonmouse.hsv1, paramonmouse.hsv2, binary);
+
+		cv::GaussianBlur(binary, binary, cv::Size (9, 9), 2, 2);
+
+		cv::imshow( "Warped", warped );
+}
+
+bool EliminatedContour(vector<cv::Point> contour, cv::Point bary, int index)
 {
     bary = px2mm(bary);
     px2mm(contour);
@@ -130,9 +195,35 @@ bool EliminatedContour(vector<cv::Point> contour, cv::Point bary)
     }
     Norm = Norm/contour.size();
 
-    if (Norm >= TOLERANCE_MIN and Norm <= TOLERANCE_MAX)
+    if (index==0)
     {
-        return false;
+        if (Norm >= TOLERANCE_MIN_CD and Norm <= TOLERANCE_MAX_CD)
+        {
+            return false;
+        }
+        else return true;
     }
-    else return true;
+    else
+    {
+        if (Norm >= TOLERANCE_MIN_LINGOT and Norm <= TOLERANCE_MAX_LINGOT)
+        {
+            return false;
+        }
+        else return true;
+    }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

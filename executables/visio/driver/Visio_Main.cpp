@@ -24,12 +24,12 @@ using namespace std;
 cv::Vec3b hsv_selected;
 cv::Scalar hsv_pixel;
 bool hsv_selected_ready = false;
-vector<cv::Point> Positions_Display;
+vector<cv::Point> Positions_Display, Positions_Display_CD, Positions_Display_LINGOT;
 cv::Mat binary;
 pthread_mutex_t lock;
-
-
-
+bool lookForChessBoard_IRC=false;
+cv::Mat warped;
+ParamonMouse paramonmouse;
 
 
 /**
@@ -41,9 +41,10 @@ pthread_mutex_t lock;
 void DisplayPosition()
 {
     vector<cv::Point> Positions_Display_Temp;
-
     pthread_mutex_lock( &lock );
-    findObjects(binary, Positions_Display);
+    MousePick(warped, binary, Positions_Display, paramonmouse, 0);
+    findObjects(binary, Positions_Display, 0); //0 for CD, 1 for lingot: elimination tolerance depends on this index.
+    Positions_Display_CD = Positions_Display;
     pthread_mutex_unlock( &lock );
     Positions_Display_Temp = Positions_Display;
     stringstream ss;
@@ -53,9 +54,42 @@ void DisplayPosition()
 		    px2mm(Positions_Display_Temp[i]);
             ss << "(" << Positions_Display_Temp[i].x << "," << Positions_Display_Temp[i].y << ")";
 		}
-    ss << ")+()";
+    ss << ")+(";
+
+    pthread_mutex_lock( &lock );
+    MousePick(warped, binary, Positions_Display, paramonmouse, 1);
+    findObjects(binary, Positions_Display, 1); //0 for CD, 1 for lingot: elimination tolerance depends on this index.
+    Positions_Display_LINGOT = Positions_Display;
+    pthread_mutex_unlock( &lock );
+    Positions_Display_Temp = Positions_Display;
+        for (unsigned int i=0; i < Positions_Display_Temp.size(); i++)
+		{
+		    px2mm(Positions_Display_Temp[i]);
+            ss << "(" << Positions_Display_Temp[i].x << "," << Positions_Display_Temp[i].y << ")";
+		}
+    ss << ")";
     cout<<ss.str();
     ss.str("");
+}
+
+void id()
+{
+    cout<<"Visio";
+}
+
+void ping()
+{
+    cout<<"pong";
+}
+
+void QV_CALIB_PERSPECTIVE_1()
+{
+    lookForChessBoard_IRC=true;
+}
+
+void QV_CALIB_PERSPECTIVE_0()
+{
+    lookForChessBoard_IRC=false;
 }
 
 int main(int argc, char** argv)
@@ -65,13 +99,17 @@ int main(int argc, char** argv)
 
     lock = cm->getMutex();
 	cm->addFunction(QV_GET, &DisplayPosition);
+	cm->addFunction(QV_ID, &id);
+	cm->addFunction(QV_PING, &ping);
+	cm->addFunction(QV_CALIB_PERSPECTIVE_ON, &QV_CALIB_PERSPECTIVE_1);
+	cm->addFunction(QV_CALIB_PERSPECTIVE_OFF, &QV_CALIB_PERSPECTIVE_0);
 	cm->start();
 
 	//code main()
 
-	bool lookForChessBoard = false;
-	ParamonMouse paramonmouse;
 
+
+    bool lookForChessBoard = false;
 	int board_w = BOARD_W;
 	int board_h = BOARD_H;
 
@@ -94,7 +132,7 @@ int main(int argc, char** argv)
 		return 0;
 	}
 	cv::Mat image;
-	cv::Mat warped;
+
     cv::Mat gray;
 	cv::Mat warpMatrix;
 	cv::namedWindow( "Raw" , CV_WINDOW_AUTOSIZE);
@@ -115,7 +153,7 @@ int main(int argc, char** argv)
 		// Convert to gray
 
 
-        if (lookForChessBoard)
+        if (lookForChessBoard or lookForChessBoard_IRC)
 		{
             ChessboardFinder(image, gray, warpMatrix, warpok, found, lookForChessBoard, board_sz);
 		}
@@ -134,7 +172,7 @@ int main(int argc, char** argv)
 		if(not warped.empty())
 		{
         pthread_mutex_lock( &lock );
-        MousePick(warped, binary, Positions_Display, paramonmouse);
+        MousePick(warped, binary, Positions_Display_CD, paramonmouse, 2, Positions_Display_LINGOT);
         pthread_mutex_unlock( &lock );
         }
 		// Handle pause/unpause and ESC
