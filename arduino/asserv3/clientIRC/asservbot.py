@@ -28,10 +28,10 @@ class DebugBot(arduinobot.ArduinoBot):
 
 		if msg.startswith("plot"):
 			msg_split = msg.split()
-			t = int(msg_split[1].strip())
+			t = float(msg_split[1].strip())
 			x = float(msg_split[2].strip())
 			v = float(msg_split[3].strip())
-			pwm = int(msg_split[4].strip())
+			pwm = float(msg_split[4].strip())
 			self.t.append(t/1000)
 			self.x.append(x)
 			self.v.append(v)
@@ -58,6 +58,12 @@ class DebugBot(arduinobot.ArduinoBot):
 		title('title')
 		grid(True)
 		show()
+
+	def cmd_reset_plot(self, **kwargs):
+		self.t = []
+		self.x = []
+		self.v = []
+		self.pwm = []
 		
 if __name__ == "__main__":
 	arduinobot.run(
