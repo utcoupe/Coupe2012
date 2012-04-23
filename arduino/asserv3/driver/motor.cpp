@@ -6,8 +6,8 @@ AF_DCMotor moteurG;
 AF_DCMotor moteurD;
 
 void initPWM(){
-	moteurG = AF_DCMotor(2, MOTOR12_64KHZ);
-	moteurD = AF_DCMotor(1, MOTOR12_64KHZ);
+	moteurG = AF_DCMotor(2, MOTOR12_64KHZ); // A
+	moteurD = AF_DCMotor(1, MOTOR12_64KHZ); // B
 	moteurG.setSpeed(0);
 	moteurG.run(FORWARD);
 	moteurD.setSpeed(0);

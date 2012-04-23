@@ -197,6 +197,18 @@
  */
 #define QA_ASPEED			25
 
+/**
+ * @param p
+ * @param i
+ * @param d
+ */
+#define QA_SETPID			26
+
+/**
+ *
+ */
+#define QA_DUMP				27
+
 
 ////////////////////////////////////////////////////////////////////////
 ////						VISIO

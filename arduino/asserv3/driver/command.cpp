@@ -9,7 +9,10 @@
 #endif
 
 #include "globals.h"
+#include "goal.h"
+#include "tools.h"
 
+#include "control.h"
 
 
 
@@ -54,21 +57,79 @@ void cmd(int id, int id_cmd, int* args, int size){
 			break;
 		}
 
+		case QA_SETPID:
+		{
+			g_delta_regulator.setPosPID(args[0]/1000.0,args[1]/1000.0,args[2]/1000.0);
+			break;
+		}
+
+		case QA_DUMP:
+		{
+			dump();
+			break;
+		}
+
 		case QA_TURN:
 		{
-			g_goal_a = (double)args[0] * DEG_TO_RAD;
-			g_goal_x = g_observer.getX();
-			g_goal_y = g_observer.getY();
-			g_goal_type = GOAL_ANG;
+			g_debug_on = 1;
+			Goal::get()->set(
+				Goal::GOAL_ANG,
+				g_observer.getX(),
+				g_observer.getY(),
+				deg_to_rad(args[0]),
+				deg_s_to_rad_cycle(args[1]),
+				0.0
+			);
+			g_delta_regulator.setMod(PosAndSpeedRegulator::BOTH);
+			g_alpha_regulator.setMod(PosAndSpeedRegulator::BOTH);
 			break;
 		}
 
 		case QA_GOTO:
 		{
-			g_goal_a = 0.0;
-			g_goal_x = args[0] * ENC_MM_TO_TICKS;
-			g_goal_y = args[1] * ENC_MM_TO_TICKS;
-			g_goal_type = GOAL_POS;
+			g_debug_on = 1;
+			Goal::get()->set(
+				Goal::GOAL_POS,
+				mm_to_ticks(args[0]),
+				mm_to_ticks(args[1]),
+				0.0,
+				0.0,
+				mm_s_to_ticks_cycle(args[2])
+			);
+			g_delta_regulator.setMod(PosAndSpeedRegulator::BOTH);
+			g_alpha_regulator.setMod(PosAndSpeedRegulator::BOTH);
+			break;
+		}
+
+		case QA_DSPEED:
+		{
+			g_debug_on = 1;
+			Goal::get()->set(
+				Goal::GOAL_DELTA_SPEED,
+				(TICKS)0,
+				(TICKS)0,
+				0.0,
+				mm_s_to_ticks_cycle(args[0]),
+				0.0
+			);
+			g_delta_regulator.setMod(PosAndSpeedRegulator::SPEED);
+			g_alpha_regulator.setMod(PosAndSpeedRegulator::NONE);
+			break;
+		}
+
+		case QA_ASPEED:
+		{
+			g_debug_on = 1;
+			Goal::get()->set(
+				Goal::GOAL_ALPHA_SPEED,
+				(TICKS)0,
+				(TICKS)0,
+				0.0,
+				0.0,
+				deg_s_to_rad_cycle(args[0])
+			);
+			g_delta_regulator.setMod(PosAndSpeedRegulator::NONE);
+			g_alpha_regulator.setMod(PosAndSpeedRegulator::SPEED);
 			break;
 		}
 
@@ -88,28 +149,32 @@ void cmd(int id, int id_cmd, int* args, int size){
 			break;
 		}
 
-		case QA_POS:
-		{
-			int x_mm = g_observer.mm_getX();
-			int y_mm = g_observer.mm_getY();
-			int a_deg = g_observer.deg_getA();
-			int tab[] = {x_mm,y_mm,a_deg};
-			sendMessage(id,tab,3);
-			break;
-		}
-
 		case QA_RESET:
 		{
-			g_goal_type = GOAL_POS;
+			Goal::get()->reset();
 			g_debug_on = 0;
-			g_goal_x = 0;
-			g_goal_y = 0;
-			g_goal_a = 0.0;
 			g_observer.reset();
 			g_delta_regulator.reset();
 			g_alpha_regulator.reset();
 			G_value_left_enc = 0;
 			G_value_right_enc = 0;
+			break;
+		}
+
+		case QA_SET_POS:
+		{
+			g_observer.setPos(
+				mm_to_ticks(args[0]),
+				mm_to_ticks(args[1]),
+				deg_to_rad(args[2])
+			);
+			break;
+		}
+
+		case QA_POS:
+		{
+			int tab[3] = {(int)g_observer.mm_getX(), (int)g_observer.getY(), (int)g_observer.deg_getA()};
+			sendMessage(id, tab, 3);
 			break;
 		}
 		

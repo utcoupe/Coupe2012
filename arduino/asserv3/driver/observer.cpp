@@ -47,31 +47,31 @@ void RobotObserver::compute(int32_t left_value, int32_t right_value) {
 	_y += dy;
 }
 
-int32_t RobotObserver::getX() const {
+TICKS RobotObserver::getX() const {
 	return _x;
 }
 
-int32_t RobotObserver::getY() const {
+TICKS RobotObserver::getY() const {
 	return _y;
 }
 
-int32_t RobotObserver::mm_getX() const {
-	return ((double)_x) * ENC_TICKS_TO_MM;
+MM RobotObserver::mm_getX() const {
+	return mm_to_ticks(_x);
 }
 
-int32_t RobotObserver::mm_getY() const {
-	return ((double)_y) * ENC_TICKS_TO_MM;
+MM RobotObserver::mm_getY() const {
+	return mm_to_ticks(_y);
 }
 
-double RobotObserver::getA() const {
+RAD RobotObserver::getA() const {
 	return _a;
 }
 
-int RobotObserver::deg_getA() const {
+DEG RobotObserver::deg_getA() const {
 	return _a * RAD_TO_DEG;
 }
 
-int32_t RobotObserver::getSpeed() const {
+double RobotObserver::getSpeed() const {
 	return _speed;
 }
 
@@ -91,7 +91,11 @@ void RobotObserver::reset() {
 	_x = _y = _speed = _a = _speed_a = _prev_left_value = _prev_right_value = 0;
 }
 
-
+void RobotObserver::setPos(int32_t x, int32_t y, double a) {
+	_x = x;
+	_y = y;
+	_a = a;
+}
 
 
 

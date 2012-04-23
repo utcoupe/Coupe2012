@@ -41,12 +41,12 @@ double PID::computeErrSum(double err) {
 double PID::compute(double consign, double current) {
 	double err = consign - current;		// calcul erreur
 	double err_sum = computeErrSum(err);						// calcul intégrale
-	double delta_current = current - _last;	// dérivée de la sortie du process
-	//double delta_err = err - _last;
+	/*double delta_current = current - _last;	// dérivée de la sortie du process
 	double out = (_kp * err) + (_ki * _err_sum / NB_ERRORS) - (_kd * delta_current);	// PID
-	_last = current;					// sauvegarde
-	//double out = (_kp * err) + (_ki * _err_sum / NB_ERRORS) + (_kd * delta_err);	// PID
-	//_last = err;					// sauvegarde
+	_last = current;//*/					// sauvegarde
+	double delta_err = err - _last;
+	double out = (_kp * err) + (_ki * _err_sum / NB_ERRORS) + (_kd * delta_err);	// PID
+	_last = err;	//*/				// sauvegarde
 
 	return out;
 }

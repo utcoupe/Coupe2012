@@ -46,6 +46,10 @@ Regulator& Regulator::reset() {
 	_pid.reset();
 }
 
+double Regulator::getOutLimit() const {
+	return _out_limit;
+}
+
 
 PosAndSpeedRegulator::PosAndSpeedRegulator() : _last_speed_consign(0), _accel_limit(0), _mod(PosAndSpeedRegulator::BOTH), _on(true) {}
 
