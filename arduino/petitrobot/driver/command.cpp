@@ -50,6 +50,14 @@ void cmd(int id, int header, int *args, int size){
           sendMessage(id, get_position(id, args[0]));
         break;
       }
+    case Q_LIRE:
+      {
+        if (size < 1)
+          sendMessage(id, E_INVALID_PARAMETERS_NUMBERS);
+        else
+          sendMessage(id, lire(id, args[0], args[1]));
+        break;
+      }
     default:
       {
         sendMessage(id,-1);

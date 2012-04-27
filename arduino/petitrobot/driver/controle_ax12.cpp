@@ -21,6 +21,15 @@ byte get_position(int id, int id_moteur) {
   }
 }
 
+byte lire(int id, int ordre, int id_moteur) {
+  if (id_moteur > NB_MOTEURS) {
+    return E_INVALID_PARAMETERS_VALUE;
+  }
+  else {
+    return motor[id_moteur].readInfo (ordre);//PRESENT_POSITION);
+  }
+}
+
 void cherche_moteurs(void) {
   AX12::init(1000000);
 
@@ -65,5 +74,5 @@ void cherche_moteurs(void) {
       motor[i].writeInfo (RETURN_DELAY_TIME, 150);
     }
   }
-  sendMessage(0, "detected", c);
+  sendMessage(0, "detected", c); //on renvoie le nombre de moteurs détectés
 }
