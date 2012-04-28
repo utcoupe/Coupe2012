@@ -122,10 +122,11 @@ class MiniRobot(Robot):
 						self.state_buldo = not self.state_buldo
 						self._cmd_others_buldo(self.state_buldo)
 
-	def _cmd_others_arrachercarte(self, **kwargs):
+	def _cmd_others_arracher_carte(self, **kwargs):
 		self.match.arracher_carte(self.team)
 		self.send_canal_others(kwargs['id_msg'], 1)
-		
+		print("Carte arrachée")
+
 	def _cmd_others_balais(self, right, on):
 		if right:
 			if on:
