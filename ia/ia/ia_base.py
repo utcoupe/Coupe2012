@@ -7,7 +7,7 @@ import time
 from py3irc.mypyirc.ircdefine import *
 from geometry import ConvexPoly
 
-from .clientIRC import IABot, Asservissement, Extras
+from .clientIRC import *
 from .gamestate import GameState
 from .robot import Robot
 from .graph import NavGraph
@@ -24,6 +24,7 @@ class IaBase:
 		canal_big_asserv, canal_mini_asserv,
 		canal_big_others, canal_mini_others,
 		canal_big_extras, canal_mini_extras,
+		canal_big_actions, canal_mini_actions,
 		canal_hokuyo, canal_debug
 		):
 		"""
@@ -42,6 +43,8 @@ class IaBase:
 		@param {str} canal_debug
 		@param {str} canal_big_extras
 		@param {str} canal_mini_extras
+		@param {str} canal_big_actions
+		@param {str} canal_mini_actions
 		"""
 		# création bot irc
 		self.ircbot = IABot(server_ip, server_port,
@@ -53,6 +56,8 @@ class IaBase:
 			canal_hokuyo		= canal_hokuyo,
 			canal_big_extras	=canal_big_extras,
 			canal_mini_extras	=canal_mini_extras,
+			canal_big_actions	=canal_big_actions,
+			canal_mini_actions	=canal_mini_actions
 		)
 		
 		# démarage du bot irc
@@ -128,6 +133,9 @@ class IaBase:
 		asserv = Asservissement(self.ircbot, canal_mini_asserv)
 		minirobot.set_asserv(asserv)
 
+                #creation des actionneurs
+		pitits_actionneurs = ActionneursMini(self.ircbot, canal_mini_actions)
+		minirobot.set_actionneurs(pitits_actionneurs)
 
 		# extras
 		extras = Extras(self.ircbot, canal_mini_extras)

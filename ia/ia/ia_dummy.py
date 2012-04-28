@@ -16,7 +16,8 @@ class IaDummy(IaBase):
 		canal_big_asserv, canal_mini_asserv,
 		canal_big_others, canal_mini_others,
 		canal_big_extras, canal_mini_extras,
-		canal_hokuyo, canal_debug,
+		canal_big_actions, canal_mini_actions,
+		canal_hokuyo, canal_debug, skip_recalage,
 		autostart = False, match_timeout = None
 		):
 		IaBase.__init__(self,
@@ -30,6 +31,8 @@ class IaDummy(IaBase):
 			canal_debug			=canal_debug,
 			canal_big_extras	=canal_big_extras,
 			canal_mini_extras	=canal_mini_extras,
+			canal_mini_actions	=canal_mini_actions,
+			canal_big_actions	=canal_big_actions
 		)
 		
 		
@@ -41,9 +44,10 @@ class IaDummy(IaBase):
 
 		self.loopRobot(self.gamestate.bigrobot)
 		self.loopRobot(self.gamestate.minirobot)
+		self.gamestate.minirobot.actionneurs.arracher_carte()
+		#time.sleep(2 + random.random() * 5.0)
+		time.sleep(2)
 
-		time.sleep(2 + random.random() * 5.0)
-		
 		# attente du rafraichissement
 		self.gamestate.wait_update()
 

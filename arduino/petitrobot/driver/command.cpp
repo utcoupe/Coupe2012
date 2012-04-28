@@ -52,10 +52,19 @@ void cmd(int id, int header, int *args, int size){
       }
     case Q_LIRE:
       {
-        if (size < 1)
+        if (size < 2)
           sendMessage(id, E_INVALID_PARAMETERS_NUMBERS);
         else
           sendMessage(id, lire(id, args[0], args[1]));
+        break;
+      }
+    case Q_ATTRAPER_CARTE:
+      {
+        tourner(id, 0, 0);
+        tourner(id, 2, 0);
+        //wait
+        tourner(id, 2, -105);
+        tourner(id, 0, 90);
         break;
       }
     default:

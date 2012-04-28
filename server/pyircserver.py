@@ -154,6 +154,11 @@ class Room:
 		if client.nick in self.clients:
 			del self.clients[client.nick]
 		self.l_clients.release()
+		self.send(irc_unparse(ParsedMsg(
+			prefix = client.prefix,
+			command = 'quit',
+			parameters = ('Client exited',)
+		)))
 	
 	def get_clients(self):
 		self.l_clients.acquire()
@@ -161,9 +166,13 @@ class Room:
 		self.l_clients.release()
 		return d
 	
-	def send(self, msg):
+	def send(self, msg, *, exclude=set()):
+		exclude = set(exclude)
+		self.l_clients.acquire()
 		for client in self.clients.values():
-			client.send(msg)
+			if client not in exclude:
+				client.send(msg)
+		self.l_clients.release()
 
 
 def need_params(n):
@@ -246,6 +255,7 @@ class Server(socketserver.ThreadingMixIn, socketserver.TCPServer):
 	def new_room(self, chan):
 		self.l_rooms.acquire()
 		self.rooms[chan] = Room(chan)
+		self.l_rooms.release()
 	
 	def remove_client(self, client):
 		self.l_clients.acquire()
@@ -322,15 +332,23 @@ class Server(socketserver.ThreadingMixIn, socketserver.TCPServer):
 	@need_params(1)
 	@need_auth
 	def _cmd_join(self, client, msg):
+		print("coucou")
 		canal = msg.parameters[0]
 		if not valide_chan(canal):
+			print("coucou2.1")
 			client.send(self.make_response(ERR_NOSUCHCHANNEL, client.nick, canal, 'Invalid channel name'))
 		else:
+			print("coucou2.2")
 			if canal not in self.rooms:
+				print("coucou3")
 				self.new_room(canal)
+			print("coucou4")
 			self.rooms[canal].add_client(client)
-			client.send(self.make_response('join', canal, prefix=client.prefix))
+			print("coucou5")
+			self.rooms[canal].send(self.make_response('join', canal, prefix=client.prefix))
+			print("coucou6")
 			self._cmd_names(client, ParsedMsg(prefix=msg.prefix, command='names', parameters=[canal]))
+			print("coucou7")
 	
 	@need_params(2)
 	@need_auth
@@ -338,7 +356,7 @@ class Server(socketserver.ThreadingMixIn, socketserver.TCPServer):
 		nick_or_chan, privmsg = msg.parameters[0:2]
 		response = self.make_response('privmsg', nick_or_chan, privmsg, prefix=client.prefix)
 		if nick_or_chan in self.rooms:
-			self.rooms[nick_or_chan].send(response)
+			self.rooms[nick_or_chan].send(response, exclude=(client,))
 		elif nick_or_chan in self.clients:
 			self.clients[nick_or_chan].send(response)
 		else:

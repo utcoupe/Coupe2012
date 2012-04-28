@@ -37,6 +37,11 @@ Renvoie la position angulaire du moteur
 */
 #define Q_LIRE		80
 
+/**
+   Attrape la carte
+*/
+#define Q_ATTRAPER_CARTE 90
+
 // erreurs
 #define E_INVALID_CMD                   -1
 #define E_INVALID_PARAMETERS_NUMBERS    -2
