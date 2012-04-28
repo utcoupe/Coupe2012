@@ -27,7 +27,7 @@ void RobotObserver::compute(int32_t left_value, int32_t right_value) {
 
 
 	// calcul du changement d'orientation en rad
-	double delta_angle = (double)(dr-dl)/(2.0*(double)ENC_CENTER_DIST_TICKS);
+	double delta_angle = (double)(dr-dl)/(double)ENC_CENTER_DIST_TICKS;
 
 	// calcul du deplacement
 	double delta_dist = (double)(dr+dl)/2.0;
@@ -56,11 +56,11 @@ TICKS RobotObserver::getY() const {
 }
 
 MM RobotObserver::mm_getX() const {
-	return mm_to_ticks(_x);
+	return ticks_to_mm(_x);
 }
 
 MM RobotObserver::mm_getY() const {
-	return mm_to_ticks(_y);
+	return ticks_to_mm(_y);
 }
 
 RAD RobotObserver::getA() const {
@@ -68,7 +68,7 @@ RAD RobotObserver::getA() const {
 }
 
 DEG RobotObserver::deg_getA() const {
-	return _a * RAD_TO_DEG;
+	return rad_to_deg(_a);
 }
 
 double RobotObserver::getSpeed() const {

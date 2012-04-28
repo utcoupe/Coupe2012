@@ -93,7 +93,7 @@ void positionControl(bool goal_position, int32_t goal_x, int32_t goal_y, double 
 	double current_alpha = alpha_diff;
 
 	if (((!goal_position and fabs(alpha_diff) < DEG_TO_RAD) or
-		(goal_position and fabs(delta_diff) < 10*ENC_MM_TO_TICKS)))
+		(goal_position and fabs(delta_diff) < 10.0*ENC_MM_TO_TICKS)))
 	{
 		// goal atteind
 	}

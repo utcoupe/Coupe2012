@@ -147,7 +147,6 @@ double PosAndSpeedRegulator::_speedCompute(double consign, double current_speed)
 }
 
 double PosAndSpeedRegulator::_positionCompute(double consign, double current_pos) {
-	if (fabsf(consign - current_pos ) < ENC_MM_TO_TICKS) return 0.0;
 	return _pos_regu.compute(consign, current_pos);
 }
 

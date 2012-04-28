@@ -34,8 +34,8 @@ typedef int				DEG;
 //#define ENC_RADIUS 30.0 		// {mm} Rayon de la roue codeuse
 #define ENC_RADIUS 34.0 		// {mm} Rayon de la roue codeuse
 
-#define ENC_TICKS_TO_MM 0.10681415022205297 //(2*M_PI*ENC_RADIUS)/(ENC_RESOLUTION*4) // {mm.tick^-1} (opti: a calculer apres) 
-#define ENC_MM_TO_TICKS 9.362055475993843 //(ENC_RESOLUTION*4)/(2*M_PI*ENC_RADIUS) // {tick.mm^-1}
+#define ENC_TICKS_TO_MM (2*M_PI*ENC_RADIUS)/(ENC_RESOLUTION*4) //0.10681415022205297 //(2*M_PI*ENC_RADIUS)/(ENC_RESOLUTION*4) // {mm.tick^-1} (opti: a calculer apres) 
+#define ENC_MM_TO_TICKS (ENC_RESOLUTION*4)/(2*M_PI*ENC_RADIUS) //9.362055475993843 //(ENC_RESOLUTION*4)/(2*M_PI*ENC_RADIUS) // {tick.mm^-1}
 
 #endif
 
