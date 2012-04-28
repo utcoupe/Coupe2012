@@ -32,12 +32,6 @@ cv::Mat warped;
 ParamonMouse paramonmouse;
 bool lookForChessBoard = false;
 
-/**
- * récupérer la position des cds et lingots
- * @return ((x1,y1),(x2,y2),(x3,y3),..){SEP}((x1,y1),(x2,y2),(x3,y3),..) cds{SEP}lingots
- */
-
-
 void DisplayPosition()
 {
     vector<cv::Point> Positions_Display_Temp;
@@ -83,6 +77,7 @@ void PERSPECTIVE_Rechargement()
 }
 
 
+
 int main(int argc, char** argv)
 
 {
@@ -94,7 +89,7 @@ int main(int argc, char** argv)
 	cm->addFunction(QV_PING, &ping);
 	cm->addFunction(QV_CALIB_PERSPECTIVE_CALI, &PERSPECTIVE_Calibrer);
 	cm->addFunction(QV_CALIB_PERSPECTIVE_RECHARG, &PERSPECTIVE_Rechargement);
-	cm->addFunction(QV_CALIB_HSV, &CalibHSV);
+//	cm->addFunction(QV_CALIB_HSV, &CalibHSV);
 
 	cm->start();
 
@@ -196,9 +191,9 @@ int main(int argc, char** argv)
                 DisplayPosition();
                 break;
 
-               case 'v':
+/*               case 'v':
                valider();
-                break;
+                break;*/
 
 
 			case 27:
