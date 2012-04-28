@@ -360,7 +360,7 @@ class Server(socketserver.ThreadingMixIn, socketserver.TCPServer):
 
 if __name__=='__main__':
 	import sys
-	HOST, PORT = 'localhost', int(sys.argv[1])
+	HOST, PORT = '', int(sys.argv[1])
 	server = Server((HOST,PORT))
 	server.start()
 	#msgparsed = irc_parse('JOIN #test coucou\n')
