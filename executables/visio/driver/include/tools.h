@@ -14,7 +14,7 @@ void px2mm(vector<cv::Point> & p);
 bool fexists(const char *filename);
 void id();
 void ping();
-void CalibHSV();
+//void CalibHSV();
 void valider();
 #endif
 

@@ -7,8 +7,8 @@
 const unsigned int CAMERA_N	= 1;
 
 //chess board Width and Height
-const int BOARD_W = 8;
-const int BOARD_H = 6;
+const int BOARD_W = 7;
+const int BOARD_H = 5;
 
 //Board size in MM and PX
 const unsigned int BOARD_WIDTH_MM	= 210;
