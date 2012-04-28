@@ -72,25 +72,16 @@ void DisplayPosition()
     ss.str("");
 }
 
-void id()
+void PERSPECTIVE_Calibrer()
 {
-    cout<<"Visio";
+     lookForChessBoard = true;
 }
 
-void ping()
+void PERSPECTIVE_Rechargement()
 {
-    cout<<"pong";
+     recharger_Matrix_Perspective = true;
 }
 
-void QV_CALIB_PERSPECTIVE_Calibrer()
-{
-    lookForChessBoard=true;
-}
-
-void QV_CALIB_PERSPECTIVE_Rechargement()
-{
-    recharger_Matrix_Perspective=true;
-}
 
 int main(int argc, char** argv)
 
@@ -101,8 +92,10 @@ int main(int argc, char** argv)
 	cm->addFunction(QV_GET, &DisplayPosition);
 	cm->addFunction(QV_ID, &id);
 	cm->addFunction(QV_PING, &ping);
-	cm->addFunction(QV_CALIB_PERSPECTIVE_CALI, &QV_CALIB_PERSPECTIVE_Calibrer);
-	cm->addFunction(QV_CALIB_PERSPECTIVE_RECHARG, &QV_CALIB_PERSPECTIVE_Rechargement);
+	cm->addFunction(QV_CALIB_PERSPECTIVE_CALI, &PERSPECTIVE_Calibrer);
+	cm->addFunction(QV_CALIB_PERSPECTIVE_RECHARG, &PERSPECTIVE_Rechargement);
+	cm->addFunction(QV_CALIB_HSV, &CalibHSV);
+
 	cm->start();
 
 	//code main()
@@ -202,6 +195,11 @@ int main(int argc, char** argv)
 			case 'c':
                 DisplayPosition();
                 break;
+
+               case 'v':
+               valider();
+                break;
+
 
 			case 27:
 				return 0;

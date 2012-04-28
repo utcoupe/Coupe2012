@@ -110,10 +110,33 @@ void MousePick(cv::Mat& warped, cv::Mat& binary, const vector<cv::Point>& Positi
 		cv::cvtColor(warped, warped_hsv, CV_BGR2HSV);
 		cv::GaussianBlur(warped_hsv, warped_hsv, cv::Size (9, 9), 2, 2);
 
+               int h_cd, s_cd, v_cd, h2_cd,s2_cd,v2_cd;
+               int h_L, s_L, v_L, h2_L, s2_L, v2_L;
+               if(fexists("HSVbande.yml"))
+               {
+                    cv::FileStorage fhsv("HSVbande.yml", cv::FileStorage::READ);
+                    fhsv["h_cd"] >> h_cd;
+                    fhsv["s_cd"] >> s_cd;
+                    fhsv["v_cd"] >> v_cd;
+                    fhsv["h2_cd"] >> h2_cd;
+                    fhsv["s2_cd"] >> s2_cd;
+                    fhsv["v2_cd"] >> v2_cd;
+
+                    fhsv["h_L"] >> h_L;
+                    fhsv["s_L"] >> s_L;
+                    fhsv["v_L"] >> v_L;
+                    fhsv["h2_L"] >> h2_L;
+                    fhsv["s2_L"] >> s2_L;
+                    fhsv["v2_L"] >> v2_L;
+                    fhsv.release();
+               }
+               else
+               cerr << "Failed to open HSVbande.yml!\n" << endl;
+
         if (index == 0)
-            cv::inRange(warped_hsv, cv::Scalar(CD_MIN_H, CD_MIN_S, CD_MIN_V), cv::Scalar(CD_MAX_H, CD_MAX_S, CD_MAX_V), binary);
+            cv::inRange(warped_hsv, cv::Scalar(h_cd, s_cd, v_cd), cv::Scalar(h2_cd, s2_cd, v2_cd), binary);
         else if (index == 1)
-            cv::inRange(warped_hsv, cv::Scalar(LINGOT_MIN_H, LINGOT_MIN_S, LINGOT_MIN_V), cv::Scalar(LINGOT_MAX_H, LINGOT_MAX_S, LINGOT_MAX_V), binary);
+            cv::inRange(warped_hsv, cv::Scalar(h_L, s_L, v_L), cv::Scalar(h2_L, s2_L, v2_L), binary);
         else
 		    cv::inRange(warped_hsv, paramonmouse.hsv1, paramonmouse.hsv2, binary);
 
@@ -140,26 +163,33 @@ void MousePick(cv::Mat& warped, cv::Mat& binary, const vector<cv::Point>& Positi
 		cv::cvtColor(warped, warped_hsv, CV_BGR2HSV);
 		cv::GaussianBlur(warped_hsv, warped_hsv, cv::Size (9, 9), 2, 2);
 
-          int CD_MIN_H = CD_H - HSV_TOLERANCE1;
-          int CD_MIN_S = CD_S - HSV_TOLERANCE2;
-		int CD_MIN_V = CD_V - HSV_TOLERANCE3;
+               int h_cd, s_cd, v_cd, h2_cd,s2_cd,v2_cd;
+               int h_L, s_L, v_L, h2_L, s2_L, v2_L;
+               if(fexists("HSVbande.yml"))
+               {
+                    cv::FileStorage fhsv("HSVbande.yml", cv::FileStorage::READ);
+                    fhsv["h_cd"] >> h_cd;
+                    fhsv["s_cd"] >> s_cd;
+                    fhsv["v_cd"] >> v_cd;
+                    fhsv["h2_cd"] >> h2_cd;
+                    fhsv["s2_cd"] >> s2_cd;
+                    fhsv["v2_cd"] >> v2_cd;
 
-		int CD_MAX_H = CD_H + HSV_TOLERANCE1;
-		int CD_MAX_S = CD_S + HSV_TOLERANCE2;
-		int CD_MAX_V = CD_V + HSV_TOLERANCE3;
-
-          int LINGOT_MIN_H = LINGOT_H - HSV_TOLERANCE1;
-		int LINGOT_MIN_S = LINGOT_S - HSV_TOLERANCE2;
-		int LINGOT_MIN_V = LINGOT_V - HSV_TOLERANCE3;
-
-		int LINGOT_MAX_H = LINGOT_H + HSV_TOLERANCE1;
-		int LINGOT_MAX_S = LINGOT_S + HSV_TOLERANCE2;
-		int LINGOT_MAX_V = LINGOT_V + HSV_TOLERANCE3;
+                    fhsv["h_L"] >> h_L;
+                    fhsv["s_L"] >> s_L;
+                    fhsv["v_L"] >> v_L;
+                    fhsv["h2_L"] >> h2_L;
+                    fhsv["s2_L"] >> s2_L;
+                    fhsv["v2_L"] >> v2_L;
+                    fhsv.release();
+               }
+               else
+               cerr << "Failed to open HSVbande.yml!\n" << endl;
 
         if (index == 0)
-            cv::inRange(warped_hsv, cv::Scalar(CD_MIN_H, CD_MIN_S, CD_MIN_V), cv::Scalar(CD_MAX_H, CD_MAX_S, CD_MAX_V), binary);
+            cv::inRange(warped_hsv, cv::Scalar(h_cd, s_cd, v_cd), cv::Scalar(h2_cd, s2_cd, v2_cd), binary);
         else if (index == 1)
-            cv::inRange(warped_hsv, cv::Scalar(LINGOT_MIN_H, LINGOT_MIN_S, LINGOT_MIN_V), cv::Scalar(LINGOT_MAX_H, LINGOT_MAX_S, LINGOT_MAX_V), binary);
+            cv::inRange(warped_hsv, cv::Scalar(h_L, s_L, v_L), cv::Scalar(h2_L, s2_L, v2_L), binary);
         else
 		    cv::inRange(warped_hsv, paramonmouse.hsv1, paramonmouse.hsv2, binary);
 
