@@ -3,7 +3,7 @@
 
 #include <inttypes.h>
 
-typedef int32_t			TICKS;
+typedef double			TICKS;
 typedef int				MM;
 typedef double			RAD;
 typedef int				DEG;

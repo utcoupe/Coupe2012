@@ -31,24 +31,6 @@ void debug(double consign, double current, double pwm) {
 	tab[n] = (int)current;
 	++n;
 	if (n>=N) n=0;
-	//int32_t t = millis();
-		
-	/*++n;
-	sum_consign += consign;
-	sum_current += current;
-	sum_pwm += pwm;*/
-	/*if (g_debug_on and (t - last) > 5) {
-		Serial.println("--- coucou ---");
-		Serial.print(G_value_left_enc); Serial.print(" "); Serial.println(G_value_right_enc);
-		Serial.print("plot ");
-		Serial.print(millis()); Serial.print(" ");
-		Serial.print(consign); Serial.print(" "); // bleu
-		Serial.print(current); Serial.print(" "); // verte
-		Serial.println(0); // rouge
-		
-		last = t;
-		n = sum_consign = sum_current = sum_pwm = 0;
-	}*/
 }
 
 
@@ -93,7 +75,7 @@ void positionControl(bool goal_position, int32_t goal_x, int32_t goal_y, double 
 	double current_alpha = alpha_diff;
 
 	if (((!goal_position and fabs(alpha_diff) < DEG_TO_RAD) or
-		(goal_position and fabs(delta_diff) < 10.0*ENC_MM_TO_TICKS)))
+		(goal_position and fabs(delta_diff) < 5.0*ENC_MM_TO_TICKS)))
 	{
 		// goal atteind
 	}
