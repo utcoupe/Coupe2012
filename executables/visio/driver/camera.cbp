@@ -16,11 +16,17 @@
 				</Compiler>
 				<Linker>
 					<Add option="-I/usr/include/opencv" />
-					<Add library="ml" />
-					<Add library="cvaux" />
-					<Add library="highgui" />
-					<Add library="cv" />
-					<Add library="cxcore" />
+					<Add library="opencv_core" />
+					<Add library="opencv_imgproc" />
+					<Add library="opencv_highgui" />
+					<Add library="opencv_ml" />
+					<Add library="opencv_video" />
+					<Add library="opencv_features2d" />
+					<Add library="opencv_calib3d" />
+					<Add library="opencv_objdetect" />
+					<Add library="opencv_contrib" />
+					<Add library="opencv_legacy" />
+					<Add library="opencv_flann" />
 				</Linker>
 			</Target>
 			<Target title="Release">

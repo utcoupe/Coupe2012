@@ -24,13 +24,13 @@ using namespace std;
 cv::Vec3b hsv_selected;
 cv::Scalar hsv_pixel;
 bool hsv_selected_ready = false;
+bool recharger_Matrix_Perspective = false;
 vector<cv::Point> Positions_Display, Positions_Display_CD, Positions_Display_LINGOT;
 cv::Mat binary;
 pthread_mutex_t lock;
-bool lookForChessBoard_IRC=false;
 cv::Mat warped;
 ParamonMouse paramonmouse;
-
+bool lookForChessBoard = false;
 
 /**
  * récupérer la position des cds et lingots
@@ -72,44 +72,37 @@ void DisplayPosition()
     ss.str("");
 }
 
-void id()
+void PERSPECTIVE_Calibrer()
 {
-    cout<<"Visio";
+     lookForChessBoard = true;
 }
 
-void ping()
+void PERSPECTIVE_Rechargement()
 {
-    cout<<"pong";
+     recharger_Matrix_Perspective = true;
 }
 
-void QV_CALIB_PERSPECTIVE_1()
-{
-    lookForChessBoard_IRC=true;
-}
-
-void QV_CALIB_PERSPECTIVE_0()
-{
-    lookForChessBoard_IRC=false;
-}
 
 int main(int argc, char** argv)
 
 {
     ComManager* cm = ComManager::getComManager();
 
-    lock = cm->getMutex();
+     lock = cm->getMutex();
 	cm->addFunction(QV_GET, &DisplayPosition);
 	cm->addFunction(QV_ID, &id);
 	cm->addFunction(QV_PING, &ping);
-	cm->addFunction(QV_CALIB_PERSPECTIVE_ON, &QV_CALIB_PERSPECTIVE_1);
-	cm->addFunction(QV_CALIB_PERSPECTIVE_OFF, &QV_CALIB_PERSPECTIVE_0);
+	cm->addFunction(QV_CALIB_PERSPECTIVE_CALI, &PERSPECTIVE_Calibrer);
+	cm->addFunction(QV_CALIB_PERSPECTIVE_RECHARG, &PERSPECTIVE_Rechargement);
+	cm->addFunction(QV_CALIB_HSV, &CalibHSV);
+
 	cm->start();
 
 	//code main()
 
 
 
-    bool lookForChessBoard = false;
+
 	int board_w = BOARD_W;
 	int board_h = BOARD_H;
 
@@ -132,8 +125,7 @@ int main(int argc, char** argv)
 		return 0;
 	}
 	cv::Mat image;
-
-    cv::Mat gray;
+     cv::Mat gray;
 	cv::Mat warpMatrix;
 	cv::namedWindow( "Raw" , CV_WINDOW_AUTOSIZE);
 	cv::namedWindow( "Warped" , CV_WINDOW_AUTOSIZE);
@@ -153,7 +145,7 @@ int main(int argc, char** argv)
 		// Convert to gray
 
 
-        if (lookForChessBoard or lookForChessBoard_IRC)
+        if (lookForChessBoard)
 		{
             ChessboardFinder(image, gray, warpMatrix, warpok, found, lookForChessBoard, board_sz);
 		}
@@ -169,8 +161,17 @@ int main(int argc, char** argv)
 			cv::imshow( "Warped", warped);
 		}
 
-		if(not warped.empty())
+		if(recharger_Matrix_Perspective)
 		{
+		     cv::FileStorage fs2("warpMatrix.yml", cv::FileStorage::READ);
+		     fs2["warpMatrix"] >> warpMatrix;
+		     warpPerspective(image, warped, warpMatrix, image.size(), cv::INTER_LINEAR, cv::BORDER_CONSTANT);
+		     cv::imshow( "Warped", warped);
+		     //recharger_Matrix_Perspective = false;
+		}
+
+        if(not warped.empty())
+     {
         pthread_mutex_lock( &lock );
         MousePick(warped, binary, Positions_Display_CD, paramonmouse, 2, Positions_Display_LINGOT);
         pthread_mutex_unlock( &lock );
@@ -194,6 +195,11 @@ int main(int argc, char** argv)
 			case 'c':
                 DisplayPosition();
                 break;
+
+               case 'v':
+               valider();
+                break;
+
 
 			case 27:
 				return 0;

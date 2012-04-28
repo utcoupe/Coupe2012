@@ -24,6 +24,12 @@ Allume le moteur du percepteur
 */
 #define Q_PERCEPTEUR		60
 
+/**
+Renvoie la position angulaire du moteur
+@param moteur
+*/
+#define Q_GET_POS		70
+
 // erreurs
 #define E_INVALID_CMD                   -1
 #define E_INVALID_PARAMETERS_NUMBERS    -2

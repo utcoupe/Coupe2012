@@ -11,4 +11,10 @@ using namespace std;
 cv::Point2f px2mm(cv::Point2f & p);
 cv::Point2f px2mm(cv::Point & p);
 void px2mm(vector<cv::Point> & p);
+bool fexists(const char *filename);
+void id();
+void ping();
+void CalibHSV();
+void valider();
 #endif
+

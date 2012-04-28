@@ -1,9 +1,11 @@
 #include "../include/perspective.h"
 #include <opencv/cv.h>
+#include "opencv2/opencv.hpp"
 #include <opencv/highgui.h>
 #include <vector>
 #include <iostream>
 #include "../include/parametres.h"
+#include "../include/tools.h"
 
 void getvertices( vector<cv::Point2f> corners, cv::Point2f src[], cv::Point2f dst[], const int board_w, const int board_h )
 {
@@ -21,9 +23,8 @@ void ChessboardFinder(cv::Mat& image, cv::Mat& gray, cv::Mat& warpMatrix, bool& 
 {
             vector<cv::Point2f> corners;
             cv::cvtColor(image, gray, CV_RGB2GRAY);
-        	cv::Point2f src_vertices[4];
+            cv::Point2f src_vertices[4];
             cv::Point2f dst_vertices[4];
-
 			// Looking for the chessboard
 			found = cv::findChessboardCorners( gray, board_sz, corners, CV_CALIB_CB_ADAPTIVE_THRESH | CV_CALIB_CB_FILTER_QUADS );
 
@@ -32,15 +33,18 @@ void ChessboardFinder(cv::Mat& image, cv::Mat& gray, cv::Mat& warpMatrix, bool& 
 			{
 				// Get subpixel accuracy on those corners
 				cv::cornerSubPix( gray, corners, cv::Size( 11, 11 ),
-					cv::Size( -1, -1 ), cv::TermCriteria( CV_TERMCRIT_EPS | CV_TERMCRIT_ITER, 30, 0.1 ));
+                    cv::Size( -1, -1 ), cv::TermCriteria( CV_TERMCRIT_EPS | CV_TERMCRIT_ITER, 30, 0.1 ));
 				// Draw chessboard corners
 				cv::drawChessboardCorners( image, board_sz, cv::Mat(corners), found );
 				//calculate warpmatrix
-                getvertices( corners, src_vertices, dst_vertices, board_sz.width, board_sz.height);
+                    getvertices( corners, src_vertices, dst_vertices, board_sz.width, board_sz.height);
 				warpMatrix = cv::getPerspectiveTransform(src_vertices, dst_vertices);
-
+				cv::FileStorage fs("warpMatrix.yml", cv::FileStorage::WRITE);
+                    fs << "warpMatrix" << warpMatrix;
+				fs.release();
 				warpok = true;
 				found = false;
 				lookForChessBoard= false;
+
 			}
 }

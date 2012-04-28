@@ -227,19 +227,25 @@
  */
 #define QV_PING					41
 
+/**
+ * Calibrer bande HSV de CD et de LINGOT
+ */
+#define QV_CALIB_HSV					42
+
 
 /**
  * passer en mode calibration de la perspective (= détection de l'échéquier)
+ * Enreigistrer la matrix dans un fichier warpMatrix.yml
  */
-#define QV_CALIB_PERSPECTIVE_ON		43
+#define QV_CALIB_PERSPECTIVE_CALI		43
 
 
 /**
  * arreter le mode calibration de la perspective (= détection de l'échéquier)
  */
-#define QV_CALIB_PERSPECTIVE_OFF	44
+#define QV_CALIB_PERSPECTIVE_RECHARG	44
 
- 
+
 /**
  * récupérer la position des cds et lingots
  * @return ((x1,y1),(x2,y2),(x3,y3),..){SEP}((x1,y1),(x2,y2),(x3,y3),..) cds{SEP}lingots
