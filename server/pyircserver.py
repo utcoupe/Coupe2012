@@ -333,7 +333,7 @@ class Server(socketserver.ThreadingMixIn, socketserver.TCPServer):
 			if canal not in self.rooms:
 				self.new_room(canal)
 			self.rooms[canal].add_client(client)
-			client.send(self.make_response('join', canal, prefix=client.prefix))
+			self.rooms[canal].send(self.make_response('join', canal, prefix=client.prefix))
 			self._cmd_names(client, ParsedMsg(prefix=msg.prefix, command='names', parameters=[canal]))
 	
 	@need_params(2)
