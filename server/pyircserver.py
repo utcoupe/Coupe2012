@@ -161,9 +161,13 @@ class Room:
 		self.l_clients.release()
 		return d
 	
-	def send(self, msg):
+	def send(self, msg, *, exclude=set()):
+		exclude = set(exclude)
+		print(exclude)
 		for client in self.clients.values():
-			client.send(msg)
+			if client not in exclude:
+				print(client)
+				client.send(msg)
 
 
 def need_params(n):
@@ -338,7 +342,7 @@ class Server(socketserver.ThreadingMixIn, socketserver.TCPServer):
 		nick_or_chan, privmsg = msg.parameters[0:2]
 		response = self.make_response('privmsg', nick_or_chan, privmsg, prefix=client.prefix)
 		if nick_or_chan in self.rooms:
-			self.rooms[nick_or_chan].send(response)
+			self.rooms[nick_or_chan].send(response, exclude=(client,))
 		elif nick_or_chan in self.clients:
 			self.clients[nick_or_chan].send(response)
 		else:
