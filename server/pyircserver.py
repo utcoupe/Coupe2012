@@ -154,6 +154,11 @@ class Room:
 		if client.nick in self.clients:
 			del self.clients[client.nick]
 		self.l_clients.release()
+		self.send(irc_unparse(ParsedMsg(
+			prefix = client.prefix,
+			command = 'quit',
+			parameters = ('Client exited',)
+		)))
 	
 	def get_clients(self):
 		self.l_clients.acquire()
