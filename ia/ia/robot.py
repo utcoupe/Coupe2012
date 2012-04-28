@@ -36,6 +36,9 @@ class Robot:
 		"""
 		self.extras = extras
 
+	def set_actionneurs(self, actionneurs):
+		self.actionneurs = actionneurs
+
 	def reset(self):
 		self.pos = Vec(self.init_pos)
 		self.a = 0

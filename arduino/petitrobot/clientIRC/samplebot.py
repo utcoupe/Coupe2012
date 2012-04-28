@@ -12,7 +12,7 @@ import arduinobot
 if __name__ == "__main__":
 	arduinobot.run(
 		nickname="petit_robot",				# nom du bot
-		channel="#tests_flo",					# canal sur lequel se connecter
+		channel="#actionsmini",					# canal sur lequel se connecter
 		serial_port="/dev/ttyACM0",			# port de l'arduino
 		protocol_file=os.path.join(FILE_DIR,"..","driver","protocole.h"),	# où trouver le protocole.h
 		protocol_prefixe="Q_")				# préfix des commandes dans le protocole
