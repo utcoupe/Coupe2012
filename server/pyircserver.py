@@ -6,8 +6,9 @@ import queue
 import re
 from collections import namedtuple
 import datetime
+import copy
 
-
+from error_code import *
 
 
 ParsedMsg = namedtuple('ParsedMsg', ['prefix', 'command', 'parameters'])
@@ -30,7 +31,7 @@ def irc_parse(msg):
 	else:
 		return None
 def irc_unparse(msg):
-	return ':'+msg.prefix+SEP+str(msg.command)+SEP+parameters_unparse(msg.parameters)+CRLF
+	return ':'+msg.prefix+SEP+str(msg.command).upper()+SEP+parameters_unparse(msg.parameters)+CRLF
 
 def parameters_parse(s):
 	if not s:
@@ -44,10 +45,12 @@ def parameters_parse(s):
 	l = list(filter(lambda x: x, l))
 	return l
 def parameters_unparse(params):
-	if params and ' ' in params[-1]:
+	if len(params) > 1:
 		return SEP.join(params[:-1])+SEP+':'+params[-1]
+	elif params:
+		return ':'+params[-1]
 	else:
-		return SEP.join(params)
+		return ''
 
 def prefix_parse(s):
 	t = re_prefix.match(s)
@@ -62,6 +65,8 @@ def prefix_unparse(prefix):
 
 def valide_nick(nick):
 	return re.match('[\w\d]+', nick) != None
+def valide_chan(chan):
+	return re.match('#[\w\d]+', chan) != None
 
 class Client(socketserver.StreamRequestHandler):
 	
@@ -76,9 +81,17 @@ class Client(socketserver.StreamRequestHandler):
 		self.nick = ''
 		self.realname = ''
 		self.server.add_client(self)
+		self.rooms = {}
 	
 	def stop(self):
 		self.e_stop.set()
+	
+	def _stop(self):
+		self.stop()
+		self.server.remove_client(self)
+	
+	def is_auth(self):
+		return self.nick != None
 	
 	@property
 	def domain(self):
@@ -103,8 +116,7 @@ class Client(socketserver.StreamRequestHandler):
 				self.data = self.rfile.readline().decode().strip()
 			except Exception as ex:
 				print(ex)
-				self.stop()
-				self.server.remove_client(self)
+				self._stop()
 			else:
 				print("{} wrote:".format(self.prefix))
 				print(self.data)
@@ -129,19 +141,60 @@ class Room:
 	def __init__(self, name):
 		self.name = name
 		self.clients = {}
-
-	def send_msg(self, msg):
-		for client in self.clients:
-			client.send_msg(msg)
-
+		self.l_clients = threading.Lock()
 	
+	def add_client(self, client):
+		self.l_clients.acquire()
+		self.clients[client.nick] = client
+		self.l_clients.release()
+		client.rooms[self.name] = self
+	
+	def remove_client(self, client):
+		self.l_clients.acquire()
+		if client.nick in self.clients:
+			del self.clients[client.nick]
+		self.l_clients.release()
+	
+	def get_clients(self):
+		self.l_clients.acquire()
+		d = copy.copy(self.clients)
+		self.l_clients.release()
+		return d
+	
+	def send(self, msg):
+		for client in self.clients.values():
+			client.send(msg)
+
+
+def need_params(n):
+	"""
+	decorator
+	permet de préciser un nombre minimum de paramètres pour une fonction
+	"""
+	def call(f):
+		def wrapped(self, client, msg):
+			if len(msg.parameters) < n:
+				client.send(self.make_response(ERR_NEEDMOREPARAMS, 'Not enough parameters'))
+			else:
+				f(self, client, msg)
+		return wrapped
+	return call
+
+def need_auth(f):
+	def wrapped(self, client, msg):
+		if client.is_auth():
+			f(self, client, msg)
+		else:
+			client.send(self.make_response(ERR_NOTREGISTERED, 'You have not registered'))
+	return wrapped
 
 class Server(socketserver.ThreadingMixIn, socketserver.TCPServer):
 	def __init__(self, host_port):
 		socketserver.TCPServer.__init__(self, host_port, Client)
-		self.daemon_threads = True
+		#self.daemon_threads = True
 		self.allow_reuse_address = True
 		self.rooms = {}
+		self.l_rooms = threading.Lock()
 		self.clients = {}
 		self.l_clients = threading.Lock()
 		self.date_launch = None
@@ -168,9 +221,13 @@ class Server(socketserver.ThreadingMixIn, socketserver.TCPServer):
 			self.shutdown()
 			print("Shutdown")
 	
-	def make_response(self, command, *args):
+	def make_response(self, command, *args, prefix=None):
+		if not prefix:
+			prefix = str(self.server_address[0])
+		if prefix.startswith(':'):
+			prefix = prefix[1:]
 		return irc_unparse(ParsedMsg(
-			prefix = ':'+str(self.server_address),
+			prefix = prefix,
 			command = command,
 			parameters = args
 		))
@@ -186,19 +243,27 @@ class Server(socketserver.ThreadingMixIn, socketserver.TCPServer):
 			self.clients[id(client)] = client
 		self.l_clients.release()
 	
+	def new_room(self, chan):
+		self.l_rooms.acquire()
+		self.rooms[chan] = Room(chan)
+	
 	def remove_client(self, client):
 		self.l_clients.acquire()
-		if client.nick: # si il est déjà autentifié
+		if client.is_auth(): # si il est déjà autentifié
 			if client.nick in self.clients:
+				print("removed", client.nick)
 				del self.clients[client.nick] # on supprime l'ancienne clef
 		else: # si il est nouveau
 			if id(client) in self.clients:
+				print("removed", id(client))
 				del self.clients[id(client)] # on le supprime des client non authentifiés
 		self.l_clients.release()
 	
 	def kill(self, client):
-		self.remove_client()
 		client.stop()
+		for room in client.rooms.values():
+			room.remove_client(client)
+		self.remove_client(client)
 	
 	def try_add_client(self, client, nick):
 		err,msg = 0,''
@@ -229,30 +294,67 @@ class Server(socketserver.ThreadingMixIn, socketserver.TCPServer):
 		else:
 			print("Err: imposible de parser le message : "+msg_irc)
 	
+	@need_params(1)
 	def _cmd_nick(self, client, msg):
-		if not msg.parameters:
-			client.send(self.make_response(ERR_NONICKNAMEGIVEN, 'No nickname given'))
-		elif not valide_nick(msg.parameters[0]):
+		if not valide_nick(msg.parameters[0]):
 			client.send(self.make_response(ERR_ERRONEUSNICKNAME, 'Invalid nickname parameters'))
 		else:
 			err,msg = self.try_add_client(client, msg.parameters[0])
 			if err!=0:
 				client.send(self.make_response(err,msg))
 	
+	@need_params(4)
 	def _cmd_user(self, client, msg):
-		if len(msg.parameters) < 4:
-			client.send(self.server.make_response(ERR_NEEDMOREPARAMS, 'Not enough parameters'))
-		else:
-			client.realname = msg.parameters[3]
-			client.send(self.make_response('001', client.nick, 'Welcome to the Python IRC Network '+client.prefix))
-			client.send(self.make_response('002', client.nick, 'Your host is {host}, running version {version}'.format(host=self.server_address, version='PyIrcServer-0.0')))
-			client.send(self.make_response('003', client.nick, 'This server was created %s' % self.date_launch))
-			client.send(self.make_response('004', client.nick, '{host}'.format(host=self.server_address,)))
-			client.send(self.make_response('005', client.nick))
+		client.realname = msg.parameters[3]
+		client.send(self.make_response('001', client.nick, 'Welcome to the Python IRC Network '+client.prefix))
+		client.send(self.make_response('002', client.nick, 'Your host is {host}, running version {version}'.format(host=self.server_address, version='PyIrcServer-0.0')))
+		client.send(self.make_response('003', client.nick, 'This server was created %s' % self.date_launch))
+		client.send(self.make_response('004', client.nick, '{host}'.format(host=self.server_address,)))
+		client.send(self.make_response('005', client.nick))
+		client.send(self.make_response(ERR_NOMOTD, client.nick, 'Message of the day file is missing.'))
+		client.send(self.make_response(RPL_LUSERCLIENT, client.nick, 'There are %s users and %s services on %s servers'%(len(self.clients), 0, 1)))
+		client.send(self.make_response(RPL_LUSERME, client.nick, 'I have %s clients and %s servers'%(len(self.clients), 1)))
+		
 	
 	def _cmd_quit(self, client, msg):
 		self.kill(client)
 	
+	@need_params(1)
+	@need_auth
+	def _cmd_join(self, client, msg):
+		canal = msg.parameters[0]
+		if not valide_chan(canal):
+			client.send(self.make_response(ERR_NOSUCHCHANNEL, client.nick, canal, 'Invalid channel name'))
+		else:
+			if canal not in self.rooms:
+				self.new_room(canal)
+			self.rooms[canal].add_client(client)
+			client.send(self.make_response('join', canal, prefix=client.prefix))
+			self._cmd_names(client, ParsedMsg(prefix=msg.prefix, command='names', parameters=[canal]))
+	
+	@need_params(2)
+	@need_auth
+	def _cmd_privmsg(self, client, msg):
+		nick_or_chan, privmsg = msg.parameters[0:2]
+		response = self.make_response('privmsg', nick_or_chan, privmsg, prefix=client.prefix)
+		if nick_or_chan in self.rooms:
+			self.rooms[nick_or_chan].send(response)
+		elif nick_or_chan in self.clients:
+			self.clients[nick_or_chan].send(response)
+		else:
+			client.send(self.make_response(ERR_NORECIPIENT, client.nick, 'No such nick/channel'))
+	
+	@need_params(1)
+	@need_auth
+	def _cmd_names(self, client, msg):
+		chan = msg.parameters[0]
+		if chan in self.rooms:
+			clients = self.rooms[chan].get_clients()
+			nicks = map(lambda c: c.nick, clients.values())
+			nicks_str = SEP.join(nicks)
+			client.send(self.make_response(RPL_NAMREPLY, client.nick, '=', chan, nicks_str))
+			client.send(self.make_response(RPL_ENDOFNAMES, client.nick, chan, 'End of /NAMES list'))
+		
 	def __repr__(self):
 		return '<PyIrcServer(%s,%s)' % self.server_address
 
