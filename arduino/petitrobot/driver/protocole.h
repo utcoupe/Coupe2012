@@ -30,6 +30,13 @@ Renvoie la position angulaire du moteur
 */
 #define Q_GET_POS		70
 
+/**
+   Renvoie la position angulaire du moteur
+   @param info
+   @param moteur
+*/
+#define Q_LIRE		80
+
 // erreurs
 #define E_INVALID_CMD                   -1
 #define E_INVALID_PARAMETERS_NUMBERS    -2

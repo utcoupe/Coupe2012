@@ -3,21 +3,36 @@
 AX12 motor[NB_MOTEURS];
 int reverse[10] = {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1};
 
-byte tourner(int id, int id_moteur, int position) {
+int tourner(int id, int id_moteur, int position) {
   if (position < -150 || position > 150 || id_moteur > NB_MOTEURS) {
     return E_INVALID_PARAMETERS_VALUE;
   }
   else {
-    return motor[id_moteur].writeInfo (GOAL_POSITION, map(position, -150, 150, 0, 1023));
+    int valeur = map(position, -150, 150, 0, 1023);
+    return motor[id_moteur].writeInfo (GOAL_POSITION, valeur);
   }
 }
 
-byte get_position(int id, int id_moteur) {
+int get_position(int id, int id_moteur) {
   if (id_moteur > NB_MOTEURS) {
     return E_INVALID_PARAMETERS_VALUE;
   }
   else {
-    return motor[id_moteur].readInfo (PRESENT_POSITION);
+    int valeur = lire (id, GOAL_POSITION, id_moteur);
+    if (valeur == -1)
+      return -1;
+    else
+      return (valeur*0.293255132)-150;
+  }
+}
+
+int lire(int id, int ordre, int id_moteur) {
+  if (id_moteur > NB_MOTEURS) {
+    return E_INVALID_PARAMETERS_VALUE;
+  }
+  else {
+    motor[id_moteur].readInfo (ordre);
+    return motor[id_moteur].status_data;
   }
 }
 
@@ -65,5 +80,5 @@ void cherche_moteurs(void) {
       motor[i].writeInfo (RETURN_DELAY_TIME, 150);
     }
   }
-  sendMessage(0, "detected", c);
+  sendMessage(0, "detected", c); //on renvoie le nombre de moteurs détectés
 }
