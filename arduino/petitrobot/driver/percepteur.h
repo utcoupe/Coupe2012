@@ -9,27 +9,52 @@
 
 #define NB_MOTORS_PERCEPTEUR		1
 
-#define PIN_SWITCH_HAUT			21
-#define PIN_SWITCH_BAS			20
+#define DROIT_HAUT	21
+#define DROIT_BAS		20
+#define GAUCHE_HAUT	2
+#define GAUCHE_BAS	3
 
 class Percepteur {
 
  public:
-  Percepteur();
+  Percepteur(char i, char pin_haut_, char pin_bas_);
   int set_pwm(int ordre, int pwm);
+  void change_haut(char etat);
+  void change_bas(char etat);
 
  private:
+  char id;
   int pwm;
   int sens;
-  AF_DCMotor * motors;
+
+  /* etats switchs
+     0 : bas
+     1 : bas hésitation
+     2 : haut
+     3 : haut hésitation
+     4 : au milieu
+  */
+  char etat_switchs;
+
+  /* etats moteur
+     0 : arrêté
+     1 : elevator going up!
+     2 : backward
+  */
+  char etat_moteur;
+  int id_ordre;
+  char pin_haut;
+  char pin_bas;
+  AF_DCMotor *moteur;
 
 };
 
-void fdcHaut();
-void fdcBas();
+void fdcDroitHaut();
+void fdcDroitBas();
+void fdcGaucheHaut();
+void fdcGaucheBas();
 
-extern Percepteur g_percepteur;
-
-
+extern Percepteur *g_percepteur_droit;
+extern Percepteur *g_percepteur_gauche;
 
 #endif
