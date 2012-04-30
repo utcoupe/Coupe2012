@@ -78,10 +78,15 @@ void cmd(int id, int id_cmd, int* args, int size){
 				g_observer.getY(),
 				deg_to_rad(args[0]),
 				deg_s_to_rad_cycle(args[1]),
-				0.0
+				0.0,
+				id,
+				false
 			);
+			g_delta_regulator.reset();
+			g_alpha_regulator.reset();
 			g_delta_regulator.setMod(PosAndSpeedRegulator::BOTH);
 			g_alpha_regulator.setMod(PosAndSpeedRegulator::BOTH);
+			sendMessage(id, 1);
 			break;
 		}
 
@@ -94,10 +99,15 @@ void cmd(int id, int id_cmd, int* args, int size){
 				mm_to_ticks(args[1]),
 				0.0,
 				0.0,
-				mm_s_to_ticks_cycle(args[2])
+				mm_s_to_ticks_cycle(args[2]),
+				id,
+				false
 			);
+			g_delta_regulator.reset();
+			g_alpha_regulator.reset();
 			g_delta_regulator.setMod(PosAndSpeedRegulator::BOTH);
 			g_alpha_regulator.setMod(PosAndSpeedRegulator::BOTH);
+			sendMessage(id, 1);
 			break;
 		}
 
@@ -110,8 +120,11 @@ void cmd(int id, int id_cmd, int* args, int size){
 				(TICKS)0,
 				0.0,
 				mm_s_to_ticks_cycle(args[0]),
-				0.0
+				0.0,
+				id
 			);
+			g_delta_regulator.reset();
+			g_alpha_regulator.reset();
 			g_delta_regulator.setMod(PosAndSpeedRegulator::SPEED);
 			g_alpha_regulator.setMod(PosAndSpeedRegulator::NONE);
 			break;
@@ -126,8 +139,11 @@ void cmd(int id, int id_cmd, int* args, int size){
 				(TICKS)0,
 				0.0,
 				0.0,
-				deg_s_to_rad_cycle(args[0])
+				deg_s_to_rad_cycle(args[0]),
+				id
 			);
+			g_delta_regulator.reset();
+			g_alpha_regulator.reset();
 			g_delta_regulator.setMod(PosAndSpeedRegulator::NONE);
 			g_alpha_regulator.setMod(PosAndSpeedRegulator::SPEED);
 			break;
@@ -138,6 +154,7 @@ void cmd(int id, int id_cmd, int* args, int size){
 			g_debug_on = 0;
 			g_delta_regulator.stop();
 			g_alpha_regulator.stop();
+			sendMessage(id, 0);
 			break;
 		}
 
@@ -146,6 +163,7 @@ void cmd(int id, int id_cmd, int* args, int size){
 			g_debug_on = 1;
 			g_delta_regulator.resume();
 			g_alpha_regulator.resume();
+			sendMessage(id, 0);
 			break;
 		}
 
@@ -158,6 +176,7 @@ void cmd(int id, int id_cmd, int* args, int size){
 			g_alpha_regulator.reset();
 			G_value_left_enc = 0;
 			G_value_right_enc = 0;
+			sendMessage(id, 0);
 			break;
 		}
 
@@ -168,6 +187,7 @@ void cmd(int id, int id_cmd, int* args, int size){
 				mm_to_ticks(args[1]),
 				deg_to_rad(args[2])
 			);
+			sendMessage(id, 0);
 			break;
 		}
 

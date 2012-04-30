@@ -66,7 +66,7 @@ void applyPwm(const int output_alpha, const int output_delta, int& pwm_left, int
 
 void positionControl(const int32_t goal_x, const int32_t goal_y, const double goal_a,
 	const int32_t current_x, const int32_t current_y, const double current_a, const int32_t current_speed, const double current_speed_a,
-	int& pwm_left, int& pwm_right) {
+	int& pwm_left, int& pwm_right, bool & reached) {
 
 	int32_t t;
 	
@@ -96,6 +96,9 @@ void positionControl(const int32_t goal_x, const int32_t goal_y, const double go
 			g_times[5]=micros() - t;
 		}
 	}
+	else {
+		reached = true;
+	}
 
 	applyPwm(output4Alpha, output4Delta, pwm_left, pwm_right);
 }
@@ -103,7 +106,7 @@ void positionControl(const int32_t goal_x, const int32_t goal_y, const double go
 
 void angleControl(const int32_t goal_x, const int32_t goal_y, const double goal_a,
 	const int32_t current_x, const int32_t current_y, const double current_a, const int32_t current_speed, const double current_speed_a,
-	int& pwm_left, int& pwm_right) {
+	int& pwm_left, int& pwm_right, bool & reached) {
 
 	int32_t t;
 	
@@ -127,6 +130,9 @@ void angleControl(const int32_t goal_x, const int32_t goal_y, const double goal_
 			output4Delta = (int) g_delta_regulator.compute(0.0, (double)-delta_diff, current_speed);
 			g_times[4]=micros() - t;
 		}*/
+	}
+	else {
+		reached = true;
 	}
 
 	applyPwm(output4Alpha, output4Delta, pwm_left, pwm_right);

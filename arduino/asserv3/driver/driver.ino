@@ -108,13 +108,14 @@ void loop(){
 	
 	Goal& goal = *(Goal::get());
 	int pwm_right=0, pwm_left=0;
+	bool reached=false;
 	t = micros();
 	switch (goal.t()) {
 		case Goal::GOAL_POS:
 			positionControl(
 				goal.x(), goal.y(), goal.a(),
 				g_observer.getX(), g_observer.getY(), g_observer.getA(), g_observer.getSpeed(), g_observer.getSpeedA(),
-				pwm_left, pwm_right
+				pwm_left, pwm_right, reached
 			);
 		break;
 
@@ -122,7 +123,7 @@ void loop(){
 			angleControl(
 				goal.x(), goal.y(), goal.a(),
 				g_observer.getX(), g_observer.getY(), g_observer.getA(), g_observer.getSpeed(), g_observer.getSpeedA(),
-				pwm_left, pwm_right
+				pwm_left, pwm_right, reached
 			);
 		break;
 
@@ -142,6 +143,11 @@ void loop(){
 
 	setLeftPWM(pwm_left);
 	setRightPWM(pwm_right);
+
+	if (reached and !goal.reached()) {
+		goal.setReached(true);
+		sendMessage(goal.id(), 0);
+	}
 	
 	readIncomingData();
 	
