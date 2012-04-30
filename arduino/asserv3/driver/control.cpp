@@ -10,11 +10,15 @@
 #include <math.h>
 #include "tools.h"
 
+int32_t g_times[g_n] = {0};
 
+/*
 #define N	100
 int tab[N] = {0};
+*/
 
 void dump() {
+	/*
 	for (int i=0; i<N; ++i) {
 		Serial.print("plot ");
 		Serial.print(2*i); Serial.print(" ");
@@ -22,86 +26,111 @@ void dump() {
 		Serial.print(0); Serial.print(" "); // verte
 		Serial.println(0); // rouge
 	}
+	*/
 }
 
 void debug(double consign, double current, double pwm) {
+	/*
 	static int32_t last;
 	static double sum_pwm=0, sum_consign=0, sum_current=0;
 	static int n=0;
 	tab[n] = (int)current;
 	++n;
 	if (n>=N) n=0;
+	*/
 }
 
 
+void computeAlphaDeltaDiff(const int32_t goal_x, const int32_t goal_y, const double goal_a,
+	const int32_t current_x, const int32_t current_y, const double current_a,
+	double & alpha_diff_alpha, double & alpha_diff_delta, double & delta_diff) {
 
-
-
-void positionControl(bool goal_position, int32_t goal_x, int32_t goal_y, double goal_a,
-	int32_t current_x, int32_t current_y, double current_a, int32_t current_speed, double current_speed_a,
-	int& pwm_left, int& pwm_right) {
+	const int32_t dx = goal_x-current_x;
+	const int32_t dy = goal_y-current_y;
 	
-	pwm_left = 0;
-	pwm_right = 0;
+	alpha_diff_alpha = alpha_diff(goal_a, current_a);
+	alpha_diff_delta = alpha_diff(atan2(dy,dx), current_a);
+	delta_diff = sqrt(dx*dx+dy*dy);
+
+	if (fabs(alpha_diff_delta) > M_PI_2) {
+		delta_diff = -delta_diff;
+	}
+}
+
+void applyPwm(const int output_alpha, const int output_delta, int& pwm_left, int& pwm_right) {
+	pwm_left = output_delta-output_alpha;
+	pwm_right = output_delta+output_alpha;
+	pwm_left = min(255, max(-255, pwm_left));
+	pwm_right = min(255, max(-255, pwm_right));
+}
+
+void positionControl(const int32_t goal_x, const int32_t goal_y, const double goal_a,
+	const int32_t current_x, const int32_t current_y, const double current_a, const int32_t current_speed, const double current_speed_a,
+	int& pwm_left, int& pwm_right) {
+
+	int32_t t;
+	
+	double delta_diff, alpha_diff_delta, alpha_diff_alpha;
 	int output4Delta = 0;
 	int output4Alpha = 0;
-	int32_t dx = goal_x-current_x;
-	int32_t dy = goal_y-current_y;
 	
-	double alpha_diff_alpha = alpha_diff(goal_a, current_a);
-	double alpha_diff_delta = alpha_diff(atan2(dy, dx), current_a);
+
+	computeAlphaDeltaDiff(goal_x, goal_y, goal_a, current_x, current_y, current_a,
+		alpha_diff_alpha, alpha_diff_delta, delta_diff);
+
+	if(fabs(alpha_diff_delta) > M_PI_2) {
+		alpha_diff_delta = moduloPI(M_PI + alpha_diff_delta);
+	}
 	
-	double alpha_diff = 0.0;
+	
 
-	if (goal_position) {
-		alpha_diff = alpha_diff_delta;
-	}
-	else {
-		alpha_diff = alpha_diff_alpha;
-	}
+	
+	if (fabs(delta_diff) > 5.0*ENC_MM_TO_TICKS) {
+		t = micros();
+		output4Delta = (int) g_delta_regulator.compute(0.0, (double)-delta_diff, current_speed);
+		g_times[4]=micros() - t;
 
-	int sens_delta=1;
-	// Si le goal est derrière
-	if(abs(alpha_diff_delta) > M_PI/2) {
-		sens_delta = -sens_delta;
-		if (goal_position) {
-			alpha_diff = moduloPI(M_PI + alpha_diff);
+		if (fabs(alpha_diff_delta) > 0.5*DEG_TO_RAD) {
+			t = micros();
+			output4Alpha = (int) g_alpha_regulator.compute(0.0, (double)-alpha_diff_delta, current_speed_a);
+			g_times[5]=micros() - t;
 		}
 	}
 
-	double delta_diff = sqrt(dx*dx+dy*dy);
-	
-	double current_delta = sens_delta * delta_diff;
-	double current_alpha = alpha_diff;
-
-	if (((!goal_position and fabs(alpha_diff) < DEG_TO_RAD) or
-		(goal_position and fabs(delta_diff) < 5.0*ENC_MM_TO_TICKS)))
-	{
-		// goal atteind
-	}
-	else {
-		output4Delta = (int) g_delta_regulator.compute(0.0, (double)-current_delta, current_speed);
-		output4Alpha = (int) g_alpha_regulator.compute(0.0, (double)-current_alpha, current_speed_a);
-
-		pwm_left = output4Delta-output4Alpha;
-		pwm_right = output4Delta+output4Alpha;
-		pwm_left = min(255, max(-255, pwm_left));
-		pwm_right = min(255, max(-255, pwm_right));
-	}
-
-	/*if ((millis()%500) == 0) {
-		Serial.println("coucou");
-		Serial.print("pwm_left"); Serial.println(pwm_left);
-		Serial.print("pwm_right"); Serial.println(pwm_right);
-		Serial.print("out_delta"); Serial.println(output4Delta);
-		Serial.print("out_alpha"); Serial.println(output4Alpha);
-		Serial.print("delta"); Serial.println(current_delta);
-		Serial.print("alpha"); Serial.println(current_alpha);
-	}//*/
-	
-	debug(0.0, current_alpha*1000.0, pwm_right);
+	applyPwm(output4Alpha, output4Delta, pwm_left, pwm_right);
 }
 
+
+void angleControl(const int32_t goal_x, const int32_t goal_y, const double goal_a,
+	const int32_t current_x, const int32_t current_y, const double current_a, const int32_t current_speed, const double current_speed_a,
+	int& pwm_left, int& pwm_right) {
+
+	int32_t t;
+	
+	double delta_diff, alpha_diff_delta, alpha_diff_alpha, alpha_diff;
+	int output4Delta = 0;
+	int output4Alpha = 0;
+	
+
+	computeAlphaDeltaDiff(goal_x, goal_y, goal_a, current_x, current_y, current_a,
+		alpha_diff_alpha, alpha_diff_delta, delta_diff);
+
+	
+	
+	if (fabs(alpha_diff_alpha) > 0.5*DEG_TO_RAD) {
+		t = micros();
+		output4Alpha = (int) g_alpha_regulator.compute(0.0, (double)-alpha_diff_alpha, current_speed_a);
+		g_times[5]=micros() - t;
+		
+		/*if (fabs(delta_diff) > 5.0*ENC_MM_TO_TICKS) {
+			t = micros();
+			output4Delta = (int) g_delta_regulator.compute(0.0, (double)-delta_diff, current_speed);
+			g_times[4]=micros() - t;
+		}*/
+	}
+
+	applyPwm(output4Alpha, output4Delta, pwm_left, pwm_right);
+}
 
 
 

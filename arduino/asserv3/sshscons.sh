@@ -1,5 +1,5 @@
 
-HOST=utcoupe@10.42.43.94
+HOST=utcoupe@netbook.cheuv.eu
 DEST=/home/utcoupe/Bureau/coupe2012/arduino/
 
 cd /home/thomas/utcoupe/coupe2012/arduino

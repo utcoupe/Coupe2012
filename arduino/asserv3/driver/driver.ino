@@ -68,38 +68,59 @@ void setup()
 		.setOutLimit(255);
 	
 	g_alpha_regulator
-		//.setSpeedPID(500000.0, 0, 500000.0)
-		//.setPosPID(0.01, 0, 0.0)
-		.setSpeedPID(78000.0, 3333.3, 0)
+		.setSpeedPID(40000.0, 500, 500)
 		.setPosPID(0.01, 0.005, 1.0)
 		.setSpeedLimit(ALPHA_SPEED_MAX)
 		.setAccelLimit(360.0 * DEG_TO_RAD * DUREE_CYCLE * DUREE_CYCLE / 1000000.0)
 		.setOutLimit(255);
 }
 
+
+bool g_ouch=false;
 void loop(){
+
+	int32_t t;
+	/*
+	if (g_debug_on) {
+		for (int x=-30; x<0; ++x) {
+			for (int y=-30; y<0; ++y) {
+				Serial.print("save ");
+				Serial.print(x); Serial.print(' '); Serial.print(y); Serial.print(' ');
+				t = micros();
+				double hey = atan2(y,x);
+				t -= micros();
+				Serial.print(-t); Serial.print(' ');
+				Serial.println(hey);
+			}
+		}
+		g_debug_on = false;
+	}*/
 	/* on note le temps de debut */
 	int32_t time_start = micros();
 
 	// La del est allumee pendant le traitement
-	digitalWrite(16, HIGH);
+	//digitalWrite(16, HIGH);
 	
 	/* zone programmation libre */
-	
+	t = micros();
 	g_observer.compute(G_value_left_enc, G_value_right_enc);
+	g_times[6] = micros() - t;
 	
 	Goal& goal = *(Goal::get());
 	int pwm_right=0, pwm_left=0;
+	t = micros();
 	switch (goal.t()) {
 		case Goal::GOAL_POS:
-			positionControl(true, goal.x(), goal.y(), goal.a(),
+			positionControl(
+				goal.x(), goal.y(), goal.a(),
 				g_observer.getX(), g_observer.getY(), g_observer.getA(), g_observer.getSpeed(), g_observer.getSpeedA(),
 				pwm_left, pwm_right
 			);
 		break;
 
 		case Goal::GOAL_ANG:
-			positionControl(false, goal.x(), goal.y(), goal.a(),
+			angleControl(
+				goal.x(), goal.y(), goal.a(),
 				g_observer.getX(), g_observer.getY(), g_observer.getA(), g_observer.getSpeed(), g_observer.getSpeedA(),
 				pwm_left, pwm_right
 			);
@@ -117,7 +138,8 @@ void loop(){
 			Serial.println("Err : type de goal inconnu");
 		break;
 	}
-	
+	g_times[7] = micros() - t;
+
 	setLeftPWM(pwm_left);
 	setRightPWM(pwm_right);
 	
@@ -126,12 +148,25 @@ void loop(){
 	/* fin zone de programmation libre */
 
 	/* On eteint la del */
-	digitalWrite(16, LOW);
+	//digitalWrite(16, LOW);
+
+	
 	
 	/* On attend le temps qu'il faut pour boucler */
 	int32_t udelay = DUREE_CYCLE*1000L-(micros()-time_start);
-	if(udelay<0)
+	if (g_ouch) {
+		for (int i=0; i<g_n; ++i) {
+			Serial.print(i); Serial.print(" : "); Serial.println(g_times[i]);
+		}
+		g_ouch = false;
+	}
+	if(udelay<0) {
 		Serial.println("ouch : mainloop trop longue");
+		for (int i=0; i<g_n; ++i) {
+			Serial.print("ouch_"); Serial.print(i); Serial.print(" : "); Serial.println(g_times[i]);
+		}
+		g_ouch = true;
+	}
 	else if (udelay > 1000) {
 		delay(udelay/1000);
 	}
