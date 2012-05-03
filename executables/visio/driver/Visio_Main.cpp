@@ -1,9 +1,3 @@
-/**
- * \file 	Visio_Main.cpp
- * \author 	Liu
- * \date	01/04/2012          // et c'est pas une blague !!!
- *
- * */
 
 
 #include <opencv/cv.h>
