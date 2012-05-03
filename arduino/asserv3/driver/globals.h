@@ -13,7 +13,7 @@ extern RobotObserver g_observer;
 
 extern PosAndSpeedRegulator g_delta_regulator;
 extern PosAndSpeedRegulator g_alpha_regulator;
-
+extern bool g_stop;
 
 #endif
 

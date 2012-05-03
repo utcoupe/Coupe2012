@@ -110,39 +110,41 @@ void loop(){
 	int pwm_right=0, pwm_left=0;
 	bool reached=false;
 	t = micros();
-	switch (goal.t()) {
-		case Goal::GOAL_POS:
-			positionControl(
-				goal.x(), goal.y(), goal.a(),
-				g_observer.getX(), g_observer.getY(), g_observer.getA(), g_observer.getSpeed(), g_observer.getSpeedA(),
-				pwm_left, pwm_right, reached
-			);
-		break;
+	if (!g_stop) {
+		switch (goal.t()) {
+			case Goal::GOAL_POS:
+				positionControl(
+					goal.x(), goal.y(), goal.a(),
+					g_observer.getX(), g_observer.getY(), g_observer.getA(), g_observer.getSpeed(), g_observer.getSpeedA(),
+					pwm_left, pwm_right, reached
+				);
+			break;
 
-		case Goal::GOAL_ANG:
-			angleControl(
-				goal.x(), goal.y(), goal.a(),
-				g_observer.getX(), g_observer.getY(), g_observer.getA(), g_observer.getSpeed(), g_observer.getSpeedA(),
-				pwm_left, pwm_right, reached
-			);
-		break;
+			case Goal::GOAL_ANG:
+				angleControl(
+					goal.x(), goal.y(), goal.a(),
+					g_observer.getX(), g_observer.getY(), g_observer.getA(), g_observer.getSpeed(), g_observer.getSpeedA(),
+					pwm_left, pwm_right, reached
+				);
+			break;
 
-		case Goal::GOAL_DELTA_SPEED:
-			deltaSpeedControl(goal.speed(), g_observer.getSpeed(), g_delta_regulator, pwm_left, pwm_right);
-		break;
+			case Goal::GOAL_DELTA_SPEED:
+				deltaSpeedControl(goal.speed(), g_observer.getSpeed(), g_delta_regulator, pwm_left, pwm_right);
+			break;
 
-		case Goal::GOAL_ALPHA_SPEED:
-			alphaSpeedControl(goal.speed_a(), g_observer.getSpeedA(), g_alpha_regulator, pwm_left, pwm_right);
-		break;
+			case Goal::GOAL_ALPHA_SPEED:
+				alphaSpeedControl(goal.speed_a(), g_observer.getSpeedA(), g_alpha_regulator, pwm_left, pwm_right);
+			break;
 
-		case Goal::GOAL_PWM:
-			pwm_left = goal.x();
-			pwm_right = goal.y();
-		break;
-		
-		default:
-			Serial.println("Err : type de goal inconnu");
-		break;
+			case Goal::GOAL_PWM:
+				pwm_left = goal.x();
+				pwm_right = goal.y();
+			break;
+			
+			default:
+				Serial.println("Err : type de goal inconnu");
+			break;
+		}
 	}
 	g_times[7] = micros() - t;
 
