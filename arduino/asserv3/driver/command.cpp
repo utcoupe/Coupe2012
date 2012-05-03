@@ -186,7 +186,7 @@ void cmd(int id, int id_cmd, int* args, int size){
 		case QA_CANCEL:
 		{
 			// TODO
-			sendMessage(id, 0)
+			sendMessage(id, 0);
 			break;
 		}
 
