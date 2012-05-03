@@ -7,14 +7,14 @@
 const unsigned int CAMERA_N	= 1;
 
 //chess board Width and Height
-const int BOARD_W = 7;
-const int BOARD_H = 5;
+const int BOARD_W = 8;
+const int BOARD_H = 6;
 
 //Board size in MM and PX
-const unsigned int BOARD_WIDTH_MM	= 210;
-const unsigned int BOARD_HEIGHT_MM	= 140;
-const unsigned int BOARD_WIDTH_PX	= 105;
-const unsigned int BOARD_HEIGHT_PX	= 70;
+const unsigned int BOARD_WIDTH_MM	= 29 * BOARD_W;
+const unsigned int BOARD_HEIGHT_MM	= 29 * BOARD_H;
+const unsigned int BOARD_WIDTH_PX	= 110;
+const unsigned int BOARD_HEIGHT_PX	= 75;
 
 //HSV color filter tolerance
 const int HSV_TOLERANCE1 = 50;
@@ -26,8 +26,8 @@ const unsigned int TOLERANCE_MIN_CD = 40;
 const unsigned int TOLERANCE_MAX_CD = 170;
 
 //Bary point filter tolerance en mm for lingots
-const unsigned int TOLERANCE_MIN_LINGOT = 50;
-const unsigned int TOLERANCE_MAX_LINGOT = 120;
+const unsigned int TOLERANCE_MIN_LINGOT = 20;
+const unsigned int TOLERANCE_MAX_LINGOT = 90;
 
 //LINGOT and CD HSV INFO
 

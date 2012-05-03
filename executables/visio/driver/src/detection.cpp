@@ -65,8 +65,8 @@ void onMouse(int event, int x, int y, int flags, void * param)
         cout << "hsv_selected: " <<  (int)paramonmouse->hsv_selected[2]<< endl;
 
         cv::Point2f pt(x,y);
-        pt = px2mm(pt);
-        cout << "Coordonnee en mm" << endl <<" x: " <<pt.x << " y: " <<pt.y << endl;
+//        pt = px2mm(pt);
+        cout << "Coordonnee en px" << endl <<" x: " <<pt.x << " y: " <<pt.y << endl;
 
         DeterminateHSV(paramonmouse);
 
@@ -203,8 +203,9 @@ bool EliminatedContour(vector<cv::Point> contour, cv::Point bary, int index)
     bary = px2mm(bary);
     px2mm(contour);
 
+    float radius;
+    cv::Point2f bary2f = bary;
 
-    cv::RotatedRect MinRect;
     unsigned int Norm = 0;
     for (unsigned int i=0; i<contour.size(); i++)
     {
@@ -215,12 +216,27 @@ bool EliminatedContour(vector<cv::Point> contour, cv::Point bary, int index)
 
     if (index==0)
     {
+
+    cv::minEnclosingCircle(cv::Mat(contour), bary2f, radius);
+    cout<<"raduis est de: "<<radius<<endl;
+        if (radius >= TOLERANCE_MIN_CD and radius <= TOLERANCE_MAX_CD)
+        {
+
+            return false;
+        }
+        else return true;
+
+
+
+     /*   cout<<"cd norm: "<<Norm<<endl;
         if (Norm >= TOLERANCE_MIN_CD and Norm <= TOLERANCE_MAX_CD)
         return false;
-        else return true;
+        else return true;*/
     }
     else
     {
+        cout<<"lingot norm: "<<Norm<<endl;
+        cout<<Norm<<endl;
         if (Norm >= TOLERANCE_MIN_LINGOT and Norm <= TOLERANCE_MAX_LINGOT)
         return false;
         else return true;
