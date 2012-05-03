@@ -5,6 +5,18 @@ from math import *
 
 class Vec(list):
 	
+	@property
+	def x(self):
+		return self[0]
+	
+	@property
+	def y(self):
+		return self[1]
+	
+	@property
+	def z(self):
+		return self[2]
+	
 	def normalize(self):
 		self /= self.norm()
 		return self
