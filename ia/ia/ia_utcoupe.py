@@ -137,7 +137,7 @@ class IaUtcoupe(IaBase):
 		
 		# gogogo robots !
 		self.loopRobot(self.gamestate.bigrobot)
-		self.loopRobot(self.gamestate.minirobot)
+		#self.loopRobot(self.gamestate.minirobot) # pas de petit robot pour l'instant
 		
 		
 
@@ -218,7 +218,10 @@ class IaUtcoupe(IaBase):
 			bigrobot.asserv.cancel(block=True)
 			minirobot.asserv.cancel(block=True)
 			bigrobot.extras.teleport(self.p((160,250)), self.a(0))
-			minirobot.extras.teleport(self.p((400,250)), self.a(0))
+			bigrobot.asserv.set_pos(self.p((160,250)), self.a(0))
+			#minirobot.extras.teleport(self.p((400,250)), self.a(0))
+			minirobot.extras.teleport(self.p((4000,4000)), self.a(0)) # suppression du petit robot pour l'instant
+			bigrobot.asserv.set_pos(self.p((4000,4000)), self.a(0))
 			self.next_state_match()
 			return
 		
@@ -332,11 +335,13 @@ class IaUtcoupe(IaBase):
 		if self.state_mini == 1:
 			# avancer le petit robot
 			self.state_mini = 42
-			minirobot.asserv.goto((500,250), handler=self.mini_next_on_response_2(2))
+			#minirobot.asserv.goto((500,250), handler=self.mini_next_on_response_2(2)) # decommenter
+			self.state_mini = 2 # supprimer
 		elif self.state_mini == 2:
 			self.state_mini = 42
 			self.state_big = 42
-			minirobot.asserv.goto((1200,250), handler=self.mini_next_on_response_2(3))
+			#minirobot.asserv.goto((1200,250), handler=self.mini_next_on_response_2(3)) # decommenter
+			self.state_mini = 3 # commenter
 			bigrobot.asserv.goto((700,250), handler=self.big_next_on_response_2(3))
 		elif 3 == self.state_mini and \
 			 3 == self.state_big:

@@ -102,14 +102,14 @@ class GameState:
 		
 		self.ask_asserv_for_pos(self.bigrobot)
 		self.ask_asserv_for_pos(self.minirobot)
-		self.ask_hokyo_for_pos()
+		#self.ask_hokyo_for_pos()		// IMPORTANT A DECOMMENTER
 
 		self.update_robots()
 		
 	def wait_update(self):
 		self.event_bigrobot_pos_update.wait()
 		self.event_minirobot_pos_update.wait()
-		self.event_hokuyo_update.wait()
+		#self.event_hokuyo_update.wait() // IMPORTANT A DECOMMENTER
 
 	def ping(self, canal):
 		n = 10

@@ -42,7 +42,7 @@ class Action:
 		dist = self.get_len_path()
 		dist_enemies = ( self.dist_from(r.pos) for r in self.enemies )
 		min_dist_enemies = min(dist_enemies)
-		self.score = dist - min_dist_enemies
+		self.score = dist - min_dist_enemies * 0.5
 		#print(self.point_acces, dist, min_dist_enemies, self.score)
 	
 	def __repr__(self):

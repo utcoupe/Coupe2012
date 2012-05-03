@@ -44,7 +44,9 @@ class Asservissement(BasicLinker):
 
 	def get_pos(self, **kwargs):
 		return self.send("pos", **kwargs)
-	
+
+	def set_pos(self, p, **kwargs):
+		return self.send("set_pos", **kwargs)
 
 
 

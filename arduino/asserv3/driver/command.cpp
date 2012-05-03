@@ -181,6 +181,12 @@ void cmd(int id, int id_cmd, int* args, int size){
 			break;
 		}
 
+		case QA_CANCEL:
+		{
+			// TODO
+			break;
+		}
+
 		case QA_RESET:
 		{
 			Goal::get()->reset();
