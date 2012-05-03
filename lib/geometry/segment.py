@@ -121,5 +121,6 @@ class Segment:
 
 		return 0 <= r <= 1 and 0 <= s <= 1
 		
-
+	def __hash__(self):
+		return (self.a, self.b).__hash__()
 

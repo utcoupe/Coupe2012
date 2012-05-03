@@ -92,15 +92,19 @@ class NavGraph:
 		# le point d'arrivé est inateignable
 		if not area_arrive:
 			return [],[],[]
-			
+		
+		# le point de départ est déjà dans les vertices (très peut probable)
 		if p_depart in self.vertices:
 			vertex_depart = self.vertices[p_depart]
+		# sinon, on doit le rajouter 'à la main', puis le supprimer après le traitement
 		else:
 			vertex_depart = Node()
 			vertex_depart.init(p_depart.__hash__(),p_depart, [])
+			# si le point est dans une zone
 			if area_depart:
 				for p in area_depart.points:
 					vertex_depart.neighbors.append(self.vertices[p])
+			# sinon, il est dans une zone interdite, on va chercher le chemin le plus court pour sortir
 			else:
 				near_vertex = min(self.vertices.values(), key=lambda vertex: (p_depart - vertex.pos).norm2())
 				vertex_depart.neighbors.append(self.vertices[near_vertex.pos])
@@ -193,3 +197,12 @@ class NavGraph:
 		""" fonction à appeller après avoir bougé un obstacle dynamic """
 		self.calc_areas()
 		self.calc_vertex_graph()
+	
+	@property
+	def edges(self):
+		segments = set()
+		for area in self.areas.values():
+			for edge in area.iedges():
+				segments.add(edge)
+		return list(segments)
+		
