@@ -149,6 +149,20 @@ void cmd(int id, int id_cmd, int* args, int size){
 			break;
 		}
 
+		case QA_PWM:
+		{
+			Goal::get()->set(
+				Goal::GOAL_PWM,
+				args[0],
+				args[1],
+				0.0,
+				0.0,
+				0.0,
+				id
+			);
+			break;
+		}
+
 		case QA_STOP:
 		{
 			g_debug_on = 0;

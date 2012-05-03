@@ -115,14 +115,7 @@ class IaUtcoupe(IaBase):
 		
 		# demande de rafraichissement
 		self.gamestate.ask_update()
-		
 
-		self.gamestate.update_robots()
-		
-		# gogogo robots !
-		self.loopRobot(self.gamestate.bigrobot)
-		self.loopRobot(self.gamestate.minirobot)
-		
 		# attente du rafraichissement
 		self.gamestate.wait_update()
 		
@@ -138,6 +131,15 @@ class IaUtcoupe(IaBase):
 		
 		self.debug.remove_circle(1, ID_DEBUG_MINIROBOT)
 		self.debug.draw_circle(self.gamestate.minirobot.pos, R_MINIROBOT, (0,255,0), 1, ID_DEBUG_MINIROBOT)
+		
+		# update de l'état de la carte
+		self.gamestate.update_robots()
+		
+		# gogogo robots !
+		self.loopRobot(self.gamestate.bigrobot)
+		self.loopRobot(self.gamestate.minirobot)
+		
+		
 
 
 	
@@ -165,7 +167,9 @@ class IaUtcoupe(IaBase):
 				#print(best_action)
 
 				# si cette action n'est pas déjà celle que le robot veut atteindre
-				if robot.is_new_action(best_action):
+				# ou qu'un robot a coupé le chemin
+				if robot.is_new_action(best_action) or \
+					robot.is_path_intersected():
 					print("CHANGEMENT D'ACTION")
 					asserv.cancel()
 					self.debug.draw_path(best_action.path, (255,0,0), id(robot))
@@ -190,7 +194,6 @@ class IaUtcoupe(IaBase):
 
 	def mini_next_on_response_2(self, next_state):
 		def __f(n, canal, args, kwargs):
-			print("HELLO", n, canal, args, kwargs)
 			if n == 1:
 				self.state_mini = next_state
 		return __f

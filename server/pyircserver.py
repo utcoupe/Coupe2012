@@ -332,23 +332,15 @@ class Server(socketserver.ThreadingMixIn, socketserver.TCPServer):
 	@need_params(1)
 	@need_auth
 	def _cmd_join(self, client, msg):
-		print("coucou")
 		canal = msg.parameters[0]
 		if not valide_chan(canal):
-			print("coucou2.1")
 			client.send(self.make_response(ERR_NOSUCHCHANNEL, client.nick, canal, 'Invalid channel name'))
 		else:
-			print("coucou2.2")
 			if canal not in self.rooms:
-				print("coucou3")
 				self.new_room(canal)
-			print("coucou4")
 			self.rooms[canal].add_client(client)
-			print("coucou5")
 			self.rooms[canal].send(self.make_response('join', canal, prefix=client.prefix))
-			print("coucou6")
 			self._cmd_names(client, ParsedMsg(prefix=msg.prefix, command='names', parameters=[canal]))
-			print("coucou7")
 	
 	@need_params(2)
 	@need_auth

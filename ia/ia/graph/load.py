@@ -1,7 +1,10 @@
 
 
-
-import pygame.image as im
+try:
+	import pygame.image as im
+except ImportError as ex:
+	print(ex)
+	print("If you want to use tiled map, install pygame")
 import xml.dom.minidom
 
 

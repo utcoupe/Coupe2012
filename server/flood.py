@@ -4,10 +4,10 @@ import string
 import time 
 import threading
 
-HOST="10.42.43.1"
-PORT=6667
-NICK="flooder"
-IDENT="flooder"
+HOST="localhost"
+PORT=9095
+NICK="flooder_"
+IDENT="flooder_"
 REALNAME="Flood"
 readbuffer=""
 
@@ -24,7 +24,7 @@ def loop():
         
         for line in lines:
             line = line.strip()
-            print(line)
+            #print(line)
             line = line.split()
             if(line and line[0] == "PING"):
                 envoyer("PONG %s\r\n" % line[1])
@@ -51,14 +51,14 @@ while 1:
         count = 0
         while 1:
             envoyer("privmsg #test :Je flood !") #" %f" % time.time())
-            if round(time.time()) > last:
-                print("%f messages par seconde" % count)
+            if time.time() - last > 1:
+                print("%s messages par seconde" % count)
                 last = round(time.time())
                 count = 0
             else:
                 count = count + 1
             
-            time.sleep(.01)
+            time.sleep(.001)
         print(time.time())
     else:
         envoyer(m)
