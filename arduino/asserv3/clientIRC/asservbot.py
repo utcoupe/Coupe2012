@@ -70,7 +70,7 @@ if __name__ == "__main__":
 	arduinobot.run(
 		bot_class=DebugBot,
 		nickname="asservbot",
-		channel="#testasserv",
+		channel="#asserv",
 		serial_port="/dev/ttyACM0",
 		protocol_file=os.path.join(FILE_DIR,"..","..","protocole.h"),
 		protocol_prefixe="QA_")
