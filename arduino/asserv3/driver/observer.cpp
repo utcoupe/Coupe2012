@@ -35,8 +35,8 @@ void RobotObserver::compute(int32_t left_value, int32_t right_value) {
 	
 	// mise a jour de l'etat du robot
 	_a =  moduloPI(_a + _speed_a);	
-	_x += _speed*(1.0-0.5*_a);//cos(_a);
-	_y += _speed*_a;//sin(_a);
+	_x += _speed*cos(_a);//(1.0-0.5*0.5*_a);//cos(_a);
+	_y += _speed*sin(_a);//(_a-_a*_a*_a/6.0);//sin(_a);
 
 }
 

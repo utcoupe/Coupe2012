@@ -48,11 +48,11 @@ void computeAlphaDeltaDiff(const int32_t goal_x, const int32_t goal_y, const dou
 	const int32_t dx = goal_x-current_x;
 	const int32_t dy = goal_y-current_y;
 	
-	alpha_diff_alpha = alpha_diff(goal_a, current_a);
-	alpha_diff_delta = alpha_diff(atan2(dy,dx), current_a);
+	alpha_diff_alpha = moduloPI(alpha_diff(goal_a, current_a));
+	alpha_diff_delta = moduloPI(alpha_diff(atan2(dy,dx), current_a));
 	delta_diff = sqrt(dx*dx+dy*dy);
 
-	if (fabs(alpha_diff_delta) > M_PI_2) {
+	if (abs(alpha_diff_delta) > M_PI_2) {
 		delta_diff = -delta_diff;
 	}
 }
@@ -78,23 +78,21 @@ void positionControl(const int32_t goal_x, const int32_t goal_y, const double go
 	computeAlphaDeltaDiff(goal_x, goal_y, goal_a, current_x, current_y, current_a,
 		alpha_diff_alpha, alpha_diff_delta, delta_diff);
 
-	if(fabs(alpha_diff_delta) > M_PI_2) {
+	if(abs(alpha_diff_delta) > M_PI_2) {
 		alpha_diff_delta = moduloPI(M_PI + alpha_diff_delta);
 	}
 	
 	
 
 	
-	if (fabs(delta_diff) > 5.0*ENC_MM_TO_TICKS) {
+	if (abs(delta_diff) > 10.0*ENC_MM_TO_TICKS) {
 		t = micros();
 		output4Delta = (int) g_delta_regulator.compute(0.0, (double)-delta_diff, current_speed);
 		g_times[4]=micros() - t;
 
-		if (fabs(alpha_diff_delta) > 0.5*DEG_TO_RAD) {
-			t = micros();
-			output4Alpha = (int) g_alpha_regulator.compute(0.0, (double)-alpha_diff_delta, current_speed_a);
-			g_times[5]=micros() - t;
-		}
+		t = micros();
+		output4Alpha = (int) g_alpha_regulator.compute(0.0, (double)-alpha_diff_delta, current_speed_a);
+		g_times[5]=micros() - t;
 	}
 	else {
 		reached = true;
@@ -120,12 +118,12 @@ void angleControl(const int32_t goal_x, const int32_t goal_y, const double goal_
 
 	
 	
-	if (fabs(alpha_diff_alpha) > 0.5*DEG_TO_RAD) {
+	if (abs(alpha_diff_alpha) > 0.5*DEG_TO_RAD) {
 		t = micros();
 		output4Alpha = (int) g_alpha_regulator.compute(0.0, (double)-alpha_diff_alpha, current_speed_a);
 		g_times[5]=micros() - t;
 		
-		/*if (fabs(delta_diff) > 5.0*ENC_MM_TO_TICKS) {
+		/*if (abs(delta_diff) > 5.0*ENC_MM_TO_TICKS) {
 			t = micros();
 			output4Delta = (int) g_delta_regulator.compute(0.0, (double)-delta_diff, current_speed);
 			g_times[4]=micros() - t;

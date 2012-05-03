@@ -160,18 +160,18 @@ void loop(){
 	
 	/* On attend le temps qu'il faut pour boucler */
 	int32_t udelay = DUREE_CYCLE*1000L-(micros()-time_start);
-	if (g_ouch) {
+	/*if (g_ouch) {
 		for (int i=0; i<g_n; ++i) {
 			Serial.print(i); Serial.print(" : "); Serial.println(g_times[i]);
 		}
 		g_ouch = false;
-	}
+	}*/
 	if(udelay<0) {
 		Serial.println("ouch : mainloop trop longue");
-		for (int i=0; i<g_n; ++i) {
+		/*for (int i=0; i<g_n; ++i) {
 			Serial.print("ouch_"); Serial.print(i); Serial.print(" : "); Serial.println(g_times[i]);
 		}
-		g_ouch = true;
+		g_ouch = true;*/
 	}
 	else if (udelay > 1000) {
 		delay(udelay/1000);
