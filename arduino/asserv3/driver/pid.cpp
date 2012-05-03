@@ -8,7 +8,7 @@
 #endif
 
 PID::PID(double kp, double ki, double kd) :
-	_kp(kp), _ki(ki), _kd(kd),
+	_kp(kp), _ki(ki/NB_ERRORS), _kd(kd),
 	_err_sum(0), _last(0), _tab_errs({0}), _i_tab_errs(0),
 	_min(-(1L<<30)), _max(1L<<30), _gel_active(false) {}
 
@@ -40,12 +40,12 @@ double PID::computeErrSum(double err) {
 
 double PID::compute(double consign, double current) {
 	double err = consign - current;		// calcul erreur
-	double err_sum = computeErrSum(err);						// calcul intégrale
+	double err_sum = computeErrSum(err*_ki);						// calcul intégrale
 	/*double delta_current = current - _last;	// dérivée de la sortie du process
 	double out = (_kp * err) + (_ki * _err_sum / NB_ERRORS) - (_kd * delta_current);	// PID
 	_last = current;//*/					// sauvegarde
 	double delta_err = err - _last;
-	double out = (_kp * err) + (_ki * _err_sum / NB_ERRORS) + (_kd * delta_err);	// PID
+	double out = (_kp * err) + _err_sum + (_kd * delta_err);	// PID
 	_last = err;	//*/				// sauvegarde
 
 	return out;
@@ -53,7 +53,7 @@ double PID::compute(double consign, double current) {
 
 PID& PID::setP(double p) { _kp = p; return *this; }
 
-PID& PID::setI(double i) { _ki = i; return *this; }
+PID& PID::setI(double i) { _ki = i/(double)NB_ERRORS; return *this; }
 
 PID& PID::setD(double d) { _kd = d; return *this; }
 

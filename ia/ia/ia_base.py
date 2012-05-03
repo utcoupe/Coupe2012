@@ -24,7 +24,6 @@ class IaBase:
 		canal_big_asserv, canal_mini_asserv,
 		canal_big_others, canal_mini_others,
 		canal_big_extras, canal_mini_extras,
-		canal_big_actions, canal_mini_actions,
 		canal_hokuyo, canal_debug
 		):
 		"""
@@ -43,8 +42,6 @@ class IaBase:
 		@param {str} canal_debug
 		@param {str} canal_big_extras
 		@param {str} canal_mini_extras
-		@param {str} canal_big_actions
-		@param {str} canal_mini_actions
 		"""
 		# création bot irc
 		self.ircbot = IABot(server_ip, server_port,
@@ -56,8 +53,6 @@ class IaBase:
 			canal_hokuyo		= canal_hokuyo,
 			canal_big_extras	=canal_big_extras,
 			canal_mini_extras	=canal_mini_extras,
-			canal_big_actions	=canal_big_actions,
-			canal_mini_actions	=canal_mini_actions
 		)
 		
 		# démarage du bot irc
@@ -132,10 +127,10 @@ class IaBase:
 		# création de l'asserv
 		asserv = Asservissement(self.ircbot, canal_mini_asserv)
 		minirobot.set_asserv(asserv)
-
-                #creation des actionneurs
-		pitits_actionneurs = ActionneursMini(self.ircbot, canal_mini_actions)
-		minirobot.set_actionneurs(pitits_actionneurs)
+		
+		#creation des actionneurs
+		petits_actionneurs = ActionneursMini(self.ircbot, canal_mini_others)
+		minirobot.set_actionneurs(petits_actionneurs)
 
 		# extras
 		extras = Extras(self.ircbot, canal_mini_extras)

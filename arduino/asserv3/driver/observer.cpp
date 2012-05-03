@@ -17,34 +17,27 @@ RobotObserver::RobotObserver() : _x(0), _y(0), _speed(0), _a(0.0), _speed_a(0.0)
 
 void RobotObserver::compute(int32_t left_value, int32_t right_value) {
 
-	int32_t dl = left_value - _prev_left_value;
-	int32_t dr = right_value - _prev_right_value;
+	TICKS dl = left_value - _prev_left_value;
+	TICKS dr = right_value - _prev_right_value;
 	
 	// preparation de la prochaine iteration
 	_prev_left_value = left_value;
 	_prev_right_value = right_value;
+
+
+	// vitesse de rotation
+	_speed_a = (dr-dl)/(double)ENC_CENTER_DIST_TICKS;
+	//_speed_a = atan2(dr-dl, ENC_CENTER_DIST_TICKS);
+
+	// vitesse
+	_speed = (dr+dl)/2.0;
+
 	
-
-
-	// calcul du changement d'orientation en rad
-	double delta_angle = (double)(dr-dl)/(double)ENC_CENTER_DIST_TICKS;
-
-	// calcul du deplacement
-	double delta_dist = (double)(dr+dl)/2.0;
-
-	/* mise a jour de la position en ticks
-	 * on utilise des cos et des sin et c'est pas tres opti.
-	 * A voir si l'approximation par un dev limite d'ordre 2 est plus efficace
-	 */
-	double dx = delta_dist*cos(_a+delta_angle);
-	double dy = delta_dist*sin(_a+delta_angle);
-
 	// mise a jour de l'etat du robot
-	_speed = delta_dist;
-	_speed_a = delta_angle;
-	_a =  moduloPI(_a + delta_angle);
-	_x += dx;
-	_y += dy;
+	_a =  moduloPI(_a + _speed_a);	
+	_x += _speed*cos(_a);//(1.0-0.5*0.5*_a);//cos(_a);
+	_y += _speed*sin(_a);//(_a-_a*_a*_a/6.0);//sin(_a);
+
 }
 
 TICKS RobotObserver::getX() const {
@@ -91,7 +84,7 @@ void RobotObserver::reset() {
 	_x = _y = _speed = _a = _speed_a = _prev_left_value = _prev_right_value = 0;
 }
 
-void RobotObserver::setPos(int32_t x, int32_t y, double a) {
+void RobotObserver::setPos(TICKS x, TICKS y, RAD a) {
 	_x = x;
 	_y = y;
 	_a = a;
