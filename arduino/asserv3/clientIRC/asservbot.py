@@ -9,15 +9,17 @@ sys.path.append(os.path.join(FILE_DIR,"..","..","clientIRC"))
 
 import arduinobot
 
-import matplotlib
-matplotlib.use('Qt4Agg')
-from pylab import *
-
 
 
 class DebugBot(arduinobot.ArduinoBot):
 	def __init__(self, server_ip, server_port, nickname, channel, serial_port, serial_baudrate, protocol_file, protocol_prefixe):
 		arduinobot.ArduinoBot.__init__(self, server_ip, server_port, nickname, channel, serial_port, serial_baudrate, protocol_file, protocol_prefixe)
+		try:
+			import matplotlib
+			matplotlib.use('Qt4Agg')
+			from pylab import *
+		except ImportError as ex:
+			print(ex)
 		self.t = []
 		self.x = []
 		self.v = []
