@@ -135,6 +135,11 @@ void loop(){
 			alphaSpeedControl(goal.speed_a(), g_observer.getSpeedA(), g_alpha_regulator, pwm_left, pwm_right);
 		break;
 
+		case Goal::GOAL_PWM:
+			pwm_left = goal.x();
+			pwm_right = goal.y();
+		break;
+		
 		default:
 			Serial.println("Err : type de goal inconnu");
 		break;
