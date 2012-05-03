@@ -87,7 +87,9 @@ void positionControl(const int32_t goal_x, const int32_t goal_y, const double go
 	
 	if (abs(delta_diff) > 10.0*ENC_MM_TO_TICKS) {
 		t = micros();
-		output4Delta = (int) g_delta_regulator.compute(0.0, (double)-delta_diff, current_speed);
+		if (alpha_diff_delta < 5.0*DEG_TO_RAD) {
+			output4Delta = (int) g_delta_regulator.compute(0.0, (double)-delta_diff, current_speed);
+		}
 		g_times[4]=micros() - t;
 
 		t = micros();
