@@ -20,9 +20,10 @@ from .define import *
 
 class IaBase:
 	def __init__(self, server_ip, server_port, pos_bigrobot, pos_mini_robot, pos_enemy1, pos_enemy2, *,
-	team,
+		team,
 		canal_big_asserv, canal_mini_asserv,
 		canal_big_others, canal_mini_others,
+		canal_big_visio, canal_mini_visio,
 		canal_big_extras, canal_mini_extras,
 		canal_hokuyo, canal_debug
 		):
@@ -44,15 +45,18 @@ class IaBase:
 		@param {str} canal_mini_extras
 		"""
 		# création bot irc
-		self.ircbot = IABot(server_ip, server_port,
-			canal_big_asserv	= canal_big_asserv,
-			canal_mini_asserv	= canal_mini_asserv,
-			canal_big_others	= canal_big_others,
-			canal_mini_others	= canal_mini_others,
-			canal_debug			= canal_debug,
-			canal_hokuyo		= canal_hokuyo,
-			canal_big_extras	=canal_big_extras,
-			canal_mini_extras	=canal_mini_extras,
+		self.ircbot = IABot(server_ip, server_port, [
+			canal_big_asserv,
+			canal_mini_asserv,
+			canal_big_others,
+			canal_mini_others,
+			canal_big_visio,
+			canal_mini_visio,
+			canal_debug,
+			canal_hokuyo,
+			canal_big_extras,
+			canal_mini_extras
+			]
 		)
 		
 		# démarage du bot irc
@@ -101,6 +105,10 @@ class IaBase:
 		asserv = Asservissement(self.ircbot, canal_big_asserv)
 		bigrobot.set_asserv(asserv)
 
+		# création de la visio
+		visio = Visio(self.ircbot, canal_big_visio)
+		bigrobot.set_visio(visio)
+		
 		# extras
 		extras = Extras(self.ircbot, canal_big_extras)
 		bigrobot.set_extras(extras)
@@ -135,7 +143,7 @@ class IaBase:
 		#####
 		## Gamestate
 		#####
-		self.gamestate = GameState(self.ircbot, canal_big_asserv, canal_mini_asserv, bigrobot, minirobot, enemy1, enemy2)
+		self.gamestate = GameState(self.ircbot, canal_big_asserv, canal_mini_asserv, canal_big_visio, canal_mini_visio, bigrobot, minirobot, enemy1, enemy2)
 
 
 		
@@ -159,9 +167,13 @@ class IaBase:
 		print("Get latency big asserv")
 		print(self.gamestate.bigrobot.asserv.get_latency())
 		#print("Get latency mini asserv")
-		#print(self.gamestate.bigrobot.asserv.get_latency()) # a DECOMMENTER
+		#print(self.gamestate.bigrobot.asserv.get_latency()) 			# a DECOMMENTER
+		print("Get latency big visio")
+		print(self.gamestate.bigrobot.visio.get_latency())
+		#print("Get latency mini visio")
+		#print(self.gamestate.minirobot.visio.get_latency())			# a DECOMMENTER
 		#print("Ping hokuyo")
-		#print(self.gamestate.hokuyo.get_latency()) # a DECOMMENTER
+		#print(self.gamestate.hokuyo.get_latency()) 					# a DECOMMENTER
 		#input("appuyez sur une touche pour démarrer")
 		self.loopsetup()
 		while 1:
