@@ -11,7 +11,8 @@
 #include "include/parametres.h"
 #include "comManager.h"
 #include "protocole.h"
-
+#include <unistd.h>
+#include <sys/param.h>
 
 
 using namespace std;
@@ -20,7 +21,7 @@ cv::Vec3b hsv_selected;
 cv::Scalar hsv_pixel;
 bool hsv_selected_ready = false;
 bool recharger_Matrix_Perspective = false;
-vector<cv::Point> Positions_Display, Positions_Display_CD, Positions_Display_LINGOT;
+vector<cv::Point> Positions_Display, Positions_Display_CD, Positions_Display_LINGOT, Positions_Display_N;
 cv::Mat binary;
 pthread_mutex_t lock;
 cv::Mat warped;
@@ -28,48 +29,79 @@ cv::Mat image;
 cv::Mat warpMatrix;
 ParamonMouse paramonmouse;
 bool lookForChessBoard = false;
+string direct_abs, direct_m, direct_CDhsv, direct_Lhsv, direct_Nhsv;
+
+void Display_calcul(int indice, vector<cv::Point> &dst1, vector<cv::Point> &dstCD_LIN_N, vector<cv::Point> &dst_temp)
+{
+    pthread_mutex_lock( &lock );
+    MousePick(warped, binary, dst1, paramonmouse, indice, direct_CDhsv, direct_Lhsv, direct_Nhsv);
+/*    stringstream sss;
+    sss<<indice;
+    cv::namedWindow( sss.str()+"binary" , CV_WINDOW_AUTOSIZE);
+    cv::imshow( sss.str()+"binary", binary );
+    sss.str("");*/
+    findObjects(binary, dst1, indice); //0 for CD, 1 for lingot: elimination tolerance depends on this index, 3 pour CD noir.
+    pthread_mutex_unlock( &lock );
+    dst_temp = dst1;
+    dstCD_LIN_N = dst1;
+}
+
 
 void DisplayPosition()
 {
-    if(!ActivationVideo)
-    {warpPerspective(image, warped, warpMatrix, image.size(), cv::INTER_LINEAR, cv::BORDER_CONSTANT);}
-    vector<cv::Point> Positions_Display_Temp;
-    pthread_mutex_lock( &lock );
-    MousePick(warped, binary, Positions_Display, paramonmouse, 0);
-    findObjects(binary, Positions_Display, 0); //0 for CD, 1 for lingot: elimination tolerance depends on this index.
-    Positions_Display_CD = Positions_Display;
-    pthread_mutex_unlock( &lock );
-    Positions_Display_Temp = Positions_Display;
     stringstream ss;
+    if(!ActivationVideo) {
+         warpPerspective(image, warped, warpMatrix, image.size(), cv::INTER_LINEAR, cv::BORDER_CONSTANT);}
+
+
+    vector<cv::Point> Positions_Display_Temp;
+
+    Display_calcul(0, Positions_Display, Positions_Display_CD, Positions_Display_Temp);
+
     ss << "(";
         for (unsigned int i=0; i < Positions_Display_Temp.size(); i++)
 		{
               px2Cam(Positions_Display_Temp[i]);
+		    //Cam2CR(Positions_Display_Temp[i]);
 		    px2mm(Positions_Display_Temp[i]);
-            ss << "(" << Positions_Display_Temp[i].x << "," << Positions_Display_Temp[i].y << ")";
+
+            ss << "(" << Positions_Display_Temp[i].x << "," << Positions_Display_Temp[i].y << "),";
 		}
     ss << ")+(";
 
-    pthread_mutex_lock( &lock );
-    MousePick(warped, binary, Positions_Display, paramonmouse, 1);
-    findObjects(binary, Positions_Display, 1); //0 for CD, 1 for lingot: elimination tolerance depends on this index.
-    Positions_Display_LINGOT = Positions_Display;
-    pthread_mutex_unlock( &lock );
-    Positions_Display_Temp = Positions_Display;
+    Display_calcul(1, Positions_Display, Positions_Display_LINGOT, Positions_Display_Temp);
+
         for (unsigned int i=0; i < Positions_Display_Temp.size(); i++)
 		{
                px2Cam(Positions_Display_Temp[i]);
+              // Cam2CR(Positions_Display_Temp[i]);
 		    px2mm(Positions_Display_Temp[i]);
-            ss << "(" << Positions_Display_Temp[i].x << "," << Positions_Display_Temp[i].y << ")";
+            ss << "(" << Positions_Display_Temp[i].x << "," << Positions_Display_Temp[i].y << "),";
 		}
+    ss << ")+(";
+
+
+     Display_calcul(2, Positions_Display, Positions_Display_N, Positions_Display_Temp);
+
+     for (unsigned int i=0; i < Positions_Display_Temp.size(); i++)
+     {
+          px2Cam(Positions_Display_Temp[i]);
+         // Cam2CR(Positions_Display_Temp[i]);
+          px2mm(Positions_Display_Temp[i]);
+          ss << "(" << Positions_Display_Temp[i].x << "," << Positions_Display_Temp[i].y << "),";
+     }
+
     ss << ")";
+
     cout<<ss.str();
     ss.str("");
 }
 
+
 void PERSPECTIVE_Calibrer()
 {
      lookForChessBoard = true;
+     cout<<"0";
 }
 
 void PERSPECTIVE_Rechargement()
@@ -91,28 +123,36 @@ int main(int argc, char** argv)
 	cm->addFunction(QV_PING, &ping);
 	cm->addFunction(QV_CALIB, &PERSPECTIVE_Calibrer);
 	cm->addFunction(QV_RECHARGE, &PERSPECTIVE_Rechargement);
-//	cm->addFunction(QV_CALIB_HSV, &CalibHSV);
+
 
 	cm->start();
 
 	//code main()
 
+	//get current directory
 
-
-
+     direct_abs = argv[0];
+     std::string::size_type end = direct_abs.find_last_of('/');
+     direct_abs.erase(end);
+     cerr<<"absolute path is: "<<direct_abs<<endl;
+     direct_m = direct_abs + "/../../warpMatrix.yml";
+     direct_CDhsv = direct_abs + "/../../CDhsv.yml";
+     direct_Lhsv = direct_abs + "/../../Lhsv.yml";
+     direct_Nhsv = direct_abs + "/../../Nhsv.yml";
+     cerr<<"CDHSV path is : "<<direct_CDhsv<<endl;
+     cerr<<"LHSV path is : "<<direct_Lhsv<<endl;
+     cerr<<"NHSV path is : "<<direct_Nhsv<<endl;
+     cerr<<"matrix path is: "<<direct_m<<endl;
 	int board_w = BOARD_W;
 	int board_h = BOARD_H;
 
-	if (argc >= 3)
+     if (argc >= 3)
 	{
 		board_w = atoi(argv[1]);
 		board_h = atoi(argv[2]);
 	}
 
-//	int board_n = board_w * board_h;
 	cv::Size board_sz = cv::Size( board_w, board_h );
-//	const int board_case_px = 20;
-
 
 	// Try video input (or camera)
 	cv::VideoCapture capture(CAMERA_N);
@@ -124,9 +164,10 @@ int main(int argc, char** argv)
 
      cv::Mat gray;
 
-
-     cv::FileStorage fs2("/home/siqi/UTcoupe/Coupe2012/executables/visio/driver/warpMatrix.yml", cv::FileStorage::READ);
-     fs2["warpMatrix"] >> warpMatrix;
+     if(fexists(direct_m.c_str()))
+     {
+     cv::FileStorage fsm2(direct_m, cv::FileStorage::READ);
+     fsm2["warpMatrix"] >> warpMatrix;
 
 	if(ActivationVideo) {
      cv::namedWindow( "Raw" , CV_WINDOW_AUTOSIZE);
@@ -149,7 +190,7 @@ int main(int argc, char** argv)
 
         if (lookForChessBoard)
 		{
-            ChessboardFinder(image, gray, warpMatrix, warpok, found, lookForChessBoard, board_sz);
+            ChessboardFinder(image, gray, warpMatrix, warpok, found, lookForChessBoard, board_sz, direct_m);
 		}
 
 		// Show raw_image
@@ -167,21 +208,16 @@ int main(int argc, char** argv)
 
 		if(recharger_Matrix_Perspective and (ActivationVideo==1))
 		{
-		     if(fexists("/home/siqi/UTcoupe/Coupe2012/executables/visio/driver/warpMatrix.yml"))
-		     {
-
 		     warpPerspective(image, warped, warpMatrix, image.size(), cv::INTER_LINEAR, cv::BORDER_CONSTANT);
-
 		     cv::imshow( "Warped", warped);
 		     //recharger_Matrix_Perspective = false;
 		     }
-		     else cout<<"failed to open 'warpMatrix.yml'";
-		}
 
         if(not warped.empty())
      {
+        cv::circle(warped, cv::Point(WIDTH_WINDOW/2, HEIGHT_WINDOW), 5, cv::Scalar(30,20,255), -1, 200, 0);
         pthread_mutex_lock( &lock );
-        MousePick(warped, binary, Positions_Display_CD, paramonmouse, 2, Positions_Display_LINGOT);
+        MousePick(warped, binary, Positions_Display_CD, paramonmouse, 2, Positions_Display_LINGOT, direct_CDhsv, direct_Lhsv, direct_Nhsv, Positions_Display_N);
         pthread_mutex_unlock( &lock );
         }
 		// Handle pause/unpause and ESC
@@ -213,7 +249,8 @@ int main(int argc, char** argv)
 		}
 
 	}
-     fs2.release();
+     fsm2.release();
+}
 	// Ne pas oublier le wait final
 	cm->waitHere();
 

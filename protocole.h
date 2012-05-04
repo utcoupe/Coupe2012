@@ -228,11 +228,6 @@
  */
 #define QV_PING					41
 
-/**
- * Calibrer bande HSV de CD et de LINGOT
- */
-#define QV_CALIB_HSV					42
-
 
 /**
  * passer en mode calibration de la perspective (= détection de l'échéquier)
@@ -243,6 +238,7 @@
 
 /**
  * arreter le mode calibration de la perspective (= détection de l'échéquier)
+ * recharger la matrice perspective depuis le fichier warpMatrix.yml
  */
 #define QV_RECHARGE	44
 
