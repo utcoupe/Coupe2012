@@ -30,8 +30,8 @@ class Asservissement(BasicLinker):
 	def turnr(self, a, v=500, **kwargs):
 		self.send("turnr", round(a), v, **kwargs)
 
-	def pwm(self, pwm, **kwargs):
-		return self.send("pwm", pwm, **kwargs)
+	def pwm(self, pwm_l, pwm_r, **kwargs):
+		return self.send("pwm", pwm_l, pwm_r, **kwargs)
 
 	def stop(self, **kwargs):
 		return self.send("stop", **kwargs)
@@ -44,7 +44,13 @@ class Asservissement(BasicLinker):
 
 	def get_pos(self, **kwargs):
 		return self.send("pos", **kwargs)
-	
+
+	def set_pos(self, p, a, **kwargs):
+		"""
+			@param p {tuple|mm} position
+			@param a {radians} angle
+		"""
+		return self.send("set_pos", p[0], p[1], a, **kwargs)
 
 
 

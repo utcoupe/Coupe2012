@@ -18,7 +18,7 @@ class ExecutableBot(bridgebot.BridgeBot):
 	def __init__(self, server_ip, server_port, nickname, channel, exec_name, exec_params, protocol_file, protocol_prefixe):
 		self.process = None
 		try:
-			self.process = subprocess.Popen([exec_name]+exec_params, stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
+			self.process = subprocess.Popen([exec_name]+exec_params, stdout=subprocess.PIPE, stdin=subprocess.PIPE)
 		except Exception as ex:
 			print(ex)
 			sys.exit(1)

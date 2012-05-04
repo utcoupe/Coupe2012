@@ -55,12 +55,12 @@ class IaUtcoupe(IaBase):
 		
 		# actions gros robot
 		bigrobot = self.gamestate.bigrobot
-		actions = get_actions_bigrobot(bigrobot, bigrobot.asserv, enemies)
+		actions = get_actions_bigrobot(bigrobot, enemies)
 		bigrobot.set_actions(actions)
 		
 		# actions mini robot
 		minirobot = self.gamestate.minirobot
-		actions = get_actions_minirobot(minirobot, minirobot.asserv, enemies)
+		actions = get_actions_minirobot(minirobot, enemies)
 		minirobot.set_actions(actions)
 
 		#
@@ -82,11 +82,9 @@ class IaUtcoupe(IaBase):
 		time.sleep(0.5)
 	
 	def loop(self):
-
 		# si le match a durée depuis trop longtemps, on s'arrête
 		if self.match_timeout and (time.time() - self.t_begin_match) > self.match_timeout:
-			self.next_state_match()
-
+			self.state_match = 0
 
 		# appellé la fonction correspondant à l'état acutel
 		if 		STATE_PLAY	== self.state_match:
@@ -120,6 +118,7 @@ class IaUtcoupe(IaBase):
 		self.gamestate.wait_update()
 		
 		# debug
+		"""
 		self.debug.remove_circle(1, ID_DEBUG_ENEMY1)
 		self.debug.draw_circle(self.gamestate.enemy1.pos, R_ENEMY, (0,0,255), 1, ID_DEBUG_ENEMY1)
 		
@@ -131,13 +130,14 @@ class IaUtcoupe(IaBase):
 		
 		self.debug.remove_circle(1, ID_DEBUG_MINIROBOT)
 		self.debug.draw_circle(self.gamestate.minirobot.pos, R_MINIROBOT, (0,255,0), 1, ID_DEBUG_MINIROBOT)
+		"""
 		
 		# update de l'état de la carte
 		self.gamestate.update_robots()
 		
 		# gogogo robots !
 		self.loopRobot(self.gamestate.bigrobot)
-		self.loopRobot(self.gamestate.minirobot)
+		#self.loopRobot(self.gamestate.minirobot) # pas de petit robot pour l'instant
 		
 		
 
@@ -179,7 +179,7 @@ class IaUtcoupe(IaBase):
 				# si le robot est arrivé
 				if robot.is_arrive():
 					print("YEEEES")
-					actions.remove(best_action)
+					best_action.start()
 				else:
 					# si le robot a atteind le prochain point de passage,
 					# on passe au suivant
@@ -193,12 +193,14 @@ class IaUtcoupe(IaBase):
 				print("No reachable actions")
 
 	def mini_next_on_response_2(self, next_state):
+		""" changement de l'état du petit robot quand une double réponse a été reçue """
 		def __f(n, canal, args, kwargs):
 			if n == 1:
 				self.state_mini = next_state
 		return __f
 		
 	def big_next_on_response_2(self, next_state):
+		""" changement de l'état du gros robot quand une double réponse a été reçue """
 		def __f(n, canal, args, kwargs):
 			if n == 1:
 				self.state_big = next_state
@@ -216,9 +218,12 @@ class IaUtcoupe(IaBase):
 		# si on doit sauter le recalage (pour les tests)
 		if self.skip_recalage:
 			bigrobot.asserv.cancel(block=True)
-			minirobot.asserv.cancel(block=True)
+			#minirobot.asserv.cancel(block=True) // IMPORTANT A DECOMMENTER
 			bigrobot.extras.teleport(self.p((160,250)), self.a(0))
-			minirobot.extras.teleport(self.p((400,250)), self.a(0))
+			bigrobot.asserv.set_pos(self.p((160,250)), self.a(0))
+			#minirobot.extras.teleport(self.p((400,250)), self.a(0))
+			minirobot.extras.teleport(self.p((4000,4000)), self.a(0)) # suppression du petit robot pour l'instant // IMPORTANT A DECOMMENTER
+			#bigrobot.asserv.set_pos(self.p((4000,4000)), self.a(0))
 			self.next_state_match()
 			return
 		
@@ -325,19 +330,21 @@ class IaUtcoupe(IaBase):
 		if 0 == self.state_mini and \
 		   0 == self.state_big:
 			bigrobot.asserv.cancel(block=True)
-			minirobot.asserv.cancel(block=True)
+			#minirobot.asserv.cancel(block=True) # decommenter
 			self.state_mini = 1
 			self.state_big = 42
 
 		if self.state_mini == 1:
 			# avancer le petit robot
 			self.state_mini = 42
-			minirobot.asserv.goto((500,250), handler=self.mini_next_on_response_2(2))
+			#minirobot.asserv.goto((500,250), handler=self.mini_next_on_response_2(2)) # decommenter
+			self.state_mini = 2 # supprimer
 		elif self.state_mini == 2:
 			self.state_mini = 42
 			self.state_big = 42
-			minirobot.asserv.goto((1200,250), handler=self.mini_next_on_response_2(3))
-			bigrobot.asserv.goto((700,250), handler=self.big_next_on_response_2(3))
+			#minirobot.asserv.goto((1200,250), handler=self.mini_next_on_response_2(3)) # decommenter
+			self.state_mini = 3 # commenter
+			bigrobot.asserv.goto((700,R_BIGROBOT+50), handler=self.big_next_on_response_2(3))
 		elif 3 == self.state_mini and \
 			 3 == self.state_big:
 			self.state_mini = 0

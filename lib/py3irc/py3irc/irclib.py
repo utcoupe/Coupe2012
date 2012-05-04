@@ -499,7 +499,7 @@ class ServerConnection(Connection):
             self.disconnect("Connection reset by peer")
             return
 
-        print(new_data)
+        #print(new_data)
             
         lines = _linesep_regexp.split(str(self.previous_buffer) + str(new_data))
 

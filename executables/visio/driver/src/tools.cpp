@@ -8,26 +8,31 @@ using namespace std;
 
 cv::Point2f px2mm(cv::Point2f & p)
 {
-    float ratioX, ratioY;
-    ratioX = BOARD_HEIGHT_MM/BOARD_HEIGHT_PX;
-    ratioY = BOARD_WIDTH_MM/BOARD_WIDTH_PX;
-
-    p.x = p.x * ratioX;
-    p.y = p.y * ratioY;
+    p.x = p.x * RATIO_X;
+    p.y = p.y * RATIO_Y;
 
     return p;
 }
 
 cv::Point2f px2mm(cv::Point & p)
 {
-    float ratioX, ratioY;
-    ratioX = BOARD_HEIGHT_MM/BOARD_HEIGHT_PX;
-    ratioY = BOARD_WIDTH_MM/BOARD_WIDTH_PX;
-
-    p.x = p.x * ratioX;
-    p.y = p.y * ratioY;
+    p.x = p.x * RATIO_X;
+    p.y = p.y * RATIO_Y;
 
     return p;
+}
+
+cv::Point2f mm2px(cv::Point & p)
+{
+    p.x = p.x * RATIOX_MM2PX;
+    p.y = p.y * RATIOY_MM2PX;
+    return p;
+}
+
+void px2Cam(cv::Point & p)
+{
+     p.x = p.x - WIDTH_WINDOW/2;
+     p.y = HEIGHT_WINDOW - p.y;
 }
 
 void id()
@@ -42,14 +47,10 @@ void ping()
 
 void px2mm(vector<cv::Point> & p)
 {
-    float ratioX, ratioY;
-    ratioX = BOARD_HEIGHT_MM/BOARD_HEIGHT_PX;
-    ratioY = BOARD_WIDTH_MM/BOARD_WIDTH_PX;
-
     for (unsigned int i = 0; i < p.size(); i++)
     {
-        p[i].x = p[i].x * ratioX;
-        p[i].y = p[i].y * ratioY;
+        p[i].x = p[i].x * RATIO_X;
+        p[i].y = p[i].y * RATIO_Y;
     }
 }
 

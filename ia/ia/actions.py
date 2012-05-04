@@ -4,42 +4,73 @@ from .action import *
 
 from .define import *
 
+import time
+
 class ActionTotem(Action):
 
-	DIRECTION_HAUT		= 0
-	DIRECTION_BAS		= 1
+	DIRECTION_HAUT		= 0	# il faudra aller vers le bas (dy < 0) pour aller vider le totem
+	DIRECTION_BAS		= 1 # il faudra eller vers le haut (dy > 0) pour aller vider le totem
 	
-	def __init__(self, robot, asservissement, enemies, point_acces, direction):
+	def __init__(self, robot, enemies, point_acces, direction):
 		Action.__init__(self, robot, enemies, point_acces)
 		self.direction = direction
 
-	def action(self):
-		print("YOUHOU")
+	def run(self):
+		asserv = self.robot.asserv
+		# tourner face au totem
+		angle = 90 if self.direction==self.DIRECTION_HAUT else -90
+		asserv.turn(angle, block=True, block_level=2)
 
+		
+		# avancer
+		asserv.pwm(100,100)
+		time.sleep(1)
+		asserv.pwm(0,0)
+
+		# reculer
+		point = Vec(self.point_acces)
+		point[1] += -10 if self.direction==self.DIRECTION_HAUT else 10
+		asserv.goto(point, block=True, block_level=2)
+		
+		#fini
+		self.clean()
+		
+		
 
 class ActionBouteille(Action):
-	def __init__(self, robot, asservissement, enemies, point_acces):
-		Action.__init__(self, robot, enemies, point_acces)
-
-	def action(self):
-		print("YOUHOU")
-		
-class ActionCarte(Action):
 	def __init__(self, robot, enemies, point_acces):
 		Action.__init__(self, robot, enemies, point_acces)
 
-	def action(self):
+	def run(self):
 		print("YOUHOU")
-		
+		self.clean()
 
 
-def get_actions_bigrobot(robot, asservissement, enemies):
+class ActionCarte(Action):
+	def __init__(self, robot, enemies, point_acces):
+		Action.__init__(self, robot, enemies, point_acces)
+	
+	def run(self):
+		print("YOUHOU")
+		self.clean()
+
+
+class ActionCd(Action):
+	def __init__(self, robot, enemies, point_acces):
+		super().__init__(robot, enemies, point_acces)
+
+	def run(self):
+		print("Cd ramassé")
+		self.clean()
+
+
+def get_actions_bigrobot(robot, enemies):
 	actions = []
 	# totems
-	actions.append(ActionTotem(robot, asservissement, enemies, (1100,1125+R_BIGROBOT+1), ActionTotem.DIRECTION_BAS))
-	actions.append(ActionTotem(robot, asservissement, enemies, (1900,1125+R_BIGROBOT+1), ActionTotem.DIRECTION_BAS))
-	actions.append(ActionTotem(robot, asservissement, enemies, (1100,875-R_BIGROBOT-1), ActionTotem.DIRECTION_HAUT))
-	actions.append(ActionTotem(robot, asservissement, enemies, (1900,875-R_BIGROBOT-1), ActionTotem.DIRECTION_HAUT))
+	actions.append(ActionTotem(robot, enemies, (1100,1125+R_BIGROBOT+1), ActionTotem.DIRECTION_BAS))
+	actions.append(ActionTotem(robot, enemies, (1900,1125+R_BIGROBOT+1), ActionTotem.DIRECTION_BAS))
+	actions.append(ActionTotem(robot, enemies, (1100,875-R_BIGROBOT-1), ActionTotem.DIRECTION_HAUT))
+	actions.append(ActionTotem(robot, enemies, (1900,875-R_BIGROBOT-1), ActionTotem.DIRECTION_HAUT))
 
 
 	return actions
@@ -47,11 +78,11 @@ def get_actions_bigrobot(robot, asservissement, enemies):
 
 	
 
-def get_actions_minirobot(robot, asservissement, enemies):
+def get_actions_minirobot(robot, enemies):
 	actions = []
 	# bouteilles
-	actions.append(ActionBouteille(robot, asservissement, enemies, (640, 2000 - R_MINIROBOT - 10)))
-	actions.append(ActionBouteille(robot, asservissement, enemies, (1883, 2000 - R_MINIROBOT - 10)))
+	actions.append(ActionBouteille(robot, enemies, (640, 2000 - R_MINIROBOT - 10)))
+	actions.append(ActionBouteille(robot, enemies, (1883, 2000 - R_MINIROBOT - 10)))
 	actions.append(ActionCarte(robot, enemies, (1500, R_MINIROBOT + 10)))
 
 	return actions

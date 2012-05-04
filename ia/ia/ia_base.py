@@ -105,10 +105,6 @@ class IaBase:
 		extras = Extras(self.ircbot, canal_big_extras)
 		bigrobot.set_extras(extras)
 		
-		# actions
-		actions = get_actions_bigrobot(bigrobot, asserv, enemies)
-		bigrobot.set_actions(actions)
-		
 
 		#####
 		## Création mini robot
@@ -162,10 +158,10 @@ class IaBase:
 		self.ircbot.e_welcome.wait()
 		print("Get latency big asserv")
 		print(self.gamestate.bigrobot.asserv.get_latency())
-		print("Get latency mini asserv")
-		print(self.gamestate.bigrobot.asserv.get_latency())
-		print("Ping hokuyo")
-		print(self.gamestate.hokuyo.get_latency())
+		#print("Get latency mini asserv")
+		#print(self.gamestate.bigrobot.asserv.get_latency()) # a DECOMMENTER
+		#print("Ping hokuyo")
+		#print(self.gamestate.hokuyo.get_latency()) # a DECOMMENTER
 		#input("appuyez sur une touche pour démarrer")
 		self.loopsetup()
 		while 1:
