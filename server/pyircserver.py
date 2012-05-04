@@ -199,9 +199,9 @@ def need_auth(f):
 
 class Server(socketserver.ThreadingMixIn, socketserver.TCPServer):
 	def __init__(self, host_port):
+		self.allow_reuse_address = True
 		socketserver.TCPServer.__init__(self, host_port, Client)
 		#self.daemon_threads = True
-		self.allow_reuse_address = True
 		self.rooms = {}
 		self.l_rooms = threading.Lock()
 		self.clients = {}
