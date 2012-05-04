@@ -238,13 +238,13 @@
  * passer en mode calibration de la perspective (= détection de l'échéquier)
  * Enreigistrer la matrix dans un fichier warpMatrix.yml
  */
-#define QV_CALIB_PERSPECTIVE_CALI		43
+#define QV_CALIB		43
 
 
 /**
  * arreter le mode calibration de la perspective (= détection de l'échéquier)
  */
-#define QV_CALIB_PERSPECTIVE_RECHARG	44
+#define QV_RECHARGE	44
 
 
 /**

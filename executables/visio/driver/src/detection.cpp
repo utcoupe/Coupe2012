@@ -64,10 +64,12 @@ void onMouse(int event, int x, int y, int flags, void * param)
         cout << "hsv_selected: " <<  (int)paramonmouse->hsv_selected[1]<< endl;
         cout << "hsv_selected: " <<  (int)paramonmouse->hsv_selected[2]<< endl;
 
-        cv::Point2f pt(x,y);
+        cv::Point pt(x,y);
 //        pt = px2mm(pt);
+        px2Cam(pt);
         cout << "Coordonnee en px" << endl <<" x: " <<pt.x << " y: " <<pt.y << endl;
-
+        px2mm(pt);
+        cout << "Coordonnee en mm" << endl <<" x: " <<pt.x << " y: " <<pt.y << endl;
         DeterminateHSV(paramonmouse);
 
         break;
@@ -112,9 +114,9 @@ void MousePick(cv::Mat& warped, cv::Mat& binary, const vector<cv::Point>& Positi
 
                int h_cd, s_cd, v_cd, h2_cd,s2_cd,v2_cd;
                int h_L, s_L, v_L, h2_L, s2_L, v2_L;
-               if(fexists("HSVbande.yml"))
+               if(fexists("/home/siqi/UTcoupe/Coupe2012/executables/visio/driver/HSVbande.yml"))
                {
-                    cv::FileStorage fhsv("HSVbande.yml", cv::FileStorage::READ);
+                    cv::FileStorage fhsv("/home/siqi/UTcoupe/Coupe2012/executables/visio/driver/HSVbande.yml", cv::FileStorage::READ);
                     fhsv["h_cd"] >> h_cd;
                     fhsv["s_cd"] >> s_cd;
                     fhsv["v_cd"] >> v_cd;
@@ -148,7 +150,8 @@ void MousePick(cv::Mat& warped, cv::Mat& binary, const vector<cv::Point>& Positi
         for (unsigned int i=0; i < Positions_Display_LINGOT.size(); i++) {
         cv::circle(warped, Positions_Display_LINGOT[i], 3, cv::Scalar(0,255,0), -1, 200, 0);
         }
-		cv::imshow( "Warped", warped );
+        if(ActivationVideo) {
+		cv::imshow( "Warped", warped );}
 }
 
 void MousePick(cv::Mat& warped, cv::Mat& binary, const vector<cv::Point>& Positions_Display,
@@ -165,9 +168,9 @@ void MousePick(cv::Mat& warped, cv::Mat& binary, const vector<cv::Point>& Positi
 
                int h_cd, s_cd, v_cd, h2_cd,s2_cd,v2_cd;
                int h_L, s_L, v_L, h2_L, s2_L, v2_L;
-               if(fexists("HSVbande.yml"))
+               if(fexists("/home/siqi/UTcoupe/Coupe2012/executables/visio/driver/HSVbande.yml"))
                {
-                    cv::FileStorage fhsv("HSVbande.yml", cv::FileStorage::READ);
+                    cv::FileStorage fhsv("/home/siqi/UTcoupe/Coupe2012/executables/visio/driver/HSVbande.yml", cv::FileStorage::READ);
                     fhsv["h_cd"] >> h_cd;
                     fhsv["s_cd"] >> s_cd;
                     fhsv["v_cd"] >> v_cd;
@@ -195,7 +198,8 @@ void MousePick(cv::Mat& warped, cv::Mat& binary, const vector<cv::Point>& Positi
 
 		cv::GaussianBlur(binary, binary, cv::Size (9, 9), 2, 2);
 
-		cv::imshow( "Warped", warped );
+if(ActivationVideo) {
+		cv::imshow( "Warped", warped );}
 }
 
 bool EliminatedContour(vector<cv::Point> contour, cv::Point bary, int index)
@@ -218,7 +222,7 @@ bool EliminatedContour(vector<cv::Point> contour, cv::Point bary, int index)
     {
 
     cv::minEnclosingCircle(cv::Mat(contour), bary2f, radius);
-    cout<<"raduis est de: "<<radius<<endl;
+    cerr<<"raduis est de: "<<radius<<endl;
         if (radius >= TOLERANCE_MIN_CD and radius <= TOLERANCE_MAX_CD)
         {
 
@@ -235,8 +239,7 @@ bool EliminatedContour(vector<cv::Point> contour, cv::Point bary, int index)
     }
     else
     {
-        cout<<"lingot norm: "<<Norm<<endl;
-        cout<<Norm<<endl;
+        cerr<<"lingot norm: "<<Norm<<endl;
         if (Norm >= TOLERANCE_MIN_LINGOT and Norm <= TOLERANCE_MAX_LINGOT)
         return false;
         else return true;
