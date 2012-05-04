@@ -23,6 +23,7 @@ class IaUtcoupe(IaBase):
 	team,
 		canal_big_asserv, canal_mini_asserv,
 		canal_big_others, canal_mini_others,
+		canal_big_visio, canal_mini_visio,
 		canal_big_extras, canal_mini_extras,
 		canal_hokuyo,
 		canal_debug,
@@ -40,6 +41,8 @@ class IaUtcoupe(IaBase):
 			canal_mini_asserv	=canal_mini_asserv,
 			canal_big_others	=canal_big_others,
 			canal_mini_others	=canal_mini_others,
+			canal_big_visio		=canal_big_visio,
+			canal_mini_visio	=canal_mini_visio,
 			canal_hokuyo		=canal_hokuyo,
 			canal_debug			=canal_debug,
 			canal_big_extras	=canal_big_extras,
@@ -116,6 +119,9 @@ class IaUtcoupe(IaBase):
 
 		# attente du rafraichissement
 		self.gamestate.wait_update()
+
+		# aplication du rafraichissement
+		self.gamestate.update_robots()
 		
 		# debug
 		"""

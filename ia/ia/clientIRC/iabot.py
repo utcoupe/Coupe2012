@@ -16,13 +16,11 @@ MAX_ID		= 32000
 class IABot(MyPyIrcBot):
 
 	
-	def __init__(self, server_ip, server_port, *,
-			canal_big_asserv, canal_mini_asserv, canal_big_others, canal_mini_others, canal_debug, canal_hokuyo,
-			canal_big_extras, canal_mini_extras):
+	def __init__(self, server_ip, server_port, channels):
 		MyPyIrcBot.__init__(self,
 			server_ip, server_port,
 			"iabot",
-			[canal_big_asserv, canal_mini_asserv, canal_big_others, canal_mini_others, canal_debug, canal_hokuyo, canal_big_extras, canal_mini_extras]
+			channels
 		)
 
 

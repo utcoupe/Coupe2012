@@ -30,6 +30,9 @@ class Robot:
 		"""
 		self.asserv = asserv
 
+	def set_visio(self, visio):
+		self.visio = visio
+	
 	def set_extras(self, extras):
 		"""
 		Link le client extras (téléportation)
