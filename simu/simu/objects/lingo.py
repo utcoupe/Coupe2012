@@ -16,4 +16,4 @@ class Lingo(EngineObjectPoly):
 		)
 
 	def __repr__(self):
-		return "Cd %s " % (self.posinit,)
+		return "Lingo %s " % (self.posinit,)

@@ -9,10 +9,12 @@ from py3irc.mypyirc.mypyircbot import Executer
 from py3irc.mypyirc.ircutils import *
 from ..define import *
 from ..engine.engineobject import EngineObjectPoly
+from .cd import Cd
+from .lingo import Lingo
 
 
-
-
+def angle_diff(a, b):
+	return min(2*math.pi - (b-a), b-a)
 
 class GoalPWM:
 	def __init__(self, pwm):
@@ -46,7 +48,7 @@ class GoalANGLER(GoalANGLE): pass
 
 
 class Robot(EngineObjectPoly, Executer):
-	def __init__(self, *, engine, canal_asserv, canal_others, canal_extras,
+	def __init__(self, *, engine, canal_asserv, canal_others, canal_visio, canal_extras,
 	team, posinit, mass, poly_points, typerobot, extension_objects=[]):
 		color = 'blue' if team == BLUE else 'red'
 		EngineObjectPoly.__init__(self,
@@ -88,28 +90,30 @@ class Robot(EngineObjectPoly, Executer):
 		self.canal_asserv = canal_ircnormalize(canal_asserv)
 		self.canal_others = canal_ircnormalize(canal_others)
 		self.canal_extras = canal_ircnormalize(canal_extras)
+		self.canal_visio = canal_ircnormalize(canal_visio)
 		
 
 		# rajouts des fonctions utilisées par le bot irc
 		# _cmd_asserv_<cmd> => cmd_<canal_asserv>_<cmd>
 		self.transform("asserv", canal_asserv)
 		self.transform("others", canal_others)
+		self.transform("visio", canal_visio)
 		self.transform("extras", canal_extras)
 
 		self.body._set_velocity_func(self._my_velocity_func())
 
 	def init(self, engine):
 		self.engine = engine
-
+	
 	def x(self):
 		return px_to_mm(self.body.position[0])
-
+	
 	def y(self):
 		return px_to_mm(self.body.position[1])
-
+	
 	def a(self):
 		return int(math.degrees(self.body.angle))
-	
+		
 
 	def _my_velocity_func(self):
 		def f(body, gravity, damping, dt):
@@ -243,7 +247,31 @@ class Robot(EngineObjectPoly, Executer):
 		self.body._set_position(mm_to_px(x,y))
 		self.body._set_angle(math.radians(a))
 		self.send_canal_extras(id_msg, 1)
-
+	
+	##
+	##		VISIO
+	##
+	
+	def _cmd_visio_get(self, id_msg=42, **kwargs):
+		"""
+		Récupérer ce que vois la caméra
+		"""
+		cds = filter(lambda o: isinstance(o, Cd), self.engine.objects)
+		lingos = filter(lambda o: isinstance(o, Lingo), self.engine.objects)
+		dist2 = mm_to_px(800)**2
+		def condition(o):
+			""" assez proche et devant nous """
+			v = o.pos() - self.pos()
+			return v.norm2() < dist2 and abs(angle_diff(v.angle(),self.angle())) < math.radians(45)
+		cds = filter(condition, cds)
+		lingos = filter(condition, lingos)
+		def transform(o):
+			""" px -> mm     &&     absolute -> relative """
+			rel_pos = self.pos() - o.pos())
+			return px_to_mm(rel_pos)
+		cds = map(transform, cds)
+		lingos = map(transform, lingos)
+		self.send_canal_visio(id_msg, str(tuple(cds)), str(tuple(lingos)))
 
 	##
 	##		SEND_CANAL_X
@@ -257,6 +285,9 @@ class Robot(EngineObjectPoly, Executer):
 		
 	def send_canal_extras(self, id_msg, *args):
 		self.send_response(self.canal_extras, id_msg, self.compute_msg(*args))
+		
+	def send_canal_visio(self, id_msg, *args):
+		self.send_response(self.canal_visio, id_msg, self.compute_msg(*args))
 
 
 	def onEvent(self, event):

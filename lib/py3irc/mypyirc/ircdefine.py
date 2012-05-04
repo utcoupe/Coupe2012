@@ -1,10 +1,9 @@
 
 
 #####
-## <PREFIX_CMD><IRC_CMD><SEP><ARG1><SEP><ARG2>...<SEP_OPTIONS>options
+## <PREFIX_CMD><IRC_CMD><SEP><ARG1><SEP><ARG2>
 #####
 SEP					= " "
-SEP_OPTIONS			= "#"
 PREFIX_CMD			= "."
 
 
@@ -13,6 +12,8 @@ CANAL_BIG_ASSERV	= "#asserv"
 CANAL_MINI_ASSERV	= "#asservmini"
 CANAL_BIG_OTHERS	= "#others"
 CANAL_MINI_OTHERS	= "#othersmini"
+CANAL_BIG_VISIO		= "#visio"
+CANAL_MINI_VISIO	= "#visiomini"
 CANAL_HOKUYO		= "#hokuyo"
 CANAL_DEBUG			= "#debug"
 CANAL_BIG_EXTRAS	= "#extras"

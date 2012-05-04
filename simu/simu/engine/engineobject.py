@@ -70,10 +70,10 @@ class EngineObject:
 	def remove_body_extension(self, obj):
 		self.extension_objects.remove(obj)
 		self.engine.remove_extension(obj)
-
+	
 	def pos(self):
-		return self.body.position
-
+		return Vec(self.body.position)
+	
 	def angle(self):
 		return self.body.angle
 		
