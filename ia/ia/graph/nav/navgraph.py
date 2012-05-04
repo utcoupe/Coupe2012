@@ -134,7 +134,9 @@ class NavGraph:
 			for area in self.areas.values():
 				if area.id not in id_areas:
 					area.walkable = False
-			_areas, _raw_path, smooth_path = self.get_path_areas_mode(p_depart, p_arrive)
+			if not area_depart: # le départ est en zone interdite
+				area_depart = min(vertices[1].areas, key=lambda a: (a.middle - p_arrive).norm2())
+			_areas, _raw_path, smooth_path = self.get_path_areas_mode(p_depart, p_arrive, area_depart)
 			for area in self.areas.values():
 				area.walkable = True
 		elif len(vertices) == 2:
@@ -144,10 +146,10 @@ class NavGraph:
 			smooth_path = [p_depart, p_arrive]
 		return vertices, raw_path, smooth_path
 
-	def get_path_areas_mode(self, p_depart, p_arrive):
+	def get_path_areas_mode(self, p_depart, p_arrive, area_depart=None):
 		p_depart = Vec(p_depart)
 		p_arrive = Vec(p_arrive)
-		area_depart = self.find_area_for_point(p_depart)
+		area_depart = self.find_area_for_point(p_depart) if not area_depart else area_depart
 		area_arrive = self.find_area_for_point(p_arrive)
 		
 		# le point d'arrivé est inateignable

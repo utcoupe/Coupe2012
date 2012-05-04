@@ -272,9 +272,9 @@ class Robot(EngineObjectPoly, Executer):
 		def transform(o):
 			""" px -> mm     &&     absolute -> relative """
 			p = o.pos() - self.pos()
-			x = cosa * p.x - sina * p.y
-			y = sina * p.x + cosa * p.y
-			return tuple(px_to_mm(p))
+			x = cosa * p.x + sina * p.y
+			y = -sina * p.x + cosa * p.y
+			return tuple(px_to_mm(x,y))
 		cds = map(transform, cds)
 		lingos = map(transform, lingos)
 		self.send_canal_visio(id_msg, str(tuple(cds)).replace(' ',''), str(tuple(lingos)).replace(' ',''))
