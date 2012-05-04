@@ -197,13 +197,13 @@ class IaUtcoupe(IaBase):
 				# ou qu'un robot a coupé le chemin
 				if robot.is_new_action(best_action) or \
 					robot.is_path_intersected():
-					print("CHANGEMENT D'ACTION")
+					print("CHANGEMENT D'ACTION", best_action)
 					asserv.cancel()
 					self.debug.draw_path(best_action.path, (255,0,0), id(robot))
 					print(robot.pos, best_action.point_acces, best_action.path)
 					robot.set_target_action(best_action, best_action.path)
 
-				# si le robot est arrivé
+				# si le robot est arrivé au point de lancement de l'action
 				if robot.is_arrive():
 					print("YEEEES")
 					best_action.start()
