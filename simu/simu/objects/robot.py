@@ -251,7 +251,9 @@ class Robot(EngineObjectPoly, Executer):
 	##
 	##		VISIO
 	##
-	
+	def _cmd_visio_ping(self, id_msg=42, **kwargs):
+		self.send_canal_visio(id_msg, "pong")
+		
 	def _cmd_visio_get(self, id_msg=42, **kwargs):
 		"""
 		Récupérer ce que vois la caméra
@@ -275,7 +277,7 @@ class Robot(EngineObjectPoly, Executer):
 			return tuple(px_to_mm(p))
 		cds = map(transform, cds)
 		lingos = map(transform, lingos)
-		self.send_canal_visio(id_msg, str(tuple(cds)), str(tuple(lingos)))
+		self.send_canal_visio(id_msg, str(tuple(cds)).replace(' ',''), str(tuple(lingos)).replace(' ',''))
 
 	##
 	##		SEND_CANAL_X
