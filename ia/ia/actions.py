@@ -62,6 +62,10 @@ class ActionCd(Action):
 	def run(self):
 		print("Cd ramassé")
 		self.clean()
+	
+	def compute_score(self, p):
+		super().compute_score(p)
+		self.score -= 1000
 
 
 def get_actions_bigrobot(robot, enemies):

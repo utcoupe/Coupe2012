@@ -51,9 +51,11 @@ class IaUtcoupe(IaBase):
 
 		# ne pas se recaler
 		self.skip_recalage = skip_recalage
-		
+
+		# bind de l'event jack
 		self.ircbot.set_handler(ID_MSG_JACK, self._on_jack_event)
-		
+
+		# récupération des enemis
 		enemies = self.gamestate.enemyrobots()
 		
 		# actions gros robot
@@ -66,13 +68,22 @@ class IaUtcoupe(IaBase):
 		actions = get_actions_minirobot(minirobot, enemies)
 		minirobot.set_actions(actions)
 
-		#
+		# 
 		self.autostart		= autostart
-		self.t_begin_match	= time.time()
+
+		# durée max du match
 		self.match_timeout	= match_timeout
 
+		# date du début du match, pout compter les 90s
+		self.t_begin_match	= time.time()
+		
+		# jack event
 		self.e_jack			= threading.Event()
 
+		# les actions liées aux cds trouvés grâce à la visio
+		self.cd_actions = []
+		
+		# reset
 		self.reset()
 
 
@@ -114,14 +125,20 @@ class IaUtcoupe(IaBase):
 			
 	def loopPlay(self):
 		
+		for o in self.gamestate.objects:
+			self.debug.remove_circle(1, id(o))
+		
 		# demande de rafraichissement
 		self.gamestate.ask_update()
 
 		# attente du rafraichissement
 		self.gamestate.wait_update()
 
-		# aplication du rafraichissement
+		# application du rafraichissement
 		self.gamestate.update_robots()
+
+		# maj des actions
+		self.set_cd_actions(self.gamestate.objects)
 		
 		# debug
 		"""
@@ -140,6 +157,10 @@ class IaUtcoupe(IaBase):
 		
 		# update de l'état de la carte
 		self.gamestate.update_robots()
+
+		# voir les objets vu par les cameras
+		"""for o in self.gamestate.objects:
+			self.debug.draw_circle(o, 80, (255,0,0), 1, id(o))"""
 		
 		# gogogo robots !
 		self.loopRobot(self.gamestate.bigrobot)
@@ -162,7 +183,7 @@ class IaUtcoupe(IaBase):
 		
 		# si le robot n'est pas en action et qu'il reste des actions
 		if not robot.in_action and actions:
-			# recherche de la mailleur action à effectuer
+			# recherche de la meilleur action à effectuer
 			for action in actions:
 				action.compute_score(robot.pos)
 			reachable_actions = tuple(filter(lambda a: a.path, actions))
@@ -441,4 +462,19 @@ class IaUtcoupe(IaBase):
 				return 180 + a
 		else:
 			return a
-		
+
+	def set_cd_actions(self, cds):
+		"""
+		@param cds {list:pair} list es positions des cds
+		"""
+		bigrobot = self.gamestate.bigrobot
+		for actions in self.cd_actions:
+			try:
+				bigrobot.actions.remove(actions)
+			except ValueError:
+				pass
+		self.cd_actions = []
+		for cd in cds:
+			self.cd_actions.append(ActionCd(bigrobot, self.gamestate.enemyrobots(), cd))
+		bigrobot.actions.extend(self.cd_actions)
+	

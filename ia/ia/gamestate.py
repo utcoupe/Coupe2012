@@ -12,7 +12,7 @@ import time
 import threading
 from inspect import currentframe
 import itertools
-
+import math
 
 from py3irc.mypyirc.ircdefine import *
 from .clientIRC.hokuyo import Hokuyo
@@ -196,17 +196,15 @@ class GameState:
 	def on_msg_visio(self, n, canal, args, options):
 		if len(args) == 2:
 			if canal == self.canal_big_visio:
-				print("coucou")
 				event = self.event_bigrobot_visio_update
 				robot = self.bigrobot
 			else:
-				print("hello")
 				event = self.event_minirobot_visio_update
 				event = self.minirobot
 			cds = eval(args[0])
 			lingos = eval(args[1])
 			objects = cds + lingos
-			new_objects = Visio.relative_to_absolute(robot.pos, robot.a, objects)
+			new_objects = Visio.relative_to_absolute(robot.pos, math.radians(robot.a), objects)
 			self.objects += new_objects
 			event.set()
 		else:
