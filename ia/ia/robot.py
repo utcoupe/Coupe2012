@@ -30,6 +30,9 @@ class Robot:
 		"""
 		self.asserv = asserv
 
+	def set_visio(self, visio):
+		self.visio = visio
+	
 	def set_extras(self, extras):
 		"""
 		Link le client extras (téléportation)
@@ -77,7 +80,18 @@ class Robot:
 		return len(self.path) == 0
 
 	def is_new_action(self, action):
-		return action != self.target_action
+		if not self.target_action:
+			return True
+		if action != self.target_action:
+			x1,y1 = action.point_acces
+			x2,y2 = self.target_action.point_acces
+			if abs(x1-x2) < 50 and abs(y1-y2) < 50:
+				self.target_action = action
+				return False
+			else:
+				return True
+		else:
+			return False
 
 	def update_pos(self, p):
 		self.pos = Vec(p)

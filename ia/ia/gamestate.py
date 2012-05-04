@@ -12,10 +12,11 @@ import time
 import threading
 from inspect import currentframe
 import itertools
-
+import math
 
 from py3irc.mypyirc.ircdefine import *
 from .clientIRC.hokuyo import Hokuyo
+from .clientIRC.visio import Visio
 
 
 
@@ -30,10 +31,12 @@ def permutation_k_parmis_4(k):
 
 
 class GameState:
-	def __init__(self, ircbot, canal_big_asserv, canal_mini_asserv, bigrobot, minirobot, enemy1, enemy2):
+	def __init__(self, ircbot, canal_big_asserv, canal_mini_asserv, canal_big_visio, canal_mini_visio, bigrobot, minirobot, enemy1, enemy2):
 		self.ircbot 			= ircbot
 		self.canal_big_asserv 	= canal_big_asserv
 		self.canal_mini_asserv 	= canal_mini_asserv
+		self.canal_big_visio 	= canal_big_visio
+		self.canal_mini_visio 	= canal_mini_visio
 		self.bigrobot 			= bigrobot
 		self.minirobot 			= minirobot
 		self.enemy1		 		= enemy1
@@ -41,10 +44,14 @@ class GameState:
 
 		self.hokuyo				= Hokuyo(ircbot, CANAL_HOKUYO)
 
+		self.objects			= []
+
 		self.event_bigrobot_pos_update = threading.Event()
 		self.event_minirobot_pos_update = threading.Event()
 		self.event_hokuyo_update = threading.Event()
 		self.event_on_pong = threading.Event()
+		self.event_bigrobot_visio_update = threading.Event()
+		self.event_minirobot_visio_update = threading.Event()
 
 		
 
@@ -99,17 +106,22 @@ class GameState:
 		self.event_bigrobot_pos_update.clear()
 		self.event_minirobot_pos_update.clear()
 		self.event_hokuyo_update.clear()
+		self.event_bigrobot_visio_update.clear()
+		self.event_minirobot_visio_update.clear()
+		
 		
 		self.ask_asserv_for_pos(self.bigrobot)
-		self.ask_asserv_for_pos(self.minirobot)
-		#self.ask_hokyo_for_pos()		// IMPORTANT A DECOMMENTER
+		#self.ask_asserv_for_pos(self.minirobot) 						// IMPORTANT A DECOMMENTER
+		self.ask_visio_for_objects()
+		#self.ask_hokyo_for_pos()										// IMPORTANT A DECOMMENTER
 
-		self.update_robots()
 		
 	def wait_update(self):
 		self.event_bigrobot_pos_update.wait()
-		self.event_minirobot_pos_update.wait()
-		#self.event_hokuyo_update.wait() // IMPORTANT A DECOMMENTER
+		self.event_bigrobot_visio_update.wait()
+		#self.event_minirobot_visio_update.wait()						// IMPORTANT A DECOMMENTER
+		#self.event_minirobot_pos_update.wait() 						// IMPORTANT A DECOMMENTER
+		#self.event_hokuyo_update.wait() 								// IMPORTANT A DECOMMENTER
 
 	def ping(self, canal):
 		n = 10
@@ -127,6 +139,11 @@ class GameState:
 	def ask_asserv_for_pos(self, robot):
 		robot.asserv.get_pos(handler=self.on_msg_pos)
 
+	def ask_visio_for_objects(self):
+		self.objects = []
+		self.bigrobot.visio.get(handler=self.on_msg_visio)
+		#self.minirobot.visio.get(handler=self.on_msg_visio) 			// IMPORTANT A DECOMMENTER
+	
 	def on_msg(self, canal, auteur, msg):
 		msg_split = msg.split(SEP)
 		if len(msg_split) > 1:
@@ -176,6 +193,24 @@ class GameState:
 			self.send_error(canal, "Error %s.on_msg_hokyo (%s:%d) : pas assez de paramètres " %
 				(self.__class__.__name__, currentframe().f_code.co_filename, currentframe().f_lineno))
 
+	def on_msg_visio(self, n, canal, args, options):
+		if len(args) == 2:
+			if canal == self.canal_big_visio:
+				event = self.event_bigrobot_visio_update
+				robot = self.bigrobot
+			else:
+				event = self.event_minirobot_visio_update
+				event = self.minirobot
+			cds = eval(args[0])
+			lingos = eval(args[1])
+			objects = cds + lingos
+			new_objects = Visio.relative_to_absolute(robot.pos, math.radians(robot.a), objects)
+			self.objects += new_objects
+			event.set()
+		else:
+			self.send_error(canal, "Error %s.on_msg_visio (%s:%d) : pas assez de paramètres " %
+				(self.__class__.__name__, currentframe().f_code.co_filename, currentframe().f_lineno))
+	
 	def send_error(self, canal, msg):
 		if self.ircbot:
 			self.ircbot.send_error(canal, msg)

@@ -1,12 +1,13 @@
 
 from geometry import Vec
-
+import threading
 
 MAX_DIST = 1E50
 
-class Action:
+class Action(threading.Thread):
 	
 	def __init__(self, robot, enemies, point_acces):
+		super().__init__()
 		self.point_acces = Vec(point_acces)
 		self.robot = robot
 		self.enemies = enemies
@@ -15,6 +16,22 @@ class Action:
 		self.score = 0
 		self.path = []
 
+		# passe à True quand l'action est finie
+		self._done = False
+
+	def start(self):
+		print("ACTION", self)
+		self.robot.in_action = True
+		super().start()
+	
+	def run(self):
+		raise Exception("method run must be overriden")
+
+	def clean(self):
+		self.robot.actions.remove(self)
+		self._done = True
+		self.robot.in_action = False
+	
 	def dist_from(self, p):
 		""" retourne la distance pour se rendre au point d'entrée
 		de cette action """
@@ -47,6 +64,8 @@ class Action:
 	
 	def __repr__(self):
 		return "Action(%s, %s)" % (self.point_acces, self.score)
-		
+
+	def done(self):
+		return self._done
 
 

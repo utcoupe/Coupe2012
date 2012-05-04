@@ -85,7 +85,7 @@ def mm_to_px(*args):
 	
 	"""
 	def f(a):
-		if type(a) == tuple or type(a) == list:
+		if isinstance(a,tuple) or isinstance(a,list):
 			return mm_to_px(*a)
 		else:
 			return int(a / PX_TO_MM)
@@ -100,7 +100,7 @@ def px_to_mm(*args):
 	@param la valeur ou la liste convertie
 	"""
 	def f(a):
-		if type(a) == tuple or type(a) == list:
+		if isinstance(a,tuple) or isinstance(a,list):
 			return px_to_mm(*a)
 		else:
 			return int(a * PX_TO_MM)

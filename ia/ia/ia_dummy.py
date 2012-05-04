@@ -15,6 +15,7 @@ class IaDummy(IaBase):
 		team,
 		canal_big_asserv, canal_mini_asserv,
 		canal_big_others, canal_mini_others,
+		canal_big_visio, canal_mini_visio,
 		canal_big_extras, canal_mini_extras,
 		canal_hokuyo, canal_debug, skip_recalage,
 		autostart = False, match_timeout = None
@@ -26,12 +27,12 @@ class IaDummy(IaBase):
 			canal_mini_asserv	=canal_mini_asserv,
 			canal_big_others	=canal_big_others,
 			canal_mini_others	=canal_mini_others,
+			canal_big_visio		=canal_big_visio,
+			canal_mini_visio	=canal_mini_visio,
 			canal_hokuyo		=canal_hokuyo,
 			canal_debug			=canal_debug,
 			canal_big_extras	=canal_big_extras,
 			canal_mini_extras	=canal_mini_extras,
-			canal_mini_actions	=canal_mini_actions,
-			canal_big_actions	=canal_big_actions
 		)
 		
 		

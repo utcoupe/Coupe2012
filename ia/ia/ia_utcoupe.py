@@ -23,6 +23,7 @@ class IaUtcoupe(IaBase):
 	team,
 		canal_big_asserv, canal_mini_asserv,
 		canal_big_others, canal_mini_others,
+		canal_big_visio, canal_mini_visio,
 		canal_big_extras, canal_mini_extras,
 		canal_hokuyo,
 		canal_debug,
@@ -40,6 +41,8 @@ class IaUtcoupe(IaBase):
 			canal_mini_asserv	=canal_mini_asserv,
 			canal_big_others	=canal_big_others,
 			canal_mini_others	=canal_mini_others,
+			canal_big_visio		=canal_big_visio,
+			canal_mini_visio	=canal_mini_visio,
 			canal_hokuyo		=canal_hokuyo,
 			canal_debug			=canal_debug,
 			canal_big_extras	=canal_big_extras,
@@ -48,28 +51,39 @@ class IaUtcoupe(IaBase):
 
 		# ne pas se recaler
 		self.skip_recalage = skip_recalage
-		
+
+		# bind de l'event jack
 		self.ircbot.set_handler(ID_MSG_JACK, self._on_jack_event)
-		
+
+		# récupération des enemis
 		enemies = self.gamestate.enemyrobots()
 		
 		# actions gros robot
 		bigrobot = self.gamestate.bigrobot
-		actions = get_actions_bigrobot(bigrobot, bigrobot.asserv, enemies)
+		actions = get_actions_bigrobot(bigrobot, enemies)
 		bigrobot.set_actions(actions)
 		
 		# actions mini robot
 		minirobot = self.gamestate.minirobot
-		actions = get_actions_minirobot(minirobot, minirobot.asserv, enemies)
+		actions = get_actions_minirobot(minirobot, enemies)
 		minirobot.set_actions(actions)
 
-		#
+		# 
 		self.autostart		= autostart
-		self.t_begin_match	= time.time()
+
+		# durée max du match
 		self.match_timeout	= match_timeout
 
+		# date du début du match, pout compter les 90s
+		self.t_begin_match	= time.time()
+		
+		# jack event
 		self.e_jack			= threading.Event()
 
+		# les actions liées aux cds trouvés grâce à la visio
+		self.cd_actions = []
+		
+		# reset
 		self.reset()
 
 
@@ -82,11 +96,9 @@ class IaUtcoupe(IaBase):
 		time.sleep(0.5)
 	
 	def loop(self):
-
 		# si le match a durée depuis trop longtemps, on s'arrête
 		if self.match_timeout and (time.time() - self.t_begin_match) > self.match_timeout:
-			self.next_state_match()
-
+			self.state_match = 0
 
 		# appellé la fonction correspondant à l'état acutel
 		if 		STATE_PLAY	== self.state_match:
@@ -113,13 +125,23 @@ class IaUtcoupe(IaBase):
 			
 	def loopPlay(self):
 		
+		for o in self.gamestate.objects:
+			self.debug.remove_circle(1, id(o))
+		
 		# demande de rafraichissement
 		self.gamestate.ask_update()
 
 		# attente du rafraichissement
 		self.gamestate.wait_update()
+
+		# application du rafraichissement
+		self.gamestate.update_robots()
+
+		# maj des actions
+		self.set_cd_actions(self.gamestate.objects)
 		
 		# debug
+		"""
 		self.debug.remove_circle(1, ID_DEBUG_ENEMY1)
 		self.debug.draw_circle(self.gamestate.enemy1.pos, R_ENEMY, (0,0,255), 1, ID_DEBUG_ENEMY1)
 		
@@ -131,9 +153,14 @@ class IaUtcoupe(IaBase):
 		
 		self.debug.remove_circle(1, ID_DEBUG_MINIROBOT)
 		self.debug.draw_circle(self.gamestate.minirobot.pos, R_MINIROBOT, (0,255,0), 1, ID_DEBUG_MINIROBOT)
+		"""
 		
 		# update de l'état de la carte
 		self.gamestate.update_robots()
+
+		# voir les objets vu par les cameras
+		"""for o in self.gamestate.objects:
+			self.debug.draw_circle(o, 80, (255,0,0), 1, id(o))"""
 		
 		# gogogo robots !
 		self.loopRobot(self.gamestate.bigrobot)
@@ -156,7 +183,7 @@ class IaUtcoupe(IaBase):
 		
 		# si le robot n'est pas en action et qu'il reste des actions
 		if not robot.in_action and actions:
-			# recherche de la mailleur action à effectuer
+			# recherche de la meilleur action à effectuer
 			for action in actions:
 				action.compute_score(robot.pos)
 			reachable_actions = tuple(filter(lambda a: a.path, actions))
@@ -170,16 +197,16 @@ class IaUtcoupe(IaBase):
 				# ou qu'un robot a coupé le chemin
 				if robot.is_new_action(best_action) or \
 					robot.is_path_intersected():
-					print("CHANGEMENT D'ACTION")
+					print("CHANGEMENT D'ACTION", best_action)
 					asserv.cancel()
 					self.debug.draw_path(best_action.path, (255,0,0), id(robot))
 					print(robot.pos, best_action.point_acces, best_action.path)
 					robot.set_target_action(best_action, best_action.path)
 
-				# si le robot est arrivé
+				# si le robot est arrivé au point de lancement de l'action
 				if robot.is_arrive():
 					print("YEEEES")
-					actions.remove(best_action)
+					best_action.start()
 				else:
 					# si le robot a atteind le prochain point de passage,
 					# on passe au suivant
@@ -193,12 +220,14 @@ class IaUtcoupe(IaBase):
 				print("No reachable actions")
 
 	def mini_next_on_response_2(self, next_state):
+		""" changement de l'état du petit robot quand une double réponse a été reçue """
 		def __f(n, canal, args, kwargs):
 			if n == 1:
 				self.state_mini = next_state
 		return __f
 		
 	def big_next_on_response_2(self, next_state):
+		""" changement de l'état du gros robot quand une double réponse a été reçue """
 		def __f(n, canal, args, kwargs):
 			if n == 1:
 				self.state_big = next_state
@@ -216,12 +245,12 @@ class IaUtcoupe(IaBase):
 		# si on doit sauter le recalage (pour les tests)
 		if self.skip_recalage:
 			bigrobot.asserv.cancel(block=True)
-			minirobot.asserv.cancel(block=True)
+			#minirobot.asserv.cancel(block=True) // IMPORTANT A DECOMMENTER
 			bigrobot.extras.teleport(self.p((160,250)), self.a(0))
 			bigrobot.asserv.set_pos(self.p((160,250)), self.a(0))
 			#minirobot.extras.teleport(self.p((400,250)), self.a(0))
-			minirobot.extras.teleport(self.p((4000,4000)), self.a(0)) # suppression du petit robot pour l'instant
-			bigrobot.asserv.set_pos(self.p((4000,4000)), self.a(0))
+			minirobot.extras.teleport(self.p((4000,4000)), self.a(0)) # suppression du petit robot pour l'instant // IMPORTANT A DECOMMENTER
+			#bigrobot.asserv.set_pos(self.p((4000,4000)), self.a(0))
 			self.next_state_match()
 			return
 		
@@ -328,7 +357,7 @@ class IaUtcoupe(IaBase):
 		if 0 == self.state_mini and \
 		   0 == self.state_big:
 			bigrobot.asserv.cancel(block=True)
-			minirobot.asserv.cancel(block=True)
+			#minirobot.asserv.cancel(block=True) # decommenter
 			self.state_mini = 1
 			self.state_big = 42
 
@@ -342,7 +371,7 @@ class IaUtcoupe(IaBase):
 			self.state_big = 42
 			#minirobot.asserv.goto((1200,250), handler=self.mini_next_on_response_2(3)) # decommenter
 			self.state_mini = 3 # commenter
-			bigrobot.asserv.goto((700,250), handler=self.big_next_on_response_2(3))
+			bigrobot.asserv.goto((700,R_BIGROBOT+50), handler=self.big_next_on_response_2(3))
 		elif 3 == self.state_mini and \
 			 3 == self.state_big:
 			self.state_mini = 0
@@ -433,4 +462,19 @@ class IaUtcoupe(IaBase):
 				return 180 + a
 		else:
 			return a
-		
+
+	def set_cd_actions(self, cds):
+		"""
+		@param cds {list:pair} list es positions des cds
+		"""
+		bigrobot = self.gamestate.bigrobot
+		for actions in self.cd_actions:
+			try:
+				bigrobot.actions.remove(actions)
+			except ValueError:
+				pass
+		self.cd_actions = []
+		for cd in cds:
+			self.cd_actions.append(ActionCd(bigrobot, self.gamestate.enemyrobots(), cd))
+		bigrobot.actions.extend(self.cd_actions)
+	
