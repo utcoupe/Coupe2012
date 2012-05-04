@@ -168,6 +168,7 @@ void cmd(int id, int id_cmd, int* args, int size){
 			g_debug_on = 0;
 			g_delta_regulator.stop();
 			g_alpha_regulator.stop();
+			g_stop = true;
 			sendMessage(id, 0);
 			break;
 		}
@@ -177,6 +178,7 @@ void cmd(int id, int id_cmd, int* args, int size){
 			g_debug_on = 1;
 			g_delta_regulator.resume();
 			g_alpha_regulator.resume();
+			g_stop = false;
 			sendMessage(id, 0);
 			break;
 		}
@@ -184,6 +186,7 @@ void cmd(int id, int id_cmd, int* args, int size){
 		case QA_CANCEL:
 		{
 			// TODO
+			sendMessage(id, 0);
 			break;
 		}
 
