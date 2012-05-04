@@ -184,6 +184,7 @@ class Robot(EngineObjectPoly, Executer):
 		@param y mm
 		@param v mm/s
 		"""
+		self.goals = []
 		self.goals.append( GoalPOS( id_msg, *mm_to_px(x,y,v) ) )
 		self.send_canal_asserv(id_msg, 1)
 	
@@ -194,6 +195,7 @@ class Robot(EngineObjectPoly, Executer):
 		@param y mm
 		@param v mm/s
 		"""
+		self.goals = []
 		self.goals.append( GoalPOSR( id_msg, *mm_to_px(x,y,v) ) )
 		self.send_canal_asserv(id_msg, 1)
 
@@ -223,8 +225,8 @@ class Robot(EngineObjectPoly, Executer):
 	def _cmd_asserv_pos(self, *, id_msg=42, **options):
 		self.send_canal_asserv(id_msg, self.x(), self.y(), self.a())
 
-	def _cmd_asserv_pwm(self, pwm, *, id_msg=42, **kwargs):
-		self.goals.append(GoalPWM(pwm))
+	def _cmd_asserv_pwm(self, pwm_l, pwm_r, *, id_msg=42, **kwargs):
+		self.goals.append(GoalPWM(pwm_l))
 		self.send_canal_asserv(id_msg, 1)
 	
 	##
