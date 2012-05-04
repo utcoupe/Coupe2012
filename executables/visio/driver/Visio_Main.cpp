@@ -13,6 +13,7 @@
 #include "protocole.h"
 
 
+
 using namespace std;
 
 cv::Vec3b hsv_selected;
@@ -23,11 +24,15 @@ vector<cv::Point> Positions_Display, Positions_Display_CD, Positions_Display_LIN
 cv::Mat binary;
 pthread_mutex_t lock;
 cv::Mat warped;
+cv::Mat image;
+cv::Mat warpMatrix;
 ParamonMouse paramonmouse;
 bool lookForChessBoard = false;
 
 void DisplayPosition()
 {
+    if(!ActivationVideo)
+    {warpPerspective(image, warped, warpMatrix, image.size(), cv::INTER_LINEAR, cv::BORDER_CONSTANT);}
     vector<cv::Point> Positions_Display_Temp;
     pthread_mutex_lock( &lock );
     MousePick(warped, binary, Positions_Display, paramonmouse, 0);
@@ -39,6 +44,7 @@ void DisplayPosition()
     ss << "(";
         for (unsigned int i=0; i < Positions_Display_Temp.size(); i++)
 		{
+              px2Cam(Positions_Display_Temp[i]);
 		    px2mm(Positions_Display_Temp[i]);
             ss << "(" << Positions_Display_Temp[i].x << "," << Positions_Display_Temp[i].y << ")";
 		}
@@ -52,6 +58,7 @@ void DisplayPosition()
     Positions_Display_Temp = Positions_Display;
         for (unsigned int i=0; i < Positions_Display_Temp.size(); i++)
 		{
+               px2Cam(Positions_Display_Temp[i]);
 		    px2mm(Positions_Display_Temp[i]);
             ss << "(" << Positions_Display_Temp[i].x << "," << Positions_Display_Temp[i].y << ")";
 		}
@@ -68,6 +75,7 @@ void PERSPECTIVE_Calibrer()
 void PERSPECTIVE_Rechargement()
 {
      recharger_Matrix_Perspective = true;
+     cout<<"0";
 }
 
 
@@ -81,8 +89,8 @@ int main(int argc, char** argv)
 	cm->addFunction(QV_GET, &DisplayPosition);
 	cm->addFunction(QV_ID, &id);
 	cm->addFunction(QV_PING, &ping);
-	cm->addFunction(QV_CALIB_PERSPECTIVE_CALI, &PERSPECTIVE_Calibrer);
-	cm->addFunction(QV_CALIB_PERSPECTIVE_RECHARG, &PERSPECTIVE_Rechargement);
+	cm->addFunction(QV_CALIB, &PERSPECTIVE_Calibrer);
+	cm->addFunction(QV_RECHARGE, &PERSPECTIVE_Rechargement);
 //	cm->addFunction(QV_CALIB_HSV, &CalibHSV);
 
 	cm->start();
@@ -113,17 +121,22 @@ int main(int argc, char** argv)
 		cerr << "Failed to open a video device or video file!\n" << endl;
 		return 0;
 	}
-	cv::Mat image;
+
      cv::Mat gray;
-	cv::Mat warpMatrix;
-	cv::namedWindow( "Raw" , CV_WINDOW_AUTOSIZE);
-	cv::namedWindow( "Warped" , CV_WINDOW_AUTOSIZE);
+
+
+     cv::FileStorage fs2("/home/siqi/UTcoupe/Coupe2012/executables/visio/driver/warpMatrix.yml", cv::FileStorage::READ);
+     fs2["warpMatrix"] >> warpMatrix;
+
+	if(ActivationVideo) {
+     cv::namedWindow( "Raw" , CV_WINDOW_AUTOSIZE);
+	cv::namedWindow( "Warped" , CV_WINDOW_AUTOSIZE); 	}
 	vector<cv::Vec3f> circles;
 	bool found = false;
 	bool warpok = false;
-
 	while(1)
 	{
+	     //cout<<"ça tourne"<<endl;
 		// Get current frame
 		capture >> image;
 		if (image.empty())
@@ -140,23 +153,29 @@ int main(int argc, char** argv)
 		}
 
 		// Show raw_image
-		cv::imshow( "Raw", image );
+		if(ActivationVideo) {
+		cv::imshow( "Raw", image );}
 
 		if (warpok)
 		{
 			// Warp image
 			warpPerspective(image, warped, warpMatrix, image.size(), cv::INTER_LINEAR, cv::BORDER_CONSTANT);
 			// Show warped image
-			cv::imshow( "Warped", warped);
+			if(ActivationVideo) {
+			cv::imshow( "Warped", warped);}
 		}
 
-		if(recharger_Matrix_Perspective)
+		if(recharger_Matrix_Perspective and (ActivationVideo==1))
 		{
-		     cv::FileStorage fs2("warpMatrix.yml", cv::FileStorage::READ);
-		     fs2["warpMatrix"] >> warpMatrix;
+		     if(fexists("/home/siqi/UTcoupe/Coupe2012/executables/visio/driver/warpMatrix.yml"))
+		     {
+
 		     warpPerspective(image, warped, warpMatrix, image.size(), cv::INTER_LINEAR, cv::BORDER_CONSTANT);
+
 		     cv::imshow( "Warped", warped);
 		     //recharger_Matrix_Perspective = false;
+		     }
+		     else cout<<"failed to open 'warpMatrix.yml'";
 		}
 
         if(not warped.empty())
@@ -166,7 +185,7 @@ int main(int argc, char** argv)
         pthread_mutex_unlock( &lock );
         }
 		// Handle pause/unpause and ESC
-		int c = cv::waitKey( 15 );
+		int c = cv::waitKey( 100 );
 		switch (c)
 		{
 			case 's':
@@ -185,11 +204,6 @@ int main(int argc, char** argv)
                 DisplayPosition();
                 break;
 
-/*               case 'v':
-               valider();
-                break;*/
-
-
 			case 27:
 				return 0;
 
@@ -199,7 +213,7 @@ int main(int argc, char** argv)
 		}
 
 	}
-
+     fs2.release();
 	// Ne pas oublier le wait final
 	cm->waitHere();
 
