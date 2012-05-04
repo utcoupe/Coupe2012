@@ -45,8 +45,12 @@ class Asservissement(BasicLinker):
 	def get_pos(self, **kwargs):
 		return self.send("pos", **kwargs)
 
-	def set_pos(self, p, **kwargs):
-		return self.send("set_pos", **kwargs)
+	def set_pos(self, p, a, **kwargs):
+		"""
+			@param p {tuple|mm} position
+			@param a {radians} angle
+		"""
+		return self.send("set_pos", p[0], p[1], a, **kwargs)
 
 
 
