@@ -36,13 +36,7 @@ void DeterminateHSV (ParamonMouse *parametre)
 		h2 = parametre->hsv_selected[0] + HSV_TOLERANCE1;
 		s2 = parametre->hsv_selected[1] + HSV_TOLERANCE2;
 		v2 = parametre->hsv_selected[2] +  HSV_TOLERANCE3;
-/*      cout << "h: " <<  (int)h<< endl;
-        cout << "s: " <<  (int)s<< endl;
-        cout << "v: " <<  (int)v<< endl;
-        cout << "h2: " <<  (int)h2<< endl;
-        cout << "s2: " <<  (int)s2<< endl;
-        cout << "v2: " <<  (int)v2<< endl;
-*/
+
         parametre->hsv1[0] = h;
         parametre->hsv1[1] = s;
         parametre->hsv1[2] = v;
@@ -60,16 +54,16 @@ void onMouse(int event, int x, int y, int flags, void * param)
         cv::Mat hsv;
         cv::cvtColor(*(paramonmouse->image), hsv, CV_BGR2HSV);
         paramonmouse->hsv_selected = hsv.at<cv::Vec3b>(y, x);
-        cout << "hsv_selected: " <<  (int)paramonmouse->hsv_selected[0]<< endl;
-        cout << "hsv_selected: " <<  (int)paramonmouse->hsv_selected[1]<< endl;
-        cout << "hsv_selected: " <<  (int)paramonmouse->hsv_selected[2]<< endl;
+        cerr << "hsv_selected: " <<  (int)paramonmouse->hsv_selected[0]<< endl;
+        cerr << "hsv_selected: " <<  (int)paramonmouse->hsv_selected[1]<< endl;
+        cerr << "hsv_selected: " <<  (int)paramonmouse->hsv_selected[2]<< endl;
 
         cv::Point pt(x,y);
-//        pt = px2mm(pt);
         px2Cam(pt);
-        cout << "Coordonnee en px" << endl <<" x: " <<pt.x << " y: " <<pt.y << endl;
+        //Cam2CR(pt);
+        cerr << "Coordonnee en px" << endl <<" x: " <<pt.x << " y: " <<pt.y << endl;
         px2mm(pt);
-        cout << "Coordonnee en mm" << endl <<" x: " <<pt.x << " y: " <<pt.y << endl;
+        cerr << "Coordonnee en mm" << endl <<" x: " <<pt.x << " y: " <<pt.y << endl;
         DeterminateHSV(paramonmouse);
 
         break;
@@ -85,8 +79,6 @@ void findObjects(cv::Mat src, vector<cv::Point>& VecOfPosition, int indice_objet
 
     cv::findContours( src, contours, hierarchy, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE );
 
-//    result.resize(contours.size());
-
     for (unsigned int i=0; i < contours.size(); i++)
     {
         cv::Point bary;
@@ -101,7 +93,8 @@ void findObjects(cv::Mat src, vector<cv::Point>& VecOfPosition, int indice_objet
 }
 
 void MousePick(cv::Mat& warped, cv::Mat& binary, const vector<cv::Point>& Positions_Display_CD,
-               ParamonMouse& paramonmouse, int index, const vector<cv::Point>& Positions_Display_LINGOT)
+               ParamonMouse& paramonmouse, int index, const vector<cv::Point>& Positions_Display_LINGOT,
+               string direct_CDhsv, string direct_Lhsv, string direct_Nhsv, const vector<cv::Point>& Positions_Display_N)
 {
         cv::Mat warped_hsv;
         paramonmouse.image = &warped;
@@ -114,34 +107,44 @@ void MousePick(cv::Mat& warped, cv::Mat& binary, const vector<cv::Point>& Positi
 
                int h_cd, s_cd, v_cd, h2_cd,s2_cd,v2_cd;
                int h_L, s_L, v_L, h2_L, s2_L, v2_L;
-               if(fexists("/home/siqi/UTcoupe/Coupe2012/executables/visio/driver/HSVbande.yml"))
+               int h_N, s_N, v_N, h2_N, s2_N, v2_N;
+               if(fexists(direct_CDhsv.c_str()) and fexists(direct_Lhsv.c_str()) and fexists(direct_Nhsv.c_str()) )
                {
-                    cv::FileStorage fhsv("/home/siqi/UTcoupe/Coupe2012/executables/visio/driver/HSVbande.yml", cv::FileStorage::READ);
-                    fhsv["h_cd"] >> h_cd;
-                    fhsv["s_cd"] >> s_cd;
-                    fhsv["v_cd"] >> v_cd;
-                    fhsv["h2_cd"] >> h2_cd;
-                    fhsv["s2_cd"] >> s2_cd;
-                    fhsv["v2_cd"] >> v2_cd;
+                    cv::FileStorage fCD(direct_CDhsv, cv::FileStorage::READ);
+                    fCD["h_cd"] >> h_cd;
+                    fCD["s_cd"] >> s_cd;
+                    fCD["v_cd"] >> v_cd;
+                    fCD["h2_cd"] >> h2_cd;
+                    fCD["s2_cd"] >> s2_cd;
+                    fCD["v2_cd"] >> v2_cd;
+                    cv::FileStorage fL(direct_Lhsv, cv::FileStorage::READ);
+                    fL["h_L"] >> h_L;
+                    fL["s_L"] >> s_L;
+                    fL["v_L"] >> v_L;
+                    fL["h2_L"] >> h2_L;
+                    fL["s2_L"] >> s2_L;
+                    fL["v2_L"] >> v2_L;
+                    cv::FileStorage fN(direct_Nhsv, cv::FileStorage::READ);
+                    fN["h_N"] >> h_N;
+                    fN["s_N"] >> s_N;
+                    fN["v_N"] >> v_N;
+                    fN["h2_N"] >> h2_N;
+                    fN["s2_N"] >> s2_N;
+                    fN["v2_N"] >> v2_N;
 
-                    fhsv["h_L"] >> h_L;
-                    fhsv["s_L"] >> s_L;
-                    fhsv["v_L"] >> v_L;
-                    fhsv["h2_L"] >> h2_L;
-                    fhsv["s2_L"] >> s2_L;
-                    fhsv["v2_L"] >> v2_L;
-                    fhsv.release();
+                    fCD.release();
+                    fL.release();
+                    fN.release();
                }
                else
-               cerr << "Failed to open HSVbande.yml!\n" << endl;
+               cerr << "Failed to open hsv config!" << endl;
 
-        if (index == 0)
-            cv::inRange(warped_hsv, cv::Scalar(h_cd, s_cd, v_cd), cv::Scalar(h2_cd, s2_cd, v2_cd), binary);
-        else if (index == 1)
-            cv::inRange(warped_hsv, cv::Scalar(h_L, s_L, v_L), cv::Scalar(h2_L, s2_L, v2_L), binary);
-        else
-		    cv::inRange(warped_hsv, paramonmouse.hsv1, paramonmouse.hsv2, binary);
-
+        switch (index) {
+          case 0: cv::inRange(warped_hsv, cv::Scalar(h_cd, s_cd, v_cd), cv::Scalar(h2_cd, s2_cd, v2_cd), binary); break;
+          case 1: cv::inRange(warped_hsv, cv::Scalar(h_L, s_L, v_L), cv::Scalar(h2_L, s2_L, v2_L), binary); break;
+          case 2: cv::inRange(warped_hsv, cv::Scalar(h_N, s_N, v_N), cv::Scalar(h2_N, s2_N, v2_N), binary); break;
+        default : cv::inRange(warped_hsv, paramonmouse.hsv1, paramonmouse.hsv2, binary);
+        }
 		cv::GaussianBlur(binary, binary, cv::Size (9, 9), 2, 2);
 
         for (unsigned int i=0; i < Positions_Display_CD.size(); i++) {
@@ -150,12 +153,16 @@ void MousePick(cv::Mat& warped, cv::Mat& binary, const vector<cv::Point>& Positi
         for (unsigned int i=0; i < Positions_Display_LINGOT.size(); i++) {
         cv::circle(warped, Positions_Display_LINGOT[i], 3, cv::Scalar(0,255,0), -1, 200, 0);
         }
+        for (unsigned int i=0; i < Positions_Display_N.size(); i++) {
+        cv::circle(warped, Positions_Display_N[i], 3, cv::Scalar(14,124,255), -1, 200, 0);
+        }
+
         if(ActivationVideo) {
 		cv::imshow( "Warped", warped );}
 }
 
 void MousePick(cv::Mat& warped, cv::Mat& binary, const vector<cv::Point>& Positions_Display,
-               ParamonMouse& paramonmouse, int index)
+               ParamonMouse& paramonmouse, int index, string direct_CDhsv, string direct_Lhsv, string direct_Nhsv)
 {
         cv::Mat warped_hsv;
         paramonmouse.image = &warped;
@@ -168,34 +175,44 @@ void MousePick(cv::Mat& warped, cv::Mat& binary, const vector<cv::Point>& Positi
 
                int h_cd, s_cd, v_cd, h2_cd,s2_cd,v2_cd;
                int h_L, s_L, v_L, h2_L, s2_L, v2_L;
-               if(fexists("/home/siqi/UTcoupe/Coupe2012/executables/visio/driver/HSVbande.yml"))
+               int h_N, s_N, v_N, h2_N, s2_N, v2_N;
+                              if(fexists(direct_CDhsv.c_str()) and fexists(direct_Lhsv.c_str()) and fexists(direct_Nhsv.c_str()) )
                {
-                    cv::FileStorage fhsv("/home/siqi/UTcoupe/Coupe2012/executables/visio/driver/HSVbande.yml", cv::FileStorage::READ);
-                    fhsv["h_cd"] >> h_cd;
-                    fhsv["s_cd"] >> s_cd;
-                    fhsv["v_cd"] >> v_cd;
-                    fhsv["h2_cd"] >> h2_cd;
-                    fhsv["s2_cd"] >> s2_cd;
-                    fhsv["v2_cd"] >> v2_cd;
+                    cv::FileStorage fCD(direct_CDhsv, cv::FileStorage::READ);
+                    fCD["h_cd"] >> h_cd;
+                    fCD["s_cd"] >> s_cd;
+                    fCD["v_cd"] >> v_cd;
+                    fCD["h2_cd"] >> h2_cd;
+                    fCD["s2_cd"] >> s2_cd;
+                    fCD["v2_cd"] >> v2_cd;
+                    cv::FileStorage fL(direct_Lhsv, cv::FileStorage::READ);
+                    fL["h_L"] >> h_L;
+                    fL["s_L"] >> s_L;
+                    fL["v_L"] >> v_L;
+                    fL["h2_L"] >> h2_L;
+                    fL["s2_L"] >> s2_L;
+                    fL["v2_L"] >> v2_L;
+                    cv::FileStorage fN(direct_Nhsv, cv::FileStorage::READ);
+                    fN["h_N"] >> h_N;
+                    fN["s_N"] >> s_N;
+                    fN["v_N"] >> v_N;
+                    fN["h2_N"] >> h2_N;
+                    fN["s2_N"] >> s2_N;
+                    fN["v2_N"] >> v2_N;
 
-                    fhsv["h_L"] >> h_L;
-                    fhsv["s_L"] >> s_L;
-                    fhsv["v_L"] >> v_L;
-                    fhsv["h2_L"] >> h2_L;
-                    fhsv["s2_L"] >> s2_L;
-                    fhsv["v2_L"] >> v2_L;
-                    fhsv.release();
+                    fCD.release();
+                    fL.release();
+                    fN.release();
                }
                else
-               cerr << "Failed to open HSVbande.yml!\n" << endl;
+               cerr << "Failed to open hsv config!" << endl;
 
-        if (index == 0)
-            cv::inRange(warped_hsv, cv::Scalar(h_cd, s_cd, v_cd), cv::Scalar(h2_cd, s2_cd, v2_cd), binary);
-        else if (index == 1)
-            cv::inRange(warped_hsv, cv::Scalar(h_L, s_L, v_L), cv::Scalar(h2_L, s2_L, v2_L), binary);
-        else
-		    cv::inRange(warped_hsv, paramonmouse.hsv1, paramonmouse.hsv2, binary);
-
+        switch (index) {
+          case 0: cv::inRange(warped_hsv, cv::Scalar(h_cd, s_cd, v_cd), cv::Scalar(h2_cd, s2_cd, v2_cd), binary); break;
+          case 1: cv::inRange(warped_hsv, cv::Scalar(h_L, s_L, v_L), cv::Scalar(h2_L, s2_L, v2_L), binary); break;
+          case 2: cv::inRange(warped_hsv, cv::Scalar(h_N, s_N, v_N), cv::Scalar(h2_N, s2_N, v2_N), binary); break;
+        default : cv::inRange(warped_hsv, paramonmouse.hsv1, paramonmouse.hsv2, binary);
+}
 		cv::GaussianBlur(binary, binary, cv::Size (9, 9), 2, 2);
 
 if(ActivationVideo) {
@@ -216,35 +233,32 @@ bool EliminatedContour(vector<cv::Point> contour, cv::Point bary, int index)
             Norm += sqrt ( pow( (contour[i].x - bary.x), 2) + pow( (contour[i].y - bary.y), 2) );
     }
     Norm = Norm/contour.size();
+    cerr<<index<<"Norm= "<<Norm<<endl;
 
-
-    if (index==0)
-    {
-
-    cv::minEnclosingCircle(cv::Mat(contour), bary2f, radius);
-    cerr<<"raduis est de: "<<radius<<endl;
-        if (radius >= TOLERANCE_MIN_CD and radius <= TOLERANCE_MAX_CD)
-        {
-
-            return false;
-        }
-        else return true;
-
-
-
+    switch (index) {
+         case 0:
+              cv::minEnclosingCircle(cv::Mat(contour), bary2f, radius);
+              cerr<<"raduis B est de: "<<radius<<endl;
+                  if (radius >= TOLERANCE_MIN_CD and radius <= TOLERANCE_MAX_CD)
+                      {return false; break;}
+                    else {return true; break;}
      /*   cout<<"cd norm: "<<Norm<<endl;
         if (Norm >= TOLERANCE_MIN_CD and Norm <= TOLERANCE_MAX_CD)
         return false;
         else return true;*/
+        case 1:
+                  cerr<<"lingot norm: "<<Norm<<endl;
+                  if (Norm >= TOLERANCE_MIN_LINGOT and Norm <= TOLERANCE_MAX_LINGOT)
+                      {return false; break;}
+                    else {return true; break;}
+        case 2:
+              cv::minEnclosingCircle(cv::Mat(contour), bary2f, radius);
+              cerr<<"raduis N est de: "<<radius<<endl;
+                  if (radius >= TOLERANCE_MIN_CD and radius <= TOLERANCE_MAX_CD)
+                      {return false; break;}
+                    else {return true; break;}
+        default: cerr<<"why are you give me a indice other than 0 1 2 ?"; return true; break;
     }
-    else
-    {
-        cerr<<"lingot norm: "<<Norm<<endl;
-        if (Norm >= TOLERANCE_MIN_LINGOT and Norm <= TOLERANCE_MAX_LINGOT)
-        return false;
-        else return true;
-    }
-
 /*  float radius;
     cv::Point2f bary2f = bary;
     if (index==0)
