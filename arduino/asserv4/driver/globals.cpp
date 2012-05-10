@@ -6,8 +6,8 @@ int g_debug_on(0);
 RobotObserver g_observer;
 
 
-//PosAndSpeedRegulator g_delta_regulator;
-//PosAndSpeedRegulator g_alpha_regulator;
+PosAndSpeedRegulator g_delta_regulator;
+PosAndSpeedRegulator g_alpha_regulator;
 
 
 bool g_stop = false;

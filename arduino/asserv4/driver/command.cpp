@@ -75,8 +75,8 @@ void cmd(int id, int id_cmd, int* args, int size){
 		case QA_STOP:
 		{
 			g_debug_on = 0;
-			//g_delta_regulator.stop();
-			//g_alpha_regulator.stop();
+			g_delta_regulator.stop();
+			g_alpha_regulator.stop();
 			g_stop = true;
 			sendMessage(id, 0);
 			break;
@@ -85,8 +85,8 @@ void cmd(int id, int id_cmd, int* args, int size){
 		case QA_RESUME:
 		{
 			g_debug_on = 1;
-			//g_delta_regulator.resume();
-			//g_alpha_regulator.resume();
+			g_delta_regulator.resume();
+			g_alpha_regulator.resume();
 			g_stop = false;
 			sendMessage(id, 0);
 			break;
@@ -104,8 +104,8 @@ void cmd(int id, int id_cmd, int* args, int size){
 			Goal::get()->reset();
 			g_debug_on = 0;
 			g_observer.reset();
-			//g_delta_regulator.reset();
-			//g_alpha_regulator.reset();
+			g_delta_regulator.reset();
+			g_alpha_regulator.reset();
 			value_left_enc = 0;
 			value_right_enc = 0;
 			sendMessage(id, 0);
