@@ -46,6 +46,7 @@ void initEncoders(){
 
 void valueChangeOnEncoderLeftPinA(){
 	int new_state = VALUE_PIN_LEFT_A;
+	//int new_state = digitalRead(PIN_LEFT_A);
 
 	if(new_state == 1)
 		if(state_left_pinB == 1)
@@ -64,6 +65,7 @@ void valueChangeOnEncoderLeftPinA(){
 
 void valueChangeOnEncoderLeftPinB(){
 	int new_state = VALUE_PIN_LEFT_B;
+	//int new_state = digitalRead(PIN_LEFT_B);
 
 	if(new_state == 1)
 		if(state_left_pinA == 1)
@@ -82,6 +84,7 @@ void valueChangeOnEncoderLeftPinB(){
 
 void valueChangeOnEncoderRightPinA(){
 	int new_state = VALUE_PIN_RIGHT_A;
+	//int new_state = digitalRead(PIN_RIGHT_A);
 
 	if(new_state == 1)
 		if(state_right_pinB == 1)
@@ -100,6 +103,7 @@ void valueChangeOnEncoderRightPinA(){
 
 void valueChangeOnEncoderRightPinB(){
 	int new_state = VALUE_PIN_RIGHT_B;
+	//int new_state = digitalRead(PIN_RIGHT_B);
 
 	if(new_state == 1)
 		if(state_right_pinA == 1)

@@ -10,7 +10,6 @@
 #include <math.h>
 #include "tools.h"
 
-int32_t g_times[g_n] = {0};
 
 /*
 #define N	100
@@ -86,15 +85,11 @@ void positionControl(const int32_t goal_x, const int32_t goal_y, const double go
 
 	
 	if (abs(delta_diff) > 10.0*ENC_MM_TO_TICKS) {
-		t = micros();
 		if (alpha_diff_delta < 5.0*DEG_TO_RAD) {
 			output4Delta = (int) g_delta_regulator.compute(0.0, (double)-delta_diff, current_speed);
 		}
-		g_times[4]=micros() - t;
 
-		t = micros();
 		output4Alpha = (int) g_alpha_regulator.compute(0.0, (double)-alpha_diff_delta, current_speed_a);
-		g_times[5]=micros() - t;
 	}
 	else {
 		reached = true;
@@ -121,15 +116,11 @@ void angleControl(const int32_t goal_x, const int32_t goal_y, const double goal_
 	
 	
 	if (abs(alpha_diff_alpha) > 0.5*DEG_TO_RAD) {
-		t = micros();
 		output4Alpha = (int) g_alpha_regulator.compute(0.0, (double)-alpha_diff_alpha, current_speed_a);
-		g_times[5]=micros() - t;
 		
-		if (abs(delta_diff) > 5.0*ENC_MM_TO_TICKS) {
-			t = micros();
+		/*if (abs(delta_diff) > 5.0*ENC_MM_TO_TICKS) {
 			output4Delta = (int) g_delta_regulator.compute(0.0, (double)-delta_diff, current_speed);
-			g_times[4]=micros() - t;
-		}
+		}*/
 	}
 	else {
 		reached = true;

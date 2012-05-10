@@ -14,7 +14,7 @@
 
 #include "control.h"
 
-
+double ENC_CENTER_DIST_MM=263.0;
 
 /**
  * Analyse le message et effectue les actions associees
@@ -59,7 +59,9 @@ void cmd(int id, int id_cmd, int* args, int size){
 
 		case QA_SETPID:
 		{
-			g_delta_regulator.setPosPID(args[0]/1000.0,args[1]/1000.0,args[2]/1000.0);
+			//g_alpha_regulator.setSpeedPID(args[0]*100.0,args[1]*100.0,args[2]*100.0);
+			g_alpha_regulator.setPosPID(args[0]*1000.0,args[1]*1000.0,args[2]*1000.0);
+			//ENC_CENTER_DIST_MM = ((double)args[0])/10.0;
 			break;
 		}
 
@@ -216,7 +218,7 @@ void cmd(int id, int id_cmd, int* args, int size){
 
 		case QA_POS:
 		{
-			int tab[3] = {(int)g_observer.mm_getX(), (int)g_observer.mm_getY(), (int)g_observer.deg_getA()};
+			int tab[3] = {(int)g_observer.mm_getX(), (int)g_observer.mm_getY(), /*G_angle*180.0/M_PI*/(int)g_observer.deg_getA()};
 			sendMessage(id, tab, 3);
 			break;
 		}
