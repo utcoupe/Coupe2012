@@ -20,6 +20,7 @@ Va à une certaine position angulaire (en °)
 
 /**
 Allume le moteur du percepteur
+@param moteur
 @param pwm [-255, 255]
 */
 #define Q_PERCEPTEUR		60
