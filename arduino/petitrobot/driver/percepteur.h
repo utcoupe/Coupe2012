@@ -17,13 +17,14 @@
 class Percepteur {
 
  public:
-  Percepteur(char i, char pin_haut_, char pin_bas_);
+  Percepteur(char i, char pin_haut_, char pin_bas_, char cote);
   int set_pwm(int ordre, int pwm);
   void change_haut(char etat);
   void change_bas(char etat);
 
  private:
   char id;
+  char cote;
   int pwm;
   int sens;
 

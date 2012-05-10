@@ -3,8 +3,9 @@
 Percepteur *g_percepteur_droit;
 Percepteur *g_percepteur_gauche;
 
-Percepteur::Percepteur(char i, char pin_haut_, char pin_bas_) {
+Percepteur::Percepteur(char i, char pin_haut_, char pin_bas_, char cote) {
   this->id = i;
+  this->cote = cote;
   this->pwm = 0;
   this->sens = FORWARD;
   this->moteur = new AF_DCMotor(i+1, MOTOR12_64KHZ);
@@ -32,7 +33,7 @@ int Percepteur::set_pwm(int _ordre, int _pwm) {
     this->sens = BACKWARD;
     if (this->etat_switchs != 0) {
       this->etat_moteur = 2;
-      sendMessage(_ordre, "go backward");
+      sendMessage(_ordre, "B");
     }
     else
       return 0;
@@ -41,7 +42,7 @@ int Percepteur::set_pwm(int _ordre, int _pwm) {
     this->sens = FORWARD;
     if (this->etat_switchs != 2) {
       this->etat_moteur = 1;
-      sendMessage(_ordre, "go forward");
+      sendMessage(_ordre, "F");
     }
     else
       return 0;
@@ -54,30 +55,40 @@ int Percepteur::set_pwm(int _ordre, int _pwm) {
 }
 
 void Percepteur::change_haut(char etat) {
+  char envoi[4] = {this->cote, 'e', 'e','\0'};
   if (etat) { //switch on
     if (this->etat_switchs != 2) {
       this->etat_switchs = 2;
-      sendMessage(this->id_ordre, "HH", this->etat_moteur);
+      envoi[1] = 'H';
+      envoi[2] = 'H';
+      sendMessage(this->id_ordre, envoi, this->etat_moteur);
 
       if (this->etat_moteur == 1)
         this->set_pwm(this->id_ordre, 0);
     }
   } else {
-    sendMessage(this->id_ordre, "RH");
+    envoi[1] = 'R';
+    envoi[2] = 'H';
+    sendMessage(this->id_ordre, envoi);
     this->etat_switchs = 4;
   }
 }
 
 void Percepteur::change_bas(char etat) {
+  char envoi[4] = {this->cote, 'e', 'e','\0'};
   if (etat) { // switch on
     if (this->etat_switchs != 0) {
       this->etat_switchs = 0;
-      sendMessage(this->id_ordre, "HB", this->etat_moteur);
+      envoi[1] = 'H';
+      envoi[2] = 'B';
+      sendMessage(this->id_ordre, envoi, this->etat_moteur);
       if (this->etat_moteur == 2)
         this->set_pwm(this->id_ordre, 0);
     }
   } else {
-    sendMessage(this->id_ordre, "RB");
+    envoi[1] = 'R';
+    envoi[2] = 'B';
+    sendMessage(this->id_ordre, envoi);
     this->etat_switchs = 4;
   }
 }

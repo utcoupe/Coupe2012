@@ -7,8 +7,8 @@ void setup()
 
   cherche_moteurs();
 
-  g_percepteur_droit = new Percepteur(0, DROIT_HAUT, DROIT_BAS);
-  g_percepteur_gauche = new Percepteur(1, GAUCHE_HAUT, GAUCHE_BAS);
+  g_percepteur_droit = new Percepteur(0, DROIT_HAUT, DROIT_BAS, 'D');
+  g_percepteur_gauche = new Percepteur(1, GAUCHE_HAUT, GAUCHE_BAS, 'G');
 
   attachInterrupt(2, fdcDroitHaut, CHANGE); //pin 21
   attachInterrupt(3, fdcDroitBas, CHANGE); //pin 20
