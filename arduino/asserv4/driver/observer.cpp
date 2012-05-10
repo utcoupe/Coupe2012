@@ -1,11 +1,6 @@
 #include "observer.h"
 
-#if defined(ARDUINO) && ARDUINO >= 100
-#	include "Arduino.h"
-#else
-#	include "WProgram.h"
-#	include "wiring.h"
-#endif
+#include "include_arduino.h"
 
 #include "math.h"
 
@@ -40,27 +35,27 @@ void RobotObserver::compute(TICKS left_value, TICKS right_value) {
 	_prev_right_value = right_value;
 }
 
-TICKS RobotObserver::getX() const {
+TICKS RobotObserver::x() const {
 	return _x * 0.01;
 }
 
-TICKS RobotObserver::getY() const {
+TICKS RobotObserver::y() const {
 	return _y * 0.01;
 }
 
-MM RobotObserver::mm_getX() const {
-	return ticks_to_mm(getX());
+MM RobotObserver::mm_x() const {
+	return ticks_to_mm(_x*0.01);
 }
 
-MM RobotObserver::mm_getY() const {
-	return ticks_to_mm(getY());
+MM RobotObserver::mm_y() const {
+	return ticks_to_mm(_y*0.01);
 }
 
-RAD RobotObserver::getA() const {
+RAD RobotObserver::a() const {
 	return _a;
 }
 
-DEG RobotObserver::deg_getA() const {
+DEG RobotObserver::deg_a() const {
 	return rad_to_deg(_a);
 }
 

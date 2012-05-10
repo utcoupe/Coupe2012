@@ -19,8 +19,8 @@ void valueChangeOnEncoderLeftPinB();
 void valueChangeOnEncoderRightPinA();
 void valueChangeOnEncoderRightPinB();
 
-extern int32_t G_value_left_enc;
-extern int32_t G_value_right_enc;
+extern TICKS G_value_left_enc;
+extern TICKS G_value_right_enc;
 
 
 /*The most common type of incremental encoder uses two output channels (A and B) to sense position.

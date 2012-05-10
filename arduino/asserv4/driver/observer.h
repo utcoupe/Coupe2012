@@ -14,12 +14,12 @@ class RobotObserver
 		void reset();
 		void setPos(TICKS x, TICKS y, RAD a);
 		
-		TICKS getX() const;
-		TICKS getY() const;
-		MM mm_getX() const;
-		MM mm_getY() const;
-		RAD getA() const;
-		DEG deg_getA() const;
+		TICKS x() const;
+		TICKS y() const;
+		MM mm_x() const;
+		MM mm_y() const;
+		RAD a() const;
+		DEG deg_a() const;
 		double getSpeed() const;
 		double mm_s_getSpeed() const;
 		double getSpeedA() const;

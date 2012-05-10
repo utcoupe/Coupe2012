@@ -3,7 +3,9 @@
 
 #include <inttypes.h>
 
-typedef double			TICKS;
+
+typedef int32_t			TICKS;
+typedef int32_t			TICKS_100; // centième de ticks
 typedef int				MM;
 typedef double			RAD;
 typedef int				DEG;
@@ -31,7 +33,8 @@ typedef int				DEG;
 /* Parametres mecanique du robot */
 #define DIST_MOTOR_AXIS_TO_BACK_MM 122.0 // Distance entre le l'axe des moteurs et l'arriere du robot
 
-#define ENC_CENTER_DIST_MM 250.0 //261.0 // {mm} Distance entre chaque roue codeuse
+//#define ENC_CENTER_DIST_MM 250.0 //261.0 // {mm} Distance entre chaque roue codeuse
+extern double ENC_CENTER_DIST_MM;
 #define ENC_CENTER_DIST_TICKS (ENC_CENTER_DIST_MM*ENC_MM_TO_TICKS) // {tick} Distance entre chaque roue codeuse du robot en ticks
 //#define ENC_RESOLUTION 512 		// Nombre de points par tour d'encodeur
 #define ENC_RESOLUTION 500 		// Nombre de points par tour d'encodeur

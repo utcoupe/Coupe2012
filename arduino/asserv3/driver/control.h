@@ -19,8 +19,6 @@ void deltaSpeedControl(double goal_speed, double current_speed, PosAndSpeedRegul
 
 void dump();
 
-#define g_n 10
-extern int32_t g_times[g_n];
 
 #endif
 

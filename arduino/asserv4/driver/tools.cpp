@@ -25,7 +25,7 @@ double alpha_diff(double a, double b)
 	return moduloPI(a - b);
 }
 
-/*
+
 double mm_s_to_ticks_cycle(int u) {
 	return u * ENC_MM_TO_TICKS * DUREE_CYCLE / 1000.0;
 }
@@ -42,4 +42,4 @@ MM ticks_to_mm(TICKS ticks) { return (MM) (((double)ticks) * (double)ENC_TICKS_T
 RAD deg_to_rad(DEG a) { return (RAD) (((double)a) * (double)DEG_TO_RAD); }
 DEG rad_to_deg(RAD a) { return (DEG) (((double)a) * (double)RAD_TO_DEG); }
 
-*/
+
