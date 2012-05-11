@@ -431,7 +431,7 @@ void pwmControl(int* value_pwm_left, int* value_pwm_right){
 		return;
 	}
 
-	(*value_pwm_right) = -current_goal.x;
+	(*value_pwm_right) = current_goal.x;
 	(*value_pwm_left) = current_goal.y;
 
 	if(millis()-start > current_goal.period){
