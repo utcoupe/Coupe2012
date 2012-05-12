@@ -15,7 +15,7 @@ radbot=robotSize/sizeFact
 
 separator='+'
 
-p = Popen(["./hokuyoApp.exe","-col","2"], stdout=PIPE, stdin=PIPE)
+p = Popen(["./hokuyoApp.exe","-col","1"], stdout=PIPE, stdin=PIPE)
 
 
 class thRead(threading.Thread):
@@ -31,12 +31,10 @@ class thRead(threading.Thread):
 				exit()
 	
 			if(r.find(separator)!=-1):
-				del(robot[:])			
 				r = r.split(separator)
-				listCoor = eval(r[1])
-				print "Apres l'eval : ",listCoor
-				for li in listCoor:				
-					robot.append(li)
+				robot = eval(r[1])
+				print "Apres l'eval : ",robot
+				drawZone(canvas)
 					
 			print "List affiche : ",robot
 			print ""
@@ -52,7 +50,6 @@ class thWrite(threading.Thread):
 			p.stdin.write(cmd.encode("utf-8"))
 			p.stdin.flush()
 			time.sleep(0.1 - (time.time()-start) )
-			drawZone(canvas)
 
 def drawcircle(canv,x,y,rad):
     return canv.create_oval(x-rad,y-rad,x+rad,y+rad,width=0,fill='green')
@@ -73,6 +70,7 @@ def drawZone(canv):
 	except Exception as ex:
 		print ex
 		
+
 
 
 

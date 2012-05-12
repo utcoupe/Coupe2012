@@ -18,24 +18,15 @@ coord UrgDriver::computeBotLocation(const list<coord> & bot)
 	coord rob;
 	rob.x=0;
 	rob.y=0;
-	int nb=0;
 	
 	std::list<coord>::const_iterator it;
 	for ( it=bot.begin() ; it!=bot.end(); it++ )
 	{
 		rob.x+=(*it).x;
 		rob.y+=(*it).y;
-		
-		if(nb>0){
-		rob.x/=2;
-		rob.y/=2;
-		}
-		
-		nb++;
 	}
-		
-	// Changement de repére
-	rob.y = LY - rob.y;
+	rob.x /= bot.size();
+	rob.y /= bot.size();
 	
 	// Erreur si le robot est trop prét du bord c'est surement une main
 	// qui traine ^^ on est plus à une apporximation de se genre 
@@ -115,6 +106,9 @@ void UrgDriver::interpretData(const std::vector<long> & data, int n)
 			radian = ABS(radian);
 			c.x = l*cos(radian)  + deltaX; 
 			c.y = l*sin(radian)  + deltaY;
+			if (color==BLEU) {
+				c.x = 3000 - c.x;
+			}
 		
 			#if DEBUG
 				cerr << "X = " << c.x << " Y = " << c.y << endl;

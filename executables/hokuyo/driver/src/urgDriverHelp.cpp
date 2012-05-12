@@ -163,12 +163,12 @@ void UrgDriver::updateParamWithColor(short color)
 {	
 	this->color = color;
 	if(this->color == ROUGE) {
-		defineRange((-1)*deg2,(-1)*deg1);
-		defineRangeIndex((-1)*deg2,(-1)*deg1);
-	}
-	else {
 		defineRange(deg1,deg2);
 		defineRangeIndex(deg1,deg2);
+	}
+	else {
+		defineRange((-1)*deg2,(-1)*deg1);
+		defineRangeIndex((-1)*deg2,(-1)*deg1);
 	}
 
 	urg.setCaptureRange(urg.rad2index(radMin), urg.rad2index(radMax));	
@@ -238,7 +238,7 @@ short UrgDriver::hokuyoFindColor()
 		getData(data,&timestamp);
 		
 		// Coté Rouge
-		defineRangeIndex(-90,-70);
+		defineRangeIndex(70,90);
 		for(int j = indexMin; j < indexMax; ++j) 
 		{
 			long l = data[j];
@@ -252,7 +252,7 @@ short UrgDriver::hokuyoFindColor()
 		}
 					
 		// Coté Violet
-		defineRangeIndex(70,90);
+		defineRangeIndex(-90,-70);
 		for(int j = indexMin; j < indexMax; ++j) {
 			long l = data[j];
 			if( l>(LY-100) && l>(LY+100) ){
