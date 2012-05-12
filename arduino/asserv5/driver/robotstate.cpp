@@ -8,10 +8,12 @@
 #include "robotstate.h"
 #include "parameters.h"
 #include "math.h"
+#include "encoder.h"
 
 int value_pwm_left;
 int value_pwm_right;
 RobotState robot_state;
+double a0=0.0;
 
 void initRobotState(){
 	robot_state.x = 0;
@@ -45,11 +47,12 @@ void robot_set_ticks_y(long int y) {
 }
 
 void robot_set_rad_angle(double a) {
+	a0 = a-(double)(value_right_enc-value_left_enc)/(double)ENC_CENTER_DIST_TICKS;
 	robot_state.a = a;
 }
 
 void robot_set_deg_angle(double a) {
-	robot_state.a = a*2.0*M_PI/180.0;
+	a0 = a*M_PI/180.0-(double)(value_right_enc-value_left_enc)/(double)ENC_CENTER_DIST_TICKS;
 }
 
 double robot_get_angle() {
@@ -85,11 +88,10 @@ void computeRobotState(){
 
 	/*mise a jour de l'etat du robot  */
 	//robot_state.speed = 0;
-	robot_state.x.a = moduloPI((double)(value_right_enc-value_left_enc)/(double)ENC_CENTER_DIST_TICKS);
+	robot_state.a = moduloPI(a0+(double)(value_right_enc-value_left_enc)/(double)ENC_CENTER_DIST_TICKS);
 	robot_set_x(robot_state.x + (double)delta_dist*cos(robot_state.a));
 	robot_set_y(robot_state.y + (double)delta_dist*sin(robot_state.a));
 }
-
 
 
 /* Fonction de calcul du modulo PI ]-PI,PI]

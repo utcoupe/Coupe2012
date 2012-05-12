@@ -101,51 +101,22 @@ void cmd(int id, int id_cmd, int* args, int size){
 			sendMessage(id,tab,3);
 	        break;
 		}
-/*
-		case QA_MCALIB: //TODO a eclater en calibration manuel de l'angle ,de x et de y
+
+		case QA_SET_POS:
 		{
-			if (size < 3)
+			if (size < 2)
 				sendMessage(id, E_INVALID_PARAMETERS_NUMBERS);
-			else
-			{
-				pushGoalManualCalibration(TYPE_CALIB_X, (double)args[0]*ENC_MM_TO_TICKS);
-				pushGoalManualCalibration(TYPE_CALIB_Y, (double)args[1]*ENC_MM_TO_TICKS);
-				pushGoalManualCalibration(TYPE_CALIB_ANGLE, (double)args[2]*DEG_TO_RAD);
-				sendMessage(id, 1);
+			else {
+				robot_set_mm_x(args[0]);
+				robot_set_mm_y(args[1]);
+				robot_set_deg_angle(args[2]);
+				value_left_enc = 0;
+				value_right_enc = 0;
+				sendMessage(id, 0);
 			}
 			break;
 		}
 
-		case QA_ACALIB:
-		{
-			if (size < 1)
-				sendMessage(id, E_INVALID_PARAMETERS_NUMBERS);
-			else
-			{
-				if(args[0] == 1){
-					pushGoalAutoCalibration(id,true);
-				}
-				else{
-					pushGoalAutoCalibration(id,false);
-				}
-
-				sendMessage(id, 1);
-			}
-			break;
-		}
-
-		case QA_DELAY:
-		{
-			if (size < 1)
-				sendMessage(id, E_INVALID_PARAMETERS_NUMBERS);
-			else
-			{
-				pushGoalDelay(args[0]);
-				sendMessage(id, 1);
-			}
-			break;
-		}
-*/
 		case QA_PWM:
 		{
 			if (size < 2)
@@ -197,21 +168,35 @@ void cmd(int id, int id_cmd, int* args, int size){
 		{
 			clearGoals();
 			current_goal.isCanceled = true;
-			sendMessage(id, 1);
+			sendMessage(id, 0);
 			break;
 		}
 
 		case QA_STOP: /* comme pause */
 		{
 			current_goal.isPaused = true;
-			sendMessage(id, 1);
+			sendMessage(id, 0);
 			break;
 		}
 
 		case QA_RESUME: /* comme resume */
 		{
 			current_goal.isPaused = false;
-			sendMessage(id, 1);
+			sendMessage(id, 0);
+			break;
+		}
+
+		case QA_RESET:
+		{
+			clearGoals();
+			current_goal.isCanceled = true;
+			current_goal.isPaused = false;
+			value_left_enc = 0;
+			value_right_enc = 0;
+			robot_set_rad_angle(0.0);
+			robot_set_x(0);
+			robot_set_y(0);
+			sendMessage(id, 0);
 			break;
 		}
 
