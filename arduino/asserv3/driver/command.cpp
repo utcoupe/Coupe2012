@@ -218,7 +218,7 @@ void cmd(int id, int id_cmd, int* args, int size){
 
 		case QA_POS:
 		{
-			int tab[3] = {(int)g_observer.mm_getX(), (int)g_observer.mm_getY(), /*G_angle*180.0/M_PI*/(int)g_observer.deg_getA()};
+			int tab[3] = {(int)g_observer.mm_getX(), (int)g_observer.mm_getY(), (int)g_observer.deg_getA()};
 			sendMessage(id, tab, 3);
 			break;
 		}

@@ -141,7 +141,7 @@ void cmd(int id, int id_cmd, int* args, int size){
 			}
 			break;
 		}
-
+*/
 		case QA_PWM:
 		{
 			if (size < 2)
@@ -153,7 +153,7 @@ void cmd(int id, int id_cmd, int* args, int size){
 			}
 			break;
 		}
-		
+/*
 		case Q_MODIF_GOAL_ABS:
 		{
 			if (size < 3)

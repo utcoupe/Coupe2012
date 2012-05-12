@@ -34,11 +34,14 @@ void cmd(int id, int header, int *args, int size){
       }
     case Q_PERCEPTEUR:
       {
-        if (size < 1)
+        if (size < 2)
           sendMessage(id, E_INVALID_PARAMETERS_NUMBERS);
         else
           {
-            g_percepteur.set_pwm(id, args[0]);
+            if (args[0] == 0)
+              g_percepteur_droit->set_pwm(id, args[1]);
+            else if (args[0] == 1)
+              g_percepteur_gauche->set_pwm(id, args[1]);
           }
         break;
       }

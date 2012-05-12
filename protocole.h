@@ -116,6 +116,7 @@
  * Mettre une pwm à droite et à gauche
  * @param pwm_left [-255,255]
  * @param pwm_right [-255,255]
+ * @param period duree d'application de la pwm
  */
 #define QA_PWM				8
 
