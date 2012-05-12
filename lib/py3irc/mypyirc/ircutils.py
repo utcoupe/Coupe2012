@@ -69,7 +69,7 @@ def raw_msg_to_args_n_kwargs(raw_msg):
 	raw_msg = raw_msg.strip(SEP).lower()
 	msg_split = ( m.strip(SEP) for m in raw_msg.split(SEP) )
 	args = []
-	kwargs = {'id_msg':42}
+	kwargs = {'id_msg':'42'}
 	
 	for m in msg_split:
 		t = re_kwarg.match(m)

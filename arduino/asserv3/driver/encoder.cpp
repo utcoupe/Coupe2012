@@ -15,8 +15,8 @@ int state_left_pinB;
 int state_right_pinA;
 int state_right_pinB;
 
-int32_t G_value_left_enc = 0;
-int32_t G_value_right_enc = 0;
+long G_value_left_enc;
+long G_value_right_enc;
 
 void initEncoders(){
 	G_value_left_enc = 0;
@@ -45,16 +45,16 @@ void initEncoders(){
 
 
 void valueChangeOnEncoderLeftPinA(){
-	int new_state = VALUE_PIN_LEFT_A;
+	int new_state = digitalRead(PIN_LEFT_A);
 
-	if(new_state == 1)
-		if(state_left_pinB == 1)
+	if(new_state == HIGH)
+		if(state_left_pinB == HIGH)
 			G_value_left_enc--;
 		else
 			G_value_left_enc++;
 
 	else
-		if(state_left_pinB == 1)
+		if(state_left_pinB == HIGH)
 			G_value_left_enc++;
 		else
 			G_value_left_enc--;
@@ -63,16 +63,16 @@ void valueChangeOnEncoderLeftPinA(){
 }
 
 void valueChangeOnEncoderLeftPinB(){
-	int new_state = VALUE_PIN_LEFT_B;
+	int new_state = digitalRead(PIN_LEFT_B);
 
-	if(new_state == 1)
-		if(state_left_pinA == 1)
+	if(new_state == HIGH)
+		if(state_left_pinA == HIGH)
 			G_value_left_enc++;
 		else
 			G_value_left_enc--;
 
 	else
-		if(state_left_pinA == 1)
+		if(state_left_pinA == HIGH)
 			G_value_left_enc--;
 		else
 			G_value_left_enc++;
@@ -81,16 +81,16 @@ void valueChangeOnEncoderLeftPinB(){
 }
 
 void valueChangeOnEncoderRightPinA(){
-	int new_state = VALUE_PIN_RIGHT_A;
+	int new_state = digitalRead(PIN_RIGHT_A);
 
-	if(new_state == 1)
-		if(state_right_pinB == 1)
+	if(new_state == HIGH)
+		if(state_right_pinB == HIGH)
 			G_value_right_enc--;
 		else
 			G_value_right_enc++;
 
 	else
-		if(state_right_pinB == 1)
+		if(state_right_pinB == HIGH)
 			G_value_right_enc++;
 		else
 			G_value_right_enc--;
@@ -99,23 +99,22 @@ void valueChangeOnEncoderRightPinA(){
 }
 
 void valueChangeOnEncoderRightPinB(){
-	int new_state = VALUE_PIN_RIGHT_B;
+	int new_state = digitalRead(PIN_RIGHT_B);
 
-	if(new_state == 1)
-		if(state_right_pinA == 1)
+	if(new_state == HIGH)
+		if(state_right_pinA == HIGH)
 			G_value_right_enc++;
 		else
 			G_value_right_enc--;
 
 	else
-		if(state_right_pinA == 1)
+		if(state_right_pinA == HIGH)
 			G_value_right_enc--;
 		else
 			G_value_right_enc++;
 
 	state_right_pinB = new_state;
 }
-
 
 /*
 

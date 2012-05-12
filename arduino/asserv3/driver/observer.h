@@ -27,8 +27,8 @@ class RobotObserver
 
 	private:
 		TICKS _prev_left_value, _prev_right_value;
-		TICKS _x;
-		TICKS _y;
+		TICKS_100 _x;
+		TICKS_100 _y;
 		RAD _a;
 		
 		// {ticks/cycle}

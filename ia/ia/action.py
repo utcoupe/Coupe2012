@@ -20,6 +20,7 @@ class Action(threading.Thread):
 		self._done = False
 
 	def start(self):
+		print("ACTION", self)
 		self.robot.in_action = True
 		super().start()
 	

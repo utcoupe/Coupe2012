@@ -17,7 +17,7 @@ class GameStateTestCase(unittest.TestCase):
 		mini = Robot((0,0), None)
 		enemy1 = Robot((3000,0), None)
 		enemy2 = Robot((3000,0), None)
-		self.gamestate = GameState(None, CANAL_BIG_ASSERV, CANAL_MINI_ASSERV, big, mini, enemy1, enemy2)
+		self.gamestate = GameState(None, CANAL_BIG_ASSERV, CANAL_MINI_ASSERV, CANAL_BIG_VISIO, CANAL_MINI_VISIO, big, mini, enemy1, enemy2)
 
 	def test_on_msg_pos(self):
 		self.gamestate.on_msg_pos(0, CANAL_BIG_ASSERV, ("400","300","40"), {})

@@ -115,11 +115,13 @@ class Client(socketserver.StreamRequestHandler):
 			try:
 				self.data = self.rfile.readline().decode().strip()
 			except Exception as ex:
-				print(ex)
+				print(self.prefix, ex)
 				self._stop()
 			else:
 				print("{} wrote:".format(self.prefix))
 				print(self.data)
+				if not self.data:
+					self.send("are you alive ?") # test si ce n'est pas la connection qui s'est coupée
 				self.server.process_incoming_msg(self, self.data)
 	
 	def loop_send(self):
@@ -129,7 +131,11 @@ class Client(socketserver.StreamRequestHandler):
 			except queue.Empty:
 				pass
 			else:
-				self.wfile.write((msg.strip()+CRLF).encode())
+				try:
+					self.wfile.write((msg.strip()+CRLF).encode())
+				except Exception as ex:
+					print(self.prefix, ex)
+					self._stop()
 	
 	def validate_auth(self, nick):
 		self.nick = nick
@@ -199,9 +205,9 @@ def need_auth(f):
 
 class Server(socketserver.ThreadingMixIn, socketserver.TCPServer):
 	def __init__(self, host_port):
+		self.allow_reuse_address = True
 		socketserver.TCPServer.__init__(self, host_port, Client)
 		#self.daemon_threads = True
-		self.allow_reuse_address = True
 		self.rooms = {}
 		self.l_rooms = threading.Lock()
 		self.clients = {}
@@ -294,15 +300,16 @@ class Server(socketserver.ThreadingMixIn, socketserver.TCPServer):
 		return err,msg
 	
 	def process_incoming_msg(self, client, msg_irc):
-		msg = irc_parse(msg_irc)
-		if msg:
-			method_name = '_cmd_'+msg.command 
-			if method_name in dir(self):
-				getattr(self, method_name)(client, msg)
+		if msg_irc:
+			msg = irc_parse(msg_irc)
+			if msg:
+				method_name = '_cmd_'+msg.command 
+				if method_name in dir(self):
+					getattr(self, method_name)(client, msg)
+				else:
+					print("Err: commande inconnue : "+msg.command)
 			else:
-				print("Err: commande inconnue : "+msg.command)
-		else:
-			print("Err: imposible de parser le message : "+msg_irc)
+				print("Err: imposible de parser le message : "+msg_irc)
 	
 	@need_params(1)
 	def _cmd_nick(self, client, msg):

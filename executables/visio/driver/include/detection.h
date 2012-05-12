@@ -23,8 +23,9 @@ void DeterminateHSV (ParamonMouse *parametre);
 void onMouse(int event, int x, int y, int flags, void * param);
 void findObjects(cv::Mat src, vector<cv::Point>& VecOfPosition, int indice_objet);
 void MousePick(cv::Mat& warped, cv::Mat& binary, const vector<cv::Point>& Positions_Display,
-               ParamonMouse& paramonmouse, int index);
+               ParamonMouse& paramonmouse, int index, string direct_CDhsv, string direct_Lhsv, string direct_Nhsv);
 void MousePick(cv::Mat& warped, cv::Mat& binary, const vector<cv::Point>& Positions_Display_CD,
-               ParamonMouse& paramonmouse, int index, const vector<cv::Point>& Positions_Display_LINGOT);
+               ParamonMouse& paramonmouse, int index, const vector<cv::Point>& Positions_Display_LINGOT,
+               string direct_CDhsv, string direct_Lhsv, string direct_Nhsv, const vector<cv::Point>& Positions_Display_N);
 bool EliminatedContour(vector<cv::Point> contour, cv::Point bary, int index);
 #endif // DETECTION_H

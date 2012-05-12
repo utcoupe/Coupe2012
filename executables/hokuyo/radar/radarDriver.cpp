@@ -17,7 +17,7 @@
 using namespace std; 
 using namespace qrk;
 
-#define device "/dev/ttyACM1"
+#define device "/dev/ttyACM0"
 
 
 int main()

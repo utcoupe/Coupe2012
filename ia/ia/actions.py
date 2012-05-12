@@ -34,7 +34,11 @@ class ActionTotem(Action):
 		
 		#fini
 		self.clean()
+
+		print("YOUHOU le totem")
 		
+	def __repr__(self):
+		return "ActionTotem(%s, %s)" % (self.point_acces, self.score)
 		
 
 class ActionBouteille(Action):
@@ -45,14 +49,19 @@ class ActionBouteille(Action):
 		print("YOUHOU")
 		self.clean()
 
+	def __repr__(self):
+		return "ActionBouteille(%s, %s)" % (self.point_acces, self.score)
 
 class ActionCarte(Action):
 	def __init__(self, robot, enemies, point_acces):
 		Action.__init__(self, robot, enemies, point_acces)
 	
 	def run(self):
-		print("YOUHOU")
 		self.clean()
+		print("YOUHOU")
+		
+	def __repr__(self):
+		return "ActionCarte(%s, %s)" % (self.point_acces, self.score)
 
 
 class ActionCd(Action):
@@ -60,9 +69,15 @@ class ActionCd(Action):
 		super().__init__(robot, enemies, point_acces)
 
 	def run(self):
-		print("Cd ramassé")
 		self.clean()
+		print("YOUHOU le Cd")
+	
+	def compute_score(self, p):
+		super().compute_score(p)
+		self.score -= 1000
 
+	def __repr__(self):
+		return "ActionCd(%s, %s)" % (self.point_acces, self.score)
 
 def get_actions_bigrobot(robot, enemies):
 	actions = []

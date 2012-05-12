@@ -75,6 +75,27 @@ void setup()
 		.setOutLimit(255);
 }
 
+double G_angle = 0.0;
+void computeRobotState(){
+	static long prev_value_left_enc = 0;
+	static long prev_value_right_enc = 0;
+
+	static unsigned long prevTime = 0;
+
+	/*calcul du deplacement depuis la derniere fois en ticks */
+	long dl = G_value_left_enc - prev_value_left_enc;
+	long dr = G_value_right_enc - prev_value_right_enc;
+
+	/*preparation de la prochaine iteration*/
+	prev_value_left_enc = G_value_left_enc;
+	prev_value_right_enc = G_value_right_enc;
+
+	/* calcul du changement d'orientation en rad */
+	double delta_angle = (double)(dr-dl)/(double)ENC_CENTER_DIST_TICKS;
+
+	/*mise a jour de l'etat du robot  */
+	G_angle = moduloPI(G_angle + delta_angle);
+}
 
 bool g_ouch=false;
 void loop(){
@@ -102,14 +123,12 @@ void loop(){
 	//digitalWrite(16, HIGH);
 	
 	/* zone programmation libre */
-	t = micros();
 	g_observer.compute(G_value_left_enc, G_value_right_enc);
-	g_times[6] = micros() - t;
+	//computeRobotState();
 	
 	Goal& goal = *(Goal::get());
 	int pwm_right=0, pwm_left=0;
 	bool reached=false;
-	t = micros();
 	if (!g_stop) {
 		switch (goal.t()) {
 			case Goal::GOAL_POS:
@@ -146,7 +165,6 @@ void loop(){
 			break;
 		}
 	}
-	g_times[7] = micros() - t;
 
 	setLeftPWM(pwm_left);
 	setRightPWM(pwm_right);
@@ -167,21 +185,8 @@ void loop(){
 	
 	/* On attend le temps qu'il faut pour boucler */
 	int32_t udelay = DUREE_CYCLE*1000L-(micros()-time_start);
-	/*if (g_ouch) {
-		for (int i=0; i<g_n; ++i) {
-			Serial.print(i); Serial.print(" : "); Serial.println(g_times[i]);
-		}
-		g_ouch = false;
-	}*/
 	if(udelay<0) {
 		Serial.println("ouch : mainloop trop longue");
-		/*for (int i=0; i<g_n; ++i) {
-			Serial.print("ouch_"); Serial.print(i); Serial.print(" : "); Serial.println(g_times[i]);
-		}
-		g_ouch = true;*/
-	}
-	else if (udelay > 1000) {
-		delay(udelay/1000);
 	}
 	else {
 		delayMicroseconds(udelay);
