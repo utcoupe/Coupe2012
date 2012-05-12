@@ -13,14 +13,14 @@ using namespace std;
 
 
 //! calcul la position d'un robot en fonction d'un groupe de points
-coord UrgDriver::computeBotLocation(list<coord> bot)
+coord UrgDriver::computeBotLocation(const list<coord> & bot)
 {
 	coord rob;
 	rob.x=0;
 	rob.y=0;
 	int nb=0;
 	
-	std::list<coord>::iterator it;
+	std::list<coord>::const_iterator it;
 	for ( it=bot.begin() ; it!=bot.end(); it++ )
 	{
 		rob.x+=(*it).x;
@@ -92,7 +92,7 @@ long distanceAuBord(coord c) {
 
 
 //! Traitement des données venant de l'hokuyo
-void UrgDriver::interpretData(std::vector<long> data, int n)
+void UrgDriver::interpretData(const std::vector<long> & data, int n)
 {	
 	#if DEBUG
 		cout << endl << endl << endl;

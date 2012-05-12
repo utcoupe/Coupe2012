@@ -5,7 +5,7 @@ from pygame.locals import *
 
 
 
-FPS					= 50
+FPS					= 30
 PX_TO_MM			= 4
 
 

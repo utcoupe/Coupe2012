@@ -119,8 +119,8 @@ public:
 	
 	//! Fonctions compute
 	bool checkPointBot(coord p1, coord p2);
-	coord computeBotLocation(list<coord> bot);
-	void interpretData(vector<long> data, int n);
+	coord computeBotLocation(const list<coord> & bot);
+	void interpretData(const vector<long> & data, int n);
 };
 
  

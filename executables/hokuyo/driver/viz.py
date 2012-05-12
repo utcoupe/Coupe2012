@@ -48,7 +48,7 @@ class thWrite(threading.Thread):
 		time.sleep(1)
 		while gbool:
 			start = time.time()
-			cmd='1.1\n'			
+			cmd='1'+separator+'1\n'
 			p.stdin.write(cmd.encode("utf-8"))
 			p.stdin.flush()
 			time.sleep(0.1 - (time.time()-start) )
@@ -94,7 +94,7 @@ canvas.pack(expand=YES, fill=BOTH)
 
 root.mainloop()
 
-cmd='1.9\n'			
+cmd='1'+separator+'9\n'
 p.stdin.write(cmd.encode("utf-8"))
 p.stdin.flush()
 
