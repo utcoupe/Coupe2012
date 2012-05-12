@@ -64,3 +64,52 @@ long int robot_get_y() {
 	return robot_state.y;
 }
 
+
+/* Implementation du modele d'evolution du robot a partir de l'odometrie
+ * A appeler a intervalle regulier (a voir pour la mettre sur une interruption timer)
+ * */
+void computeRobotState(){
+	static long int prev_value_left_enc = 0;
+	static long int prev_value_right_enc = 0;
+
+	/*calcul du deplacement depuis la derniere fois en ticks */
+	long int dl = value_left_enc - prev_value_left_enc;
+	long int dr = value_right_enc - prev_value_right_enc;
+
+	/*preparation de la prochaine iteration*/
+	prev_value_left_enc = value_left_enc;
+	prev_value_right_enc = value_right_enc;
+
+	/* calcul du deplacement */
+	long int delta_dist = (dr+dl)*50;
+
+	/*mise a jour de l'etat du robot  */
+	//robot_state.speed = 0;
+	robot_state.x.a = moduloPI((double)(value_right_enc-value_left_enc)/(double)ENC_CENTER_DIST_TICKS);
+	robot_set_x(robot_state.x + (double)delta_dist*cos(robot_state.a));
+	robot_set_y(robot_state.y + (double)delta_dist*sin(robot_state.a));
+}
+
+
+
+/* Fonction de calcul du modulo PI ]-PI,PI]
+ * moduloPi( 3*PI/2 )= - PI/2
+ * moduloPi( PI ) = PI
+ * moduloPi( 0 ) = 0
+ *
+ * x-y*((int)(x/y)) => c'est le modulo pour des doubles (x%y)
+ * trunc et int c'est pareil au final, j'ai choisi trunc juste pour que ce soit plus complique !
+ * */
+double moduloPI(double Nb){
+	double result;
+	if (Nb > M_PI)
+		result = Nb - (2*M_PI)*trunc((Nb + M_PI) / (2*M_PI));
+	else  if (Nb <= -M_PI)
+		result = Nb - (2*M_PI)*trunc((Nb - M_PI) / (2*M_PI));
+	else result = Nb;
+	return(result);
+}
+
+
+
+

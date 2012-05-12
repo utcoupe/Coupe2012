@@ -35,3 +35,6 @@ long int robot_get_x();
 long int robot_get_y();
 
 
+void computeRobotState();
+double moduloPI(double Nb);
+

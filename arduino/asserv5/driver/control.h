@@ -47,8 +47,5 @@ void positionControl(int*,int*);
 void delayControl(int*, int*);
 void pwmControl(int*, int*);
 
-void computeRobotState();
-
-double moduloPI(double Nb);
 
 #endif /* CONTROL_H_ */

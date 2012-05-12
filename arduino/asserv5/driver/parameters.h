@@ -42,10 +42,10 @@ const double ENC_CENTER_DIST_TICKS = ENC_CENTER_DIST_MM*ENC_MM_TO_TICKS; // Dist
 #define PIN_DIR_LEFT 12
 #define PIN_EN_RIGHT 11
 #define PIN_DIR_RIGHT 13
-#define PIN_LEFT_A 18
-#define PIN_LEFT_B 19
-#define PIN_RIGHT_A 21
-#define PIN_RIGHT_B 20
+#define PIN_LEFT_A 18			// A encodeur 1 (gauche) (vert-marron)
+#define PIN_LEFT_B 19			// B encodeur 1 (gauche) (vert-blanc)
+#define PIN_RIGHT_A 21			// A encodeur 2 (droite) (noir-blanc)
+#define PIN_RIGHT_B 20			// B encodeur 2 (droite) (noir-marron)
 #define INTERRUPT_LEFT_A 5
 #define INTERRUPT_LEFT_B 4
 #define INTERRUPT_RIGHT_A 2
