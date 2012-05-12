@@ -33,7 +33,7 @@ int Percepteur::set_pwm(int _ordre, int _pwm) {
     this->sens = BACKWARD;
     if (this->etat_switchs != 0) {
       this->etat_moteur = 2;
-      sendMessage(_ordre, "B");
+      sendMessage(_ordre, "B", this->etat_moteur);
     }
     else
       return 0;
@@ -42,7 +42,7 @@ int Percepteur::set_pwm(int _ordre, int _pwm) {
     this->sens = FORWARD;
     if (this->etat_switchs != 2) {
       this->etat_moteur = 1;
-      sendMessage(_ordre, "F");
+      sendMessage(_ordre, "F", this->etat_moteur);
     }
     else
       return 0;
