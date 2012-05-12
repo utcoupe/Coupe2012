@@ -12,6 +12,7 @@ Center = (MAX_VAL,MAX_VAL) # x,y
 
 gbool = True
 listC=[]
+canvas_ids = []
 p = Popen(["./radDriver.exe"], stdout=PIPE, stdin=PIPE)
 
 class thRead(threading.Thread):
@@ -48,18 +49,13 @@ def drawcircle(canv,x,y,rad):
 
 
 def drawZone(canv):
-	canv.delete(ALL)
+	global canvas_ids
+	#canv.delete(ALL)
 	
 	#drawcircle(canv,MAX_VAL/sizeFact,MAX_VAL/sizeFact,20)
 	
-	canv.create_line((Center[0]/sizeFact,Center[1]/sizeFact,Center[0]/sizeFact,(Center[1]-3000)/sizeFact),fill="red",width=2)
-	canv.create_line((Center[0]/sizeFact,(Center[1]-3000)/sizeFact,(Center[0]-2000)/sizeFact,(Center[1]-3000)/sizeFact),fill="red",width=2)
-	canv.create_line((Center[0]/sizeFact,(Center[1]-3000)/sizeFact,(Center[0]+2000)/sizeFact,(Center[1]-3000)/sizeFact),fill="red",width=2)
-	canv.create_line(((Center[0]-2000)/sizeFact,Center[1]/sizeFact,(Center[0]-2000)/sizeFact,(Center[1]-3000)/sizeFact),fill="red",width=2)
-	canv.create_line(((Center[0]+2000)/sizeFact,Center[1]/sizeFact,(Center[0]+2000)/sizeFact,(Center[1]-3000)/sizeFact),fill="red",width=2)
-	
-	
-	for c in listC : 
+	new_ids = [ 0 ] * len(listC)
+	for i,c in enumerate(listC): 
 		teta=float(c[0])
 		lon =float(c[1])
 	
@@ -72,7 +68,7 @@ def drawZone(canv):
 		y = MAX_VAL - y 
 		
 		
-		print  teta, " - ", lon, " - ", x, " - ", y
+		#print  teta, " - ", lon, " - ", x, " - ", y
 		
 		x = x / sizeFact
 		y = y / sizeFact
@@ -81,8 +77,10 @@ def drawZone(canv):
 		y = int(y)
 	
 		
-	
-		drawcircle(canv,x,y,5)
+		if i < len(canvas_ids):
+			canv.delete(canvas_ids[i])
+		new_ids[i] = drawcircle(canv,x,y,5)
+	canvas_ids = new_ids
 	
 	
 
@@ -105,6 +103,13 @@ root = Tk()
 
 canvas = Canvas(width=(2*MAX_VAL)/sizeFact, height=(MAX_VAL)/sizeFact, bg='blue')  
 canvas.pack(expand=YES, fill=BOTH) 
+
+canv = canvas
+canv.create_line((Center[0]/sizeFact,Center[1]/sizeFact,Center[0]/sizeFact,(Center[1]-3000)/sizeFact),fill="red",width=2)
+canv.create_line((Center[0]/sizeFact,(Center[1]-3000)/sizeFact,(Center[0]-2000)/sizeFact,(Center[1]-3000)/sizeFact),fill="red",width=2)
+canv.create_line((Center[0]/sizeFact,(Center[1]-3000)/sizeFact,(Center[0]+2000)/sizeFact,(Center[1]-3000)/sizeFact),fill="red",width=2)
+canv.create_line(((Center[0]-2000)/sizeFact,Center[1]/sizeFact,(Center[0]-2000)/sizeFact,(Center[1]-3000)/sizeFact),fill="red",width=2)
+canv.create_line(((Center[0]+2000)/sizeFact,Center[1]/sizeFact,(Center[0]+2000)/sizeFact,(Center[1]-3000)/sizeFact),fill="red",width=2)
 
 root.mainloop()
 
