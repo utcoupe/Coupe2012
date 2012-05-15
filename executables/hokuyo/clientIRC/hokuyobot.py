@@ -23,7 +23,7 @@ from executablebot import run
 
 if __name__ == "__main__":
 	run(
-		nickname = "bridgebot",
+		nickname = "hokuyobot",
 		channel = "#hokuyo",
 		exec_name = EXEC,
 		protocol_file = PROTOCOL_H,
