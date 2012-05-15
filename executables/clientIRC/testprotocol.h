@@ -1,6 +1,8 @@
 #ifndef PROTOCOLE_H
 #define PROTOCOLE_H
 
+#define SEP			'+'
+
 /**
  * coucou
  */

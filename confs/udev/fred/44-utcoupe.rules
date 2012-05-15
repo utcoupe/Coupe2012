@@ -1,0 +1,2 @@
+SUBSYSTEMS=="usb", ATTRS{serial}=="6493234373835161F131", KERNEL=="ttyACM[0-9]*", NAME="%k", SYMLINK+="ttyAsserv"
+SUBSYSTEMS=="usb", ATTRS{serial}=="64938333932351D0C030", KERNEL=="ttyACM[0-9]*", NAME="%k", SYMLINK+="ttyOthers"

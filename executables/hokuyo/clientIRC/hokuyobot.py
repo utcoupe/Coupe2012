@@ -15,7 +15,7 @@ import sys
 import os
 FILE_DIR  = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(os.path.join(FILE_DIR,"..","..","clientIRC"))
-EXEC = os.path.join(FILE_DIR,"..", "driver", "hokuyoApp.exe")
+EXEC = os.path.join(FILE_DIR,"..", "driver", "hokuyoapp.exe")
 PROTOCOL_H = os.path.join(FILE_DIR,"..","..","..","protocole.h")
 
 from executablebot import run
@@ -23,8 +23,8 @@ from executablebot import run
 
 if __name__ == "__main__":
 	run(
-		nickname = "bridgebot",
-		channel = "#hokuyo",
+		nickname = "hokuyobot",
+		channel = CANAL_HOKUYO,
 		exec_name = EXEC,
 		protocol_file = PROTOCOL_H,
 		protocol_prefixe = "QH_",
