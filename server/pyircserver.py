@@ -11,6 +11,7 @@ import datetime
 import copy
 
 from error_code import *
+from logger import Logger
 
 
 ParsedMsg = namedtuple('ParsedMsg', ['prefix', 'command', 'parameters'])
@@ -377,13 +378,13 @@ class Server(socketserver.ThreadingMixIn, socketserver.TCPServer):
 	def __repr__(self):
 		return '<PyIrcServer(%s,%s)' % self.server_address
 
+
 if __name__=='__main__':
 	import sys
+	import os
 	HOST, PORT = '', int(sys.argv[1])
-	LOG_FILE = sys.argv[2] if len(sys.argv) > 2 else None
-	if LOG_FILE:
-		sys.stdout = open(LOG_FILE, 'w')
-		sys.stderr = sys.stdout
+	LOG_FILE = os.path.abspath(__file__)+'.log'
+	sys.stdout = Logger(LOG_FILE)
 	server = Server((HOST,PORT))
 	server.start()
 	#msgparsed = irc_parse('JOIN #test coucou\n')
