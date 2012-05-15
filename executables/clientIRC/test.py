@@ -13,4 +13,5 @@ while True:
 		print(ex)
 	else:
 		print(m)
+	break
 	time.sleep(0.01)
