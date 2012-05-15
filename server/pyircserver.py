@@ -1,3 +1,5 @@
+
+
 import socketserver
 import socket
 
@@ -378,6 +380,10 @@ class Server(socketserver.ThreadingMixIn, socketserver.TCPServer):
 if __name__=='__main__':
 	import sys
 	HOST, PORT = '', int(sys.argv[1])
+	LOG_FILE = sys.argv[2] if len(sys.argv) > 2 else None
+	if LOG_FILE:
+		sys.stdout = open(LOG_FILE, 'w')
+		sys.stderr = sys.stdout
 	server = Server((HOST,PORT))
 	server.start()
 	#msgparsed = irc_parse('JOIN #test coucou\n')
