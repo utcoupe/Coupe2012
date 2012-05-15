@@ -2,6 +2,8 @@
 
 AX12 motor[NB_MOTEURS];
 int reverse[10] = {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1};
+int goal[NB_MOTEURS];
+int ordre[NB_MOTEURS];
 
 int tourner(int id, int id_moteur, int position) {
   if (position < -150 || position > 150 || id_moteur > NB_MOTEURS) {
@@ -9,6 +11,8 @@ int tourner(int id, int id_moteur, int position) {
   }
   else {
     int valeur = map(position, -150, 150, 0, 1023);
+    goal[id_moteur] = position;
+    ordre[id_moteur] = id;
     return motor[id_moteur].writeInfo (GOAL_POSITION, valeur);
   }
 }
@@ -18,7 +22,7 @@ int get_position(int id, int id_moteur) {
     return E_INVALID_PARAMETERS_VALUE;
   }
   else {
-    int valeur = lire (id, GOAL_POSITION, id_moteur);
+    int valeur = lire (id, PRESENT_POSITION, id_moteur);
     if (valeur == -1)
       return -1;
     else
@@ -52,9 +56,11 @@ void cherche_moteurs(void) {
       // i est le numéro du moteur dans la chaine
       motor[i] = AX12(detect[i]);
       reverse[detect[i]] = i;
+      goal[i] = 200;
+      ordre[i] = -1;
 
       motor[i].writeInfo (TORQUE_ENABLE, 1); // on doit activer ça sinon le moteur ne développe pas de couple
-      motor[i].setEndlessTurnMode(false); // ça semble pas utile: TODO tester sans pour pourvoir
+      motor[i].setEndlessTurnMode(false); // ça semble pas utile: TODO tester sans pour pour voir
 
       // CW : ClockWise
       // et donc CCW : Counter-CLockWise

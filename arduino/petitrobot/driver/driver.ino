@@ -23,6 +23,16 @@ void loop()
 
   readIncomingData();
 
+  for (char i=0; i<NB_MOTEURS; i++) {
+    if (ordre[i] != -1) {
+      int err = lire(0, PRESENT_POSITION, i) - goal[i];
+      if(err <= 2 && err >= -2) {
+        sendMessage(ordre[i], "ok");
+        ordre[i] = -1;
+      }
+    }
+  }
+
   // On attend le temps qu'il faut pour boucler
   long udelay = 2000-(micros()-timeStart);
   if(udelay>0)
