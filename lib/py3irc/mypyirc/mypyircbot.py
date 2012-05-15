@@ -258,6 +258,10 @@ class MyPyIrcBot(ircbot.SingleServerIRCBot):
 
 	def write(self, msg):
 		if msg: print(msg)
+
+	def sendall(self, msg):
+		for canal in self.canaux:
+			self.send(canal, msg)
 	
 	def send(self, canal, msg):
 		"""

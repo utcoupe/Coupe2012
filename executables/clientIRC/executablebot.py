@@ -17,6 +17,7 @@ from py3irc.mypyirc import bridgebot
 
 class ExecutableBot(bridgebot.BridgeBot):
 	def __init__(self, server_ip, server_port, nickname, channel, exec_name, exec_params, protocol_file, protocol_prefixe):
+		super().__init__(server_ip, server_port, nickname, channel, protocol_file, protocol_prefixe)
 		self.exec_name = exec_name
 		self.exec_params = exec_params
 		self.process = None
@@ -24,7 +25,6 @@ class ExecutableBot(bridgebot.BridgeBot):
 		self.connect_exec()
 		print("OK")
 		
-		super().__init__(server_ip, server_port, nickname, channel, protocol_file, protocol_prefixe)
 
 	def connect_exec(self):
 		if self.lock_connect.acquire(False):
@@ -45,6 +45,7 @@ class ExecutableBot(bridgebot.BridgeBot):
 					time.sleep(1)
 				else:
 					print("reconnection ok")
+					self.sendall("reconnection ok")
 					break
 			self.lock_connect.release()
 	
@@ -71,6 +72,16 @@ class ExecutableBot(bridgebot.BridgeBot):
 			return 'IOError'
 		else:
 			return m
+
+	def cmd__setexe(self, exe, args, *, id_msg=42, **kwargs):
+		"""
+		changer l'executable
+		@param exe nom de l'executable
+		@param args la liste des arguments, séparés par une virgule
+		"""
+		self.exec_name = exe
+		self.exec_args = args[1:-1].split(',')
+		self.connect_exec()
 
 def run(**args):
 	import optparse
