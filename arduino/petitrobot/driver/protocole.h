@@ -43,6 +43,16 @@ Renvoie la position angulaire du moteur
 */
 #define Q_ATTRAPER_CARTE 90
 
+/**
+   Passe en mode buldozer
+*/
+#define Q_GO_BULDOZER 100
+
+/**
+   Arrête le mode buldozer
+*/
+#define Q_STOP_BULDOZER 110
+
 // erreurs
 #define E_INVALID_CMD                   -1
 #define E_INVALID_PARAMETERS_NUMBERS    -2
