@@ -19,15 +19,25 @@ class Radar(tk.Tk):
 		canv.create_line(((Center[0]+2000)/sizeFact,Center[1]/sizeFact,(Center[0]+2000)/sizeFact,(Center[1]-3000)/sizeFact),fill="red",width=2)
 		self.canvas.pack()
 
+		self.counter = 0
+
 	def draw_points(self, points):
-		self.canvas.delete('points')
 
 		rad = 5
-		
-		for x,y in points:
-			x += MAX_VAL
+
+		def f(p):
+			x,y = p # y et x sont inversé à l'affichage
+			x,y = MAX_VAL - y, MAX_VAL - x
 			x /= sizeFact
 			y /= sizeFact
+			return x,y
+			
+		points = map(f, points)
 
-			self.canvas.create_oval(x-rad,y-rad,x+rad,y+rad,width=0,fill='green')
+		oldtag = 'mytag'+str(self.counter)
+		self.counter += 1
+		newtag = 'mytag'+str(self.counter)
+		for x,y in points:
+			self.canvas.create_oval(x-rad,y-rad,x+rad,y+rad,width=0,fill='green', tag=newtag)
+		self.canvas.delete(oldtag)
 		
