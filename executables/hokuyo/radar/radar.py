@@ -26,8 +26,9 @@ class Radar(tk.Tk):
 		
 		for x,y in points:
 			x += MAX_VAL
+			y = MAX_VAL - y
 			x /= sizeFact
 			y /= sizeFact
 
-			self.canvas.create_oval(x-rad,y-rad,x+rad,y+rad,width=0,fill='green')
+			self.canvas.create_oval(x-rad,y-rad,x+rad,y+rad,width=0,fill='green', tag='points')
 		

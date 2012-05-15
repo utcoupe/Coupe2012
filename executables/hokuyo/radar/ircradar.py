@@ -23,7 +23,12 @@ class RadarBot(MyPyIrcBot):
 		"""
 			@param exploite les données renvoyées par l'hokuyo
 		"""
-		pass
+		try:
+			points = eval(data)
+		except:
+			pass
+		else:
+			self.radar.draw_points(points)
 
 
 if __name__ == "__main__":
