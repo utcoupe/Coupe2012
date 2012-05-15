@@ -14,14 +14,14 @@
 #include "delay.h"
 #include "stdio.h"
 #include "UrgCtrl.h"
+#include <cmath>
 using namespace std; 
 using namespace qrk;
 
-#define device "/dev/ttyACM0"
+const string device = "/dev/ttyACM0";
 
 
-int main()
-{
+int main() {
 	
 	UrgCtrl urg;
 	if (! urg.connect(device)) {
@@ -31,6 +31,7 @@ int main()
 	urg.setCaptureMode(AutoCapture);
 
 	int scan_msec = urg.scanMsec();
+	bool pass = false;
 
 	const double rad90 = 90.0 * M_PI / 180.0;
 	urg.setCaptureRange(urg.rad2index(-rad90), urg.rad2index(rad90));
@@ -38,8 +39,7 @@ int main()
 	int command=55;
 	string request;
 	size_t pos;	
-	while(command!=9)
-	{
+	while(command!=9) {
 		cin >> request;
 		fflush(stdin);
 		pos = request.find('.'); 
@@ -54,13 +54,16 @@ int main()
 			delay(scan_msec);
 		}
 
-		bool pass = false;
 		cout << "[";
 		for (int j = 0; j < n; ++j) {
 			if(pass){
 				cout << ",";
 			}
-			cout << "(" <<urg.index2rad(j)<< "," <<data[j]<< ")";
+			double teta = urg.index2rad(j);
+			double delta = data[j];
+			int x = delta * cos(teta);
+			int y = delta * sin(teta);
+			cout << "(" << y << "," << x << ")";
 			pass = true;
 		}
 		cout << "]";
@@ -72,3 +75,4 @@ int main()
 	return 0;
 	
 }
+
