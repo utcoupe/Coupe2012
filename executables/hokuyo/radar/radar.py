@@ -24,7 +24,6 @@ class Radar(tk.Tk):
 	def draw_points(self, points):
 
 		rad = 5
-
 		def f(p):
 			x,y = p # y et x sont inversé à l'affichage
 			x,y = MAX_VAL - y, MAX_VAL - x
