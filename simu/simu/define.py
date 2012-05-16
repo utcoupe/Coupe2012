@@ -42,6 +42,7 @@ KEY_BALAIS_RIGHT	= K_w			# sortir le balais de droite
 KEY_BULDO			= K_x			# mode buldozer
 KEY_TELEPORTATION	= K_t			# mode téléportation
 KEY_RECUL			= K_r			# mode marche arrière
+KEY_JACK			= K_j			# jack
 
 
 BIG			= 0
