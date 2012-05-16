@@ -288,7 +288,8 @@ void positionControl(int* value_pwm_left, int* value_pwm_right){
 	 */
 	int sens = 1;
 	bool onlyTurn = false; // il ne faut que tourner
-	if (current_goal.phase == PHASE_1 and abs(currentAlpha) > M_PI/2) {
+	if (current_goal.phase == PHASE_1 and abs(currentAlpha) > M_4_PI) {
+		pid4AlphaControl.SetOutputLimits(-100,100); // composante liee a la vitesse de rotation
 		onlyTurn = true;
 	}
 	else if(current_goal.phase != PHASE_1 and abs(currentAlpha) > M_PI/2) {/* c'est a dire qu'on a meilleur temps de partir en marche arriere */
