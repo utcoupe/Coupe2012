@@ -1,5 +1,6 @@
 #include "sensor.h"
-
+#include "include_arduino.h"
+#include "message.h"
 
 typedef struct
 {
@@ -12,6 +13,8 @@ typedef struct
 Switch switchJack;
 void SwitchInit(Switch & s, const int pin)
 {
+	pinMode(PIN_JACK, INPUT);
+	digitalWrite(pin, HIGH);
 	s.lastValue = digitalRead(pin);
 	s.lastOscillation = 0;
 	s.lastSwitch = 0;
@@ -21,7 +24,6 @@ void checkSwitch(const int pin, const int warning, Switch & s, char* param = (ch
 
 
 void initSensor(){
-	pinMode(PIN_JACK, INPUT);
 	SwitchInit(switchJack, PIN_JACK);
 }
 

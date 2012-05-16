@@ -5,7 +5,7 @@
 
 
 #define ID_MSG_US		104
-#define PIN_US			A0
+#define PIN_US			22
 
 
 
