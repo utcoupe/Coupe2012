@@ -41,6 +41,9 @@ Renvoie la position angulaire du moteur
 */
 #define Q_FERMER_PEIGNES 100
 
+#define ID_MSG_US			104
+#define PIN_US				A0
+
 // erreurs
 #define E_INVALID_CMD                   -1
 #define E_INVALID_PARAMETERS_NUMBERS    -2
