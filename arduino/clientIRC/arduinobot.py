@@ -10,7 +10,7 @@ import threading
 import serial
 
 from py3irc.mypyirc import BridgeBot
-
+from py3irc.mypyirc.ircdefine import *
 
 
 
