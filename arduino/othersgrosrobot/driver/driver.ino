@@ -29,7 +29,7 @@ void loop()
 {
   timeStart = micros();
 
-	if (timeVerif != 0 && millis() >= timeVerif && digitalRead(21) == stateVerif) {
+  if (timeVerif != 0 && millis() >= timeVerif && digitalRead(21) == stateVerif) {
     timeVerif = 0;
     sendMessage(103, !stateVerif);
   }
@@ -44,6 +44,8 @@ void loop()
       }
     }
   }
+
+  usTrigger();
 
   readIncomingData();
 
