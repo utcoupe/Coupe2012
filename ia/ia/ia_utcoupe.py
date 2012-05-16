@@ -93,12 +93,21 @@ class IaUtcoupe(IaBase):
 		self.state_match	= STATE_WAIT_JACK1
 		self.state_mini	= 0
 		self.state_big	= 0
+
+		enemies = self.gamestate.enemyrobots()
+		bigrobot = self.gamestate.bigrobot
+		actions = get_actions_bigrobot(bigrobot, enemies)
+		bigrobot.set_actions(actions)
+		minirobot = self.gamestate.minirobot
+		actions = get_actions_minirobot(minirobot, enemies)
+		minirobot.set_actions(actions)
+		
 		time.sleep(0.5)
 	
 	def loop(self):
 		# si le match a durée depuis trop longtemps, on s'arrête
 		if self.match_timeout and (time.time() - self.t_begin_match) > self.match_timeout:
-			self.state_match = 0
+			self.reset()
 
 		# appellé la fonction correspondant à l'état acutel
 		if 		STATE_PLAY	== self.state_match:
@@ -222,6 +231,7 @@ class IaUtcoupe(IaBase):
 	def mini_next_on_response_2(self, next_state):
 		""" changement de l'état du petit robot quand une double réponse a été reçue """
 		def __f(n, canal, args, kwargs):
+			print("BOUKAKE")
 			if n == 1:
 				self.state_mini = next_state
 		return __f
@@ -249,7 +259,7 @@ class IaUtcoupe(IaBase):
 			bigrobot.extras.teleport(self.p((160,250)), self.a(0))
 			bigrobot.asserv.set_pos(self.p((160,250)), self.a(0))
 			minirobot.extras.teleport(self.p((400,250)), self.a(0))
-			#minirobot.extras.teleport(self.p((4000,4000)), self.a(0)) # suppression du petit robot pour l'instant // IMPORTANT A DECOMMENTER
+			minirobot.extras.teleport(self.p((4000,4000)), self.a(0)) # suppression du petit robot pour l'instant // IMPORTANT A DECOMMENTER
 			#bigrobot.asserv.set_pos(self.p((4000,4000)), self.a(0))
 			self.next_state_match()
 			return
@@ -262,13 +272,10 @@ class IaUtcoupe(IaBase):
 			bigrobot.extras.teleport(self.p((1100,250)), self.a(90))
 			minirobot.extras.teleport(self.p((250,250)), self.a(90))
 			# petit et gros reculent et se calent contre le mur
-			minirobot.asserv.pwm(-100)
-			bigrobot.asserv.pwm(-100)
-			time.sleep(1)
-			minirobot.asserv.cancel(block=True)
-			bigrobot.asserv.cancel(block=True)
-			self.state_mini = 1
-			self.state_big = 1
+			self.state_mini = 42
+			self.state_big = 42
+			minirobot.asserv.pwm(-100, -100, 1000, handler=self.mini_next_on_response_2(1))
+			bigrobot.asserv.pwm(-100, -100, 1000, handler=self.big_next_on_response_2(1))
 
 		if 1 == self.state_mini:
 			# petit avance de 10cm
@@ -292,9 +299,7 @@ class IaUtcoupe(IaBase):
 		
 		if 3 == self.state_mini:
 			# petit recul et se cale contre le mur
-			minirobot.asserv.pwm(-100)
-			time.sleep(1)
-			minirobot.asserv.cancel(block=True)
+			minirobot.asserv.pwm(-100,-100, 1000, block=True, block_level=2)
 			# petit avance de 10cm
 			self.state_mini = 42
 			minirobot.asserv.gotor((100,0), handler=self.mini_next_on_response_2(4))
@@ -332,9 +337,7 @@ class IaUtcoupe(IaBase):
 		if 4 == self.state_big:
 			# gros recul et se cale contre le mur
 			self.state_big = 42
-			bigrobot.asserv.pwm(-100)
-			time.sleep(1)
-			bigrobot.asserv.cancel(block=True)
+			bigrobot.asserv.pwm(-100,-100, 1000, block=True, block_level=2)
 			self.state_big = 5
 
 		if 10 == self.state_mini:
@@ -357,20 +360,20 @@ class IaUtcoupe(IaBase):
 		if 0 == self.state_mini and \
 		   0 == self.state_big:
 			bigrobot.asserv.cancel(block=True)
-			minirobot.asserv.cancel(block=True)
+			#minirobot.asserv.cancel(block=True)		// A DECOMMENTER
 			self.state_mini = 1
 			self.state_big = 42
 
 		if self.state_mini == 1:
 			# avancer le petit robot
 			self.state_mini = 42
-			minirobot.asserv.goto((500,250), handler=self.mini_next_on_response_2(2))
-			#self.state_mini = 2 # supprimer
+			#minirobot.asserv.goto((500,250), handler=self.mini_next_on_response_2(2))		// A DECOMMENTER
+			self.state_mini = 2 # supprimer
 		elif self.state_mini == 2:
 			self.state_mini = 42
 			self.state_big = 42
-			minirobot.asserv.goto((1200,250), handler=self.mini_next_on_response_2(3))
-			#self.state_mini = 3 # supprimer
+			#minirobot.asserv.goto((1200,250), handler=self.mini_next_on_response_2(3))		// A DECOMMENTER
+			self.state_mini = 3 # supprimer
 			bigrobot.asserv.goto((700,R_BIGROBOT+50), handler=self.big_next_on_response_2(3))
 		elif 3 == self.state_mini and \
 			 3 == self.state_big:
@@ -391,7 +394,7 @@ class IaUtcoupe(IaBase):
 
 	def next_state_match(self):
 		if STATE_PLAY == self.state_match:
-			self.state_match = 0
+			self.reset()
 		else:
 			self.state_match += 1
 
@@ -430,7 +433,6 @@ class IaUtcoupe(IaBase):
 		@param {position} p
 		@return inverse p
 		"""
-		print("HELLO", self.team, RED)
 		if self.team == RED:
 			return [self.x(p[0]), p[1]]
 		else:

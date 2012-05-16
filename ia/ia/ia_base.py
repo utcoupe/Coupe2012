@@ -168,8 +168,8 @@ class IaBase:
 		print(self.gamestate.bigrobot.asserv.get_latency())
 		#print("Get latency mini asserv")
 		#print(self.gamestate.bigrobot.asserv.get_latency()) 			# a DECOMMENTER
-		print("Get latency big visio")
-		print(self.gamestate.bigrobot.visio.get_latency())
+		#print("Get latency big visio")
+		#print(self.gamestate.bigrobot.visio.get_latency())
 		#print("Get latency mini visio")
 		#print(self.gamestate.minirobot.visio.get_latency())			# a DECOMMENTER
 		#print("Ping hokuyo")
