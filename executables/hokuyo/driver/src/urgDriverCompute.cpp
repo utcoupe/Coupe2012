@@ -107,7 +107,7 @@ void UrgDriver::interpretData(const std::vector<long> & data, int n)
 			c.x = l*cos(radian)  + deltaX; 
 			c.y = l*sin(radian)  + deltaY;
 			if (color==BLEU) {
-				c.x = 3000 - c.x;
+				c.x = LX - c.x;
 			}
 		
 			#if DEBUG
