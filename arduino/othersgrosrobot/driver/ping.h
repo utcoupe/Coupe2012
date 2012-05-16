@@ -1,12 +1,18 @@
 #ifndef PING_H_
 #define PING_H_
 
-#include <WProgram.h>
+#include "include_arduino.h"
+
+
+#define ID_MSG_US		104
+#define PIN_US			A0
+
+
 
 unsigned int getDistance(unsigned char pingPin);
 long microsecondsToInches(long int microseconds);
 long microsecondsToCentimeters(long int microseconds);
-long usTrigger();
+void usTrigger();
 
 #endif
 

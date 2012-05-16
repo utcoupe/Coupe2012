@@ -7,7 +7,6 @@
 
 /**
 Renvoie l'entier passé en paramètre
-@param entier
 */
 #define Q_PING			10
 
@@ -41,8 +40,6 @@ Renvoie la position angulaire du moteur
 */
 #define Q_FERMER_PEIGNES 100
 
-#define ID_MSG_US			104
-#define PIN_US				A0
 
 // erreurs
 #define E_INVALID_CMD                   -1

@@ -1,4 +1,5 @@
 #include "command.h"
+#include "ping.h"
 
 long long int timeVerif;
 char stateVerif;
@@ -34,7 +35,7 @@ void loop()
     sendMessage(103, !stateVerif);
   }
 
-  for (char i=0; i<NB_MOTEURS; i++) {
+  /*for (char i=0; i<NB_MOTEURS; i++) {
     if (ordre[i] != -1) {
       int pos = lire(0, PRESENT_POSITION, i);
       int err = pos - goal[i];
@@ -43,7 +44,7 @@ void loop()
         ordre[i] = -1;
       }
     }
-  }
+  }*/
 
   usTrigger();
 
