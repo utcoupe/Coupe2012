@@ -70,6 +70,18 @@ void cmd(int id, int header, int *args, int size){
         tourner(id, 0, 90);
         break;
       }
+    case Q_GO_BULDOZER:
+      {
+        tourner(id, 1, 35);
+        tourner(id, 3, -110);
+        break;
+      }
+    case Q_STOP_BULDOZER:
+      {
+        tourner(id, 1, -150);
+        tourner(id, 3, 70);
+        break;
+      }
     default:
       {
         sendMessage(id,-1);

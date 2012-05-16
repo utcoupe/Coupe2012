@@ -46,7 +46,11 @@ class ActionBouteille(Action):
 		Action.__init__(self, robot, enemies, point_acces)
 
 	def run(self):
-		print("YOUHOU")
+		print("\nACTION BOUTEILLE BIIIIITCH\n")
+
+		self.robot.asserv.turn(90, block=True, block_level=2)
+		self.robot.asserv.gotor((90, 0), block=True, block_level=2)
+
 		self.clean()
 
 	def __repr__(self):
@@ -57,8 +61,18 @@ class ActionCarte(Action):
 		Action.__init__(self, robot, enemies, point_acces)
 	
 	def run(self):
+		self.robot.actionneurs.abaisser_bras()
+		self.robot.actionneurs.ouvrir_pince()
+
+		self.robot.asserv.turn(-90, block=True, block_level=2)
+		self.robot.asserv.gotor((70, 0), block=True, block_level=2)
+
+		self.robot.actionneurs.fermer_pince()
+		time.sleep(0.2)
+		self.robot.actionneurs.remonter_bras()
+		time.sleep(0.2)
 		self.clean()
-		print("YOUHOU")
+		print("Carte Chopée")
 		
 	def __repr__(self):
 		return "ActionCarte(%s, %s)" % (self.point_acces, self.score)
