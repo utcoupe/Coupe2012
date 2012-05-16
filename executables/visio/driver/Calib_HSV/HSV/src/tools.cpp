@@ -3,36 +3,37 @@
 #include <vector>
 #include <fstream>
 #include "../include/parametres.h"
+#include "../include/config.h"
 
 using namespace std;
 
 cv::Point2f px2mm(cv::Point2f & p)
 {
-    p.x = p.x * RATIO_X;
-    p.y = p.y * RATIO_Y;
+    p.x = p.x * config.RATIO_X;
+    p.y = p.y * config.RATIO_Y;
 
     return p;
 }
 
 cv::Point2f px2mm(cv::Point & p)
 {
-    p.x = p.x * RATIO_X;
-    p.y = p.y * RATIO_Y;
+    p.x = p.x * config.RATIO_X;
+    p.y = p.y * config.RATIO_Y;
 
     return p;
 }
 
 cv::Point2f mm2px(cv::Point & p)
 {
-    p.x = p.x * RATIOX_MM2PX;
-    p.y = p.y * RATIOY_MM2PX;
+    p.x = p.x * config.RATIOX_MM2PX;
+    p.y = p.y * config.RATIOY_MM2PX;
     return p;
 }
 
 void px2Cam(cv::Point & p)
 {
-     p.x = p.x - WIDTH_WINDOW/2;
-     p.y = HEIGHT_WINDOW - p.y;
+     p.x = p.x - config.WIDTH_WINDOW/2;
+     p.y = config.HEIGHT_WINDOW - p.y;
 }
 
 void id()
@@ -49,8 +50,8 @@ void px2mm(vector<cv::Point> & p)
 {
     for (unsigned int i = 0; i < p.size(); i++)
     {
-        p[i].x = p[i].x * RATIO_X;
-        p[i].y = p[i].y * RATIO_Y;
+        p[i].x = p[i].x * config.RATIO_X;
+        p[i].y = p[i].y * config.RATIO_Y;
     }
 }
 

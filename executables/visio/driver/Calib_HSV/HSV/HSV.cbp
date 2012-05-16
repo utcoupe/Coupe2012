@@ -45,12 +45,14 @@
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
+		<Unit filename="include/config.h" />
 		<Unit filename="include/detection.h" />
 		<Unit filename="include/parametres.h" />
 		<Unit filename="include/perspective.h" />
 		<Unit filename="include/tools.h" />
 		<Unit filename="main.cpp" />
 		<Unit filename="src/detection.cpp" />
+		<Unit filename="src/parametres.cpp" />
 		<Unit filename="src/perspective.cpp" />
 		<Unit filename="src/tools.cpp" />
 		<Extensions>
