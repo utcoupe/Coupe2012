@@ -10,14 +10,21 @@
 #include <sys/param.h>
 #include "include/config.h"
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#define MAXBUFSIZE 1024
+
+
 using namespace std;
 
 Config config;
+string direct_abs, direct_m, direct_CDhsv, direct_Lhsv, direct_Nhsv, direct_config;
 
 void validerCD()
 {
      int h, s, v, h2, s2, v2;
-     cv::FileStorage fCD("../../CDhsv.yml", cv::FileStorage::WRITE);
+     cv::FileStorage fCD(direct_CDhsv, cv::FileStorage::WRITE);
      h = cv::getTrackbarPos("h_cd", "Calib_cd");
           s = cv::getTrackbarPos("s_cd", "Calib_cd");
           v = cv::getTrackbarPos("v_cd", "Calib_cd");
@@ -38,7 +45,7 @@ void validerCD()
 
 void validerL()
 {
-          cv::FileStorage fL("../../Lhsv.yml", cv::FileStorage::WRITE);
+          cv::FileStorage fL(direct_Lhsv, cv::FileStorage::WRITE);
           int h, s, v, h2, s2, v2;
           h = cv::getTrackbarPos("h_L", "Calib_Lingot");
           s = cv::getTrackbarPos("s_L", "Calib_Lingot");
@@ -61,7 +68,7 @@ void validerL()
 void validerN()
 {
      int h, s, v, h2, s2, v2;
-          cv::FileStorage fN("../../Nhsv.yml", cv::FileStorage::WRITE);
+          cv::FileStorage fN(direct_Nhsv, cv::FileStorage::WRITE);
           h = cv::getTrackbarPos("h_N", "Calib_CDnoir");
           s = cv::getTrackbarPos("s_N", "Calib_CDnoir");
           v = cv::getTrackbarPos("v_N", "Calib_CDnoir");
@@ -180,7 +187,27 @@ void Calib(int &h, int &s, int &v, int &h2, int &s2, int &v2, cv::Mat &warped, i
 
 int main(int argc, char** argv)
 {
-     getconfig(config, "../../config.yml");
+     char buf[ MAXBUFSIZE ];
+    int count;
+    count = readlink( "/proc/self/exe", buf, MAXBUFSIZE );
+    if ( count < 0 || count >= MAXBUFSIZE ) {
+    printf( "Failed to get absolute path\n" );
+    }
+          direct_abs = buf;
+          string::size_type end = direct_abs.find_last_of('/');
+          direct_abs.erase(end);
+          cerr<<"absolute path is: "<<direct_abs<<endl;
+          direct_m = direct_abs + "/../../../../warpMatrix.yml";
+          direct_CDhsv = direct_abs + "/../../../../CDhsv.yml";
+          direct_Lhsv = direct_abs + "/../../../../Lhsv.yml";
+          direct_Nhsv = direct_abs + "/../../../../Nhsv.yml";
+          direct_config = direct_abs + "/../../../../config.yml";
+          cerr<<"CDHSV path is : "<<direct_CDhsv<<endl;
+          cerr<<"LHSV path is : "<<direct_Lhsv<<endl;
+          cerr<<"NHSV path is : "<<direct_Nhsv<<endl;
+          cerr<<"matrix path is: "<<direct_m<<endl;
+
+     getconfig(config, direct_config);
      cout<<"caméra"<<config.CAMERA_N;
 	int board_w = config.BOARD_W;
 	int board_h = config.BOARD_H;
@@ -224,9 +251,9 @@ int main(int argc, char** argv)
 	bool found = false;
 	bool warpok = false;
 
-     if(fexists("../../CDhsv.yml") and fexists("../../Lhsv.yml") and fexists("../../Nhsv.yml"))
+     if(fexists(direct_CDhsv.c_str()) and fexists(direct_Lhsv.c_str()) and fexists(direct_Nhsv.c_str()))
                {
-                    cv::FileStorage fCDr("../../CDhsv.yml", cv::FileStorage::READ);
+                    cv::FileStorage fCDr(direct_CDhsv, cv::FileStorage::READ);
                     fCDr["h_cd"] >> h_cd;
                     fCDr["s_cd"] >> s_cd;
                     fCDr["v_cd"] >> v_cd;
@@ -234,7 +261,7 @@ int main(int argc, char** argv)
                     fCDr["s2_cd"] >> s2_cd;
                     fCDr["v2_cd"] >> v2_cd;
                     fCDr.release();
-                    cv::FileStorage fLr("../../Lhsv.yml", cv::FileStorage::READ);
+                    cv::FileStorage fLr(direct_Lhsv, cv::FileStorage::READ);
                     fLr["h_L"] >> h_L;
                     fLr["s_L"] >> s_L;
                     fLr["v_L"] >> v_L;
@@ -242,7 +269,7 @@ int main(int argc, char** argv)
                     fLr["s2_L"] >> s2_L;
                     fLr["v2_L"] >> v2_L;
                     fLr.release();
-                    cv::FileStorage fNr("../../Nhsv.yml", cv::FileStorage::READ);
+                    cv::FileStorage fNr(direct_Nhsv, cv::FileStorage::READ);
                     fNr["h_N"] >> h_N;
                     fNr["s_N"] >> s_N;
                     fNr["v_N"] >> v_N;
@@ -278,7 +305,7 @@ int main(int argc, char** argv)
 
 		if(recharger_Matrix_Perspective)
 		{
-		     cv::FileStorage fs2("../../warpMatrix.yml", cv::FileStorage::READ);
+		     cv::FileStorage fs2(direct_m, cv::FileStorage::READ);
 		     fs2["warpMatrix"] >> warpMatrix;
 		     warpPerspective(image, warped, warpMatrix, image.size(), cv::INTER_LINEAR, cv::BORDER_CONSTANT);
 		     cv::imshow( "Camera", warped);

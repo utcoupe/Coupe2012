@@ -45,7 +45,7 @@ void ChessboardFinder(cv::Mat& image, cv::Mat& gray, cv::Mat& warpMatrix,
 				//calculate warpmatrix
                     getvertices( corners, src_vertices, dst_vertices, board_sz.width, board_sz.height);
 				warpMatrix = cv::getPerspectiveTransform(src_vertices, dst_vertices);
-				cv::FileStorage fs("../../warpMatrix.yml", cv::FileStorage::WRITE);
+				cv::FileStorage fs(direct_m, cv::FileStorage::WRITE);
                     fs << "warpMatrix" << warpMatrix;
 				fs.release();
 				//warpok = true;
