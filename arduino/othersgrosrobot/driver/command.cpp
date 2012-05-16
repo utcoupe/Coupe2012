@@ -48,6 +48,20 @@ void cmd(int id, int header, int *args, int size){
           sendMessage(id, lire(id, args[0], args[1]));
         break;
       }
+    case Q_OUVRIR_PEIGNES:
+      {
+				motor[0].writeInfo (MOVING_SPEED, 1);
+				motor[2].writeInfo (MOVING_SPEED, 1);
+        tourner(id, 0, -70);
+        tourner(id, 2, 70);
+      }
+    case Q_FERMER_PEIGNES:
+      {
+				motor[0].writeInfo (MOVING_SPEED, 1);
+				motor[2].writeInfo (MOVING_SPEED, 1);
+        tourner(id, 0, 150);
+        tourner(id, 2, -150);
+      }
     default:
       {
         sendMessage(id,-1);
