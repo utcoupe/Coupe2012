@@ -50,17 +50,19 @@ void cmd(int id, int header, int *args, int size){
       }
     case Q_OUVRIR_PEIGNES:
       {
-				motor[0].writeInfo (MOVING_SPEED, 1);
-				motor[2].writeInfo (MOVING_SPEED, 1);
+        motor[0].writeInfo (MOVING_SPEED, 500);
+        motor[2].writeInfo (MOVING_SPEED, 500);
         tourner(id, 0, -70);
         tourner(id, 2, 70);
+        break;
       }
     case Q_FERMER_PEIGNES:
       {
-				motor[0].writeInfo (MOVING_SPEED, 1);
-				motor[2].writeInfo (MOVING_SPEED, 1);
+        motor[0].writeInfo (MOVING_SPEED, 200);
+        motor[2].writeInfo (MOVING_SPEED, 200);
         tourner(id, 0, 150);
         tourner(id, 2, -150);
+        break;
       }
     default:
       {
