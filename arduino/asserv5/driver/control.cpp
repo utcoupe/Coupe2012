@@ -28,6 +28,7 @@
 #include "PID_Beta6.h"
 #include "fifo.h"
 #include "message.h"
+#include "math.h"
 
 
 CurrentGoal current_goal;
