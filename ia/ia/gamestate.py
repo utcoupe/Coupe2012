@@ -60,7 +60,9 @@ class GameState:
 		self.sums = {}
 		self.sums['update_big_ng'] = {'t':0, 'n':0}
 		self.sums['update_mini_ng'] = {'t':0, 'n':0}
-			
+
+		self.us_detect = False # pour l'homologation, si les ultra sons detectent quelque chose devant alors on s'arrête
+		self.set_handler(ID_MSG_US, self.on_msg_us)
 
 	def reset(self):
 		self.bigrobot.reset()
@@ -226,6 +228,21 @@ class GameState:
 			event.set()
 		else:
 			self.send_error(canal, "Error %s.on_msg_visio (%s:%d) : pas assez de paramètres " %
+				(self.__class__.__name__, currentframe().f_code.co_filename, currentframe().f_lineno))
+
+	def on_msg_us(self, n, canal, args, kwargs):
+		if len(args) == 1:
+			dist = int(args[0])
+			if dist < 200:
+				if not self.us_detect:
+					self.bigrobot.stop()
+				self.us_detect = True
+			else:
+				if self.us_detect:
+					self.bigrobot.resume()
+				self.us_detect = False
+		else:
+			self.send_error(canal, "Error %s.on_msg_us (%s:%d) : pas assez de paramètres " %
 				(self.__class__.__name__, currentframe().f_code.co_filename, currentframe().f_lineno))
 	
 	def send_error(self, canal, msg):
