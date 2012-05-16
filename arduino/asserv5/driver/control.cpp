@@ -28,7 +28,6 @@
 #include "PID_Beta6.h"
 #include "fifo.h"
 #include "message.h"
-#include "math.h"
 
 
 CurrentGoal current_goal;
@@ -289,11 +288,11 @@ void positionControl(int* value_pwm_left, int* value_pwm_right){
 	 */
 	int sens = 1;
 	bool onlyTurn = false; // il ne faut que tourner
-	if (current_goal.phase == PHASE_1 and abs(currentAlpha) > M_4_PI) {
+	if (current_goal.phase == PHASE_1 and abs(currentAlpha) > M_PI/4.0) {
 		pid4AlphaControl.SetOutputLimits(-100,100); // composante liee a la vitesse de rotation
 		onlyTurn = true;
 	}
-	else if(current_goal.phase != PHASE_1 and abs(currentAlpha) > M_PI/2) {/* c'est a dire qu'on a meilleur temps de partir en marche arriere */
+	else if(current_goal.phase != PHASE_1 and abs(currentAlpha) > M_PI/2.0) {/* c'est a dire qu'on a meilleur temps de partir en marche arriere */
 		sens = -1;
 		currentAlpha = moduloPI(M_PI + angularCoeff - robot_get_angle());
 	}
