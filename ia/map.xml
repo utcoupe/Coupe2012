@@ -1,6 +1,9 @@
 <map>
+
+<!--circle x="1500" y="1500" rayon="300" n="8" /-->
 	
 <size width="3000" height="2000" w_tiles="100" />
+
 
 <!-- mur zone départ -->
 <polygon>
@@ -36,12 +39,17 @@
 
 
 <!-- totem -->
-<carre x="1100" y="1000" width="250"/>
-
+<!--carre x="1100" y="1000" width="250"/-->
 <!-- totem -->
-<carre x="1900" y="1000" width="250"/>
+<!--carre x="1900" y="1000" width="250"/-->
+<polygon>
+	<vertex x="975" y="875" />
+	<vertex x="2025" y="875" />
+	<vertex x="2025" y="1125" />
+	<vertex x="975" y="1125" />
+</polygon>
 
 <!-- baobab -->
-<circle x="1500" y="1000" rayon="75" n="8"/>
+<!--circle x="1500" y="1000" rayon="75" n="8"/-->
 
 </map>

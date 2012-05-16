@@ -169,10 +169,12 @@ class IaUtcoupe(IaBase):
 			self.debug.draw_circle(o, 80, (255,0,0), 1, id(o))"""
 		
 		# gogogo robots !
-		if not self.gamestate.us_detect:
-			self.loopRobot(self.gamestate.bigrobot)
-		else:
+		if self.gamestate.us_detect:
 			print("Les pings ont detectés un bolosse en face !!!")
+		elif self.gamestate.enemies_angle_mort:
+			print("Un bolosse est dans l'angle mort !!!")
+		else:
+			self.loopRobot(self.gamestate.bigrobot)
 		#self.loopRobot(self.gamestate.minirobot) # decommenter
 			
 		

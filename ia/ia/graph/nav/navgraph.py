@@ -142,8 +142,8 @@ class NavGraph:
 		elif len(vertices) == 2:
 			smooth_path = raw_path
 		else:
-			raw_path = [p_depart, p_arrive]
-			smooth_path = [p_depart, p_arrive]
+			raw_path = []
+			smooth_path = []
 		return vertices, raw_path, smooth_path
 
 	def get_path_areas_mode(self, p_depart, p_arrive, area_depart=None):
