@@ -1,4 +1,7 @@
 #include "ping.h"
+#include "message.h"
+
+
 
 unsigned int getDistance(unsigned char pingPin){
 	// establish variables for duration of the ping, 
@@ -46,7 +49,7 @@ void usTrigger() {
 		timePing = millis();
 		int d = 0;
 
-		d = microsecondsToCentimeters(getDistance(PIN_PING));
+		d = microsecondsToCentimeters(getDistance(PIN_US));
 		sendMessage(ID_MSG_US,d);
 	}
 }

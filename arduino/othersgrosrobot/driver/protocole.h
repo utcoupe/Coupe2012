@@ -7,7 +7,6 @@
 
 /**
 Renvoie l'entier passé en paramètre
-@param entier
 */
 #define Q_PING			10
 
@@ -40,6 +39,7 @@ Renvoie la position angulaire du moteur
    Fermer les peignes pour vider le côté d'un totem
 */
 #define Q_FERMER_PEIGNES 100
+
 
 // erreurs
 #define E_INVALID_CMD                   -1

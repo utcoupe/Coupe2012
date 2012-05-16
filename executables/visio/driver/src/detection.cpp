@@ -6,6 +6,7 @@
 #include <iostream>
 #include "../include/tools.h"
 #include "../include/parametres.h"
+#include "../include/config.h"
 
 using namespace std;
 
@@ -30,12 +31,12 @@ void DeterminateHSV (ParamonMouse *parametre)
 {
 
 		int h, s, v, h2, v2, s2;
-        h = parametre->hsv_selected[0] - HSV_TOLERANCE1;
-		s = parametre->hsv_selected[1] - HSV_TOLERANCE2;
-		v = parametre->hsv_selected[2] -  HSV_TOLERANCE3;
-		h2 = parametre->hsv_selected[0] + HSV_TOLERANCE1;
-		s2 = parametre->hsv_selected[1] + HSV_TOLERANCE2;
-		v2 = parametre->hsv_selected[2] +  HSV_TOLERANCE3;
+          h = parametre->hsv_selected[0] - config.HSV_TOLERANCE1;
+		s = parametre->hsv_selected[1] - config.HSV_TOLERANCE2;
+		v = parametre->hsv_selected[2] -  config.HSV_TOLERANCE3;
+		h2 = parametre->hsv_selected[0] + config.HSV_TOLERANCE1;
+		s2 = parametre->hsv_selected[1] + config.HSV_TOLERANCE2;
+		v2 = parametre->hsv_selected[2] +  config.HSV_TOLERANCE3;
 
         parametre->hsv1[0] = h;
         parametre->hsv1[1] = s;
@@ -227,7 +228,7 @@ bool EliminatedContour(vector<cv::Point> contour, cv::Point bary, int index)
     float radius;
     cv::Point2f bary2f = bary;
 
-    unsigned int Norm = 0;
+    int Norm = 0;
     for (unsigned int i=0; i<contour.size(); i++)
     {
             Norm += sqrt ( pow( (contour[i].x - bary.x), 2) + pow( (contour[i].y - bary.y), 2) );
@@ -239,7 +240,7 @@ bool EliminatedContour(vector<cv::Point> contour, cv::Point bary, int index)
          case 0:
               cv::minEnclosingCircle(cv::Mat(contour), bary2f, radius);
               cerr<<"raduis B est de: "<<radius<<endl;
-                  if (radius >= TOLERANCE_MIN_CD and radius <= TOLERANCE_MAX_CD)
+                  if (radius >= config.TOLERANCE_MIN_CD and radius <= config.TOLERANCE_MAX_CD)
                       {return false; break;}
                     else {return true; break;}
      /*   cout<<"cd norm: "<<Norm<<endl;
@@ -248,13 +249,13 @@ bool EliminatedContour(vector<cv::Point> contour, cv::Point bary, int index)
         else return true;*/
         case 1:
                   cerr<<"lingot norm: "<<Norm<<endl;
-                  if (Norm >= TOLERANCE_MIN_LINGOT and Norm <= TOLERANCE_MAX_LINGOT)
+                  if (Norm >= config.TOLERANCE_MIN_LINGOT and Norm <= config.TOLERANCE_MAX_LINGOT)
                       {return false; break;}
                     else {return true; break;}
         case 2:
               cv::minEnclosingCircle(cv::Mat(contour), bary2f, radius);
               cerr<<"raduis N est de: "<<radius<<endl;
-                  if (radius >= TOLERANCE_MIN_CD and radius <= TOLERANCE_MAX_CD)
+                  if (radius >= config.TOLERANCE_MIN_CD and radius <= config.TOLERANCE_MAX_CD)
                       {return false; break;}
                     else {return true; break;}
         default: cerr<<"why are you give me a indice other than 0 1 2 ?"; return true; break;

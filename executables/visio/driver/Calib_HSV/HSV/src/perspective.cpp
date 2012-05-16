@@ -6,6 +6,7 @@
 #include <iostream>
 #include "../include/parametres.h"
 #include "../include/tools.h"
+#include "../include/config.h"
 
 void getvertices( vector<cv::Point2f> corners, cv::Point2f src[], cv::Point2f dst[], const int board_w, const int board_h )
 {
@@ -14,13 +15,13 @@ void getvertices( vector<cv::Point2f> corners, cv::Point2f src[], cv::Point2f ds
 	src[2] = corners[(board_w*board_h)-1];
 	src[3] = corners[board_w*(board_h-1)];
 
-	cv::Point Trans(-90, 400);
+	cv::Point Trans(config.TRANS_X-config.DIS_X_CAM_CR, config.TRANS_Y+config.DIS_Y_CAM_CR);
 	mm2px(Trans);
-	dst[0].x = WIDTH_WINDOW/2 + Trans.x; dst[0].y = HEIGHT_WINDOW - Trans.y;
+	dst[0].x = config.WIDTH_WINDOW/2 + Trans.x; dst[0].y = config.HEIGHT_WINDOW - Trans.y;
 	cout<<"x1-x0 en px: "<<dst[1].x - dst[0].x<<" y3-y0 en px: "<<dst[3].y - dst[0].y<<endl;
-     dst[1] = cv::Point2f(BOARD_WIDTH_PX ,.0) + dst[0];
-	dst[2] = cv::Point2f(BOARD_WIDTH_PX, BOARD_HEIGHT_PX) + dst[0];
-	dst[3] = cv::Point2f(.0, BOARD_HEIGHT_PX) + dst[0];
+     dst[1] = cv::Point2f(config.BOARD_WIDTH_PX ,.0) + dst[0];
+	dst[2] = cv::Point2f(config.BOARD_WIDTH_PX, config.BOARD_HEIGHT_PX) + dst[0];
+	dst[3] = cv::Point2f(.0, config.BOARD_HEIGHT_PX) + dst[0];
 }
 
 void ChessboardFinder(cv::Mat& image, cv::Mat& gray, cv::Mat& warpMatrix,

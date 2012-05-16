@@ -1,0 +1,39 @@
+%YAML:1.0
+#Camera choice   0 for built-in webcam, 1 for usb webcam
+CAMERA_N: 0;
+
+#chess board Width and Height
+BOARD_W: 8;
+BOARD_H: 6;
+
+#Board size in MM and PX
+BOARD_WIDTH_MM: 29 * BOARD_W;
+BOARD_HEIGHT_MM: 29 * BOARD_H;
+BOARD_WIDTH_PX: 110;
+BOARD_HEIGHT_PX: 75;
+
+RATIO_X: (float)BOARD_WIDTH_MM/BOARD_WIDTH_PX;
+RATIO_Y: (float)BOARD_HEIGHT_MM/BOARD_HEIGHT_PX;
+
+RATIOX_MM2PX: (float)BOARD_WIDTH_PX/BOARD_WIDTH_MM;
+RATIOY_MM2PX: (float)BOARD_HEIGHT_PX/BOARD_HEIGHT_MM;
+
+
+WIDTH_WINDOW: 640;
+HEIGHT_WINDOW: 480;
+DIS_X_CAM_CR: 55;
+DIS_Y_CAM_CR: 120;
+
+#HSV color filter tolerance
+HSV_TOLERANCE1: 50;
+HSV_TOLERANCE2: 40;
+HSV_TOLERANCE3: 40;
+
+#Bary point filter tolerance en mm for CDs
+TOLERANCE_MIN_CD: 60;
+TOLERANCE_MAX_CD: 100;
+
+#Bary point filter tolerance en mm for lingots
+TOLERANCE_MIN_LINGOT: 40;
+TOLERANCE_MAX_LINGOT: 90;
+
