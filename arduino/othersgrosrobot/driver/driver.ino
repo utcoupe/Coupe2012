@@ -1,5 +1,6 @@
 #include "command.h"
 #include "ping.h"
+#include "sensor.h"
 
 long long int timeVerif;
 char stateVerif;
@@ -11,10 +12,7 @@ void setup()
 
   cherche_moteurs();
 
-  pinMode(21, INPUT);
-  digitalWrite(21, HIGH);
-  attachInterrupt(2, jack_interrupt, CHANGE);
-  timeVerif = 0;
+	initSensor();
 }
 
 void jack_interrupt()
