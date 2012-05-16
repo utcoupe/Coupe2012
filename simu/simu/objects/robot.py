@@ -199,7 +199,7 @@ class Robot(EngineObjectPoly, Executer):
 		@param v mm/s
 		"""
 		self.goals = []
-		self.goals.append( GoalPOS( id_msg, *mm_to_px(x,y,v) ) )
+		self.goals.append( GoalPOS( id_msg, *mm_to_px(x,y,v*2) ) )
 		self.send_canal_asserv(id_msg, 1)
 	
 	def _cmd_asserv_gotor(self, x, y, v, *, id_msg=42, **options):
@@ -210,7 +210,7 @@ class Robot(EngineObjectPoly, Executer):
 		@param v mm/s
 		"""
 		self.goals = []
-		self.goals.append( GoalPOSR( id_msg, *mm_to_px(x,y,v) ) )
+		self.goals.append( GoalPOSR( id_msg, *mm_to_px(x,y,v*2) ) )
 		self.send_canal_asserv(id_msg, 1)
 
 	def _cmd_asserv_turn(self, a, v, *, id_msg=42, **options):

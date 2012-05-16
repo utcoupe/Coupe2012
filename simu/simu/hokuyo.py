@@ -9,7 +9,8 @@ class Hokuyo(Executer):
 		self.canal = canal
 		self.robots = robots
 
-	def cmd_hokuyo_get(self, **kwargs):
+	def cmd_hokuyo_getdata(self, **kwargs):
+		lr = filter(lambda r: r.x() > 0 and r.y() > 0, self.robots)
 		reponse = str(tuple(map(lambda r: (r.x(),r.y()), self.robots)))
 		reponse = reponse.replace(" ","")
 		self.send_canal_hokuyo(kwargs['id_msg'], reponse)
