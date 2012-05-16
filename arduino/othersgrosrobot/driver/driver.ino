@@ -20,7 +20,7 @@ void loop()
 {
   long long int timeStart = micros();
 
-  /*for (char i=0; i<NB_MOTEURS; i++) {
+  for (char i=0; i<NB_MOTEURS; i++) {
     if (ordre[i] != -1) {
       int pos = lire(0, PRESENT_POSITION, i);
       int err = pos - goal[i];
@@ -29,7 +29,7 @@ void loop()
         ordre[i] = -1;
       }
     }
-  }*/
+  }
 
   usTrigger();
   sensorTrigger();
