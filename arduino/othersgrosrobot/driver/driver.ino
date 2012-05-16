@@ -15,23 +15,10 @@ void setup()
 	initSensor();
 }
 
-void jack_interrupt()
-{
-  if (timeVerif == 0) {
-    stateVerif = digitalRead(21);
-    timeVerif = millis() + 20;
-  }
-}
 
-long long int timeStart;
 void loop()
 {
-  timeStart = micros();
-
-  if (timeVerif != 0 && millis() >= timeVerif && digitalRead(21) == stateVerif) {
-    timeVerif = 0;
-    sendMessage(103, !stateVerif);
-  }
+  long long int timeStart = micros();
 
   /*for (char i=0; i<NB_MOTEURS; i++) {
     if (ordre[i] != -1) {
@@ -45,6 +32,7 @@ void loop()
   }*/
 
   usTrigger();
+  sensorTrigger();
 
   readIncomingData();
 
