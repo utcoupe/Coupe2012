@@ -8,8 +8,11 @@
 #include "include/perspective.h"
 #include <unistd.h>
 #include <sys/param.h>
+#include "include/config.h"
 
 using namespace std;
+
+Config config;
 
 void validerCD()
 {
@@ -177,8 +180,10 @@ void Calib(int &h, int &s, int &v, int &h2, int &s2, int &v2, cv::Mat &warped, i
 
 int main(int argc, char** argv)
 {
-	int board_w = BOARD_W;
-	int board_h = BOARD_H;
+     getconfig(config, "../../config.yml");
+     cout<<"caméra"<<config.CAMERA_N;
+	int board_w = config.BOARD_W;
+	int board_h = config.BOARD_H;
      int h_cd, s_cd, v_cd, h2_cd, s2_cd, v2_cd, h_L, s_L, v_L, h2_L, s2_L, v2_L, h_N, s_N, v_N, h2_N, s2_N, v2_N;
      cv::Vec3b hsv_selected;
      cv::Scalar hsv_pixel;
@@ -205,7 +210,7 @@ int main(int argc, char** argv)
 
 
 	// Try video input (or camera)
-	cv::VideoCapture capture(CAMERA_N);
+	cv::VideoCapture capture(config.CAMERA_N);
 	if (!capture.isOpened())
 	{
 		cerr << "Failed to open a video device or video file!\n" << endl;

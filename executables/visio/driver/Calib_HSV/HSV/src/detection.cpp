@@ -6,6 +6,7 @@
 #include <iostream>
 #include "../include/tools.h"
 #include "../include/parametres.h"
+#include "../include/config.h"
 
 using namespace std;
 
@@ -30,12 +31,12 @@ void DeterminateHSV (ParamonMouse *parametre)
 {
 
 		int h, s, v, h2, v2, s2;
-        h = parametre->hsv_selected[0] - HSV_TOLERANCE1;
-		s = parametre->hsv_selected[1] - HSV_TOLERANCE2;
-		v = parametre->hsv_selected[2] -  HSV_TOLERANCE3;
-		h2 = parametre->hsv_selected[0] + HSV_TOLERANCE1;
-		s2 = parametre->hsv_selected[1] + HSV_TOLERANCE2;
-		v2 = parametre->hsv_selected[2] +  HSV_TOLERANCE3;
+        h = parametre->hsv_selected[0] - config.HSV_TOLERANCE1;
+		s = parametre->hsv_selected[1] - config.HSV_TOLERANCE2;
+		v = parametre->hsv_selected[2] -  config.HSV_TOLERANCE3;
+		h2 = parametre->hsv_selected[0] + config.HSV_TOLERANCE1;
+		s2 = parametre->hsv_selected[1] + config.HSV_TOLERANCE2;
+		v2 = parametre->hsv_selected[2] +  config.HSV_TOLERANCE3;
 /*      cout << "h: " <<  (int)h<< endl;
         cout << "s: " <<  (int)s<< endl;
         cout << "v: " <<  (int)v<< endl;
@@ -148,7 +149,7 @@ bool EliminatedContour(vector<cv::Point> contour, cv::Point bary, int index)
 
 
     cv::RotatedRect MinRect;
-    unsigned int Norm = 0;
+    int Norm = 0;
     for (unsigned int i=0; i<contour.size(); i++)
     {
             Norm += sqrt ( pow( (contour[i].x - bary.x), 2) + pow( (contour[i].y - bary.y), 2) );
@@ -158,13 +159,13 @@ bool EliminatedContour(vector<cv::Point> contour, cv::Point bary, int index)
 
     if (index==0)
     {
-        if (Norm >= TOLERANCE_MIN_CD and Norm <= TOLERANCE_MAX_CD)
+        if (Norm >= config.TOLERANCE_MIN_CD and Norm <= config.TOLERANCE_MAX_CD)
         return false;
         else return true;
     }
     else
     {
-        if (Norm >= TOLERANCE_MIN_LINGOT and Norm <= TOLERANCE_MAX_LINGOT)
+        if (Norm >= config.TOLERANCE_MIN_LINGOT and Norm <= config.TOLERANCE_MAX_LINGOT)
         return false;
         else return true;
     }

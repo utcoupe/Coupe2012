@@ -49,12 +49,14 @@
 		<Unit filename="Visio_Main.cpp" />
 		<Unit filename="comManager.cpp" />
 		<Unit filename="comManager.h" />
+		<Unit filename="include/config.h" />
 		<Unit filename="include/detection.h" />
 		<Unit filename="include/parametres.h" />
 		<Unit filename="include/perspective.h" />
 		<Unit filename="include/tools.h" />
 		<Unit filename="protocole.h" />
 		<Unit filename="src/detection.cpp" />
+		<Unit filename="src/parametres.cpp" />
 		<Unit filename="src/perspective.cpp" />
 		<Unit filename="src/tools.cpp" />
 		<Extensions>

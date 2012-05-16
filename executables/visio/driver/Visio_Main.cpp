@@ -13,7 +13,7 @@
 #include "protocole.h"
 #include <unistd.h>
 #include <sys/param.h>
-
+#include "include/config.h"
 
 using namespace std;
 
@@ -29,7 +29,8 @@ cv::Mat image;
 cv::Mat warpMatrix;
 ParamonMouse paramonmouse;
 bool lookForChessBoard = false;
-string direct_abs, direct_m, direct_CDhsv, direct_Lhsv, direct_Nhsv;
+string direct_abs, direct_m, direct_CDhsv, direct_Lhsv, direct_Nhsv, direct_config;
+Config config;
 
 void Display_calcul(int indice, vector<cv::Point> &dst1, vector<cv::Point> &dstCD_LIN_N, vector<cv::Point> &dst_temp)
 {
@@ -50,9 +51,9 @@ void Display_calcul(int indice, vector<cv::Point> &dst1, vector<cv::Point> &dstC
 void DisplayPosition()
 {
     stringstream ss;
-    if(!ActivationVideo) {
-         warpPerspective(image, warped, warpMatrix, image.size(), cv::INTER_LINEAR, cv::BORDER_CONSTANT);}
-
+    #if ActivationVideo==1
+         warpPerspective(image, warped, warpMatrix, image.size(), cv::INTER_LINEAR, cv::BORDER_CONSTANT);
+    #endif
 
     vector<cv::Point> Positions_Display_Temp;
 
@@ -110,26 +111,17 @@ void PERSPECTIVE_Rechargement()
      cout<<"0";
 }
 
-
-
 int main(int argc, char** argv)
-
 {
-    ComManager* cm = ComManager::getComManager();
-
+     ComManager* cm = ComManager::getComManager();
      lock = cm->getMutex();
 	cm->addFunction(QV_GET, &DisplayPosition);
 	cm->addFunction(QV_ID, &id);
 	cm->addFunction(QV_PING, &ping);
 	cm->addFunction(QV_CALIB, &PERSPECTIVE_Calibrer);
 	cm->addFunction(QV_RECHARGE, &PERSPECTIVE_Rechargement);
-
-
 	cm->start();
-
-	//code main()
-
-	//get current directory
+     //get current directory
 
      direct_abs = argv[0];
      std::string::size_type end = direct_abs.find_last_of('/');
@@ -139,12 +131,15 @@ int main(int argc, char** argv)
      direct_CDhsv = direct_abs + "/../../CDhsv.yml";
      direct_Lhsv = direct_abs + "/../../Lhsv.yml";
      direct_Nhsv = direct_abs + "/../../Nhsv.yml";
+     direct_config = direct_abs + "/../../config.yml";
      cerr<<"CDHSV path is : "<<direct_CDhsv<<endl;
      cerr<<"LHSV path is : "<<direct_Lhsv<<endl;
      cerr<<"NHSV path is : "<<direct_Nhsv<<endl;
      cerr<<"matrix path is: "<<direct_m<<endl;
-	int board_w = BOARD_W;
-	int board_h = BOARD_H;
+
+     getconfig(config, direct_config);
+	int board_w = config.BOARD_W;
+	int board_h = config.BOARD_H;
 
      if (argc >= 3)
 	{
@@ -155,7 +150,7 @@ int main(int argc, char** argv)
 	cv::Size board_sz = cv::Size( board_w, board_h );
 
 	// Try video input (or camera)
-	cv::VideoCapture capture(CAMERA_N);
+	cv::VideoCapture capture(config.CAMERA_N);
 	if (!capture.isOpened())
 	{
 		cerr << "Failed to open a video device or video file!\n" << endl;
@@ -169,9 +164,10 @@ int main(int argc, char** argv)
      cv::FileStorage fsm2(direct_m, cv::FileStorage::READ);
      fsm2["warpMatrix"] >> warpMatrix;
 
-	if(ActivationVideo) {
+	#if ActivationVideo==1
      cv::namedWindow( "Raw" , CV_WINDOW_AUTOSIZE);
-	cv::namedWindow( "Warped" , CV_WINDOW_AUTOSIZE); 	}
+	cv::namedWindow( "Warped" , CV_WINDOW_AUTOSIZE);
+	#endif
 	vector<cv::Vec3f> circles;
 	bool found = false;
 	bool warpok = false;
@@ -194,16 +190,18 @@ int main(int argc, char** argv)
 		}
 
 		// Show raw_image
-		if(ActivationVideo) {
-		cv::imshow( "Raw", image );}
+		#if ActivationVideo==1
+		cv::imshow( "Raw", image );
+		#endif
 
 		if (warpok)
 		{
 			// Warp image
 			warpPerspective(image, warped, warpMatrix, image.size(), cv::INTER_LINEAR, cv::BORDER_CONSTANT);
 			// Show warped image
-			if(ActivationVideo) {
-			cv::imshow( "Warped", warped);}
+			#if ActivationVideo==1
+			cv::imshow( "Warped", warped);
+			#endif
 		}
 
 		if(recharger_Matrix_Perspective and (ActivationVideo==1))
@@ -215,9 +213,10 @@ int main(int argc, char** argv)
 
         if(not warped.empty())
      {
-        cv::circle(warped, cv::Point(WIDTH_WINDOW/2, HEIGHT_WINDOW), 5, cv::Scalar(30,20,255), -1, 200, 0);
+        cv::circle(warped, cv::Point(config.WIDTH_WINDOW/2, config.HEIGHT_WINDOW), 5, cv::Scalar(30,20,255), -1, 200, 0);
         pthread_mutex_lock( &lock );
-        MousePick(warped, binary, Positions_Display_CD, paramonmouse, 2, Positions_Display_LINGOT, direct_CDhsv, direct_Lhsv, direct_Nhsv, Positions_Display_N);
+        MousePick(warped, binary, Positions_Display_CD, paramonmouse, 2,
+                  Positions_Display_LINGOT, direct_CDhsv, direct_Lhsv, direct_Nhsv, Positions_Display_N);
         pthread_mutex_unlock( &lock );
         }
 		// Handle pause/unpause and ESC
