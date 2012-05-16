@@ -105,6 +105,8 @@ class Robot(EngineObjectPoly, Executer):
 		self.transform("extras", canal_extras)
 
 		self.body._set_velocity_func(self._my_velocity_func())
+		
+		self.state_jack = 0  # jack in
 
 	def init(self, engine):
 		self.engine = engine
@@ -322,6 +324,9 @@ class Robot(EngineObjectPoly, Executer):
 				return True
 			elif KEY_RECUL == event.key:
 				self.mod_recul = not self.mod_recul
+			elif KEY_JACK == event.key:
+				self.state_jack = 0 if self.state_jack else 1
+				self.send_canal_others(ID_MSG_JACK, self.state_jack)
 		elif KEYUP == event.type:
 			if KEY_CHANGE_TEAM == event.key:
 				print("équipe bleu")

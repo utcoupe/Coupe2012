@@ -31,7 +31,7 @@ CANAUX				= (
 
 ID_MSG_POS		= 101
 ID_MSG_HOKUYO	= 102
-ID_MSG_JACK		= 102
+ID_MSG_JACK		= 103
 ID_MSG_US		= 104 # ultra son
 
 BLUE	= 0
