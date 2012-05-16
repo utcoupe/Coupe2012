@@ -11,7 +11,7 @@ int tourner(int id, int id_moteur, int position) {
   }
   else {
     int valeur = map(position, -150, 150, 0, 1023);
-    goal[id_moteur] = position;
+    goal[id_moteur] = valeur;
     ordre[id_moteur] = id;
     return motor[id_moteur].writeInfo (GOAL_POSITION, valeur);
   }

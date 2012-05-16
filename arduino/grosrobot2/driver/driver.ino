@@ -1,5 +1,8 @@
 #include "command.h"
 
+long long int timeVerif;
+char stateVerif;
+
 void setup()
 {
 
@@ -7,13 +10,18 @@ void setup()
 
   cherche_moteurs();
 
-  g_percepteur_droit = new Percepteur(0, DROIT_HAUT, DROIT_BAS, 'D');
-  g_percepteur_gauche = new Percepteur(1, GAUCHE_HAUT, GAUCHE_BAS, 'G');
+  pinMode(21, INPUT);
+  digitalWrite(21, HIGH);
+  attachInterrupt(2, jack_interrupt, CHANGE);
+  timeVerif = 0;
+}
 
-  attachInterrupt(2, fdcDroitHaut, CHANGE); //pin 21
-  attachInterrupt(3, fdcDroitBas, CHANGE); //pin 20
-  attachInterrupt(0, fdcGaucheHaut, CHANGE); //pin 2
-  attachInterrupt(1, fdcGaucheBas, CHANGE); //pin 3
+void jack_interrupt()
+{
+  if (timeVerif == 0) {
+    stateVerif = digitalRead(21);
+    timeVerif = millis() + 20;
+  }
 }
 
 long long int timeStart;
@@ -21,17 +29,23 @@ void loop()
 {
   timeStart = micros();
 
-  readIncomingData();
+	if (timeVerif != 0 && millis() >= timeVerif && digitalRead(21) == stateVerif) {
+    timeVerif = 0;
+    sendMessage(103, !stateVerif);
+  }
 
   for (char i=0; i<NB_MOTEURS; i++) {
     if (ordre[i] != -1) {
-      int err = lire(0, PRESENT_POSITION, i) - goal[i];
-      if(err <= 2 && err >= -2) {
+      int pos = lire(0, PRESENT_POSITION, i);
+      int err = pos - goal[i];
+      if(err <= 5 && err >= -5) {
         sendMessage(ordre[i], "ok");
         ordre[i] = -1;
       }
     }
   }
+
+  readIncomingData();
 
   // On attend le temps qu'il faut pour boucler
   long udelay = 2000-(micros()-timeStart);

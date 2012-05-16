@@ -32,19 +32,6 @@ void cmd(int id, int header, int *args, int size){
           }
         break;
       }
-    case Q_PERCEPTEUR:
-      {
-        if (size < 2)
-          sendMessage(id, E_INVALID_PARAMETERS_NUMBERS);
-        else
-          {
-            if (args[0] == 0)
-              g_percepteur_droit->set_pwm(id, args[1]);
-            else if (args[0] == 1)
-              g_percepteur_gauche->set_pwm(id, args[1]);
-          }
-        break;
-      }
     case Q_GET_POS:
       {
         if (size < 1)
@@ -59,27 +46,6 @@ void cmd(int id, int header, int *args, int size){
           sendMessage(id, E_INVALID_PARAMETERS_NUMBERS);
         else
           sendMessage(id, lire(id, args[0], args[1]));
-        break;
-      }
-    case Q_ATTRAPER_CARTE:
-      {
-        tourner(id, 0, 0);
-        tourner(id, 2, 0);
-        //wait
-        tourner(id, 2, -105);
-        tourner(id, 0, 90);
-        break;
-      }
-    case Q_GO_BULDOZER:
-      {
-        tourner(id, 1, 35);
-        tourner(id, 3, -110);
-        break;
-      }
-    case Q_STOP_BULDOZER:
-      {
-        tourner(id, 1, -150);
-        tourner(id, 3, 70);
         break;
       }
     default:

@@ -25,8 +25,9 @@ void loop()
 
   for (char i=0; i<NB_MOTEURS; i++) {
     if (ordre[i] != -1) {
-      int err = lire(0, PRESENT_POSITION, i) - goal[i];
-      if(err <= 2 && err >= -2) {
+      int pos = lire(0, PRESENT_POSITION, i);
+      int err = pos - goal[i];
+      if(err <= 5 && err >= -5) {
         sendMessage(ordre[i], "ok");
         ordre[i] = -1;
       }

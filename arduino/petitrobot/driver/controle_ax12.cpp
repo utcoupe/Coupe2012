@@ -11,7 +11,7 @@ int tourner(int id, int id_moteur, int position) {
   }
   else {
     int valeur = map(position, -150, 150, 0, 1023);
-    goal[id_moteur] = position;
+    goal[id_moteur] = valeur;
     ordre[id_moteur] = id;
     return motor[id_moteur].writeInfo (GOAL_POSITION, valeur);
   }
@@ -49,6 +49,7 @@ void cherche_moteurs(void) {
   AX12::autoDetect (detect, NB_MOTEURS);
 
   for (byte i=0; i<NB_MOTEURS; i++) {
+    sendMessage(8, detect[i]);
     if (detect[i] >= 0) {
       c++;
 
