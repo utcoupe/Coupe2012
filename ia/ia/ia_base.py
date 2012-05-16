@@ -17,6 +17,8 @@ from .actions import *
 from .define import *
 
 
+JACK_OUT		= 1		# jack arraché
+JACK_IN			= 0		# jack pluggé
 
 class IaBase:
 	def __init__(self, server_ip, server_port, pos_bigrobot, pos_mini_robot, pos_enemy1, pos_enemy2, *,

@@ -13,8 +13,6 @@ STATE_WAIT_JACK2	= 2
 STATE_POST_RECAL	= 3
 STATE_PLAY			= 4
 
-JACK_OUT		= 1		# jack arraché
-JACK_IN			= 0		# jack pluggé
 
 
 
@@ -52,39 +50,18 @@ class IaUtcoupe(IaBase):
 		# ne pas se recaler
 		self.skip_recalage = skip_recalage
 
-		# bind de l'event jack
-		self.ircbot.set_handler(ID_MSG_JACK, self._on_jack_event)
-
-		# récupération des enemis
-		enemies = self.gamestate.enemyrobots()
-		
-		# actions gros robot
-		bigrobot = self.gamestate.bigrobot
-		actions = get_actions_bigrobot(bigrobot, enemies)
-		bigrobot.set_actions(actions)
-		
-		# actions mini robot
-		minirobot = self.gamestate.minirobot
-		actions = get_actions_minirobot(minirobot, enemies)
-		minirobot.set_actions(actions)
-
 		# 
 		self.autostart		= autostart
-
+		
 		# durée max du match
 		self.match_timeout	= match_timeout
 
-		# date du début du match, pout compter les 90s
-		self.t_begin_match	= time.time()
-		
-		# jack event
-		self.e_jack			= threading.Event()
-
-		# les actions liées aux cds trouvés grâce à la visio
-		self.cd_actions = []
 		
 		# reset
 		self.reset()
+		
+		
+
 
 
 	def reset(self):
@@ -94,13 +71,32 @@ class IaUtcoupe(IaBase):
 		self.state_mini	= 0
 		self.state_big	= 0
 
+		
+		# bind de l'event jack
+		self.ircbot.set_handler(ID_MSG_JACK, self._on_jack_event)
+
+		# récupération des enemis
 		enemies = self.gamestate.enemyrobots()
+		
+		# actions gros robot
 		bigrobot = self.gamestate.bigrobot
-		actions = get_actions_bigrobot(bigrobot, enemies)
+		actions = get_actions_bigrobot(self, bigrobot, enemies)
 		bigrobot.set_actions(actions)
+		
+		# actions mini robot
 		minirobot = self.gamestate.minirobot
-		actions = get_actions_minirobot(minirobot, enemies)
+		actions = get_actions_minirobot(self, minirobot, enemies)
 		minirobot.set_actions(actions)
+
+
+		# date du début du match, pout compter les 90s
+		self.t_begin_match	= time.time()
+		
+		# jack event
+		self.e_jack			= threading.Event()
+
+		# les actions liées aux cds trouvés grâce à la visio
+		self.cd_actions = []
 		
 		time.sleep(0.5)
 	
@@ -129,6 +125,8 @@ class IaUtcoupe(IaBase):
 			else:
 				self.on_jack_event(JACK_OUT)
 		else:
+			if self.e_jack.is_set():
+				self.e_jack.clear()
 			self.e_jack.wait(2)
 		
 			
@@ -265,7 +263,6 @@ class IaUtcoupe(IaBase):
 			minirobot.extras.teleport(self.p((-20,-20)), self.a(0)) # suppression du petit robot pour l'instant // IMPORTANT A DECOMMENTER
 			#bigrobot.asserv.set_pos(self.p((4000,4000)), self.a(0))
 			self.next_state_match()
-			print("HEYHO")
 			return
 		
 		if 0 == self.state_mini and \

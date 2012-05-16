@@ -121,7 +121,7 @@ class ActionLingo(Action):
 	def __repr__(self):
 		return "ActionCd(%s, %s)" % (self.point_acces, self.score)
 
-def get_actions_bigrobot(robot, enemies):
+def get_actions_bigrobot(ia, robot, enemies):
 	actions = []
 	"""
 	# totems
@@ -130,8 +130,8 @@ def get_actions_bigrobot(robot, enemies):
 	actions.append(ActionTotem(robot, enemies, (1100,875-R_BIGROBOT-1), ActionTotem.DIRECTION_HAUT))
 	actions.append(ActionTotem(robot, enemies, (1900,875-R_BIGROBOT-1), ActionTotem.DIRECTION_HAUT))
 	"""
-	actions.append(ActionBouteille(robot, enemies, (640, 2000 - R_BIGROBOT - 100)))
-	actions.append(ActionBouteille(robot, enemies, (1883, 2000 - R_BIGROBOT - 100)))
+	actions.append(ActionBouteille(robot, enemies, (ia.x(640), 2000 - R_BIGROBOT - 100)))
+	actions.append(ActionBouteille(robot, enemies, (ia.x(1883), 2000 - R_BIGROBOT - 100)))
 
 
 	return actions
@@ -139,7 +139,7 @@ def get_actions_bigrobot(robot, enemies):
 
 	
 
-def get_actions_minirobot(robot, enemies):
+def get_actions_minirobot(ia, robot, enemies):
 	actions = []
 	# bouteilles
 	"""actions.append(ActionBouteille(robot, enemies, (640, 2000 - R_MINIROBOT - 10)))

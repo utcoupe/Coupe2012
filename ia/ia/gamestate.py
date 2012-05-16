@@ -62,7 +62,7 @@ class GameState:
 		self.sums['update_mini_ng'] = {'t':0, 'n':0}
 
 		self.us_detect = False # pour l'homologation, si les ultra sons detectent quelque chose devant alors on s'arrête
-		self.set_handler(ID_MSG_US, self.on_msg_us)
+		self.ircbot.set_handler(ID_MSG_US, self.on_msg_us)
 
 	def reset(self):
 		self.bigrobot.reset()
@@ -244,7 +244,7 @@ class GameState:
 		else:
 			self.send_error(canal, "Error %s.on_msg_us (%s:%d) : pas assez de paramètres " %
 				(self.__class__.__name__, currentframe().f_code.co_filename, currentframe().f_lineno))
-	
+
 	def send_error(self, canal, msg):
 		if self.ircbot:
 			self.ircbot.send_error(canal, msg)
