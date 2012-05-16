@@ -3,6 +3,7 @@
 
 import random
 import math
+import time
 
 
 from py3irc.mypyirc.mypyircbot import Executer
@@ -17,8 +18,11 @@ def angle_diff(a, b):
 	return min(2*math.pi - (b-a), b-a)
 
 class GoalPWM:
-	def __init__(self, pwm):
+	def __init__(self, id_msg, pwm, delay):
 		self.pwm = pwm
+		self.delay = delay
+		self.start = -1
+		self.id_msg = id_msg
 
 class GoalPOS:
 	def __init__(self, id_msg, x, y, v):
@@ -154,11 +158,17 @@ class Robot(EngineObjectPoly, Executer):
 							a += math.pi
 						self.body._set_angle(a)
 				elif isinstance(current_goal, GoalPWM):
-					a = self.body.angle
-					v = self.max_speed * current_goal.pwm / 255
-					vx = v * math.cos(a)
-					vy = v * math.sin(a)
-					self.body._set_velocity((vx,vy))
+					if current_goal.start == -1:
+						current_goal.start = time.time()
+					elif (time.time() - current_goal.start) > current_goal.delay:
+						self.goals.pop(0)
+						self.send_canal_asserv(current_goal.id_msg, 0)
+					else:
+						a = self.body.angle
+						v = self.max_speed * current_goal.pwm / 255
+						vx = v * math.cos(a)
+						vy = v * math.sin(a)
+						self.body._set_velocity((vx,vy))
 				elif isinstance(current_goal, GoalANGLE):
 					self.body._set_angle(current_goal.a)
 					self.goals.pop(0)
@@ -216,21 +226,21 @@ class Robot(EngineObjectPoly, Executer):
 
 	def _cmd_asserv_cancel(self, *, id_msg=42, **options):
 		self.goals = []
-		self.send_canal_asserv(id_msg, 1)
+		self.send_canal_asserv(id_msg, 0)
 
 	def _cmd_asserv_stop(self, *, id_msg=42, **options):
 		self.stop = True
-		self.send_canal_asserv(id_msg, 1)
+		self.send_canal_asserv(id_msg, 0)
 
 	def _cmd_asserv_resume(self, *, id_msg=42, **options):
 		self.stop = False
-		self.send_canal_asserv(id_msg, 1)
+		self.send_canal_asserv(id_msg, 0)
 	
 	def _cmd_asserv_pos(self, *, id_msg=42, **options):
 		self.send_canal_asserv(id_msg, self.x(), self.y(), self.a())
 
-	def _cmd_asserv_pwm(self, pwm_l, pwm_r, *, id_msg=42, **kwargs):
-		self.goals.append(GoalPWM(pwm_l))
+	def _cmd_asserv_pwm(self, pwm_l, pwm_r, delay, *, id_msg=42, **kwargs):
+		self.goals.append(GoalPWM(id_msg, pwm_l, delay/1000))
 		self.send_canal_asserv(id_msg, 1)
 	
 	##
