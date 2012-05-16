@@ -1,13 +1,13 @@
 #ifndef COMMAND_H_
 #define COMMAND_H_
 
+#include "Arduino.h"
+
+
 
 #include "message.h"
-
-#include "balais.h"
-#include "tapis.h"
-#include "idAX18.h"
-#include "controleAX18.h"
+#include "controle_ax12.h"
+#include "percepteur.h"
 
 void cmd(int,int,int*,int); // from, id_cmd, *args, sizeArgs
 
