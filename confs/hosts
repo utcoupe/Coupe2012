@@ -1,0 +1,16 @@
+127.0.0.1	localhost
+127.0.1.1	Hattila
+10.42.43.52	hokuyo
+10.42.43.53	pitibot
+10.42.43.62	arthur
+10.42.43.1	thomas.t
+10.42.43.29	fred.t
+10.42.43.1	fred.u
+
+
+# The following lines are desirable for IPv6 capable hosts
+::1     ip6-localhost ip6-loopback
+fe00::0 ip6-localnet
+ff00::0 ip6-mcastprefix
+ff02::1 ip6-allnodes
+ff02::2 ip6-allrouters
