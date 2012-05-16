@@ -23,9 +23,7 @@ class ActionTotem(Action):
 
 		
 		# avancer
-		asserv.pwm(100,100)
-		time.sleep(1)
-		asserv.pwm(0,0)
+		asserv.pwm(100,100,1000, block=True, block_level=2)
 
 		# reculer
 		point = Vec(self.point_acces)
@@ -46,7 +44,12 @@ class ActionBouteille(Action):
 		Action.__init__(self, robot, enemies, point_acces)
 
 	def run(self):
-		print("YOUHOU")
+		print("\nACTION BOUTEILLE BIIIIITCH\n")
+
+		self.robot.asserv.turn(-90, block=True, block_level=2)
+		self.robot.asserv.pwm(-100,-100,1000, block=True, block_level=2)
+		self.robot.asserv.goto(self.point_acces)
+
 		self.clean()
 
 	def __repr__(self):
@@ -57,8 +60,18 @@ class ActionCarte(Action):
 		Action.__init__(self, robot, enemies, point_acces)
 	
 	def run(self):
+		self.robot.actionneurs.abaisser_bras()
+		self.robot.actionneurs.ouvrir_pince()
+
+		self.robot.asserv.turn(-90, block=True, block_level=2)
+		self.robot.asserv.gotor((70, 0), block=True, block_level=2)
+
+		self.robot.actionneurs.fermer_pince()
+		time.sleep(0.2)
+		self.robot.actionneurs.remonter_bras()
+		time.sleep(0.2)
 		self.clean()
-		print("YOUHOU")
+		print("Carte Chopée")
 		
 	def __repr__(self):
 		return "ActionCarte(%s, %s)" % (self.point_acces, self.score)
@@ -81,11 +94,14 @@ class ActionCd(Action):
 
 def get_actions_bigrobot(robot, enemies):
 	actions = []
+	"""
 	# totems
 	actions.append(ActionTotem(robot, enemies, (1100,1125+R_BIGROBOT+1), ActionTotem.DIRECTION_BAS))
 	actions.append(ActionTotem(robot, enemies, (1900,1125+R_BIGROBOT+1), ActionTotem.DIRECTION_BAS))
 	actions.append(ActionTotem(robot, enemies, (1100,875-R_BIGROBOT-1), ActionTotem.DIRECTION_HAUT))
 	actions.append(ActionTotem(robot, enemies, (1900,875-R_BIGROBOT-1), ActionTotem.DIRECTION_HAUT))
+	"""
+	actions.append(ActionBouteille(robot, enemies, (640, 2000 - R_BIGROBOT - 10)))
 
 
 	return actions
@@ -96,8 +112,8 @@ def get_actions_bigrobot(robot, enemies):
 def get_actions_minirobot(robot, enemies):
 	actions = []
 	# bouteilles
-	actions.append(ActionBouteille(robot, enemies, (640, 2000 - R_MINIROBOT - 10)))
+	"""actions.append(ActionBouteille(robot, enemies, (640, 2000 - R_MINIROBOT - 10)))
 	actions.append(ActionBouteille(robot, enemies, (1883, 2000 - R_MINIROBOT - 10)))
-	actions.append(ActionCarte(robot, enemies, (1500, R_MINIROBOT + 10)))
+	actions.append(ActionCarte(robot, enemies, (1500, R_MINIROBOT + 10)))"""
 
 	return actions

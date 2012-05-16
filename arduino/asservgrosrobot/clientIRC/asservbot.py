@@ -11,8 +11,8 @@ import arduinobot
 
 if __name__ == "__main__":
 	arduinobot.run(
-		nickname="asservbot",
-		channel="asserv",
-		serial_port="/dev/ttyACM0",
+		nickname="asservgrosbot",
+		channel=CANAL_BIG_ASSERV,
+		serial_port="/dev/ttyAsserv",
 		protocol_file=os.path.join(FILE_DIR,"..","..","protocole.h"),
 		protocol_prefixe="QA_")

@@ -14,14 +14,15 @@
 #include "delay.h"
 #include "stdio.h"
 #include "UrgCtrl.h"
+#include <cmath>
+#include "protocole.h"
 using namespace std; 
 using namespace qrk;
 
-#define device "/dev/ttyACM0"
+const char* device = "/dev/ttyACM0";
 
 
-int main()
-{
+int main() {
 	
 	UrgCtrl urg;
 	if (! urg.connect(device)) {
@@ -33,17 +34,25 @@ int main()
 	int scan_msec = urg.scanMsec();
 
 	const double rad90 = 90.0 * M_PI / 180.0;
-	urg.setCaptureRange(urg.rad2index(-rad90), urg.rad2index(rad90));
+	const unsigned int begin = urg.rad2index(-rad90);
+	const unsigned int end = urg.rad2index(rad90);
+	urg.setCaptureRange(begin, end);
 
 	int command=55;
+	int id=42;
 	string request;
 	size_t pos;	
-	while(command!=9)
-	{
+	while(command!=9) {
 		cin >> request;
 		fflush(stdin);
-		pos = request.find('.'); 
-		command = atoi(request.substr(pos+1).c_str()); 
+		pos = request.find(SEP);
+		try {
+			id = atoi(request.substr(0, pos).c_str());
+			command = atoi(request.substr(pos+1).c_str());
+		}
+		catch(...) {
+			continue;
+		}
 	
 		long timestamp = 0;
 		vector<long> data;
@@ -52,19 +61,20 @@ int main()
 		int n = urg.capture(data, &timestamp);
 		if (n <= 0) {
 			delay(scan_msec);
+			cout << id << SEP << "[]" << endl;
 		}
-
-		bool pass = false;
-		cout << "[";
-		for (int j = 0; j < n; ++j) {
-			if(pass){
-				cout << ",";
+		else {
+			cout << id << SEP << "[";
+			for (unsigned int j = begin; j < end; ++j) {
+				double teta = urg.index2rad(j);
+				double delta = data[j];
+				int x = delta * cos(teta);
+				int y = delta * sin(teta);
+				cout << "(" << x << "," << y << "),";
 			}
-			cout << "(" <<urg.index2rad(j)<< "," <<data[j]<< ")";
-			pass = true;
+			cout << "]";
+			cout << endl;
 		}
-		cout << "]";
-		cout << endl;
 	}
 	
 	
@@ -72,3 +82,4 @@ int main()
 	return 0;
 	
 }
+

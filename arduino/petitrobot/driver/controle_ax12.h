@@ -10,6 +10,8 @@
 #define NB_MOTEURS 4
 
 extern AX12 motor[NB_MOTEURS];
+extern int goal[NB_MOTEURS];
+extern int ordre[NB_MOTEURS];
 
 void cherche_moteurs(void);
 int tourner(int id, int id_moteur, int position);

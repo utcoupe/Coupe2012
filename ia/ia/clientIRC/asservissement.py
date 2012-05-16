@@ -30,8 +30,8 @@ class Asservissement(BasicLinker):
 	def turnr(self, a, v=500, **kwargs):
 		self.send("turnr", round(a), v, **kwargs)
 
-	def pwm(self, pwm_l, pwm_r, **kwargs):
-		return self.send("pwm", pwm_l, pwm_r, **kwargs)
+	def pwm(self, pwm_l, pwm_r, delay, **kwargs):
+		return self.send("pwm", pwm_l, pwm_r, delay, **kwargs)
 
 	def stop(self, **kwargs):
 		return self.send("stop", **kwargs)

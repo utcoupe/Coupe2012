@@ -1,3 +1,5 @@
+
+
 import socketserver
 import socket
 
@@ -9,6 +11,7 @@ import datetime
 import copy
 
 from error_code import *
+from logger import Logger
 
 
 ParsedMsg = namedtuple('ParsedMsg', ['prefix', 'command', 'parameters'])
@@ -155,7 +158,7 @@ class Room:
 		self.l_clients.release()
 		client.rooms[self.name] = self
 	
-	def remove_client(self, client):
+	def remove_client(self, client, msg='He is a pussy'):
 		self.l_clients.acquire()
 		if client.nick in self.clients:
 			del self.clients[client.nick]
@@ -163,7 +166,7 @@ class Room:
 		self.send(irc_unparse(ParsedMsg(
 			prefix = client.prefix,
 			command = 'quit',
-			parameters = ('Client exited',)
+			parameters = (client.nick, msg)
 		)))
 	
 	def get_clients(self):
@@ -275,10 +278,10 @@ class Server(socketserver.ThreadingMixIn, socketserver.TCPServer):
 				del self.clients[id(client)] # on le supprime des client non authentifiés
 		self.l_clients.release()
 	
-	def kill(self, client):
+	def kill(self, client, msg='He is a pussy'):
 		client.stop()
 		for room in client.rooms.values():
-			room.remove_client(client)
+			room.remove_client(client, msg)
 		self.remove_client(client)
 	
 	def try_add_client(self, client, nick):
@@ -332,9 +335,13 @@ class Server(socketserver.ThreadingMixIn, socketserver.TCPServer):
 		client.send(self.make_response(RPL_LUSERCLIENT, client.nick, 'There are %s users and %s services on %s servers'%(len(self.clients), 0, 1)))
 		client.send(self.make_response(RPL_LUSERME, client.nick, 'I have %s clients and %s servers'%(len(self.clients), 1)))
 		
-	
+
+	@need_auth
 	def _cmd_quit(self, client, msg):
-		self.kill(client)
+		if len(msg.parameters) > 0:
+			self.kill(client, msg.parameters[0])
+		else:
+			self.kill(client)
 	
 	@need_params(1)
 	@need_auth
@@ -375,9 +382,13 @@ class Server(socketserver.ThreadingMixIn, socketserver.TCPServer):
 	def __repr__(self):
 		return '<PyIrcServer(%s,%s)' % self.server_address
 
+
 if __name__=='__main__':
 	import sys
+	import os
 	HOST, PORT = '', int(sys.argv[1])
+	LOG_FILE = os.path.abspath(__file__)+'.log'
+	sys.stdout = Logger(LOG_FILE)
 	server = Server((HOST,PORT))
 	server.start()
 	#msgparsed = irc_parse('JOIN #test coucou\n')
