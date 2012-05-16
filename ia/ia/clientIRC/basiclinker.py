@@ -43,6 +43,7 @@ class BasicLinker:
 		if block:
 			return self.send_block(irc_cmd, *args, handler=handler, block_level=block_level, timeout=timeout)
 		else:
+			args = map(lambda x: int(x), args)
 			self.ircbot.send_cmd(self.channel, irc_cmd, *args, handler=handler)
 			return True
 

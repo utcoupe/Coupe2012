@@ -287,7 +287,12 @@ void positionControl(int* value_pwm_left, int* value_pwm_right){
 	 * Si cet angle est superieur a PI/2 en valeur absolue, le robot recule en marche arriere (= il recule)
 	 */
 	int sens = 1;
-	if(current_goal.phase != PHASE_1 and abs(currentAlpha) > M_PI/2){/* c'est a dire qu'on a meilleur temps de partir en marche arriere */
+	bool onlyTurn = false; // il ne faut que tourner
+	if (current_goal.phase == PHASE_1 and abs(currentAlpha) > M_PI/4.0) {
+		pid4AlphaControl.SetOutputLimits(-100,100); // composante liee a la vitesse de rotation
+		onlyTurn = true;
+	}
+	else if(current_goal.phase != PHASE_1 and abs(currentAlpha) > M_PI/2.0) {/* c'est a dire qu'on a meilleur temps de partir en marche arriere */
 		sens = -1;
 		currentAlpha = moduloPI(M_PI + angularCoeff - robot_get_angle());
 	}
@@ -304,7 +309,7 @@ void positionControl(int* value_pwm_left, int* value_pwm_right){
 	switch(current_goal.phase)
 	{
 		case PHASE_1:
-			if(abs(currentDelta)<1500) /*si l'ecart n'est plus que de 6 mm, on considere la consigne comme atteinte*/
+			if(abs(currentDelta)<1500)
 			{
 				current_goal.phase = PHASE_DECEL;
 			}
@@ -384,6 +389,9 @@ void positionControl(int* value_pwm_left, int* value_pwm_right){
 	}
 	else
 	{
+		if (onlyTurn) {
+			output4Delta = 0;
+		}
 		(*value_pwm_right) = output4Delta+output4Alpha;
 		(*value_pwm_left) = output4Delta-output4Alpha;
 		

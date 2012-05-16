@@ -26,6 +26,7 @@ if __name__ == "__main__":
 		nickname = "hokuyobot",
 		channel = CANAL_HOKUYO,
 		exec_name = EXEC,
+		exec_args = ["-col", 1],
 		protocol_file = PROTOCOL_H,
 		protocol_prefixe = "QH_",
 	)

@@ -30,6 +30,8 @@ def permutation_k_parmis_4(k):
 
 
 
+
+
 class GameState:
 	def __init__(self, ircbot, canal_big_asserv, canal_mini_asserv, canal_big_visio, canal_mini_visio, bigrobot, minirobot, enemy1, enemy2):
 		self.ircbot 			= ircbot
@@ -114,7 +116,7 @@ class GameState:
 
 		#self.ask_asserv_for_pos(self.minirobot)						// IMPORTANT A DECOMMENTER
 		#self.ask_visio_for_objects()									// IMPORTANT A DECOMMENTER
-		#self.ask_hokyo_for_pos()										// IMPORTANT A DECOMMENTER
+		self.ask_hokyo_for_pos()										# IMPORTANT A DECOMMENTER HOKUYO
 
 		
 	def wait_update(self):
@@ -122,7 +124,7 @@ class GameState:
 		#self.event_bigrobot_visio_update.wait()
 		#self.event_minirobot_visio_update.wait()
 		#self.event_minirobot_pos_update.wait()							// IMPORTANT A DECOMMENTER
-		#self.event_hokuyo_update.wait() 								// IMPORTANT A DECOMMENTER
+		self.event_hokuyo_update.wait() 								# IMPORTANT A DECOMMENTER HOKUYO
 
 	def ping(self, canal):
 		n = 10
@@ -181,14 +183,28 @@ class GameState:
 	def on_msg_hokyo(self, n, canal, args, options):
 		if len(args) == 1:
 			lpos = eval(args[0])
-			robots = self.robots()
-			def test_permut(permut):
-				l = ( (robots[j].pos - lpos[i]).norm2() for i,j in enumerate(permut) )
-				return sum(l)
-			best_permut = min(permutation_k_parmis_4(len(lpos)), key=lambda permut: test_permut(permut))
-			for i,j in enumerate(best_permut):
-				if robots[j] in self.enemyrobots():
-					robots[j].update_pos(lpos[i])
+			print(lpos)
+			lpos = list(filter(lambda p: (self.bigrobot.pos-p).norm2() > 300*300 and (self.minirobot.pos-p).norm2() > 300*300, lpos))
+			robots = self.enemyrobots()
+			print(lpos)
+			if len(lpos)==0:
+				pass
+			elif len(lpos)==1:
+				robot = min(robots, key=lambda r: (r.pos-lpos[0]).norm2())
+				robot.update_pos(lpos[0])
+			else:
+				def test_permut(permut):
+					l = ( (robots[i].pos - lpos[j]).norm2() for i,j in enumerate(permut) )
+					return sum(l)
+				permuts = tuple(itertools.permutations(range(len(lpos)), 2))
+				print(permuts)
+				if not permuts:
+					print("quoi ?", lpos)
+				else:
+					best_permut = min(permuts, key=lambda permut: test_permut(permut))
+					for i,j in enumerate(best_permut):
+						robots[i].update_pos(lpos[j])
+			print(robots)
 			self.event_hokuyo_update.set()
 		else:
 			self.send_error(canal, "Error %s.on_msg_hokyo (%s:%d) : pas assez de paramètres " %

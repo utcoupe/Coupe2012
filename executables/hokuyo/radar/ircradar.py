@@ -54,7 +54,7 @@ class RadarBot(MyPyIrcBot):
 
 if __name__ == "__main__":
 	radar = Radar()
-	bot = RadarBot(radar, "localhost", 6667, True)
+	bot = RadarBot(radar, "10.42.43.1", 6667, True)
 	t = threading.Thread(target=bot.start)
 	t.setDaemon(True)
 	t.start()
