@@ -49,7 +49,7 @@ void cherche_moteurs(void) {
   AX12::autoDetect (detect, NB_MOTEURS);
 
   for (byte i=0; i<NB_MOTEURS; i++) {
-    sendMessage(8, detect[i]);
+    //sendMessage(8, detect[i]);
     if (detect[i] >= 0) {
       c++;
 
@@ -87,5 +87,5 @@ void cherche_moteurs(void) {
       motor[i].writeInfo (RETURN_DELAY_TIME, 150);
     }
   }
-  sendMessage(0, "detected", c); //on renvoie le nombre de moteurs détectés
+  //sendMessage(0, "detected", c); //on renvoie le nombre de moteurs détectés
 }

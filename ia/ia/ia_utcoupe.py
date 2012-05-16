@@ -13,8 +13,8 @@ STATE_WAIT_JACK2	= 2
 STATE_POST_RECAL	= 3
 STATE_PLAY			= 4
 
-JACK_OUT		= 0		# jack arraché
-JACK_IN			= 1		# jack pluggé
+JACK_OUT		= 1		# jack arraché
+JACK_IN			= 0		# jack pluggé
 
 
 
