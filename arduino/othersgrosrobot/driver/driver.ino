@@ -1,5 +1,5 @@
 #include "command.h"
-
+#include "ping.h"
 
 
 // initialisations
@@ -16,6 +16,9 @@ void loop()
 {
 	timeStart = micros();
 
+	// ultra sons
+	usTrigger();
+	
 	// lecture des données arrivant
 	readIncomingData();
 

@@ -148,6 +148,7 @@ class IaUtcoupe(IaBase):
 
 		# maj des actions
 		self.set_cd_actions(self.gamestate.objects)
+
 		
 		# debug
 		"""
@@ -170,8 +171,12 @@ class IaUtcoupe(IaBase):
 			self.debug.draw_circle(o, 80, (255,0,0), 1, id(o))"""
 		
 		# gogogo robots !
-		self.loopRobot(self.gamestate.bigrobot)
-		self.loopRobot(self.gamestate.minirobot) # decommenter
+		if not self.gamestate.us_detect:
+			self.loopRobot(self.gamestate.bigrobot)
+		else:
+			print("Les pings ont detectés un bolosse en face !!!")
+		#self.loopRobot(self.gamestate.minirobot) # decommenter
+			
 		
 		
 
