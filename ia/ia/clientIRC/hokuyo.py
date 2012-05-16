@@ -8,4 +8,4 @@ class Hokuyo(BasicLinker):
 		super().__init__(ircbot, channel)
 		
 	def get(self, **kwargs):
-		self.send("get", **kwargs)
+		self.send("getdata", **kwargs)

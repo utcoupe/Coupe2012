@@ -18,16 +18,16 @@ class Asservissement(BasicLinker):
 		self.angle = 0
 		self.last_update_pos = 0
 
-	def goto(self, p, vitesse=500, **kwargs):
+	def goto(self, p, vitesse=80, **kwargs):
 		return self.send("goto", p[0], p[1], vitesse, **kwargs)
 	
-	def gotor(self, p, vitesse=500, **kwargs):
+	def gotor(self, p, vitesse=80, **kwargs):
 		return self.send("gotor", p[0], p[1], vitesse, **kwargs)
 
-	def turn(self, a, v=500, **kwargs):
+	def turn(self, a, v=150, **kwargs):
 		return self.send("turn", round(a), v, **kwargs)
 
-	def turnr(self, a, v=500, **kwargs):
+	def turnr(self, a, v=150, **kwargs):
 		self.send("turnr", round(a), v, **kwargs)
 
 	def pwm(self, pwm_l, pwm_r, delay, **kwargs):

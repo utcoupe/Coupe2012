@@ -92,6 +92,35 @@ class ActionCd(Action):
 	def __repr__(self):
 		return "ActionCd(%s, %s)" % (self.point_acces, self.score)
 
+class ActionLingo(Action):
+	"""
+	Attrapper le ligno à côté de la zone de départ
+	"""
+	def __init__(self, robot, enemies, point_acces):
+		super().__init__(robot, enemies, point_acces)
+
+	def run(self):
+
+		asserv = self.robot.asserv
+
+		# tourne
+		asserv.turn(self.robot.a(180), block=True, block_level=2)
+
+		# avance
+		asserv.pwm(100,100,2000, block=True, block_level=2)
+
+		# recule
+		asserv.pwm(100,100,1000, block=True, block_level=2)
+
+		# retour au point de départ
+		asserv.goto(self.point_acces, block=True, block_level=2)
+		
+		self.clean()
+		print("LINGO POUR LES NOOBS")
+
+	def __repr__(self):
+		return "ActionCd(%s, %s)" % (self.point_acces, self.score)
+
 def get_actions_bigrobot(robot, enemies):
 	actions = []
 	"""
@@ -101,7 +130,8 @@ def get_actions_bigrobot(robot, enemies):
 	actions.append(ActionTotem(robot, enemies, (1100,875-R_BIGROBOT-1), ActionTotem.DIRECTION_HAUT))
 	actions.append(ActionTotem(robot, enemies, (1900,875-R_BIGROBOT-1), ActionTotem.DIRECTION_HAUT))
 	"""
-	actions.append(ActionBouteille(robot, enemies, (640, 2000 - R_BIGROBOT - 10)))
+	actions.append(ActionBouteille(robot, enemies, (640, 2000 - R_BIGROBOT - 50)))
+	actions.append(ActionBouteille(robot, enemies, (1883, 2000 - R_BIGROBOT - 50)))
 
 
 	return actions

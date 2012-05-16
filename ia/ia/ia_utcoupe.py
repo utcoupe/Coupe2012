@@ -164,8 +164,6 @@ class IaUtcoupe(IaBase):
 		self.debug.draw_circle(self.gamestate.minirobot.pos, R_MINIROBOT, (0,255,0), 1, ID_DEBUG_MINIROBOT)
 		"""
 		
-		# update de l'état de la carte
-		self.gamestate.update_robots()
 
 		# voir les objets vu par les cameras
 		"""for o in self.gamestate.objects:
@@ -224,7 +222,7 @@ class IaUtcoupe(IaBase):
 						print("goto %s" % goal)
 						#self.bigrobot.cancel()
 						if goal:
-							asserv.goto(goal, 800)
+							asserv.goto(goal)
 			else:
 				print("No reachable actions")
 
@@ -255,13 +253,14 @@ class IaUtcoupe(IaBase):
 		# si on doit sauter le recalage (pour les tests)
 		if self.skip_recalage:
 			bigrobot.asserv.cancel(block=True)
-			minirobot.asserv.cancel(block=True)
-			bigrobot.extras.teleport(self.p((160,250)), self.a(0))
-			bigrobot.asserv.set_pos(self.p((160,250)), self.a(0))
+			#minirobot.asserv.cancel(block=True)						// IMPORTANT A DECOMMENTER
+			bigrobot.extras.teleport(self.p((120,250)), self.a(0))
+			bigrobot.asserv.set_pos(self.p((120,250)), self.a(0))
 			minirobot.extras.teleport(self.p((400,250)), self.a(0))
-			minirobot.extras.teleport(self.p((4000,4000)), self.a(0)) # suppression du petit robot pour l'instant // IMPORTANT A DECOMMENTER
+			minirobot.extras.teleport(self.p((-20,-20)), self.a(0)) # suppression du petit robot pour l'instant // IMPORTANT A DECOMMENTER
 			#bigrobot.asserv.set_pos(self.p((4000,4000)), self.a(0))
 			self.next_state_match()
+			print("HEYHO")
 			return
 		
 		if 0 == self.state_mini and \
@@ -324,7 +323,7 @@ class IaUtcoupe(IaBase):
 		if 7 == self.state_mini and 4 == self.state_big:
 			# petit recul
 			self.state_mini = 42
-			minirobot.asserv.goto(self.p((700,250)), -500, handler=self.mini_next_on_response_2(8))
+			minirobot.asserv.goto(self.p((700,250)), handler=self.mini_next_on_response_2(8))
 		elif 8 == self.state_mini:
 			# petit tourne
 			self.state_mini = 42
@@ -332,7 +331,7 @@ class IaUtcoupe(IaBase):
 		elif 9 == self.state_mini:
 			# petit se pause contre le gros
 			self.state_mini = 42
-			minirobot.asserv.goto(self.p((400,250)), -500, handler=self.mini_next_on_response_2(10))
+			minirobot.asserv.goto(self.p((400,250)), handler=self.mini_next_on_response_2(10))
 			
 		if 4 == self.state_big:
 			# gros recul et se cale contre le mur

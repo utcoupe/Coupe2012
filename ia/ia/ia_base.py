@@ -167,13 +167,13 @@ class IaBase:
 		print("Get latency big asserv")
 		print(self.gamestate.bigrobot.asserv.get_latency())
 		#print("Get latency mini asserv")
-		#print(self.gamestate.bigrobot.asserv.get_latency()) 			# a DECOMMENTER
+		#print(self.gamestate.bigrobot.asserv.get_latency()) 			# A DECOMMENTER
 		#print("Get latency big visio")
 		#print(self.gamestate.bigrobot.visio.get_latency())
 		#print("Get latency mini visio")
-		#print(self.gamestate.minirobot.visio.get_latency())			# a DECOMMENTER
+		#print(self.gamestate.minirobot.visio.get_latency())			# A DECOMMENTER
 		#print("Ping hokuyo")
-		#print(self.gamestate.hokuyo.get_latency()) 					# a DECOMMENTER
+		#print(self.gamestate.hokuyo.get_latency()) 						# A DECOMMENTER HOKUYO
 		#input("appuyez sur une touche pour démarrer")
 		self.loopsetup()
 		while 1:
