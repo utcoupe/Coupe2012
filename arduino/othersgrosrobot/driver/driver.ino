@@ -31,7 +31,7 @@ void loop()
     }
   }
 
-  usTrigger();
+  //usTrigger();
   sensorTrigger();
 
   readIncomingData();
