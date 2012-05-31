@@ -11,6 +11,14 @@
 
 #include "protocole.h"
 
+
+void ping() {
+	cout << "pong";
+}
+
+void ident() {
+	cout << "hokuyo";
+}
 /***********************************************************************
  * <h1>QH_GETDATA</h1>
  * <p>Fonction retournant la postion des robots en coordonnées 
@@ -32,6 +40,7 @@ void setRed(void)
 	application->ud->stop();
 	application->ud->updateParamWithColor(ROUGE);
 	application->ud->start();
+	cout << 0;
 }
 
 /***********************************************************************
@@ -44,6 +53,7 @@ void setPurple(void)
 	application->ud->stop();
 	application->ud->updateParamWithColor(BLEU);
 	application->ud->start();
+	cout << 0;
 }
 
 /***********************************************************************

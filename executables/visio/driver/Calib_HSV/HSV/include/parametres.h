@@ -8,5 +8,6 @@
 using namespace std;
 
 void getconfig(Config &config, string direct);
+extern string direct_abs, direct_m, direct_CDhsv, direct_Lhsv, direct_Nhsv, direct_config;
 
 #endif // PARAMETRES_H

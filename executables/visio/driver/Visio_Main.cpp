@@ -15,6 +15,14 @@
 #include <sys/param.h>
 #include "include/config.h"
 
+#include <stdio.h>
+
+#include <stdlib.h>
+#include <unistd.h>
+
+#define MAXBUFSIZE 1024
+
+
 using namespace std;
 
 cv::Vec3b hsv_selected;
@@ -123,7 +131,16 @@ int main(int argc, char** argv)
 	cm->start();
      //get current directory
 
-     direct_abs = argv[0];
+    char buf[ MAXBUFSIZE ];
+    int count;
+    count = readlink( "/proc/self/exe", buf, MAXBUFSIZE );
+    if ( count < 0 || count >= MAXBUFSIZE ) {
+    printf( "Failed to get absolute path\n" );
+    }
+
+    buf[ count ] = '\0';
+
+     direct_abs = buf;
      std::string::size_type end = direct_abs.find_last_of('/');
      direct_abs.erase(end);
      cerr<<"absolute path is: "<<direct_abs<<endl;
