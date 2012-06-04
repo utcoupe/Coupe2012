@@ -47,6 +47,8 @@ class IABot(MyPyIrcBot):
 
 	def cmd__response(self, *args, canal, id_msg, **options):
 		id_msg = int(id_msg)
+		#print(args, canal, id_msg, options)
+		#print(self.handlers)
 		if id_msg in self.handlers:
 			n, handler = self.handlers[id_msg]
 			self.handlers[id_msg][0] += 1

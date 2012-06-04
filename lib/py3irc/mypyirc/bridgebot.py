@@ -141,4 +141,4 @@ class BridgeBot(MyPyIrcBot):
 			#print(commands[-1])
 
 		return sep,commands
-	
+

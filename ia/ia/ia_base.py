@@ -111,6 +111,10 @@ class IaBase:
 		visio = Visio(self.ircbot, canal_big_visio)
 		bigrobot.set_visio(visio)
 		
+		#creation des actionneurs
+		actionneurs = ActionneursGros(self.ircbot, canal_big_others)
+		bigrobot.set_actionneurs(actionneurs)
+		
 		# extras
 		extras = Extras(self.ircbot, canal_big_extras)
 		bigrobot.set_extras(extras)
@@ -200,6 +204,8 @@ class IaBase:
 
 	def loopsetup(self):
 		self.debug.reset()
+		self.gamestate.reset()
+		self.gamestate.hokuyo.setcolor(self.team)
 		# premier rafraichissement
 		self.gamestate.ask_update()
 		self.gamestate.wait_update()

@@ -187,14 +187,14 @@ class GameState:
 	def on_msg_hokyo(self, n, canal, args, options):
 		if len(args) == 1:
 			lpos = eval(args[0])
-			print(lpos)
+			#print(lpos)
 			lpos = list(filter(lambda p: (self.bigrobot.pos-p).norm2() > 300*300 and (self.minirobot.pos-p).norm2() > 300*300, lpos))
 			if len(lpos) == 0:
 				self.enemies_angle_mort = True
 			else:
 				self.enemies_angle_mort = False
 				robots = self.enemyrobots()
-				print(lpos)
+				#print(lpos)
 				if len(lpos)==0:
 					pass
 				elif len(lpos)==1:
@@ -212,7 +212,7 @@ class GameState:
 						best_permut = min(permuts, key=lambda permut: test_permut(permut))
 						for i,j in enumerate(best_permut):
 							robots[i].update_pos(lpos[j])
-				print(robots)
+				#print(robots)
 			self.event_hokuyo_update.set()
 		else:
 			self.send_error(canal, "Error %s.on_msg_hokyo (%s:%d) : pas assez de paramètres " %

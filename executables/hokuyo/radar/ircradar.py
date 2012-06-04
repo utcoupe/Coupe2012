@@ -31,7 +31,7 @@ class RadarBot(MyPyIrcBot):
 		while 1:
 			print("heyho")
 			self.send(CANAL_HOKUYO, ".getdata")
-			time.sleep(0.1)
+			time.sleep(0.5)
 
 	def cmd__getdata(self, **kwargs):
 		"""

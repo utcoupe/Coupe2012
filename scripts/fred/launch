@@ -1,0 +1,7 @@
+#!/bin/sh
+
+echo "utcoupe" | sudo -S restart utcoupe_ircserver
+DISPLAY=:0 gnome-terminal -e "./grosothers.sh" &
+DISPLAY=:0 gnome-terminal -e "./grosasserv.sh" &
+ssh linaro@hokuyo "~/coupe2012/scripts/hokuyo/hokuyo.sh $1"
+

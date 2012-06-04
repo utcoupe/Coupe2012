@@ -24,9 +24,9 @@ from executablebot import run
 if __name__ == "__main__":
 	run(
 		nickname = "hokuyobot",
-		channel = CANAL_HOKUYO,
+		channel = "#hokuyo",
 		exec_name = EXEC,
-		exec_args = ["-col", 1],
+		exec_params = "-col,1",
 		protocol_file = PROTOCOL_H,
 		protocol_prefixe = "QH_",
 	)

@@ -1,0 +1,45 @@
+Infos sur les AX12 tels que branchés dans les robots de 2012
+
+--------------------------
+Pour faire tourner un AX12
+.tourner <pos-ax12> <angle>
+
+On reçoit deux réponses
+ d'abord soit 0 : ça à l'air de marcher
+         soit 2 : le moteur n'est pas detecté (en général)
+         soit 7 : ça foire violemment : vérifier les branchements et faire tourner le code de test_ax12
+ puis "ok" quand l'ax12 arrive à l'angle voulu
+
+-------------------------
+
+-------------------------
+Gros Robot
+Bras gauche (pos-ax12=0, ID=1)
+		 fermé : 150
+		 ouvert : -70
+Bras droit (pos-ax12=2, ID=9)
+		 fermé : -150
+		 ouvert : 70
+
+fermer_peignes : referme les deux bras en même temps et doucement
+ouvrir_peignes : ouvre les deux peignes rapidement
+------------------------
+
+-------------------------
+Petit Robot
+Pré-pince (pos-ax12=0, ID=?)
+		 relevé : 85
+		 sorti : 0
+Pince (pos-ax12=2, ID=?)
+		 ouverte : 0
+		 fermée : -105
+Bidule gauche (pos-ax12=2, ID=?)
+		 sorti : 70
+		 fermé : -110
+Bidule droit (pos-ax12=2, ID=?)
+		 sorti : -110
+		 fermé : 35
+
+fermer_peignes : referme les deux bras en même temps et doucement
+ouvrir_peignes : ouvre les deux peignes rapidement
+------------------------

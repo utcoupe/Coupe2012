@@ -25,13 +25,13 @@ void loop()
       int pos = lire(0, PRESENT_POSITION, i);
       int err = pos - goal[i];
       if(err <= 5 && err >= -5) {
-        sendMessage(ordre[i], "ok");
+        sendMessage(ordre[i], 0);
         ordre[i] = -1;
       }
     }
   }
 
-  usTrigger();
+  //usTrigger();
   sensorTrigger();
 
   readIncomingData();

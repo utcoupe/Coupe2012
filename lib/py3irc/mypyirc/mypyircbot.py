@@ -4,7 +4,6 @@
 """
 
 
-
 import inspect
 import re
 import threading
@@ -341,4 +340,6 @@ class MyPyIrcBot(ircbot.SingleServerIRCBot):
 		if self.serv:
 			self.serv.disconnect("Tchuss")
 
+	def cmd__stop(self, **kwargs):
+		self.stop()
 
