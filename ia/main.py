@@ -19,8 +19,9 @@ default["server_ip"] 		= "localhost"
 default["server_port"] 		= 6667
 default["ia"]				= 'u'
 default["player_team"]		= 'blue'
+default["color_team"]		= 'blue'
 default["autostart"]		= 0
-default["timeout"]			= -1
+default["timeout"]			= 87 
 default["skip"]				= 0
 
 usage = "usage: %prog [options]"
@@ -37,6 +38,9 @@ parser.add_option("-i", "--ia",
 parser.add_option("-p", "--player-team",
 					action="store", dest="player_team", default=default["player_team"],
 					help="équipe du bot, red ou blue")
+parser.add_option("-c", "--color",
+					action="store", dest="color_team", default=default["color_team"],
+					help="couleur du bot, red ou blue")
 parser.add_option("-a", "--autostart",
 					action="store", dest="autostart", type="int", default=default["autostart"],
 					help="le robot doit-il attendre ou non le signal du jack pour se lancer")
@@ -59,12 +63,13 @@ else:
 
 
 t = (options.player_team != 'blue')
+c = (options.color_team != 'blue')
 
 	
 myia = IaChoosen(
 	options.server_ip, options.server_port,
 	(0,0), (0,0), (3000,0), (3000,0),
-	team				= RED if t else BLUE,
+	team				= RED if c else BLUE,
 	canal_big_asserv	= CANAL_BIG_ASSERV + ("2" if t else ""),
 	canal_mini_asserv	= CANAL_MINI_ASSERV + ("2" if t else ""),
 	canal_big_others	= CANAL_BIG_OTHERS + ("2" if t else ""),

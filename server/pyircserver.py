@@ -28,7 +28,7 @@ def irc_parse(msg):
 		msgparsed = ParsedMsg(
 			prefix = t.group('prefix') if t.group('prefix') else '',
 			command = t.group('command').lower(),
-			parameters = parameters_parse(t.group('parameters'))
+			parameters = list(map(lambda x: x.strip(),parameters_parse(t.group('parameters'))))
 		)
 		return msgparsed
 	else:
@@ -158,7 +158,8 @@ class Room:
 		self.l_clients.release()
 		client.rooms[self.name] = self
 	
-	def remove_client(self, client, msg='He is a pussy'):
+	def remove_client(self, client, msg=None):
+		if not msg: msg = 'He is a pussy'
 		self.l_clients.acquire()
 		if client.nick in self.clients:
 			del self.clients[client.nick]
@@ -266,23 +267,23 @@ class Server(socketserver.ThreadingMixIn, socketserver.TCPServer):
 		self.rooms[chan] = Room(chan)
 		self.l_rooms.release()
 	
-	def remove_client(self, client):
+	def remove_client(self, client, msg=None):
 		self.l_clients.acquire()
 		if client.is_auth(): # si il est déjà autentifié
 			if client.nick in self.clients:
-				print("removed", client.nick)
+				print("removed "+client.nick)
 				del self.clients[client.nick] # on supprime l'ancienne clef
 		else: # si il est nouveau
 			if id(client) in self.clients:
-				print("removed", id(client))
+				print("removed "+id(client))
 				del self.clients[id(client)] # on le supprime des client non authentifiés
 		self.l_clients.release()
-	
-	def kill(self, client, msg='He is a pussy'):
-		client.stop()
 		for room in client.rooms.values():
 			room.remove_client(client, msg)
-		self.remove_client(client)
+	
+	def kill(self, client, msg=None):
+		client.stop()
+		self.remove_client(client, msg)
 	
 	def try_add_client(self, client, nick):
 		err,msg = 0,''

@@ -5,13 +5,9 @@
 
 
 #define ID_MSG_US		104
-#define PIN_US			22
+#define PIN_US			A0
 
 
-
-unsigned int getDistance(unsigned char pingPin);
-long microsecondsToInches(long int microseconds);
-long microsecondsToCentimeters(long int microseconds);
 void usTrigger();
 
 #endif

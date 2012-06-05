@@ -1,5 +1,4 @@
 
-
 from .action import *
 
 from .define import *
@@ -11,8 +10,8 @@ class ActionTotem(Action):
 	DIRECTION_HAUT		= 0	# il faudra aller vers le bas (dy < 0) pour aller vider le totem
 	DIRECTION_BAS		= 1 # il faudra eller vers le haut (dy > 0) pour aller vider le totem
 	
-	def __init__(self, robot, enemies, point_acces, direction):
-		Action.__init__(self, robot, enemies, point_acces)
+	def __init__(self, ia, robot, enemies, point_acces, direction):
+		Action.__init__(self, ia, robot, enemies, point_acces)
 		self.direction = direction
 
 	def run(self):
@@ -37,102 +36,170 @@ class ActionTotem(Action):
 		
 	def __repr__(self):
 		return "ActionTotem(%s, %s)" % (self.point_acces, self.score)
+
+class ActionTotemBas(Action):
+	def __init__(self, ia, robot, enemies, point_acces):
+		Action.__init__(self, ia, robot, enemies, point_acces)
+
+	def run(self):
+		print("\nACTION TOTEM ENCULEEEEE\n")
+
+		self.robot.asserv.turn(self.ia.a(90), block=True, block_level=2)
+		time.sleep(0.5)
+		point = (1450, 1000-125-R_BIGROBOT+50)
+		point2 = (400, 900)
+		self.robot.asserv.goto(self.ia.p(point), block=True, block_level=2)
+		self.robot.asserv.turn(self.ia.a(180), block=True, block_level=2)
+		time.sleep(0.5)
+		self.robot.actionneurs.tourner(0, 50)
+		self.robot.actionneurs.tourner(2, -50)#, block=True, block_level=2)
+		time.sleep(1)
 		
+		self.robot.asserv.gotor((300,0), block=True, block_level=2) # permet de vider le totem 
+		self.robot.asserv.goto(self.ia.p(point2), block=True, block_level=2)
+		self.robot.asserv.turn(self.ia.a(180), block=True, block_level=2)
+		time.sleep(0.5)
+		self.robot.asserv.pwm(100, 100, 700, block=True, block_level=2)
+
+		self.robot.asserv.pwm(-100,-100, 700, block=True, block_level=2)
+		self.robot.asserv.turn(self.ia.a(180), block=True, block_level=2)
+		time.sleep(0.5)
+		self.robot.actionneurs.ouvrir_peignes() # On protège les peignes
+		
+		#self.robot.actionneurs.tourner(0, -70)
+		#self.robot.actionneurs.tourner(1, 70)
+		self.clean()
+
+	def compute_score(self, p):
+		super().compute_score(p)
+		#if len(self.robot.actions) > 3:
+		#	self.score += 10000
+		self.score = -MAX_DIST
+
+class ActionTotemHaut(Action):
+	def __init__(self, ia, robot, enemies, point_acces):
+		Action.__init__(self, ia, robot, enemies, point_acces)
+
+	def run(self):
+		print("\nACTION TOTEM ENCULEEEEE\n")
+
+		self.robot.asserv.turn(-90, block=True, block_level=2)
+		time.sleep(0.5)
+		self.robot.asserv.goto(self.ia.p((1450, 1000+125+R_BIGROBOT-30)))
+		time.sleep(3)
+		#self.robot.asserv.gotor((50,0), block=True,block_level=2) 
+		self.robot.asserv.turn(self.ia.a(180), block=True, block_level=2)
+		time.sleep(0.5)
+		self.robot.actionneurs.tourner(0, 50)
+		self.robot.actionneurs.tourner(2, -50)#, block=True, block_level=2)
+		time.sleep(1)
+
+		self.robot.asserv.gotor((300,0), block=True, block_level=2) # permet de vider le totem 
+		self.robot.asserv.goto(self.ia.p((400, 900)), block=True, block_level=2)
+		self.robot.asserv.turn(self.ia.a(180), block=True, block_level=2)
+		self.robot.asserv.pwm(100, 100, 1200, block=True, block_level=2)
+
+		self.robot.asserv.pwm(-100,-100, 1200, block=True, block_level=2)
+		self.robot.actionneurs.ouvrir_peignes() # On protège les peignes
+
+		self.clean()
+
+	def compute_score(self, p):
+		super().compute_score(p)
+		self.score = MAX_DIST-2
+
+class ActionFinalize(Action):
+	"""
+	Revenir à la zone de dépot et reculer un peu pour décharger les objects mangés par le robot
+	"""
+
+	def __init__(self, ia, robot, enemies, point_access):
+		super().__init__(ia, robot, enemies, point_access)
+
+	def run(self):
+		ax12 = self.robot.actionneurs
+
+		self.robot.asserv.turn(self.ia.a(180), block=True, block_level=2)
+
+		self.robot.asserv.pwm(100, 100, 500, block=True, block_level=2)
+
+		self.robot.asserv.pwm(-30, -30, 2000, block=True, block_level=2)
+		time.sleep(80)
+		self.clean()
+
+	def compute_score(self, p):
+		temps = time.time() - self.ia.t_begin_match
+		if (temps > 70):
+			super().compute_score(p)
+			self.score = -MAX_DIST
+		else:
+			self.score = MAX_DIST
+
+	def __repr__(self):
+		return "ActionFinalize(%s, %s)" % (self.point_acces, self.score)
+
 
 class ActionBouteille(Action):
-	def __init__(self, robot, enemies, point_acces):
-		Action.__init__(self, robot, enemies, point_acces)
+	def __init__(self, ia, robot, enemies, point_acces):
+		Action.__init__(self, ia, robot, enemies, point_acces)
 
 	def run(self):
 		print("\nACTION BOUTEILLE BIIIIITCH\n")
 
 		self.robot.asserv.turn(-90, block=True, block_level=2)
-		self.robot.asserv.pwm(-80,-80,1500, block=True, block_level=2)
-		self.robot.asserv.goto(self.point_acces)
+		time.sleep(0.5)
+		self.robot.asserv.pwm(-100,-100,1500, block=True, block_level=2)
+		self.robot.asserv.pwm(100,100,1000, block=True, block_level=2)
+		#self.robot.asserv.goto(self.point_acces)
 
 		self.clean()
 
 	def __repr__(self):
 		return "ActionBouteille(%s, %s)" % (self.point_acces, self.score)
 
-class ActionCarte(Action):
-	def __init__(self, robot, enemies, point_acces):
-		Action.__init__(self, robot, enemies, point_acces)
-	
-	def run(self):
-		self.robot.actionneurs.abaisser_bras()
-		self.robot.actionneurs.ouvrir_pince()
-
-		self.robot.asserv.turn(-90, block=True, block_level=2)
-		self.robot.asserv.gotor((70, 0), block=True, block_level=2)
-
-		self.robot.actionneurs.fermer_pince()
-		time.sleep(0.2)
-		self.robot.actionneurs.remonter_bras()
-		time.sleep(0.2)
-		self.clean()
-		print("Carte Chopée")
-		
-	def __repr__(self):
-		return "ActionCarte(%s, %s)" % (self.point_acces, self.score)
-
-
-class ActionCd(Action):
-	def __init__(self, robot, enemies, point_acces):
-		super().__init__(robot, enemies, point_acces)
-
-	def run(self):
-		self.clean()
-		print("YOUHOU le Cd")
-	
-	def compute_score(self, p):
-		super().compute_score(p)
-		self.score -= 1000
-
-	def __repr__(self):
-		return "ActionCd(%s, %s)" % (self.point_acces, self.score)
-
 class ActionLingo(Action):
 	"""
 	Attrapper le ligno à côté de la zone de départ
 	"""
-	def __init__(self, robot, enemies, point_acces):
-		super().__init__(robot, enemies, point_acces)
+	def __init__(self, ia, robot, enemies, point_acces):
+		super().__init__(ia, robot, enemies, point_acces)
 
 	def run(self):
 
 		asserv = self.robot.asserv
 
 		# tourne
-		asserv.turn(self.robot.a(180), block=True, block_level=2)
+		asserv.turn(self.ia.a(180), block=True, block_level=2)
+		time.sleep(0.5)
 
 		# avance
-		asserv.pwm(100,100,2000, block=True, block_level=2)
+		asserv.pwm(100,100,700, block=True, block_level=2)
 
 		# recule
-		asserv.pwm(100,100,1000, block=True, block_level=2)
+		asserv.pwm(-100,-100,700, block=True, block_level=2)
 
 		# retour au point de départ
 		asserv.goto(self.point_acces, block=True, block_level=2)
 		
 		self.clean()
-		print("LINGO POUR LES NOOBS")
+		print("LINGO POUR LES NOOBS LOL")
 
 	def __repr__(self):
-		return "ActionCd(%s, %s)" % (self.point_acces, self.score)
+		return "ActionLingo(%s, %s)" % (self.point_acces, self.score)
+
+
 
 def get_actions_bigrobot(ia, robot, enemies):
 	actions = []
-	"""
-	# totems
-	actions.append(ActionTotem(robot, enemies, (1100,1125+R_BIGROBOT+1), ActionTotem.DIRECTION_BAS))
-	actions.append(ActionTotem(robot, enemies, (1900,1125+R_BIGROBOT+1), ActionTotem.DIRECTION_BAS))
-	actions.append(ActionTotem(robot, enemies, (1100,875-R_BIGROBOT-1), ActionTotem.DIRECTION_HAUT))
-	actions.append(ActionTotem(robot, enemies, (1900,875-R_BIGROBOT-1), ActionTotem.DIRECTION_HAUT))
-	"""
-	actions.append(ActionBouteille(robot, enemies, (ia.x(640), 2000 - R_BIGROBOT - 100)))
-	actions.append(ActionBouteille(robot, enemies, (ia.x(1883), 2000 - R_BIGROBOT - 100)))
 
+	actions.append(ActionBouteille(ia, robot, enemies, ia.p((640, 2000 - R_BIGROBOT - 100))))
+	actions.append(ActionBouteille(ia, robot, enemies, (ia.x(1900), 2000 - R_BIGROBOT - 100)))
+	#actions.append(ActionLingo(ia, robot, enemies, ia.p((400, 900))))
+	actions.append(ActionTotemBas(ia, robot, enemies, ia.p((1450,1000-125-R_BIGROBOT-40))))
+	actions.append(ActionTotemHaut(ia, robot, enemies, ia.p((1450,1000+125+R_BIGROBOT+40))))
+	actions.append(ActionFinalize(ia, robot, enemies, ia.p((400, 950))))
+	#actions.append(ActionTotem3(ia, robot, enemies, ia.p((2200,1000-125-R_BIGROBOT-60)), ActionTotem.DIRECTION_HAUT))
+	#actions.append(ActionTotem3(ia, robot, enemies, ia.p((2200,1000+125+R_BIGROBOT+60)), ActionTotem.DIRECTION_BAS))
 
 	return actions
 

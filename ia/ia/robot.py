@@ -45,6 +45,8 @@ class Robot:
 	def reset(self):
 		self.pos = Vec(self.init_pos)
 		self.a = 0
+		if self.asserv:
+			self.asserv.reset()
 		self.time_pos_updated = 0
 		self.in_action = False
 		self.path = []

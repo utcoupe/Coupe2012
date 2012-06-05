@@ -18,7 +18,7 @@ STATE_PLAY			= 4
 
 class IaUtcoupe(IaBase):
 	def __init__(self, server_ip, server_port, pos_bigrobot, pos_mini_robot, pos_enemy1, pos_enemy2, *,
-	team,
+		team,
 		canal_big_asserv, canal_mini_asserv,
 		canal_big_others, canal_mini_others,
 		canal_big_visio, canal_mini_visio,
@@ -47,6 +47,8 @@ class IaUtcoupe(IaBase):
 			canal_mini_extras	=canal_mini_extras,
 		)
 
+		self.team = team
+
 		# ne pas se recaler
 		self.skip_recalage = skip_recalage
 
@@ -70,7 +72,6 @@ class IaUtcoupe(IaBase):
 		self.state_match	= STATE_WAIT_JACK1
 		self.state_mini	= 0
 		self.state_big	= 0
-
 		
 		# bind de l'event jack
 		self.ircbot.set_handler(ID_MSG_JACK, self._on_jack_event)
@@ -90,7 +91,7 @@ class IaUtcoupe(IaBase):
 
 
 		# date du début du match, pout compter les 90s
-		self.t_begin_match	= time.time()
+		self.t_begin_match	= None
 		
 		# jack event
 		self.e_jack			= threading.Event()
@@ -102,7 +103,8 @@ class IaUtcoupe(IaBase):
 	
 	def loop(self):
 		# si le match a durée depuis trop longtemps, on s'arrête
-		if self.match_timeout and (time.time() - self.t_begin_match) > self.match_timeout:
+		if self.t_begin_match and self.match_timeout and (time.time() - self.t_begin_match) > self.match_timeout:
+			print("FIN MATCH")
 			self.reset()
 
 		# appellé la fonction correspondant à l'état acutel
@@ -127,7 +129,8 @@ class IaUtcoupe(IaBase):
 		else:
 			if self.e_jack.is_set():
 				self.e_jack.clear()
-			self.e_jack.wait(2)
+			else:
+				self.e_jack.wait(2)
 		
 			
 	def loopPlay(self):
@@ -173,6 +176,7 @@ class IaUtcoupe(IaBase):
 			print("Les pings ont detectés un bolosse en face !!!")
 		elif self.gamestate.enemies_angle_mort:
 			print("Un bolosse est dans l'angle mort !!!")
+			self.loopRobot(self.gamestate.bigrobot)
 		else:
 			self.loopRobot(self.gamestate.bigrobot)
 		#self.loopRobot(self.gamestate.minirobot) # decommenter
@@ -259,17 +263,51 @@ class IaUtcoupe(IaBase):
 		if self.skip_recalage:
 			bigrobot.asserv.cancel(block=True)
 			#minirobot.asserv.cancel(block=True)						// IMPORTANT A DECOMMENTER
-			bigrobot.extras.teleport(self.p((120,250)), self.a(0))
-			bigrobot.asserv.set_pos(self.p((120,250)), self.a(0))
-			minirobot.extras.teleport(self.p((400,250)), self.a(0))
+			bigrobot.extras.teleport(self.p((113,250)), self.a(0))
+			bigrobot.asserv.set_pos(self.p((113,250)), self.a(0))
+			#minirobot.extras.teleport(self.p((400,250)), self.a(0))
 			minirobot.extras.teleport(self.p((-20,-20)), self.a(0)) # suppression du petit robot pour l'instant // IMPORTANT A DECOMMENTER
 			#bigrobot.asserv.set_pos(self.p((4000,4000)), self.a(0))
 			self.next_state_match()
 			return
+
+		if 0 == self.state_big:
+			bigrobot.asserv.cancel(block=True)
+			self.state_big = 42
+			bigrobot.asserv.pwm(-100, -100, 1000, handler=self.big_next_on_response_2(1))
+		elif 1 == self.state_big:
+			bigrobot.asserv.set_pos(self.p((0, 113)), 90)
+			self.state_big = 42
+			time.sleep(0.1)
+			bigrobot.asserv.goto(self.p((250,0)), handler=self.big_next_on_response_2(2))
+		elif 2 == self.state_big:
+			self.state_big = 42
+			bigrobot.asserv.turn(self.a(0), handler=self.big_next_on_response_2(3))
+		elif 3 == self.state_big:
+			self.state_big = 42
+			bigrobot.asserv.pwm(-100, -100, 1000, handler=self.big_next_on_response_2(4))
+		elif 4 == self.state_big:
+			bigrobot.asserv.set_pos(self.p(113, bigrobot.pos[1]), self.a(0))
+			self.state_big = 5
+		elif 5 == self.state_big:
+			self.state_big = 42
+			bigrobot.asserv.goto(self.p((500-(LONGUEUR_BIGROBOT-DIST_AXE_TO_BACK)-10,250)), handler=self.big_next_on_response_2(6))
+		elif 6 == self.state_big:
+			self.state_big = 42
+			bigrobot.asserv.turn(self.a(0), self.big_next_on_response_2(7))
+		elif 7 == self.state_big:
+			self.state_mini = 0
+			self.state_big = 0
+			self.next_state_match()
+
+		"""
+			
+			
+			
+
 		
 		if 0 == self.state_mini and \
 		   0 == self.state_big:
-			self.reset()
 			bigrobot.asserv.cancel(block=True)
 			minirobot.asserv.cancel(block=True)
 			bigrobot.extras.teleport(self.p((1100,250)), self.a(90))
@@ -350,11 +388,14 @@ class IaUtcoupe(IaBase):
 			self.state_mini = 0
 			self.state_big = 0
 			self.next_state_match()
+		"""
 
 	def loopPostRecal(self):
 		"""
 		Sortir de la zone de départ
 		"""
+		if not self.t_begin_match:
+			self.t_begin_match = time.time()
 		print("POST RECALAGE", self.state_big, self.state_mini)
 		
 		minirobot = self.gamestate.minirobot
@@ -377,7 +418,7 @@ class IaUtcoupe(IaBase):
 			self.state_big = 42
 			#minirobot.asserv.goto((1200,250), handler=self.mini_next_on_response_2(3))		// A DECOMMENTER
 			self.state_mini = 3 # supprimer
-			bigrobot.asserv.goto((700,R_BIGROBOT+50), handler=self.big_next_on_response_2(3))
+			bigrobot.asserv.goto(self.p((700,R_BIGROBOT+50)), handler=self.big_next_on_response_2(3))
 		elif 3 == self.state_mini and \
 			 3 == self.state_big:
 			self.state_mini = 0
@@ -436,10 +477,7 @@ class IaUtcoupe(IaBase):
 		@param {position} p
 		@return inverse p
 		"""
-		if self.team == RED:
-			return [self.x(p[0]), p[1]]
-		else:
-			return p
+		return [self.x(p[0]), p[1]]
 	
 	def x(self, x):
 		"""
@@ -448,7 +486,7 @@ class IaUtcoupe(IaBase):
 		@param x
 		@return (3000 - x) si rouge sinon x
 		"""
-		if self.team == RED:
+		if self.team == BLUE:
 			return 3000 - x
 		else:
 			return x
@@ -460,7 +498,7 @@ class IaUtcoupe(IaBase):
 		@param {degrès} a
 		@return (a + 180) si rouge sinon a
 		"""
-		if self.team == RED:
+		if self.team == BLUE:
 			if a > 0:
 				return 180 - a
 			else:

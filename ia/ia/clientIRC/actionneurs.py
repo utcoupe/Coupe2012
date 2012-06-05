@@ -39,14 +39,18 @@ class ActionneursMini (BasicLinker):
 		return self.send("stop_buldozer", **kwargs)
 
 class ActionneursGros (BasicLinker):
+
+	LEFT = 0
+	RIGHT = 2
+	
 	def __init__(self, ircbot, channel):
 		super().__init__(ircbot, channel)
 
-	def fermer_machin(self, **kwargs):
-		return self.send("fermer_machin", **kwargs)
+	def fermer_peignes(self, **kwargs):
+		return self.send("fermer_peignes", **kwargs)
 
-	def ouvrir_machin(self, **kwargs):
-		return self.send("ouvrir_machin", **kwargs)
+	def ouvrir_peignes(self, **kwargs):
+		return self.send("ouvrir_peignes", **kwargs)
 
-	def action_du_troisieme_ax12(self, *kwargs):
-		return self.send("action3", **kwargs)
+	def tourner(self, i, angle, **kwargs):
+		return self.send("tourner", i, angle, **kwargs)

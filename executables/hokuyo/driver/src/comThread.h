@@ -40,7 +40,7 @@ void setRed(void)
 	application->ud->stop();
 	application->ud->updateParamWithColor(ROUGE);
 	application->ud->start();
-	cout << 0;
+	cout << 0 << "red";
 }
 
 /***********************************************************************
@@ -53,7 +53,7 @@ void setPurple(void)
 	application->ud->stop();
 	application->ud->updateParamWithColor(BLEU);
 	application->ud->start();
-	cout << 0;
+	cout << 0 << "bleu";
 }
 
 /***********************************************************************

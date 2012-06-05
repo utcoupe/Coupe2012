@@ -6,8 +6,9 @@ MAX_DIST = 1E50
 
 class Action(threading.Thread):
 	
-	def __init__(self, robot, enemies, point_acces):
+	def __init__(self, ia, robot, enemies, point_acces):
 		super().__init__()
+		self.ia = ia
 		self.point_acces = Vec(point_acces)
 		self.robot = robot
 		self.enemies = enemies
@@ -22,6 +23,7 @@ class Action(threading.Thread):
 	def start(self):
 		print("ACTION", self)
 		self.robot.in_action = True
+		self.robot.asserv.cancel()
 		super().start()
 	
 	def run(self):

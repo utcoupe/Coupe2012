@@ -29,9 +29,9 @@
 #define KP_DELTA 14.0
 #define KI_DELTA 1.5
 #define KD_DELTA 5000.0
-#define KP_ALPHA 5.0
-#define KI_ALPHA 1.5
-#define KD_ALPHA 5000.0
+#define KP_ALPHA 4.0
+#define KI_ALPHA 1.0
+#define KD_ALPHA 0
 
 /*Parametre de la file des taches a effectuer*/
 #define SIZE 15
