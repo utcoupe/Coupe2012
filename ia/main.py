@@ -13,7 +13,6 @@ from py3irc.mypyirc.ircdefine import *
 from ia import *
 
 
-
 default = {}
 default["server_ip"] 		= "localhost"
 default["server_port"] 		= 6667
