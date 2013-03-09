@@ -120,10 +120,10 @@ void UrgDriver::interpretData(const std::vector<long> & data, int n)
 			}
 			else
 			{
-				if(checkPointBot(bot.front(), c))
-				{
+				// if(checkPointBot(bot.front(), c))
+				// {
 					bot.push_front(c);
-				}
+				// }
 				else
 				{
 					coord res = computeBotLocation(bot);
